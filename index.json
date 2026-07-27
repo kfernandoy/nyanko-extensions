@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "extensions": [
+    {
+      "id": "mangadex_es",
+      "name": "MangaDex (ES/LatAm)",
+      "version": "0.1.0",
+      "sha256": "19285d67d5d89908383e25366426990bcc994b5e8ad11fd1692dda77d8aa102e",
+      "bundle_url": "http://127.0.0.1:8877/bundles/mangadex_es.py",
+      "author": "kfern"
+    }
+  ]
+}
