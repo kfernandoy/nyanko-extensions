@@ -1,9 +1,4 @@
-"""MangaDex ES/LatAm adapter for Nyanko Source API v3.
-
-Ported from the request flow in Keiyoushi's MangaDex extension (Apache-2.0).
-"""
-
-from __future__ import annotations
+"""Adaptador de MangaDex para Nyanko Source API v3."""
 
 from typing import Any
 
@@ -19,27 +14,28 @@ from nyanko_api.sources.contract import (
 from nyanko_api.sources.errors import SourceNotFoundError
 
 API_URL = "https://api.mangadex.org"
-LANGUAGES = ("es-la", "es")
 CONTENT_RATINGS = ("safe", "suggestive")
 
 
-class MangaDexEsSource:
-    name = "mangadex_es"
-    display_name = "MangaDex (ES/LatAm)"
+class MangaDexSource:
+    name = "mangadex"
+    display_name = "MangaDex"
+    language = "en"
+    languages = ("en",)
     api_version = SOURCE_API_VERSION
-    capabilities = SourceCapabilities(
-        search=True,
-        browse=True,
-        headers={
-            "User-Agent": "Nyanko/0.2.4",
-            "Referer": "https://mangadex.org/",
-            "Origin": "https://mangadex.org",
-        },
-        requests_per_minute=60,
-    )
 
     def __init__(self, fetcher: SourceFetcher | None = None) -> None:
         self.fetcher = fetcher
+        self.capabilities = SourceCapabilities(
+            search=True,
+            browse=True,
+            headers={
+                "User-Agent": "Nyanko/0.2.4",
+                "Referer": "https://mangadex.org/",
+                "Origin": "https://mangadex.org",
+            },
+            requests_per_minute=60,
+        )
 
     async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:
         params = self._manga_params(limit=min(limit, 100))
@@ -61,7 +57,7 @@ class MangaDexEsSource:
                 ("order[publishAt]", "desc"),
                 ("includeEmptyPages", 0),
             ]
-            params.extend(("translatedLanguage[]", lang) for lang in LANGUAGES)
+            params.extend(("translatedLanguage[]", lang) for lang in self.languages)
             chapters = await self._get_json("/chapter", params)
             ids = list(
                 dict.fromkeys(
@@ -82,19 +78,10 @@ class MangaDexEsSource:
             ("order[volume]", "desc"),
             ("order[chapter]", "desc"),
         ]
-        common.extend(("translatedLanguage[]", lang) for lang in LANGUAGES)
-        readable = await self._get_json(
-            f"/manga/{series_id}/feed", [*common, ("includeEmptyPages", 0)]
-        )
-        empty = await self._get_json(
-            f"/manga/{series_id}/feed", [*common, ("includeEmptyPages", 1)]
-        )
-        items = list(
-            {
-                item["id"]: item
-                for item in [*readable.get("data", []), *empty.get("data", [])]
-            }.values()
-        )
+        common.extend(("translatedLanguage[]", lang) for lang in self.languages)
+        readable = await self._get_json(f"/manga/{series_id}/feed", [*common, ("includeEmptyPages", 0)])
+        empty = await self._get_json(f"/manga/{series_id}/feed", [*common, ("includeEmptyPages", 1)])
+        items = list({item["id"]: item for item in [*readable.get("data", []), *empty.get("data", [])]}.values())
         return [self._chapter(item, series_id) for item in items]
 
     async def pages(self, chapter: SourceChapter | str) -> list[SourcePage]:
@@ -103,16 +90,9 @@ class MangaDexEsSource:
         if state == "empty":
             return []
         at_home = await self._get_json(f"/at-home/server/{chapter_id}")
-        filenames = at_home.get("chapter", {}).get("data", [])
         return [
-            SourcePage(
-                source_id=f"{chapter_id}|{index}",
-                chapter_id=source_id,
-                index=index + 1,
-                filename=filename,
-                source_name=self.name,
-            )
-            for index, filename in enumerate(filenames)
+            SourcePage(f"{chapter_id}|{index}", source_id, index + 1, filename, self.name)
+            for index, filename in enumerate(at_home.get("chapter", {}).get("data", []))
         ]
 
     async def page_bytes(self, page: SourcePage | str) -> SourcePageContent:
@@ -126,8 +106,7 @@ class MangaDexEsSource:
         index = int(raw_index)
         if index >= len(filenames):
             raise SourceNotFoundError(f"Página MangaDex fuera de rango: {source_id}")
-        url = f"{at_home['baseUrl']}/data/{chapter['hash']}/{filenames[index]}"
-        response = await self._request("GET", url)
+        response = await self._request("GET", f"{at_home['baseUrl']}/data/{chapter['hash']}/{filenames[index]}")
         response.raise_for_status()
         return SourcePageContent(
             media_type=response.headers.get("Content-Type", "image/jpeg"),
@@ -144,21 +123,13 @@ class MangaDexEsSource:
         return [by_id[manga_id] for manga_id in ids if manga_id in by_id]
 
     def _manga_params(self, *, limit: int, offset: int = 0) -> list[tuple[str, str | int]]:
-        params: list[tuple[str, str | int]] = [
-            ("limit", limit),
-            ("offset", offset),
-            ("includes[]", "cover_art"),
-        ]
-        params.extend(("availableTranslatedLanguage[]", lang) for lang in LANGUAGES)
+        params: list[tuple[str, str | int]] = [("limit", limit), ("offset", offset), ("includes[]", "cover_art")]
+        params.extend(("availableTranslatedLanguage[]", lang) for lang in self.languages)
         params.extend(("contentRating[]", rating) for rating in CONTENT_RATINGS)
         return params
 
     def _series(self, item: dict[str, Any]) -> SourceSeries:
-        return SourceSeries(
-            source_id=item["id"],
-            title=self._title(item.get("attributes", {})),
-            source_name=self.name,
-        )
+        return SourceSeries(item["id"], self._title(item.get("attributes", {})), self.name)
 
     def _chapter(self, item: dict[str, Any], series_id: str) -> SourceChapter:
         attributes = item.get("attributes", {})
@@ -168,7 +139,6 @@ class MangaDexEsSource:
         except ValueError:
             number = None
         pages = int(attributes.get("pages") or 0)
-        chapter_id = f"{item['id']}|empty" if pages == 0 else item["id"]
         label = f"Capítulo {number_text}" if number_text else "Oneshot"
         if attributes.get("title"):
             label += f" · {attributes['title']}"
@@ -180,21 +150,20 @@ class MangaDexEsSource:
             if relation.get("type") == "scanlation_group"
         ]
         return SourceChapter(
-            source_id=chapter_id,
+            source_id=f"{item['id']}|empty" if pages == 0 else item["id"],
             title=label,
             series_id=series_id,
             source_name=self.name,
             number=number,
-            scanlator=" & ".join(group for group in groups if group),
+            scanlator=" & ".join(filter(None, groups)),
             language=attributes.get("translatedLanguage", ""),
             uploaded_at=attributes.get("publishAt"),
         )
 
-    @staticmethod
-    def _title(attributes: dict[str, Any]) -> str:
+    def _title(self, attributes: dict[str, Any]) -> str:
         titles = attributes.get("title", {})
         alternatives = attributes.get("altTitles", [])
-        for language in (*LANGUAGES, "en"):
+        for language in (*self.languages, "en"):
             if titles.get(language):
                 return titles[language]
             for alternative in alternatives:
@@ -202,9 +171,7 @@ class MangaDexEsSource:
                     return alternative[language]
         return next(iter(titles.values()), "Sin título")
 
-    async def _get_json(
-        self, path: str, params: list[tuple[str, str | int]] | None = None
-    ) -> dict[str, Any]:
+    async def _get_json(self, path: str, params: list[tuple[str, str | int]] | None = None) -> dict[str, Any]:
         response = await self._request("GET", f"{API_URL}{path}", params=params)
         response.raise_for_status()
         return response.json()
@@ -214,5 +181,12 @@ class MangaDexEsSource:
             raise SourceNotFoundError("MangaDex no tiene fetcher inyectado")
         return await self.fetcher.request(method, url, **kwargs)
 
+class GeneratedMangaDexSource(MangaDexSource):
+    name = 'mangadex_es'
+    display_name = 'MangaDex (es)'
+    language = 'es'
+    languages = ('es-la', 'es')
 
-SOURCE = MangaDexEsSource
+MangaDexEsSource = GeneratedMangaDexSource
+
+SOURCE = GeneratedMangaDexSource
