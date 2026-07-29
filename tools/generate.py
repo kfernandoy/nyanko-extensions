@@ -157,6 +157,21 @@ def _slug(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", value.lower()).strip("_")
 
 
+def _disambiguate_names(
+    extensions: list[dict[str, object]],
+    languages: dict[str, str],
+) -> None:
+    counts: dict[str, int] = {}
+    for extension in extensions:
+        name = str(extension["name"])
+        counts[name] = counts.get(name, 0) + 1
+    for extension in extensions:
+        name = str(extension["name"])
+        language = languages.get(str(extension["id"]), "")
+        if counts[name] > 1 and language:
+            extension["name"] = f"{name} ({language})"
+
+
 def _supported_madara(
     module: Path,
     build: str,
@@ -3629,6 +3644,14 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             }
         )
         counts[engine_name] += 1
+
+    languages: dict[str, str] = {}
+    for item in generated:
+        bundle = (bundles_dir / f"{item['id']}.py").read_text(encoding="utf-8")
+        matches = re.findall(r"""^\s+language\s*=\s*['"]([^'"]+)['"]""", bundle, re.M)
+        if matches:
+            languages[str(item["id"])] = matches[-1]
+    _disambiguate_names(generated, languages)
 
     by_id = {item["id"]: item for item in manual}
     by_id.update((item["id"], item) for item in generated)

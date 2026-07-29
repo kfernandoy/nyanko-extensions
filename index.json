@@ -93,7 +93,7 @@
     },
     {
       "id": "akuma_all",
-      "name": "Akuma",
+      "name": "Akuma (all)",
       "version": "0.10.0",
       "sha256": "d9bed4550e837ae9732478848babcebce018467842c9e20269d7f7334673789f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_all.py",
@@ -103,7 +103,7 @@
     },
     {
       "id": "akuma_ar",
-      "name": "Akuma",
+      "name": "Akuma (ar)",
       "version": "0.10.0",
       "sha256": "1927ef0fdd9035e4b99648e9a606119740d30212990b787fb000d870506ecb67",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_ar.py",
@@ -113,7 +113,7 @@
     },
     {
       "id": "akuma_ca",
-      "name": "Akuma",
+      "name": "Akuma (ca)",
       "version": "0.10.0",
       "sha256": "b75f9782720dc12e00aa99ee610a93f29bffb1e4c4c7cdfd8bf98dc00aa13991",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_ca.py",
@@ -123,7 +123,7 @@
     },
     {
       "id": "akuma_ceb",
-      "name": "Akuma",
+      "name": "Akuma (ceb)",
       "version": "0.10.0",
       "sha256": "918876249c3c3bb2ad33df5616ca9bae537dedc3f935f98b2b36702039a94ef9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_ceb.py",
@@ -133,7 +133,7 @@
     },
     {
       "id": "akuma_cs",
-      "name": "Akuma",
+      "name": "Akuma (cs)",
       "version": "0.10.0",
       "sha256": "1ec58c8a1b3e012bca6b51ee76a8ad16052fde81dcccdb6cfdc1034834888a44",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_cs.py",
@@ -143,7 +143,7 @@
     },
     {
       "id": "akuma_da",
-      "name": "Akuma",
+      "name": "Akuma (da)",
       "version": "0.10.0",
       "sha256": "fd0f3a361723a6fef2cc62881b7e08033bac0fe5af56ac23f3d49dd8bcf37aa0",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_da.py",
@@ -153,7 +153,7 @@
     },
     {
       "id": "akuma_de",
-      "name": "Akuma",
+      "name": "Akuma (de)",
       "version": "0.10.0",
       "sha256": "783d8667de38055d570c9704ec8b8481e13aad24e98e73e808abaf8a1e6a65fe",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_de.py",
@@ -163,7 +163,7 @@
     },
     {
       "id": "akuma_en",
-      "name": "Akuma",
+      "name": "Akuma (en)",
       "version": "0.10.0",
       "sha256": "c83230be69c6c598e028427d6972979f97c5dfc13df6bd47a1ba4a85663fb639",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_en.py",
@@ -173,7 +173,7 @@
     },
     {
       "id": "akuma_eo",
-      "name": "Akuma",
+      "name": "Akuma (eo)",
       "version": "0.10.0",
       "sha256": "8ec83597e14c98be6807ceea8f15aa208f384e5e240a654c139e6113db89ec01",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_eo.py",
@@ -183,7 +183,7 @@
     },
     {
       "id": "akuma_es",
-      "name": "Akuma",
+      "name": "Akuma (es)",
       "version": "0.10.0",
       "sha256": "74b7410ef64c65177866f0c55bad99b893a4e66eccb621314116506caa75ca10",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_es.py",
@@ -193,7 +193,7 @@
     },
     {
       "id": "akuma_et",
-      "name": "Akuma",
+      "name": "Akuma (et)",
       "version": "0.10.0",
       "sha256": "6a4b9414db4ac54801ea5ec842f151f541d496ba397c1fbd62772b5e7ebcf7d5",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_et.py",
@@ -203,7 +203,7 @@
     },
     {
       "id": "akuma_fr",
-      "name": "Akuma",
+      "name": "Akuma (fr)",
       "version": "0.10.0",
       "sha256": "414e0dd9ca79ab6212d958d548ea3ad206fd137a34bf309e31bf71af8b02863a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_fr.py",
@@ -213,7 +213,7 @@
     },
     {
       "id": "akuma_hi",
-      "name": "Akuma",
+      "name": "Akuma (hi)",
       "version": "0.10.0",
       "sha256": "8b3e9c9eda17eb74db48a2305be6cf60c4c39174a8cfbe6b58f8e309b355a82c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_hi.py",
@@ -223,7 +223,7 @@
     },
     {
       "id": "akuma_hu",
-      "name": "Akuma",
+      "name": "Akuma (hu)",
       "version": "0.10.0",
       "sha256": "541a3cdedfc3ed044b97063310c67714122f880cbd3de36715c785673cdc20fb",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_hu.py",
@@ -233,7 +233,7 @@
     },
     {
       "id": "akuma_id",
-      "name": "Akuma",
+      "name": "Akuma (id)",
       "version": "0.10.0",
       "sha256": "d5f702708f63c0cb90da65e66327822049a41e8836d37b39865b3cb23aef2a08",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_id.py",
@@ -243,7 +243,7 @@
     },
     {
       "id": "akuma_it",
-      "name": "Akuma",
+      "name": "Akuma (it)",
       "version": "0.10.0",
       "sha256": "827414dcec98d98d10b6cd66d409ddc4d80c1fb6beda2875f9863bb16ae02bff",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_it.py",
@@ -253,7 +253,7 @@
     },
     {
       "id": "akuma_ja",
-      "name": "Akuma",
+      "name": "Akuma (ja)",
       "version": "0.10.0",
       "sha256": "1769d3350a71e4c6dbcb97d6793fbbf37589383ad37987cd844f9aa884026324",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_ja.py",
@@ -263,7 +263,7 @@
     },
     {
       "id": "akuma_jv",
-      "name": "Akuma",
+      "name": "Akuma (jv)",
       "version": "0.10.0",
       "sha256": "f17206a1fcab2acd4ff7214f21331620769284f9d4cb814fb6778a12e60abbe4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_jv.py",
@@ -273,7 +273,7 @@
     },
     {
       "id": "akuma_ko",
-      "name": "Akuma",
+      "name": "Akuma (ko)",
       "version": "0.10.0",
       "sha256": "e81af2b1959502123ec5b990b7c6baa4b577087d73269faafd0913ffece473e9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_ko.py",
@@ -283,7 +283,7 @@
     },
     {
       "id": "akuma_nl",
-      "name": "Akuma",
+      "name": "Akuma (nl)",
       "version": "0.10.0",
       "sha256": "9c602d73ca0e6446888a12a1086df3592756a150fc45a10c9526f1c3d279b209",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_nl.py",
@@ -293,7 +293,7 @@
     },
     {
       "id": "akuma_pl",
-      "name": "Akuma",
+      "name": "Akuma (pl)",
       "version": "0.10.0",
       "sha256": "111269237645789a8d6b7692d44d709ababf1a7c6c6e700f905251d2e727101f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_pl.py",
@@ -303,7 +303,7 @@
     },
     {
       "id": "akuma_pt",
-      "name": "Akuma",
+      "name": "Akuma (pt)",
       "version": "0.10.0",
       "sha256": "358ab046e5a37e4a411bab12765ab6c1d4c396db42af9e45ca74f59f8c6a80e4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_pt.py",
@@ -313,7 +313,7 @@
     },
     {
       "id": "akuma_ru",
-      "name": "Akuma",
+      "name": "Akuma (ru)",
       "version": "0.10.0",
       "sha256": "938fb36fa75babbeafbdc0e60b4bdd93b148b4943412b79a2486ad10e6a53414",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_ru.py",
@@ -323,7 +323,7 @@
     },
     {
       "id": "akuma_tr",
-      "name": "Akuma",
+      "name": "Akuma (tr)",
       "version": "0.10.0",
       "sha256": "6418ed70510949900d54743692f4ee32ff37100586170b3b1813da60289d82a3",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_tr.py",
@@ -333,7 +333,7 @@
     },
     {
       "id": "akuma_uk",
-      "name": "Akuma",
+      "name": "Akuma (uk)",
       "version": "0.10.0",
       "sha256": "337d0fe4d72ce70ce6a969041c03e6ebbb6b9d43b3a34a21f0618a0b06d0200a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_uk.py",
@@ -343,7 +343,7 @@
     },
     {
       "id": "akuma_vi",
-      "name": "Akuma",
+      "name": "Akuma (vi)",
       "version": "0.10.0",
       "sha256": "d04faae70f6f9e8d0d5eb86359fe786a748338069d9f1939f560ce8494420b49",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_vi.py",
@@ -353,7 +353,7 @@
     },
     {
       "id": "akuma_zh",
-      "name": "Akuma",
+      "name": "Akuma (zh)",
       "version": "0.10.0",
       "sha256": "4c25abb28caeafcba449595394a9f0110831f46dad2702b0cbd3bc9fc6220be3",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_zh.py",
@@ -1753,7 +1753,7 @@
     },
     {
       "id": "comicfury_all",
-      "name": "Comic Fury",
+      "name": "Comic Fury (all)",
       "version": "0.8.0",
       "sha256": "08b77c6cf0a046fb7a804297cc693b488963e9c79281ef56a461e8670b06bec9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_all.py",
@@ -1763,7 +1763,7 @@
     },
     {
       "id": "comicfury_de",
-      "name": "Comic Fury",
+      "name": "Comic Fury (de)",
       "version": "0.8.0",
       "sha256": "58602606edabf2564a03b6a82a51045c21590fd27844391129659c2c9ef841a5",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_de.py",
@@ -1773,7 +1773,7 @@
     },
     {
       "id": "comicfury_en",
-      "name": "Comic Fury",
+      "name": "Comic Fury (en)",
       "version": "0.8.0",
       "sha256": "73242256d2d553fd18114c75564f33e0f603d0f2938e6774fd4e39f2803258c1",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_en.py",
@@ -1783,7 +1783,7 @@
     },
     {
       "id": "comicfury_es",
-      "name": "Comic Fury",
+      "name": "Comic Fury (es)",
       "version": "0.8.0",
       "sha256": "49faafbc2bed5619a016b59340923ceaeb26e3bc83add3b0f03cd4870af267f4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_es.py",
@@ -1793,7 +1793,7 @@
     },
     {
       "id": "comicfury_fi",
-      "name": "Comic Fury",
+      "name": "Comic Fury (fi)",
       "version": "0.8.0",
       "sha256": "354cecd30f6d079f857902a6a22de819b995dc855bf63d92ad72064e55a28294",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_fi.py",
@@ -1803,7 +1803,7 @@
     },
     {
       "id": "comicfury_fr",
-      "name": "Comic Fury",
+      "name": "Comic Fury (fr)",
       "version": "0.8.0",
       "sha256": "8aa269dfedc4623368cf9f510ec7339a616524354cdd75dd6d53cacc89e41b26",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_fr.py",
@@ -1813,7 +1813,7 @@
     },
     {
       "id": "comicfury_it",
-      "name": "Comic Fury",
+      "name": "Comic Fury (it)",
       "version": "0.8.0",
       "sha256": "0e6a57b8fe91bf2e1ae647269f4d0cddf58957301ba9f58095d3fe147abfa838",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_it.py",
@@ -1823,7 +1823,7 @@
     },
     {
       "id": "comicfury_ja",
-      "name": "Comic Fury",
+      "name": "Comic Fury (ja)",
       "version": "0.8.0",
       "sha256": "0d16baaa4ec9356eafda96ccf7cba5a8fc1eb2dcad5d6815f121db801b5516b8",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_ja.py",
@@ -1833,7 +1833,7 @@
     },
     {
       "id": "comicfury_other",
-      "name": "Comic Fury",
+      "name": "Comic Fury (other)",
       "version": "0.8.0",
       "sha256": "d26a9e3d66062d5c5a613702b8c88e66b5762e2b06bcbab16a1e80cffbb479ce",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_other.py",
@@ -1853,7 +1853,7 @@
     },
     {
       "id": "comicfury_pl",
-      "name": "Comic Fury",
+      "name": "Comic Fury (pl)",
       "version": "0.8.0",
       "sha256": "a8c892cdef869e2a2f07eb0ade0a9a727e9a0df15276da8136aee2d2f8e94fea",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_pl.py",
@@ -1863,7 +1863,7 @@
     },
     {
       "id": "comicfury_pt_br",
-      "name": "Comic Fury",
+      "name": "Comic Fury (pt-BR)",
       "version": "0.8.0",
       "sha256": "9147bc4e3574beee666a71251f038e69f5ff0a9194a016298ca0b320834b1f43",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_pt_br.py",
@@ -1873,7 +1873,7 @@
     },
     {
       "id": "comicfury_ru",
-      "name": "Comic Fury",
+      "name": "Comic Fury (ru)",
       "version": "0.8.0",
       "sha256": "de0276017d8bc8acfb79fcf7421ec2932e2eb461ab3b36641f12c55c877276cc",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_ru.py",
@@ -1883,7 +1883,7 @@
     },
     {
       "id": "comicfury_zh",
-      "name": "Comic Fury",
+      "name": "Comic Fury (zh)",
       "version": "0.8.0",
       "sha256": "cc96b213fd230ab707fd8872335d6159cf9d3ffe5a64bf7616bd5577df409730",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_zh.py",
@@ -1953,7 +1953,7 @@
     },
     {
       "id": "comicklive_de",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (de)",
       "version": "0.5.0",
       "sha256": "f96b7d66edbaf33843b6c1c1f12adbc2b6727899263e4301945d1c0219074ac3",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_de.py",
@@ -1963,7 +1963,7 @@
     },
     {
       "id": "comicklive_en",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (en)",
       "version": "0.5.0",
       "sha256": "9248ad89ce8615fac8511f2d631916b526b977446501ef7311787772fd8a52e8",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_en.py",
@@ -1973,7 +1973,7 @@
     },
     {
       "id": "comicklive_es",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (es)",
       "version": "0.5.0",
       "sha256": "16391051fd529b5e4ea95e34f3ca8d58f32b9dff170474a393a2b1a92e0e1898",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_es.py",
@@ -1983,7 +1983,7 @@
     },
     {
       "id": "comicklive_fr",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (fr)",
       "version": "0.5.0",
       "sha256": "85be77256650733b3f6b35d9a2578c2bbfc7f97df7f8969f7c428efe066bbcbc",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_fr.py",
@@ -1993,7 +1993,7 @@
     },
     {
       "id": "comicklive_id",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (id)",
       "version": "0.5.0",
       "sha256": "a1fedd5f39229189f1421e4c1e60a0b3c0f0bc4adb581ecfaf4d72520eede018",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_id.py",
@@ -2003,7 +2003,7 @@
     },
     {
       "id": "comicklive_it",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (it)",
       "version": "0.5.0",
       "sha256": "b51439db97d368d24d84733213423ac750bd570af8890d40ac4b2248b851d46f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_it.py",
@@ -2013,7 +2013,7 @@
     },
     {
       "id": "comicklive_ja",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (ja)",
       "version": "0.5.0",
       "sha256": "903236cd60f6bb0e1ee2c7649ae928fcf6725121769ddb911acf4f4a62bbe6c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_ja.py",
@@ -2023,7 +2023,7 @@
     },
     {
       "id": "comicklive_ko",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (ko)",
       "version": "0.5.0",
       "sha256": "4dd68e10b46ac1e120984a08ad6dd79c1155dd182e3a673f01457dfed30d107f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_ko.py",
@@ -2033,7 +2033,7 @@
     },
     {
       "id": "comicklive_ms",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (ms)",
       "version": "0.5.0",
       "sha256": "0edcdbc468428ad5b6e201fe93d95c8f08e4c8f8b709688e6fce47e38c4c3614",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_ms.py",
@@ -2043,7 +2043,7 @@
     },
     {
       "id": "comicklive_no",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (no)",
       "version": "0.5.0",
       "sha256": "e39c909baadbcbbdaaa2323dde00d1b2b9edee9f516adb4c9d33efb4458c36ed",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_no.py",
@@ -2053,7 +2053,7 @@
     },
     {
       "id": "comicklive_pl",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (pl)",
       "version": "0.5.0",
       "sha256": "0c9ef43bfcd1cb3603cfe7b30071640c3a8b065130ca03cf37320c8590ad1bd8",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_pl.py",
@@ -2063,7 +2063,7 @@
     },
     {
       "id": "comicklive_ro",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (ro)",
       "version": "0.5.0",
       "sha256": "fa4b4f073953ca1286f1018fb0bd926b13d3a5fec558329d7643bbd053e7e76c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_ro.py",
@@ -2073,7 +2073,7 @@
     },
     {
       "id": "comicklive_ru",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (ru)",
       "version": "0.5.0",
       "sha256": "9d832481c9b5052bf52e725fdeee03d0e39983699fdc845bec81a1cb44ba57c5",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_ru.py",
@@ -2083,7 +2083,7 @@
     },
     {
       "id": "comicklive_sv",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (sv)",
       "version": "0.5.0",
       "sha256": "6e834abe02405985959dcd1de575d701528fb8ef0e1995d272e8095b2f7de5e4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_sv.py",
@@ -2093,7 +2093,7 @@
     },
     {
       "id": "comicklive_th",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (th)",
       "version": "0.5.0",
       "sha256": "08db35f4da389b5f3ae56322b3bffc99d69c889e827c899ee5ef696dcbeddbf7",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_th.py",
@@ -2103,7 +2103,7 @@
     },
     {
       "id": "comicklive_tr",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (tr)",
       "version": "0.5.0",
       "sha256": "028b90d025fc0d420479506abb71a7e839d9a179ac2f0c5968ee28076f57f343",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_tr.py",
@@ -2113,7 +2113,7 @@
     },
     {
       "id": "comicklive_uk",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (uk)",
       "version": "0.5.0",
       "sha256": "f9657222b65831999abaa901012e5fc663cb809abc04ab6905424c950873269f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_uk.py",
@@ -2123,7 +2123,7 @@
     },
     {
       "id": "comicklive_vi",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (vi)",
       "version": "0.5.0",
       "sha256": "87ef2e31b6389511934136a5b09af7c32354f1cd12d28358d7c5a10c348c670b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_vi.py",
@@ -2213,7 +2213,7 @@
     },
     {
       "id": "comicskingdom_en",
-      "name": "Comics Kingdom",
+      "name": "Comics Kingdom (en)",
       "version": "0.3.0",
       "sha256": "8ee96f36817ced9507659eec0316ae623f8307a9fc7e46d0b19432eee2dee47d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicskingdom_en.py",
@@ -2223,7 +2223,7 @@
     },
     {
       "id": "comicskingdom_es",
-      "name": "Comics Kingdom",
+      "name": "Comics Kingdom (es)",
       "version": "0.3.0",
       "sha256": "bca7a458f21aff030856ed29c09c2f87dd679dc6d1605a6747392bb5a40d9c7a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicskingdom_es.py",
@@ -2273,7 +2273,7 @@
     },
     {
       "id": "comikey_en",
-      "name": "Comikey",
+      "name": "Comikey (en)",
       "version": "0.8.0",
       "sha256": "1c4a47ecf7ba531d8f459488dfab3d7185604172a8ad77298198735db0a6de97",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comikey_en.py",
@@ -2283,7 +2283,7 @@
     },
     {
       "id": "comikey_es",
-      "name": "Comikey",
+      "name": "Comikey (es)",
       "version": "0.8.0",
       "sha256": "c099459117b49c3e9b9795d12b06fd0cd6f6055fb436c1f8f623ed0e31161f06",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comikey_es.py",
@@ -2293,7 +2293,7 @@
     },
     {
       "id": "comikey_id",
-      "name": "Comikey",
+      "name": "Comikey (id)",
       "version": "0.8.0",
       "sha256": "eaafcbac9780bfa7e537f7d86118387bfe53765055eb75e5be5dcb02ca85398b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comikey_id.py",
@@ -2303,7 +2303,7 @@
     },
     {
       "id": "comikey_pt_br",
-      "name": "Comikey",
+      "name": "Comikey (pt-BR)",
       "version": "0.8.0",
       "sha256": "a3ceed41692f0aba7c8765e8424e364a0051c4b8675df02c6fa3c0a48173fdd9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comikey_pt_br.py",
@@ -2343,7 +2343,7 @@
     },
     {
       "id": "commitstrip_en",
-      "name": "Commit Strip",
+      "name": "Commit Strip (en)",
       "version": "0.4.0",
       "sha256": "170eaf8c188677c65824f7d244e1650bef1d3e19c490a21c07cb83f690c77d4e",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/commitstrip_en.py",
@@ -2353,7 +2353,7 @@
     },
     {
       "id": "commitstrip_fr",
-      "name": "Commit Strip",
+      "name": "Commit Strip (fr)",
       "version": "0.4.0",
       "sha256": "893b828ae357e2d69a7cdfd44390cb1820888a1d2421f9d126d407d7432fcb07",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/commitstrip_fr.py",
@@ -2473,7 +2473,7 @@
     },
     {
       "id": "cubari_all",
-      "name": "Cubari",
+      "name": "Cubari (all)",
       "version": "0.26.0",
       "sha256": "a9e8c7f505cf523ba5bace15202ae0100f9ec41f7c7615a869ad6fe42c691a86",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/cubari_all.py",
@@ -2483,7 +2483,7 @@
     },
     {
       "id": "cubari_en",
-      "name": "Cubari",
+      "name": "Cubari (en)",
       "version": "0.26.0",
       "sha256": "245759b046150e79d4b173fa5b90b95c02430048c779b14e1a07c7bcc2e585fd",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/cubari_en.py",
@@ -2493,7 +2493,7 @@
     },
     {
       "id": "cubari_other",
-      "name": "Cubari",
+      "name": "Cubari (other)",
       "version": "0.26.0",
       "sha256": "980b04fd4417e3d87257bbf3022223bfdf30f59d4f34b9a8db311dfa1a7e2497",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/cubari_other.py",
@@ -3013,7 +3013,7 @@
     },
     {
       "id": "dragonballmultiverse_ar",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (ar)",
       "version": "0.8.0",
       "sha256": "9c662771de64b8dee4645a49131f81ca33c4ece4df35909aac48a829f4993d30",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_ar.py",
@@ -3023,7 +3023,7 @@
     },
     {
       "id": "dragonballmultiverse_bg",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (bg)",
       "version": "0.8.0",
       "sha256": "474ac4ae4e100e92f9cd00082881737519355a955c32efdd2b8a50db071ffdde",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_bg.py",
@@ -3033,7 +3033,7 @@
     },
     {
       "id": "dragonballmultiverse_br",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (br)",
       "version": "0.8.0",
       "sha256": "1180431b293ba3a9add1922e20864ec139209119bc0fb30d74a9ab2722de6639",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_br.py",
@@ -3043,7 +3043,7 @@
     },
     {
       "id": "dragonballmultiverse_ca",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (ca)",
       "version": "0.8.0",
       "sha256": "204e461c8cad153921f51e65de7eb6c918dae9dc440b654c0a4e1a0a29e5a57c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_ca.py",
@@ -3053,7 +3053,7 @@
     },
     {
       "id": "dragonballmultiverse_co",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (co)",
       "version": "0.8.0",
       "sha256": "a4d05c493a4dcac7f900fec43f384a7bd79aa0fbf08261d03d3e430adf0aae35",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_co.py",
@@ -3063,7 +3063,7 @@
     },
     {
       "id": "dragonballmultiverse_da",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (da)",
       "version": "0.8.0",
       "sha256": "364587b8090a9af3acacc7a2835eac516ec5dcc0e95f0ecfafe1e845735326da",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_da.py",
@@ -3073,7 +3073,7 @@
     },
     {
       "id": "dragonballmultiverse_de",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (de)",
       "version": "0.8.0",
       "sha256": "83c76a6be04e5bd79005a5844080b5899631f83014af4013fe39ec02db288332",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_de.py",
@@ -3083,7 +3083,7 @@
     },
     {
       "id": "dragonballmultiverse_el",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (el)",
       "version": "0.8.0",
       "sha256": "4052bdfd2dfd38ab1f85a4e9c84d4d677bad3d4f6324ded19a6c69dd2de68209",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_el.py",
@@ -3093,7 +3093,7 @@
     },
     {
       "id": "dragonballmultiverse_en",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (en)",
       "version": "0.8.0",
       "sha256": "1fb8db33053aa2a1caa22df3a616a1c07ca066b2d627e98bb2bad2d8a8dafc33",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_en.py",
@@ -3103,7 +3103,7 @@
     },
     {
       "id": "dragonballmultiverse_es",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (es)",
       "version": "0.8.0",
       "sha256": "7aabaad1fee8e761b6a813e9a83ad2494b6548fe0c5cd24013021f5a74e4d6f9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_es.py",
@@ -3113,7 +3113,7 @@
     },
     {
       "id": "dragonballmultiverse_es_419",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (es-419)",
       "version": "0.8.0",
       "sha256": "a6c8e40dacd4fbe3613fe443d9cfcb7065c898359a56b4b78d8ca0b30b1466a8",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_es_419.py",
@@ -3123,7 +3123,7 @@
     },
     {
       "id": "dragonballmultiverse_eu",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (eu)",
       "version": "0.8.0",
       "sha256": "53bd6420c85c7279143e0660567d31bc20f83468eb5a059a3966cb8c0da7139e",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_eu.py",
@@ -3133,7 +3133,7 @@
     },
     {
       "id": "dragonballmultiverse_fi",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (fi)",
       "version": "0.8.0",
       "sha256": "4c843848d1fe02a44f4b8828948ee6b1759ad80c0b25354875deae74a68c750d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_fi.py",
@@ -3143,7 +3143,7 @@
     },
     {
       "id": "dragonballmultiverse_fil",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (fil)",
       "version": "0.8.0",
       "sha256": "b79ed9198bfd69363bdf9cf1038b25db538eb8e24a99bc01adeb5b028c784152",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_fil.py",
@@ -3153,7 +3153,7 @@
     },
     {
       "id": "dragonballmultiverse_fr",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (fr)",
       "version": "0.8.0",
       "sha256": "8d9d92c747178e5fcdea0b8582a327f5d6903e43dd1d3efb1780ff23d7103d78",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_fr.py",
@@ -3173,7 +3173,7 @@
     },
     {
       "id": "dragonballmultiverse_ga",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (ga)",
       "version": "0.8.0",
       "sha256": "340deda2fb3942880bbcf93db06b049ded5b950ea94d48a7a202486723c34982",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_ga.py",
@@ -3183,7 +3183,7 @@
     },
     {
       "id": "dragonballmultiverse_he",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (he)",
       "version": "0.8.0",
       "sha256": "dfe8d193116b7ea8b5c18a8e00cdcb07475f88834df23ae2aefba799283485cf",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_he.py",
@@ -3193,7 +3193,7 @@
     },
     {
       "id": "dragonballmultiverse_hr",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (hr)",
       "version": "0.8.0",
       "sha256": "b25107c078b6ad464193dab67fef7dbf2c5503f621271ea52bfedd6e8447d8df",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_hr.py",
@@ -3203,7 +3203,7 @@
     },
     {
       "id": "dragonballmultiverse_hu",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (hu)",
       "version": "0.8.0",
       "sha256": "6c20fb7d22bb73f50596be389d8c85c9aee41e9adb5a225a29b76b5b37005f1f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_hu.py",
@@ -3213,7 +3213,7 @@
     },
     {
       "id": "dragonballmultiverse_it",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (it)",
       "version": "0.8.0",
       "sha256": "01984e98f189cbb55f0cab81de88edb372e6421f2442591a869cbd8bbf2b12ad",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_it.py",
@@ -3223,7 +3223,7 @@
     },
     {
       "id": "dragonballmultiverse_ja",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (ja)",
       "version": "0.8.0",
       "sha256": "3f2f60667cd988e50dd07531f0f2916b687c8b1f54c1daea047e1dc0babe8863",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_ja.py",
@@ -3233,7 +3233,7 @@
     },
     {
       "id": "dragonballmultiverse_ko",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (ko)",
       "version": "0.8.0",
       "sha256": "0e6ced34cd0f4bc48cd6cf9ed2776d3106cde287a434a36bf8b2b53b9ac655ec",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_ko.py",
@@ -3243,7 +3243,7 @@
     },
     {
       "id": "dragonballmultiverse_la",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (la)",
       "version": "0.8.0",
       "sha256": "b277d4b97229484c1c5e42313e5173923d445dbfb1028875d416a1311538246c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_la.py",
@@ -3253,7 +3253,7 @@
     },
     {
       "id": "dragonballmultiverse_lmo",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (lmo)",
       "version": "0.8.0",
       "sha256": "19bad7d677e149fbc09fd9e94c800f2348987ffe6a4372c1624e7d8d3550cbb2",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_lmo.py",
@@ -3263,7 +3263,7 @@
     },
     {
       "id": "dragonballmultiverse_lt",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (lt)",
       "version": "0.8.0",
       "sha256": "d31aa5c16df692446f8bb070a96c380994654ca47e676a4331f15f303b77b73f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_lt.py",
@@ -3273,7 +3273,7 @@
     },
     {
       "id": "dragonballmultiverse_nl",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (nl)",
       "version": "0.8.0",
       "sha256": "e326005ba8eed7ba30e164c0900381aa76788d56464ecb21cab2b6fb838ee54d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_nl.py",
@@ -3283,7 +3283,7 @@
     },
     {
       "id": "dragonballmultiverse_no",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (no)",
       "version": "0.8.0",
       "sha256": "7a491c4a0be0fec99f151fa7133e92f6559db94a41396c52d581e6405bbb92f9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_no.py",
@@ -3293,7 +3293,7 @@
     },
     {
       "id": "dragonballmultiverse_pl",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (pl)",
       "version": "0.8.0",
       "sha256": "4bd9ae1cd71889fab60597c5fc08df40728b460193a4b8dc7fe3215d4c323f55",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_pl.py",
@@ -3303,7 +3303,7 @@
     },
     {
       "id": "dragonballmultiverse_pt",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (pt)",
       "version": "0.8.0",
       "sha256": "970f27c93b7c99289ea13fbee6c2bd11f6dedefede99d19d414414dd1f8ae47a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_pt.py",
@@ -3313,7 +3313,7 @@
     },
     {
       "id": "dragonballmultiverse_pt_br",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (pt-BR)",
       "version": "0.8.0",
       "sha256": "f40be173b70bde1df1eacbac2e1f7e262017f6132abb199958a54bacfab063f5",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_pt_br.py",
@@ -3323,7 +3323,7 @@
     },
     {
       "id": "dragonballmultiverse_ro",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (ro)",
       "version": "0.8.0",
       "sha256": "eab388b1fedaf167cf269f8ea85c46f9927d5cab8d21b29ef1342cdc5a3ef5ae",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_ro.py",
@@ -3333,7 +3333,7 @@
     },
     {
       "id": "dragonballmultiverse_ru",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (ru)",
       "version": "0.8.0",
       "sha256": "01196333e559d862fbe17680adec5f22635fac69fd8ca640f8298731b5bad3b2",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_ru.py",
@@ -3343,7 +3343,7 @@
     },
     {
       "id": "dragonballmultiverse_sv",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (sv)",
       "version": "0.8.0",
       "sha256": "46699fd98e683db6bdb71a30fe85170001a8a9d6c1fee8748e40c5651d5c1a69",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_sv.py",
@@ -3353,7 +3353,7 @@
     },
     {
       "id": "dragonballmultiverse_tr",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (tr)",
       "version": "0.8.0",
       "sha256": "128dd730a932e5587652a657acd0d9889dd5e7a1305c6966243bdd7d23ce18f3",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_tr.py",
@@ -3363,7 +3363,7 @@
     },
     {
       "id": "dragonballmultiverse_vec",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (vec)",
       "version": "0.8.0",
       "sha256": "c01b4e6aaa0d2b7be58ecc0743bbdbc3a064f041e6cd7dfa58c2b47be647159b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_vec.py",
@@ -3373,7 +3373,7 @@
     },
     {
       "id": "dragonballmultiverse_zh",
-      "name": "Dragon Ball Multiverse",
+      "name": "Dragon Ball Multiverse (zh)",
       "version": "0.8.0",
       "sha256": "66d4c0e44d2364892c4006053cc5f3f829143d64a863f5b29e6d0ae19fdc9e7d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/dragonballmultiverse_zh.py",
@@ -4583,7 +4583,7 @@
     },
     {
       "id": "hdoujin_all",
-      "name": "HDoujin",
+      "name": "HDoujin (all)",
       "version": "0.4.0",
       "sha256": "76545290588183c24df6395789216e31de1eddc626d83e198aec36c277b9f952",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hdoujin_all.py",
@@ -4593,7 +4593,7 @@
     },
     {
       "id": "hdoujin_en",
-      "name": "HDoujin",
+      "name": "HDoujin (en)",
       "version": "0.4.0",
       "sha256": "c6221d21df747c829478898e747fa8d38b33f90923b1ba7a4504867c06be0a41",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hdoujin_en.py",
@@ -4603,7 +4603,7 @@
     },
     {
       "id": "hdoujin_es",
-      "name": "HDoujin",
+      "name": "HDoujin (es)",
       "version": "0.4.0",
       "sha256": "e92caf198be1b44e0725e708cecbb15cc971ac478192cae9a510b15a87dd21bc",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hdoujin_es.py",
@@ -4613,7 +4613,7 @@
     },
     {
       "id": "hdoujin_ja",
-      "name": "HDoujin",
+      "name": "HDoujin (ja)",
       "version": "0.4.0",
       "sha256": "b2cd354fa778b3c49e258da35e88c168c77603927e5eca5b2563d1cf2cbbdcf1",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hdoujin_ja.py",
@@ -4623,7 +4623,7 @@
     },
     {
       "id": "hdoujin_ko",
-      "name": "HDoujin",
+      "name": "HDoujin (ko)",
       "version": "0.4.0",
       "sha256": "83bb308a06b70b05005a1dfb94973b92a27d43c26de9efb6bc05572c7b2d410f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hdoujin_ko.py",
@@ -4633,7 +4633,7 @@
     },
     {
       "id": "hdoujin_zh",
-      "name": "HDoujin",
+      "name": "HDoujin (zh)",
       "version": "0.4.0",
       "sha256": "24dc33da191c2650f8f68385aae9d9aa28da2cdf60c3427862ff7431dbc4ff1d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hdoujin_zh.py",
@@ -4663,7 +4663,7 @@
     },
     {
       "id": "hennojin_en",
-      "name": "Hennojin",
+      "name": "Hennojin (en)",
       "version": "0.3.0",
       "sha256": "659ff816b5377f148b28286dc58bb861b95ef9c244cfce8b54a705635b4b3542",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hennojin_en.py",
@@ -4673,7 +4673,7 @@
     },
     {
       "id": "hennojin_ja",
-      "name": "Hennojin",
+      "name": "Hennojin (ja)",
       "version": "0.3.0",
       "sha256": "a5b9f783653935975e179afe605c7b6b9c27f393c45b52e3006a2f080e8a0d45",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hennojin_ja.py",
@@ -4683,7 +4683,7 @@
     },
     {
       "id": "hentai3_all",
-      "name": "3Hentai",
+      "name": "3Hentai (all)",
       "version": "0.5.0",
       "sha256": "89a79f55527428a4814281c4c4c3ded976350c383d797aa759e0351eb78059ab",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_all.py",
@@ -4693,7 +4693,7 @@
     },
     {
       "id": "hentai3_ar",
-      "name": "3Hentai",
+      "name": "3Hentai (ar)",
       "version": "0.5.0",
       "sha256": "47e7ee8c82f0ab5b21650294bc35f8486883cfc41ecc517ac57fb1ee18706239",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_ar.py",
@@ -4703,7 +4703,7 @@
     },
     {
       "id": "hentai3_bg",
-      "name": "3Hentai",
+      "name": "3Hentai (bg)",
       "version": "0.5.0",
       "sha256": "faceda30d53e4c7945632c67b34b56ad7433d6c1f74429ea15513a6a8b67b9da",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_bg.py",
@@ -4713,7 +4713,7 @@
     },
     {
       "id": "hentai3_cs",
-      "name": "3Hentai",
+      "name": "3Hentai (cs)",
       "version": "0.5.0",
       "sha256": "b1473f31ede01853efcd4cad52b7cc609edb39c597137cb0818cd21e94dfc6f3",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_cs.py",
@@ -4723,7 +4723,7 @@
     },
     {
       "id": "hentai3_de",
-      "name": "3Hentai",
+      "name": "3Hentai (de)",
       "version": "0.5.0",
       "sha256": "c70e814a45c6c2662f517548d7098fca43acee45ec3231cc339638bd002d6f4a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_de.py",
@@ -4733,7 +4733,7 @@
     },
     {
       "id": "hentai3_en",
-      "name": "3Hentai",
+      "name": "3Hentai (en)",
       "version": "0.5.0",
       "sha256": "7e0c3eff636a4a1d71a4e061bdc6d35ad4c425fcc315c0121916a55a3acdbc81",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_en.py",
@@ -4743,7 +4743,7 @@
     },
     {
       "id": "hentai3_es",
-      "name": "3Hentai",
+      "name": "3Hentai (es)",
       "version": "0.5.0",
       "sha256": "6ab35460ef6d48eaddda15b15e9c2c57c2c6391b3b96da524f0b5bc64b509a5d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_es.py",
@@ -4753,7 +4753,7 @@
     },
     {
       "id": "hentai3_fi",
-      "name": "3Hentai",
+      "name": "3Hentai (fi)",
       "version": "0.5.0",
       "sha256": "6c80c9b31d9ac0856f8544ad998688797fc3d39c6ed0195403daa4ae77f47699",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_fi.py",
@@ -4763,7 +4763,7 @@
     },
     {
       "id": "hentai3_fr",
-      "name": "3Hentai",
+      "name": "3Hentai (fr)",
       "version": "0.5.0",
       "sha256": "570d92c616c624ae76849ffb6e7f0bb59b0def22ad51cc9554cbf244390bf4fc",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_fr.py",
@@ -4773,7 +4773,7 @@
     },
     {
       "id": "hentai3_hu",
-      "name": "3Hentai",
+      "name": "3Hentai (hu)",
       "version": "0.5.0",
       "sha256": "6d196c0ab81af91fa7e8b642a641966a116bbe7eff4f4c331bc22c868a28c308",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_hu.py",
@@ -4783,7 +4783,7 @@
     },
     {
       "id": "hentai3_id",
-      "name": "3Hentai",
+      "name": "3Hentai (id)",
       "version": "0.5.0",
       "sha256": "97832bb8ed9e941ea6d8e48113cb638b2760f0f879deaf16daffcb201eec5f43",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_id.py",
@@ -4793,7 +4793,7 @@
     },
     {
       "id": "hentai3_is",
-      "name": "3Hentai",
+      "name": "3Hentai (is)",
       "version": "0.5.0",
       "sha256": "c448c9027fa8507da45672fcfe8e8ec5353db5eb81b23511e5e793f6c64a832f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_is.py",
@@ -4803,7 +4803,7 @@
     },
     {
       "id": "hentai3_it",
-      "name": "3Hentai",
+      "name": "3Hentai (it)",
       "version": "0.5.0",
       "sha256": "c4db15635995f6db46a8a1d65c37912da7a609ffcc1f5d369d02df70fc9f6de8",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_it.py",
@@ -4813,7 +4813,7 @@
     },
     {
       "id": "hentai3_ja",
-      "name": "3Hentai",
+      "name": "3Hentai (ja)",
       "version": "0.5.0",
       "sha256": "dce3ced9b0cc36a01b0b99313437223e8750db5912facbdc12320ccf3e833706",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_ja.py",
@@ -4823,7 +4823,7 @@
     },
     {
       "id": "hentai3_jv",
-      "name": "3Hentai",
+      "name": "3Hentai (jv)",
       "version": "0.5.0",
       "sha256": "50420dbd15cb6d6c8cbd5e2dfbb005f3c4de8118af78f5bdee33e05a7cba387f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_jv.py",
@@ -4833,7 +4833,7 @@
     },
     {
       "id": "hentai3_ko",
-      "name": "3Hentai",
+      "name": "3Hentai (ko)",
       "version": "0.5.0",
       "sha256": "9afd22f929e5f0b19c68158a1b37477934414fd8cd7d8f7f507094438519479a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_ko.py",
@@ -4843,7 +4843,7 @@
     },
     {
       "id": "hentai3_la",
-      "name": "3Hentai",
+      "name": "3Hentai (la)",
       "version": "0.5.0",
       "sha256": "af9dfc84e31bb41686443da756cacfe6dababba1a37a9246e9b922bbd469deed",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_la.py",
@@ -4853,7 +4853,7 @@
     },
     {
       "id": "hentai3_mo",
-      "name": "3Hentai",
+      "name": "3Hentai (mo)",
       "version": "0.5.0",
       "sha256": "643369b9f021cbbd9ee3051e17ae7b0075699a4eff95f0259b8f96918a2ec611",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_mo.py",
@@ -4863,7 +4863,7 @@
     },
     {
       "id": "hentai3_my",
-      "name": "3Hentai",
+      "name": "3Hentai (my)",
       "version": "0.5.0",
       "sha256": "970c8abc823be7f5d5c41f17f68e7d33530f8e8ee90d8dd4d60979cd0c16739b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_my.py",
@@ -4873,7 +4873,7 @@
     },
     {
       "id": "hentai3_nl",
-      "name": "3Hentai",
+      "name": "3Hentai (nl)",
       "version": "0.5.0",
       "sha256": "3e07978b730249c35978aaca0599c05f8b22c218d2c609c7e50850bb7c7a4342",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_nl.py",
@@ -4883,7 +4883,7 @@
     },
     {
       "id": "hentai3_pl",
-      "name": "3Hentai",
+      "name": "3Hentai (pl)",
       "version": "0.5.0",
       "sha256": "6e9e6c7bea40f60ce0017566121cde1bfbbc0419e6848e7c93eaf4dd2e0e5164",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_pl.py",
@@ -4893,7 +4893,7 @@
     },
     {
       "id": "hentai3_pt",
-      "name": "3Hentai",
+      "name": "3Hentai (pt)",
       "version": "0.5.0",
       "sha256": "b03e42fbbd07f63647f753baecacfeeb4fc2b900286cfd1f24d38027a7fe0e43",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_pt.py",
@@ -4903,7 +4903,7 @@
     },
     {
       "id": "hentai3_ru",
-      "name": "3Hentai",
+      "name": "3Hentai (ru)",
       "version": "0.5.0",
       "sha256": "4701436937c71c9680fdd1932815c5933eeb4df7000380ab20d45d378af71b0b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_ru.py",
@@ -4913,7 +4913,7 @@
     },
     {
       "id": "hentai3_th",
-      "name": "3Hentai",
+      "name": "3Hentai (th)",
       "version": "0.5.0",
       "sha256": "90551b0ce5f77d1b17ae8e065b868667820d5155f64401bd0c107f49aa480fa0",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_th.py",
@@ -4923,7 +4923,7 @@
     },
     {
       "id": "hentai3_tl",
-      "name": "3Hentai",
+      "name": "3Hentai (tl)",
       "version": "0.5.0",
       "sha256": "372a72c9d4ce149844d8dae1fdc96cf6c298b051af4a195db4d246da78e1ee54",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_tl.py",
@@ -4933,7 +4933,7 @@
     },
     {
       "id": "hentai3_tr",
-      "name": "3Hentai",
+      "name": "3Hentai (tr)",
       "version": "0.5.0",
       "sha256": "51f69c501f7f332f433753685386d2b8b905a472d46572b2c18cc6629fe74e65",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_tr.py",
@@ -4943,7 +4943,7 @@
     },
     {
       "id": "hentai3_uk",
-      "name": "3Hentai",
+      "name": "3Hentai (uk)",
       "version": "0.5.0",
       "sha256": "5219327eaf8513f1f6a037165141f074832a9a63529e4925d8aaf226d2d96791",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_uk.py",
@@ -4953,7 +4953,7 @@
     },
     {
       "id": "hentai3_vi",
-      "name": "3Hentai",
+      "name": "3Hentai (vi)",
       "version": "0.5.0",
       "sha256": "935d7a6819618cb9afa91404adfaeda55c08eff2abace844b38f3615ef94298d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_vi.py",
@@ -4963,7 +4963,7 @@
     },
     {
       "id": "hentai3_zh",
-      "name": "3Hentai",
+      "name": "3Hentai (zh)",
       "version": "0.5.0",
       "sha256": "9ea26cc0b09384786672d83b44dd63c16b0e87314c0d62134622acac083fa610",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_zh.py",
@@ -6103,7 +6103,7 @@
     },
     {
       "id": "holonometria_en",
-      "name": "HOLONOMETRIA",
+      "name": "HOLONOMETRIA (en)",
       "version": "0.4.0",
       "sha256": "6f971549ba9b43f6e626e3678c249e3e165b63aaeafb6a2fd1ffeda31421afe6",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/holonometria_en.py",
@@ -6113,7 +6113,7 @@
     },
     {
       "id": "holonometria_id",
-      "name": "HOLONOMETRIA",
+      "name": "HOLONOMETRIA (id)",
       "version": "0.4.0",
       "sha256": "99e06f32db519b41951ef621a1e49270feeb71f8445d94a7a50f82153912c848",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/holonometria_id.py",
@@ -6123,7 +6123,7 @@
     },
     {
       "id": "holonometria_ja",
-      "name": "HOLONOMETRIA",
+      "name": "HOLONOMETRIA (ja)",
       "version": "0.4.0",
       "sha256": "42ccad40c3bde884d381106f6c2e70cb34b9ededb048bc64f2508fcaa17b18f4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/holonometria_ja.py",
@@ -6163,7 +6163,7 @@
     },
     {
       "id": "honeytoon_de",
-      "name": "Honeytoon",
+      "name": "Honeytoon (de)",
       "version": "0.2.0",
       "sha256": "e4668b7ab8a2bc5a92510c1da5464fc8870d76caa989245da61696602fd14dc1",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/honeytoon_de.py",
@@ -6173,7 +6173,7 @@
     },
     {
       "id": "honeytoon_en",
-      "name": "Honeytoon",
+      "name": "Honeytoon (en)",
       "version": "0.2.0",
       "sha256": "82afcb9d77f2896c09fa54f9a0eb6f11777d2514b69c0867c21d0cfb6648eac5",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/honeytoon_en.py",
@@ -6183,7 +6183,7 @@
     },
     {
       "id": "honeytoon_es",
-      "name": "Honeytoon",
+      "name": "Honeytoon (es)",
       "version": "0.2.0",
       "sha256": "62a5eb4d79925926c6038f36cae02e0ba6738d8fdc63175a3c2b1a4ba2cddf73",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/honeytoon_es.py",
@@ -6193,7 +6193,7 @@
     },
     {
       "id": "honeytoon_fr",
-      "name": "Honeytoon",
+      "name": "Honeytoon (fr)",
       "version": "0.2.0",
       "sha256": "5546e16f75b884824b00cad779028bcda0a11f155411217f14c3d77da1686f89",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/honeytoon_fr.py",
@@ -6203,7 +6203,7 @@
     },
     {
       "id": "honeytoon_it",
-      "name": "Honeytoon",
+      "name": "Honeytoon (it)",
       "version": "0.2.0",
       "sha256": "804c76618f5761d0bfcac7336dafb4f93a11588455955cc61476b18c4dbfbe69",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/honeytoon_it.py",
@@ -6213,7 +6213,7 @@
     },
     {
       "id": "honeytoon_pt_br",
-      "name": "Honeytoon",
+      "name": "Honeytoon (pt-BR)",
       "version": "0.2.0",
       "sha256": "e8fa969f7f6148af0b6e30e6ee553002ca9940f4ea3d0fc35a5c3633a3a3be71",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/honeytoon_pt_br.py",
@@ -6593,7 +6593,7 @@
     },
     {
       "id": "izneo_en",
-      "name": "izneo",
+      "name": "izneo (en)",
       "version": "0.8.0",
       "sha256": "09a5668c265fd2501c8ecc42773f0f8e434dae836eff827433eb52c98690e056",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/izneo_en.py",
@@ -6603,7 +6603,7 @@
     },
     {
       "id": "izneo_fr",
-      "name": "izneo",
+      "name": "izneo (fr)",
       "version": "0.8.0",
       "sha256": "bb4a8417ea019d2608ffaea3d84b3404e26955a32eaef051bf5669ae3ab3f2e1",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/izneo_fr.py",
@@ -6773,7 +6773,7 @@
     },
     {
       "id": "kagane_ar",
-      "name": "Kagane",
+      "name": "Kagane (ar)",
       "version": "0.28.0",
       "sha256": "8df117f0e99d64a2cabae5d78bbda5e682c95d18d4947359b8e7603398b99725",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_ar.py",
@@ -6783,7 +6783,7 @@
     },
     {
       "id": "kagane_de",
-      "name": "Kagane",
+      "name": "Kagane (de)",
       "version": "0.28.0",
       "sha256": "643eae22e97fd34003c92680e277ad006f0c3f101ceb6522d81ec0fee0474df2",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_de.py",
@@ -6793,7 +6793,7 @@
     },
     {
       "id": "kagane_en",
-      "name": "Kagane",
+      "name": "Kagane (en)",
       "version": "0.28.0",
       "sha256": "062b6d43d813f2b62995d2600d0d39e397050b897a2adb78964a72ee9bc856dd",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_en.py",
@@ -6803,7 +6803,7 @@
     },
     {
       "id": "kagane_es",
-      "name": "Kagane",
+      "name": "Kagane (es)",
       "version": "0.28.0",
       "sha256": "a846d16767901c6b35e92644064dc7af90b371fec8cf4f7fe69a8ff4977f84a0",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_es.py",
@@ -6813,7 +6813,7 @@
     },
     {
       "id": "kagane_es_419",
-      "name": "Kagane",
+      "name": "Kagane (es-419)",
       "version": "0.28.0",
       "sha256": "f7bd93717715693acf55e357caa6abd1831adbfc2e2c5572b3a6b9780583321d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_es_419.py",
@@ -6823,7 +6823,7 @@
     },
     {
       "id": "kagane_fr",
-      "name": "Kagane",
+      "name": "Kagane (fr)",
       "version": "0.28.0",
       "sha256": "5b2ffc390e01dd169ae476ce955e33bc4a17107be4f065e966007e1fc318021f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_fr.py",
@@ -6833,7 +6833,7 @@
     },
     {
       "id": "kagane_hi",
-      "name": "Kagane",
+      "name": "Kagane (hi)",
       "version": "0.28.0",
       "sha256": "155e3a11c6f16b929b75dea3f7971c4deb4a1736bae28f663d745a767219e6b5",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_hi.py",
@@ -6843,7 +6843,7 @@
     },
     {
       "id": "kagane_id",
-      "name": "Kagane",
+      "name": "Kagane (id)",
       "version": "0.28.0",
       "sha256": "1f36192eee34169adb24580e9a09dbaea06f5ae7d0a78f67c97d4e231e7b6380",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_id.py",
@@ -6853,7 +6853,7 @@
     },
     {
       "id": "kagane_it",
-      "name": "Kagane",
+      "name": "Kagane (it)",
       "version": "0.28.0",
       "sha256": "17fe2f22723b4843d5c020ac06c2f553b840cc8ddf9b9f7787981ecd48d5fb76",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_it.py",
@@ -6863,7 +6863,7 @@
     },
     {
       "id": "kagane_ja",
-      "name": "Kagane",
+      "name": "Kagane (ja)",
       "version": "0.28.0",
       "sha256": "56ecbda692ecbc82cdb2a96aee6124e6d9992c9c372622bf02df30ff0bb1d5af",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_ja.py",
@@ -6873,7 +6873,7 @@
     },
     {
       "id": "kagane_ko",
-      "name": "Kagane",
+      "name": "Kagane (ko)",
       "version": "0.28.0",
       "sha256": "f36621f0a5d37774e12b7dc47729357b84d25ea2b09c07c5cc19ff5d9a3731c3",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_ko.py",
@@ -6883,7 +6883,7 @@
     },
     {
       "id": "kagane_pl",
-      "name": "Kagane",
+      "name": "Kagane (pl)",
       "version": "0.28.0",
       "sha256": "6b73e6127cafc55ea4dab0058ba3930d43320f63904a1044f5468e518398aec4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_pl.py",
@@ -6893,7 +6893,7 @@
     },
     {
       "id": "kagane_pt",
-      "name": "Kagane",
+      "name": "Kagane (pt)",
       "version": "0.28.0",
       "sha256": "7535afaea7f698ba3c5429df91cb80d71850a785b4e4133cee4f73daf93b9a20",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_pt.py",
@@ -6903,7 +6903,7 @@
     },
     {
       "id": "kagane_pt_br",
-      "name": "Kagane",
+      "name": "Kagane (pt-BR)",
       "version": "0.28.0",
       "sha256": "ae5e252c44c6dac07f6ee3855267d07baa69419590e6dd7cd25e7720f3669165",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_pt_br.py",
@@ -6913,7 +6913,7 @@
     },
     {
       "id": "kagane_ru",
-      "name": "Kagane",
+      "name": "Kagane (ru)",
       "version": "0.28.0",
       "sha256": "9b4930d6de135f62249598dae3c76fc52fad31c57229fc0f53e16c764e65e07c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_ru.py",
@@ -6923,7 +6923,7 @@
     },
     {
       "id": "kagane_th",
-      "name": "Kagane",
+      "name": "Kagane (th)",
       "version": "0.28.0",
       "sha256": "4b73b9e95f89ce07d00b47b81c0ba17380c6e311d5b8c8a8bd1efb49b6a75c71",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_th.py",
@@ -6933,7 +6933,7 @@
     },
     {
       "id": "kagane_vi",
-      "name": "Kagane",
+      "name": "Kagane (vi)",
       "version": "0.28.0",
       "sha256": "a8c4ae74eedec16169a9c529aec13b235d8594bd50686a50971cdba84f1cd1ec",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_vi.py",
@@ -6943,7 +6943,7 @@
     },
     {
       "id": "kagane_zh",
-      "name": "Kagane",
+      "name": "Kagane (zh)",
       "version": "0.28.0",
       "sha256": "bed8c1d0649568688a3f384b52ecec8f02adf4a5ba3f3a05b36afe921a846f33",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_zh.py",
@@ -7263,7 +7263,7 @@
     },
     {
       "id": "koharu_all",
-      "name": "SchaleNetwork",
+      "name": "SchaleNetwork (all)",
       "version": "0.20.0",
       "sha256": "959ea0e92d2448bb9152f73a8f003763f7c7d4a15f9ec3bb1ce3741d74d4185c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/koharu_all.py",
@@ -7273,7 +7273,7 @@
     },
     {
       "id": "koharu_en",
-      "name": "SchaleNetwork",
+      "name": "SchaleNetwork (en)",
       "version": "0.20.0",
       "sha256": "9be530488927504ea52d8d14f142483ab4d8f7cc986c84622c1246ab7414a398",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/koharu_en.py",
@@ -7283,7 +7283,7 @@
     },
     {
       "id": "koharu_ja",
-      "name": "SchaleNetwork",
+      "name": "SchaleNetwork (ja)",
       "version": "0.20.0",
       "sha256": "3084846aa491006f8476066688de955a88ed5a15d5f93e7c7548017d8bf80ed5",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/koharu_ja.py",
@@ -7293,7 +7293,7 @@
     },
     {
       "id": "koharu_zh",
-      "name": "SchaleNetwork",
+      "name": "SchaleNetwork (zh)",
       "version": "0.20.0",
       "sha256": "c311493b7798d99b974725d2da5511f0c59b89c46bdeb9ad0430c8d34100aa94",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/koharu_zh.py",
@@ -8103,7 +8103,7 @@
     },
     {
       "id": "luscious_all",
-      "name": "Luscious",
+      "name": "Luscious (all)",
       "version": "0.32.0",
       "sha256": "ccbc3f0af95bb9e2f9a75a797a93325611a02e0c983e7f26a9cb0f989956d44e",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/luscious_all.py",
@@ -8113,7 +8113,7 @@
     },
     {
       "id": "luscious_de",
-      "name": "Luscious",
+      "name": "Luscious (de)",
       "version": "0.32.0",
       "sha256": "2a2dab1fcace8a74e4b54c2940b88a0e80f5e69d3646d162e98b00f1653f8db1",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/luscious_de.py",
@@ -8123,7 +8123,7 @@
     },
     {
       "id": "luscious_en",
-      "name": "Luscious",
+      "name": "Luscious (en)",
       "version": "0.32.0",
       "sha256": "52a307df80cb792e4a0570e3af04f5cc4ecd6dcce6cb212c42520c6358e0dc6f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/luscious_en.py",
@@ -8133,7 +8133,7 @@
     },
     {
       "id": "luscious_es",
-      "name": "Luscious",
+      "name": "Luscious (es)",
       "version": "0.32.0",
       "sha256": "3dcc029e011ab28d2bdd8ca940b452b74ae28ddadfd60e786ca30b42a5b1f925",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/luscious_es.py",
@@ -8143,7 +8143,7 @@
     },
     {
       "id": "luscious_fr",
-      "name": "Luscious",
+      "name": "Luscious (fr)",
       "version": "0.32.0",
       "sha256": "283966eaee9ff81c6c46300381d7028578453f477054c488acc136aeaf3dca69",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/luscious_fr.py",
@@ -8153,7 +8153,7 @@
     },
     {
       "id": "luscious_it",
-      "name": "Luscious",
+      "name": "Luscious (it)",
       "version": "0.32.0",
       "sha256": "7b802394c735b826176e97cd3a88dee06295dcbc803aaf32457a2b428c3019ba",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/luscious_it.py",
@@ -8163,7 +8163,7 @@
     },
     {
       "id": "luscious_ja",
-      "name": "Luscious",
+      "name": "Luscious (ja)",
       "version": "0.32.0",
       "sha256": "e5346d233aad2dd1d61bc942284858b44888ff48e64763dd743905b65c654f93",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/luscious_ja.py",
@@ -8173,7 +8173,7 @@
     },
     {
       "id": "luscious_ko",
-      "name": "Luscious",
+      "name": "Luscious (ko)",
       "version": "0.32.0",
       "sha256": "021c0e7d9eae065daa3d589c3d5a190970e42ccd184a595080bb361a3f2f8a57",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/luscious_ko.py",
@@ -8183,7 +8183,7 @@
     },
     {
       "id": "luscious_other",
-      "name": "Luscious",
+      "name": "Luscious (other)",
       "version": "0.32.0",
       "sha256": "98cf84a8e567731fef93cc48d9fc9a785adf94ba0d8761a27fe4e50c2804880e",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/luscious_other.py",
@@ -8193,7 +8193,7 @@
     },
     {
       "id": "luscious_pt_br",
-      "name": "Luscious",
+      "name": "Luscious (pt-BR)",
       "version": "0.32.0",
       "sha256": "65131d73594125547acb0ba41a3fba29feba859aeac01eef2c4609271a0ba865",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/luscious_pt_br.py",
@@ -8203,7 +8203,7 @@
     },
     {
       "id": "luscious_th",
-      "name": "Luscious",
+      "name": "Luscious (th)",
       "version": "0.32.0",
       "sha256": "7bbbfe7014fdfc70ca314cc812fb774082848fb2be2c5711bd668cb48dce819c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/luscious_th.py",
@@ -8213,7 +8213,7 @@
     },
     {
       "id": "luscious_zh",
-      "name": "Luscious",
+      "name": "Luscious (zh)",
       "version": "0.32.0",
       "sha256": "da51c4b941a4bb203bcde16fa63652afe9a3570c3f69addc6179f405d7d95331",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/luscious_zh.py",
@@ -8453,7 +8453,7 @@
     },
     {
       "id": "manga18me_all",
-      "name": "Manga18.me",
+      "name": "Manga18.me (all)",
       "version": "0.3.0",
       "sha256": "86b74968ab61ef2936683ff0998e19b9b2fda3e327fcc24d45336d72b436021a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manga18me_all.py",
@@ -8463,7 +8463,7 @@
     },
     {
       "id": "manga18me_en",
-      "name": "Manga18.me",
+      "name": "Manga18.me (en)",
       "version": "0.3.0",
       "sha256": "09a68721149b5eeaf3725658a91d537626495b8f5db96857eb5a58ea6c203ca8",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manga18me_en.py",
@@ -8503,7 +8503,7 @@
     },
     {
       "id": "mangaball_ar",
-      "name": "Manga Ball",
+      "name": "Manga Ball (ar)",
       "version": "0.3.0",
       "sha256": "36766d1ebb83b512c01255f59972ed18bdabbd0ea719e9c1548e9c45fb3d0737",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_ar.py",
@@ -8513,7 +8513,7 @@
     },
     {
       "id": "mangaball_bg",
-      "name": "Manga Ball",
+      "name": "Manga Ball (bg)",
       "version": "0.3.0",
       "sha256": "96122b748b329b365191b8278a3a857766452ef80901eaaf8bc72eb5d42e0742",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_bg.py",
@@ -8523,7 +8523,7 @@
     },
     {
       "id": "mangaball_bn",
-      "name": "Manga Ball",
+      "name": "Manga Ball (bn)",
       "version": "0.3.0",
       "sha256": "acb6a0941d2557e5a79d7e6281a0a3a3b31893528b6ca3bc288a7188f4fb77f9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_bn.py",
@@ -8533,7 +8533,7 @@
     },
     {
       "id": "mangaball_ca",
-      "name": "Manga Ball",
+      "name": "Manga Ball (ca)",
       "version": "0.3.0",
       "sha256": "359535bab1fa06971c900ca707219adb5d4fccfe8a2c548a53a33303ddd548b5",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_ca.py",
@@ -8543,7 +8543,7 @@
     },
     {
       "id": "mangaball_cs",
-      "name": "Manga Ball",
+      "name": "Manga Ball (cs)",
       "version": "0.3.0",
       "sha256": "dd38379946f3bc061f4e2d131b53d2fe68e6b69a57c274380a0aaba3c93dcca8",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_cs.py",
@@ -8553,7 +8553,7 @@
     },
     {
       "id": "mangaball_da",
-      "name": "Manga Ball",
+      "name": "Manga Ball (da)",
       "version": "0.3.0",
       "sha256": "118773964855757dc9a0867e81f5766fcecd55c5e0178ed35910c542b5d7f523",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_da.py",
@@ -8563,7 +8563,7 @@
     },
     {
       "id": "mangaball_de",
-      "name": "Manga Ball",
+      "name": "Manga Ball (de)",
       "version": "0.3.0",
       "sha256": "2d12e37a93f73b2b28fde3620d38cfdf113e425ddc3f10057ff487a09fbc55a7",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_de.py",
@@ -8573,7 +8573,7 @@
     },
     {
       "id": "mangaball_el",
-      "name": "Manga Ball",
+      "name": "Manga Ball (el)",
       "version": "0.3.0",
       "sha256": "01cdec2bcb2fe56e5b529bcf4bacb76f197b75528bc31ea0c7e338475f2c3aec",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_el.py",
@@ -8583,7 +8583,7 @@
     },
     {
       "id": "mangaball_en",
-      "name": "Manga Ball",
+      "name": "Manga Ball (en)",
       "version": "0.3.0",
       "sha256": "4f12176ce68e00bc5272b1644b0db92689856df3aae7160bc719de0593e51ea9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_en.py",
@@ -8593,7 +8593,7 @@
     },
     {
       "id": "mangaball_es",
-      "name": "Manga Ball",
+      "name": "Manga Ball (es)",
       "version": "0.3.0",
       "sha256": "3040f15891434d277360eb18384aea1f6196f96e543b4162cec1a05c86f1b849",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_es.py",
@@ -8603,7 +8603,7 @@
     },
     {
       "id": "mangaball_fa",
-      "name": "Manga Ball",
+      "name": "Manga Ball (fa)",
       "version": "0.3.0",
       "sha256": "00f602529ccc11b20bd2baf07a8d09559d8162579adf90ea67e44989d63e435b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_fa.py",
@@ -8613,7 +8613,7 @@
     },
     {
       "id": "mangaball_fi",
-      "name": "Manga Ball",
+      "name": "Manga Ball (fi)",
       "version": "0.3.0",
       "sha256": "c294965d0032d1f0c315652fa4c928374a2b3097ce703f6c17c00c584817f69d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_fi.py",
@@ -8623,7 +8623,7 @@
     },
     {
       "id": "mangaball_fr",
-      "name": "Manga Ball",
+      "name": "Manga Ball (fr)",
       "version": "0.3.0",
       "sha256": "4cdfae5028fbb1f2b043f9aa49c604345c75b7c4f26e8632d0f041b6743f63cb",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_fr.py",
@@ -8633,7 +8633,7 @@
     },
     {
       "id": "mangaball_he",
-      "name": "Manga Ball",
+      "name": "Manga Ball (he)",
       "version": "0.3.0",
       "sha256": "00959c305853361a4e6d56b65870f6eb8eeb1f73582a39f18ea23fee839395bc",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_he.py",
@@ -8643,7 +8643,7 @@
     },
     {
       "id": "mangaball_hi",
-      "name": "Manga Ball",
+      "name": "Manga Ball (hi)",
       "version": "0.3.0",
       "sha256": "f7b8fc9d444a8a57a1a31fd73e6bc8e2dc45e98ba596d5035a4d214dbdb44137",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_hi.py",
@@ -8653,7 +8653,7 @@
     },
     {
       "id": "mangaball_hu",
-      "name": "Manga Ball",
+      "name": "Manga Ball (hu)",
       "version": "0.3.0",
       "sha256": "94f00c29ebd513bbd61a34f7301539d9720a7b40c29a46ff9ff8fb8fd1655fbf",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_hu.py",
@@ -8663,7 +8663,7 @@
     },
     {
       "id": "mangaball_id",
-      "name": "Manga Ball",
+      "name": "Manga Ball (id)",
       "version": "0.3.0",
       "sha256": "e6b4bc047f0f830a869fb39671cc91488ac7a5b1c952def6dd0f0584a85c0d43",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_id.py",
@@ -8673,7 +8673,7 @@
     },
     {
       "id": "mangaball_is",
-      "name": "Manga Ball",
+      "name": "Manga Ball (is)",
       "version": "0.3.0",
       "sha256": "098088d18cac801b6c4b280b4444d247b6d2d2cd06ac0190d5a097276725668c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_is.py",
@@ -8683,7 +8683,7 @@
     },
     {
       "id": "mangaball_it",
-      "name": "Manga Ball",
+      "name": "Manga Ball (it)",
       "version": "0.3.0",
       "sha256": "294a5401750bc64b91f4156223932702539ab621f2fe1c7858fe207d600cfc14",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_it.py",
@@ -8693,7 +8693,7 @@
     },
     {
       "id": "mangaball_ja",
-      "name": "Manga Ball",
+      "name": "Manga Ball (ja)",
       "version": "0.3.0",
       "sha256": "f6d7f0bd6604631f8849ccf4440c650993c8d3a051e45180215a4d692b2617d4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_ja.py",
@@ -8703,7 +8703,7 @@
     },
     {
       "id": "mangaball_kn",
-      "name": "Manga Ball",
+      "name": "Manga Ball (kn)",
       "version": "0.3.0",
       "sha256": "addc7ec26988f49341f28ddb90b2dd9e66eff59edc4ea33920a08dbaf60d1cfb",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_kn.py",
@@ -8713,7 +8713,7 @@
     },
     {
       "id": "mangaball_ko",
-      "name": "Manga Ball",
+      "name": "Manga Ball (ko)",
       "version": "0.3.0",
       "sha256": "588258dcc905d29261b5c1728408da057ac2a8b4edc0bb06f3c1bdcbb2154c12",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_ko.py",
@@ -8723,7 +8723,7 @@
     },
     {
       "id": "mangaball_ml",
-      "name": "Manga Ball",
+      "name": "Manga Ball (ml)",
       "version": "0.3.0",
       "sha256": "e06e81433e634cd4f8071c509dcfcae97236a399218e730c26f2d3222fe93131",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_ml.py",
@@ -8733,7 +8733,7 @@
     },
     {
       "id": "mangaball_ms",
-      "name": "Manga Ball",
+      "name": "Manga Ball (ms)",
       "version": "0.3.0",
       "sha256": "330d5537d0f230241b79aca18918b81397926efcb147a0477e4a57c43319cdc2",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_ms.py",
@@ -8743,7 +8743,7 @@
     },
     {
       "id": "mangaball_ne",
-      "name": "Manga Ball",
+      "name": "Manga Ball (ne)",
       "version": "0.3.0",
       "sha256": "eac044f860c5b533858e99f2067901498b79e050a68be78dc5790f0a0d151754",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_ne.py",
@@ -8753,7 +8753,7 @@
     },
     {
       "id": "mangaball_nl",
-      "name": "Manga Ball",
+      "name": "Manga Ball (nl)",
       "version": "0.3.0",
       "sha256": "f28635a887196a4f966a9f2648d099ff1c34a29117c5d05e934b800fe20647b4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_nl.py",
@@ -8763,7 +8763,7 @@
     },
     {
       "id": "mangaball_no",
-      "name": "Manga Ball",
+      "name": "Manga Ball (no)",
       "version": "0.3.0",
       "sha256": "afa376cbec41663b0b690967af49bc06242273834991e0e3477716a5c9f9c5ca",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_no.py",
@@ -8773,7 +8773,7 @@
     },
     {
       "id": "mangaball_pl",
-      "name": "Manga Ball",
+      "name": "Manga Ball (pl)",
       "version": "0.3.0",
       "sha256": "af189bc28d79b1c15893cff3b6f9f8c58f74b4d2fa1e5ef3eda47e71731d2410",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_pl.py",
@@ -8783,7 +8783,7 @@
     },
     {
       "id": "mangaball_pt_br",
-      "name": "Manga Ball",
+      "name": "Manga Ball (pt-BR)",
       "version": "0.3.0",
       "sha256": "8b625fcc26d60df0d42f479a546efc63787bfe753f7250e0a3c9aeb237cf7463",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_pt_br.py",
@@ -8793,7 +8793,7 @@
     },
     {
       "id": "mangaball_ro",
-      "name": "Manga Ball",
+      "name": "Manga Ball (ro)",
       "version": "0.3.0",
       "sha256": "788376c36295a6e443c02c8add6f63131ada6fe2a9910c40a952c1772c72cc75",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_ro.py",
@@ -8803,7 +8803,7 @@
     },
     {
       "id": "mangaball_ru",
-      "name": "Manga Ball",
+      "name": "Manga Ball (ru)",
       "version": "0.3.0",
       "sha256": "08ce1f8c4ee4f080341cd5008afe475ef723e277403edc0ed9fccfb19db9430c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_ru.py",
@@ -8813,7 +8813,7 @@
     },
     {
       "id": "mangaball_sk",
-      "name": "Manga Ball",
+      "name": "Manga Ball (sk)",
       "version": "0.3.0",
       "sha256": "5c86c9a7f9f6eb49b8dba866ba1e3b3ab926899bb8dc8d82645d56b0fc258a43",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_sk.py",
@@ -8823,7 +8823,7 @@
     },
     {
       "id": "mangaball_sl",
-      "name": "Manga Ball",
+      "name": "Manga Ball (sl)",
       "version": "0.3.0",
       "sha256": "fc6d1016747c7ae84c5e3b6c5d33bdc1ba9883fe7d9c038d8e6e294d99f64516",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_sl.py",
@@ -8833,7 +8833,7 @@
     },
     {
       "id": "mangaball_sq",
-      "name": "Manga Ball",
+      "name": "Manga Ball (sq)",
       "version": "0.3.0",
       "sha256": "b4125fcd29bcdf161651230348331ede7aa2097f2ae428cf922f6567b6d364f0",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_sq.py",
@@ -8843,7 +8843,7 @@
     },
     {
       "id": "mangaball_sr",
-      "name": "Manga Ball",
+      "name": "Manga Ball (sr)",
       "version": "0.3.0",
       "sha256": "15e731655d4578ccf0986eccd527d4ea9856c87bc6bd164a59ede5f42efe9a00",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_sr.py",
@@ -8853,7 +8853,7 @@
     },
     {
       "id": "mangaball_sv",
-      "name": "Manga Ball",
+      "name": "Manga Ball (sv)",
       "version": "0.3.0",
       "sha256": "53fdd0e2e051c4910384eda34623c2bd7e03d50fb91a35adbbda1b1dd6dce866",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_sv.py",
@@ -8863,7 +8863,7 @@
     },
     {
       "id": "mangaball_ta",
-      "name": "Manga Ball",
+      "name": "Manga Ball (ta)",
       "version": "0.3.0",
       "sha256": "cc0ae7a90bb4437343b0f3700a770c2665ccd7cf50156b65ab19c712e68d9520",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_ta.py",
@@ -8873,7 +8873,7 @@
     },
     {
       "id": "mangaball_th",
-      "name": "Manga Ball",
+      "name": "Manga Ball (th)",
       "version": "0.3.0",
       "sha256": "57e8d3493d76ae1b9fb579a573093f3b9171fe3c1ec9d4c057b64161011ad6c6",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_th.py",
@@ -8883,7 +8883,7 @@
     },
     {
       "id": "mangaball_tr",
-      "name": "Manga Ball",
+      "name": "Manga Ball (tr)",
       "version": "0.3.0",
       "sha256": "53dfa7d340fd48589bf627ab4d3145b970e309028935a1502149961eacec7660",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_tr.py",
@@ -8893,7 +8893,7 @@
     },
     {
       "id": "mangaball_uk",
-      "name": "Manga Ball",
+      "name": "Manga Ball (uk)",
       "version": "0.3.0",
       "sha256": "19166d36e6551471866f7396023a09eee26fccd71772637202c13982b605954f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_uk.py",
@@ -8903,7 +8903,7 @@
     },
     {
       "id": "mangaball_vi",
-      "name": "Manga Ball",
+      "name": "Manga Ball (vi)",
       "version": "0.3.0",
       "sha256": "860633471145dcb99160eee9a7005f2df037cd4920acf4fff6083e4cf67508de",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_vi.py",
@@ -8913,7 +8913,7 @@
     },
     {
       "id": "mangaball_zh",
-      "name": "Manga Ball",
+      "name": "Manga Ball (zh)",
       "version": "0.3.0",
       "sha256": "e340e4c9770d3a7a30a5fb2c3dcf4529432859a1fed14390b02706ea1ae6e833",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_zh.py",
@@ -9043,7 +9043,7 @@
     },
     {
       "id": "mangacloud_ar",
-      "name": "MangaCloud",
+      "name": "MangaCloud (ar)",
       "version": "0.1.0",
       "sha256": "9041d2fcb976501acc29caad7bef13314d450b286e0de4460ac0356ddb289f7c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangacloud_ar.py",
@@ -9053,7 +9053,7 @@
     },
     {
       "id": "mangacloud_en",
-      "name": "MangaCloud",
+      "name": "MangaCloud (en)",
       "version": "0.7.0",
       "sha256": "1c49290bb0110b1949d4dac5f6bfc41fd4cf401c7760f12df64ed04785b0cedd",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangacloud_en.py",
@@ -9793,7 +9793,7 @@
     },
     {
       "id": "mangadna_all",
-      "name": "MangaDNA",
+      "name": "MangaDNA (all)",
       "version": "0.2.0",
       "sha256": "327d47de7bbac479afd1467b1094e89e86a92115e65556a9284e9ed7c9226a25",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangadna_all.py",
@@ -9803,7 +9803,7 @@
     },
     {
       "id": "mangadna_en",
-      "name": "MangaDNA",
+      "name": "MangaDNA (en)",
       "version": "0.2.0",
       "sha256": "a4f06419ec28d8f4bd8d1aecb575b252a4db50b08b768f46031f16c172784cc4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangadna_en.py",
@@ -9863,7 +9863,7 @@
     },
     {
       "id": "mangafire_en",
-      "name": "MangaFire",
+      "name": "MangaFire (en)",
       "version": "0.26.0",
       "sha256": "70780b21f55f8dea9fd07fbf2e7b396284ea1ed0e64754dd0d9c13503638eba1",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangafire_en.py",
@@ -9873,7 +9873,7 @@
     },
     {
       "id": "mangafire_es",
-      "name": "MangaFire",
+      "name": "MangaFire (es)",
       "version": "0.26.0",
       "sha256": "ec4ad20434f18c41d2dc3354f5f9f78aa79bd06efe7ce8c5ede5ac30eeb255b4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangafire_es.py",
@@ -9883,7 +9883,7 @@
     },
     {
       "id": "mangafire_es_419",
-      "name": "MangaFire",
+      "name": "MangaFire (es-419)",
       "version": "0.26.0",
       "sha256": "debcc6c2bf98109b64e0483fe7c81666221728789036b924b1a40d971d1d62c8",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangafire_es_419.py",
@@ -9893,7 +9893,7 @@
     },
     {
       "id": "mangafire_fr",
-      "name": "MangaFire",
+      "name": "MangaFire (fr)",
       "version": "0.26.0",
       "sha256": "08598e89b28e14626f224e187a55cbbe48b957774a2952f0519199f969e2ffb3",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangafire_fr.py",
@@ -9903,7 +9903,7 @@
     },
     {
       "id": "mangafire_ja",
-      "name": "MangaFire",
+      "name": "MangaFire (ja)",
       "version": "0.26.0",
       "sha256": "72a1eac3ff7cc907196784d9ab4bb60a0924a1a40267c270d19657ff70930f1d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangafire_ja.py",
@@ -9913,7 +9913,7 @@
     },
     {
       "id": "mangafire_pt",
-      "name": "MangaFire",
+      "name": "MangaFire (pt)",
       "version": "0.26.0",
       "sha256": "d73e71d496e12db3435cd18565592d4d088f788eb346d3532e88ba7bc6358447",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangafire_pt.py",
@@ -9923,7 +9923,7 @@
     },
     {
       "id": "mangafire_pt_br",
-      "name": "MangaFire",
+      "name": "MangaFire (pt-BR)",
       "version": "0.26.0",
       "sha256": "e1da31e20e3544cc8077970901027b5ee6396ffcd84334f749a2980acf663621",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangafire_pt_br.py",
@@ -9953,7 +9953,7 @@
     },
     {
       "id": "mangaforfree_all",
-      "name": "MangaForFree.net",
+      "name": "MangaForFree.net (all)",
       "version": "0.2.0",
       "sha256": "592a3c813a546998312b9c2a5f7160711074f47dc416f78c3b64d4b8bb22639d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaforfree_all.py",
@@ -9963,7 +9963,7 @@
     },
     {
       "id": "mangaforfree_en",
-      "name": "MangaForFree.net",
+      "name": "MangaForFree.net (en)",
       "version": "0.2.0",
       "sha256": "20b1976162829934dbaa91a367bc7b539a926e820fa7df4853a24b8771aa75d2",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaforfree_en.py",
@@ -9973,7 +9973,7 @@
     },
     {
       "id": "mangaforfree_ko",
-      "name": "MangaForFree.net",
+      "name": "MangaForFree.net (ko)",
       "version": "0.2.0",
       "sha256": "bf9f1d2ced795645f64e16d376d218858630b2a1668b9decd7da2e762cb1d802",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaforfree_ko.py",
@@ -10133,7 +10133,7 @@
     },
     {
       "id": "mangahub_ar",
-      "name": "MangaHub",
+      "name": "MangaHub (ar)",
       "version": "0.2.0",
       "sha256": "1dd5c987d554ef95a24543a7e52263013b9ac7091e70d3a44e835270a797d656",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangahub_ar.py",
@@ -10163,7 +10163,7 @@
     },
     {
       "id": "mangahubio_en",
-      "name": "MangaHub",
+      "name": "MangaHub (en)",
       "version": "0.10.0",
       "sha256": "1f37eb88525777b0ae1927ba93d762eb9930f87005397644ea4f011b4eec0e0f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangahubio_en.py",
@@ -10623,7 +10623,7 @@
     },
     {
       "id": "mangaplus_de",
-      "name": "MANGA Plus by SHUEISHA",
+      "name": "MANGA Plus by SHUEISHA (de)",
       "version": "0.62.0",
       "sha256": "4b52540894c0745a20161a7325ae99e8dbf6c548209c3a76ce57e7cf74847116",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaplus_de.py",
@@ -10633,7 +10633,7 @@
     },
     {
       "id": "mangaplus_en",
-      "name": "MANGA Plus by SHUEISHA",
+      "name": "MANGA Plus by SHUEISHA (en)",
       "version": "0.62.0",
       "sha256": "be4b0de8a3c80d95159ef23c06eef72b9a909c5a57db43cd3a19ef6f0f80d3f1",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaplus_en.py",
@@ -10643,7 +10643,7 @@
     },
     {
       "id": "mangaplus_es",
-      "name": "MANGA Plus by SHUEISHA",
+      "name": "MANGA Plus by SHUEISHA (es)",
       "version": "0.62.0",
       "sha256": "2afdd8d04b6130badddd6f0421effeff3a41e9d16d4bb3bd3c8c695e8a7f8f60",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaplus_es.py",
@@ -10653,7 +10653,7 @@
     },
     {
       "id": "mangaplus_fr",
-      "name": "MANGA Plus by SHUEISHA",
+      "name": "MANGA Plus by SHUEISHA (fr)",
       "version": "0.62.0",
       "sha256": "b35c63a7d739cc38b81f2c46cd5ec36249e795c3ef78db72d433fb3dfbdcd9e9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaplus_fr.py",
@@ -10663,7 +10663,7 @@
     },
     {
       "id": "mangaplus_id",
-      "name": "MANGA Plus by SHUEISHA",
+      "name": "MANGA Plus by SHUEISHA (id)",
       "version": "0.62.0",
       "sha256": "51e3c31f213b07e6c099e33b2d7021b53c68edc2bbace4ed8b822009d774ed6e",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaplus_id.py",
@@ -10673,7 +10673,7 @@
     },
     {
       "id": "mangaplus_pt_br",
-      "name": "MANGA Plus by SHUEISHA",
+      "name": "MANGA Plus by SHUEISHA (pt-BR)",
       "version": "0.62.0",
       "sha256": "4ac862ae49238745ab060f2c3a20a0fde1ba396ae54bf2d3693de8f9f607ebca",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaplus_pt_br.py",
@@ -10683,7 +10683,7 @@
     },
     {
       "id": "mangaplus_ru",
-      "name": "MANGA Plus by SHUEISHA",
+      "name": "MANGA Plus by SHUEISHA (ru)",
       "version": "0.62.0",
       "sha256": "829e643e0718bdcaf73bdc68b75cfb14f573c6f5618ff8fa25b6dd1b5255dc0f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaplus_ru.py",
@@ -10693,7 +10693,7 @@
     },
     {
       "id": "mangaplus_th",
-      "name": "MANGA Plus by SHUEISHA",
+      "name": "MANGA Plus by SHUEISHA (th)",
       "version": "0.62.0",
       "sha256": "62f51c4837eee8993d78c4fb0a957b1203f727e80e99de62fd425e61071fe667",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaplus_th.py",
@@ -10703,7 +10703,7 @@
     },
     {
       "id": "mangaplus_vi",
-      "name": "MANGA Plus by SHUEISHA",
+      "name": "MANGA Plus by SHUEISHA (vi)",
       "version": "0.62.0",
       "sha256": "b5f1c39bd7bbd98dd3b5970781c6b6c0d2c242f8dae2e2d05917866e2cc372f4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaplus_vi.py",
@@ -10713,7 +10713,7 @@
     },
     {
       "id": "mangapluscreators_en",
-      "name": "MANGA Plus Creators by SHUEISHA",
+      "name": "MANGA Plus Creators by SHUEISHA (en)",
       "version": "0.3.0",
       "sha256": "380b8632637d95a9771428bf3e07a4829e9f8a1732049b80ff07e1e11cb4f732",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangapluscreators_en.py",
@@ -10723,7 +10723,7 @@
     },
     {
       "id": "mangapluscreators_es",
-      "name": "MANGA Plus Creators by SHUEISHA",
+      "name": "MANGA Plus Creators by SHUEISHA (es)",
       "version": "0.3.0",
       "sha256": "02cda2fa6f2875135f5263ec956cd87011f8619b9f0ea09f12723e22c461dd59",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangapluscreators_es.py",
@@ -11063,7 +11063,7 @@
     },
     {
       "id": "mangatoon_en",
-      "name": "MangaToon (Limited)",
+      "name": "MangaToon (Limited) (en)",
       "version": "0.8.0",
       "sha256": "60cd1e44bb7fb1369ac961607f16091b2aabbccd01092b42ffffb17196095fcd",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangatoon_en.py",
@@ -11073,7 +11073,7 @@
     },
     {
       "id": "mangatoon_es",
-      "name": "MangaToon (Limited)",
+      "name": "MangaToon (Limited) (es)",
       "version": "0.8.0",
       "sha256": "dacb44eeda51a9622f96ea79fcd7830134cc49bd8a94dc8b9b3678c41e13d4a1",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangatoon_es.py",
@@ -11083,7 +11083,7 @@
     },
     {
       "id": "mangatoon_fr",
-      "name": "MangaToon (Limited)",
+      "name": "MangaToon (Limited) (fr)",
       "version": "0.8.0",
       "sha256": "fd0097e928d716e36a61b1387d697d24c12d68438c7bff9b715eb4eafb6cc67b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangatoon_fr.py",
@@ -11093,7 +11093,7 @@
     },
     {
       "id": "mangatoon_id",
-      "name": "MangaToon (Limited)",
+      "name": "MangaToon (Limited) (id)",
       "version": "0.8.0",
       "sha256": "f526eac5bb84023659260ce2592827b49ba9277f8cd0e20f069bde80dba28148",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangatoon_id.py",
@@ -11103,7 +11103,7 @@
     },
     {
       "id": "mangatoon_ja",
-      "name": "MangaToon (Limited)",
+      "name": "MangaToon (Limited) (ja)",
       "version": "0.8.0",
       "sha256": "ae9baed3a67bfd1e14bf5f16526b20fe0df32c1c6998bfcd55f213175b2a5589",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangatoon_ja.py",
@@ -11113,7 +11113,7 @@
     },
     {
       "id": "mangatoon_pt_br",
-      "name": "MangaToon (Limited)",
+      "name": "MangaToon (Limited) (pt-BR)",
       "version": "0.8.0",
       "sha256": "681be599ccd3997a31827bf0e4315cc2deac4a2951037d6c14237cd3cba2c036",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangatoon_pt_br.py",
@@ -11123,7 +11123,7 @@
     },
     {
       "id": "mangatoon_th",
-      "name": "MangaToon (Limited)",
+      "name": "MangaToon (Limited) (th)",
       "version": "0.8.0",
       "sha256": "dfc51f5644b4642299b24bff12347f8f6704044af917430a3d0cb0c09bf735a2",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangatoon_th.py",
@@ -11133,7 +11133,7 @@
     },
     {
       "id": "mangatoon_vi",
-      "name": "MangaToon (Limited)",
+      "name": "MangaToon (Limited) (vi)",
       "version": "0.8.0",
       "sha256": "20ae9f1c1cb00ebd7de8c35d9bd61dfdc68dbbf4da25be0b95c78301aa56b729",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangatoon_vi.py",
@@ -11143,7 +11143,7 @@
     },
     {
       "id": "mangatoon_zh",
-      "name": "MangaToon (Limited)",
+      "name": "MangaToon (Limited) (zh)",
       "version": "0.8.0",
       "sha256": "bc8b862ce652814878164428f88a16f60eb840f344e1b8208cc4abc7d805d618",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangatoon_zh.py",
@@ -11513,7 +11513,7 @@
     },
     {
       "id": "manhuarm_ar",
-      "name": "Manhuarm",
+      "name": "Manhuarm (ar)",
       "version": "0.25.0",
       "sha256": "c78308bf42ca905f72f307c82999a020c1cab1b50a820bf255b712978925da89",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhuarm_ar.py",
@@ -11523,7 +11523,7 @@
     },
     {
       "id": "manhuarm_en",
-      "name": "Manhuarm",
+      "name": "Manhuarm (en)",
       "version": "0.25.0",
       "sha256": "13ca749cd2ce522317464f38784f1f4cbe1b55c5c76f4f533a4d9757ee08668d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhuarm_en.py",
@@ -11533,7 +11533,7 @@
     },
     {
       "id": "manhuarm_es",
-      "name": "Manhuarm",
+      "name": "Manhuarm (es)",
       "version": "0.25.0",
       "sha256": "72a9746ee67b3800c31d1c8417c337346ddfa2a920b1f7cb31c963cdaeed698b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhuarm_es.py",
@@ -11543,7 +11543,7 @@
     },
     {
       "id": "manhuarm_fr",
-      "name": "Manhuarm",
+      "name": "Manhuarm (fr)",
       "version": "0.25.0",
       "sha256": "333a3f166ee914292badf6817c526e56ea988b4bf19a633b112e66c7f263e6dd",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhuarm_fr.py",
@@ -11553,7 +11553,7 @@
     },
     {
       "id": "manhuarm_id",
-      "name": "Manhuarm",
+      "name": "Manhuarm (id)",
       "version": "0.25.0",
       "sha256": "329e70deeb29d66ce4a4e5612ceb2b394187d866b566030d20be2c4c78540234",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhuarm_id.py",
@@ -11563,7 +11563,7 @@
     },
     {
       "id": "manhuarm_it",
-      "name": "Manhuarm",
+      "name": "Manhuarm (it)",
       "version": "0.25.0",
       "sha256": "ac7be3bf5ea480b835e9701ddd9fc899b2bb52cc472a0830af7b0c51540bd70c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhuarm_it.py",
@@ -11573,7 +11573,7 @@
     },
     {
       "id": "manhuarm_pt_br",
-      "name": "Manhuarm",
+      "name": "Manhuarm (pt-BR)",
       "version": "0.25.0",
       "sha256": "4e837eebc968f91d334c215c7c97075b5f6a9e469c44cf74f4bbe3619d549171",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhuarm_pt_br.py",
@@ -11673,7 +11673,7 @@
     },
     {
       "id": "manhwa18cc_all",
-      "name": "Manhwa18.cc",
+      "name": "Manhwa18.cc (all)",
       "version": "0.7.0",
       "sha256": "4e02d775ac7b23b91bcc3986f127f968d4cc1c84fd9dddb53acf313b1fa7b561",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhwa18cc_all.py",
@@ -11683,7 +11683,7 @@
     },
     {
       "id": "manhwa18cc_en",
-      "name": "Manhwa18.cc",
+      "name": "Manhwa18.cc (en)",
       "version": "0.7.0",
       "sha256": "6f9d35ccf9f69a58ff8909418381eac633d559f39e79a011be48e8d48fe8fca6",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhwa18cc_en.py",
@@ -11693,7 +11693,7 @@
     },
     {
       "id": "manhwa18cc_ko",
-      "name": "Manhwa18.cc",
+      "name": "Manhwa18.cc (ko)",
       "version": "0.7.0",
       "sha256": "40cf015c5c5f5e63b710d663552ab1d9c39224912d1a9620bae345cb637e5887",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhwa18cc_ko.py",
@@ -11753,7 +11753,7 @@
     },
     {
       "id": "manhwaclubnet_en",
-      "name": "ManhwaClub.net",
+      "name": "ManhwaClub.net (en)",
       "version": "0.0.0",
       "sha256": "56eb8745b0a165527c23e7000b0bd6c97813cdec99eefaaf9da786fb2119d992",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhwaclubnet_en.py",
@@ -11763,7 +11763,7 @@
     },
     {
       "id": "manhwaclubnet_ko",
-      "name": "ManhwaClub.net",
+      "name": "ManhwaClub.net (ko)",
       "version": "0.0.0",
       "sha256": "7f61ed2e41ba27591954429b1ae603f865e2f105ee2ba717fae306a70e1013b0",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhwaclubnet_ko.py",
@@ -12023,7 +12023,7 @@
     },
     {
       "id": "manta_en",
-      "name": "Manta",
+      "name": "Manta (en)",
       "version": "0.9.0",
       "sha256": "faae25a5995332c12a257f501bd491e9fdb2f06c0fe2e127600ca12e55de3917",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manta_en.py",
@@ -12033,7 +12033,7 @@
     },
     {
       "id": "manta_es",
-      "name": "Manta",
+      "name": "Manta (es)",
       "version": "0.9.0",
       "sha256": "3941d952c76868e4395d8bcded4fd66d6089e5cce2fcedf7949e25ecb069cff1",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manta_es.py",
@@ -12073,7 +12073,7 @@
     },
     {
       "id": "mayotune_en",
-      "name": "MayoTune",
+      "name": "MayoTune (en)",
       "version": "0.2.0",
       "sha256": "7e250bb1e7d51db074735d996a043dc7633ea7f0aa2dbf48b956957b59d0e3b6",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mayotune_en.py",
@@ -12083,7 +12083,7 @@
     },
     {
       "id": "mayotune_ja",
-      "name": "MayoTune",
+      "name": "MayoTune (ja)",
       "version": "0.2.0",
       "sha256": "1487e3014d7da26418abcd84d1cbfd47668152c5f08503c0c390da5ef6c021a2",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mayotune_ja.py",
@@ -12253,7 +12253,7 @@
     },
     {
       "id": "miauscan_es",
-      "name": "Miau Scan",
+      "name": "Miau Scan (es)",
       "version": "0.7.0",
       "sha256": "40de2d00ea6268dedf8604b592ddc920b3dcc35d7175f42b47da25cd4e05cccf",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/miauscan_es.py",
@@ -12263,7 +12263,7 @@
     },
     {
       "id": "miauscan_pt_br",
-      "name": "Miau Scan",
+      "name": "Miau Scan (pt-BR)",
       "version": "0.7.0",
       "sha256": "14acc1cae8ba58d60f1b804e3b1a7de5f9dfeb2505f3bb72f0ea09dc4037b8ff",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/miauscan_pt_br.py",
@@ -12693,7 +12693,7 @@
     },
     {
       "id": "myreadingmanga_ar",
-      "name": "MyReadingManga",
+      "name": "MyReadingManga (ar)",
       "version": "0.61.0",
       "sha256": "88fe8670f6c481a944952a5e4d2baf3c7ae3390df7f983ffd88b07c7c7b8693f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_ar.py",
@@ -12703,7 +12703,7 @@
     },
     {
       "id": "myreadingmanga_de",
-      "name": "MyReadingManga",
+      "name": "MyReadingManga (de)",
       "version": "0.61.0",
       "sha256": "f90705be65cd93c1139dc89f77b5506ac5ccf222a79d85c1d0549f302d0e7a8e",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_de.py",
@@ -12713,7 +12713,7 @@
     },
     {
       "id": "myreadingmanga_en",
-      "name": "MyReadingManga",
+      "name": "MyReadingManga (en)",
       "version": "0.61.0",
       "sha256": "0dbc790775320ac953936cddf3c267ee43dc32bcbb3a65aea22a68c0df3b84fc",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_en.py",
@@ -12723,7 +12723,7 @@
     },
     {
       "id": "myreadingmanga_es",
-      "name": "MyReadingManga",
+      "name": "MyReadingManga (es)",
       "version": "0.61.0",
       "sha256": "4bf53ab3ff2fecd24226ecf91e80324fd147642eac76ff8e8be4d40043c4c598",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_es.py",
@@ -12733,7 +12733,7 @@
     },
     {
       "id": "myreadingmanga_id",
-      "name": "MyReadingManga",
+      "name": "MyReadingManga (id)",
       "version": "0.61.0",
       "sha256": "f0e252898795efa403c7c1ef20410b5c3e92d533666a20129a1c693e9d537bda",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_id.py",
@@ -12743,7 +12743,7 @@
     },
     {
       "id": "myreadingmanga_it",
-      "name": "MyReadingManga",
+      "name": "MyReadingManga (it)",
       "version": "0.61.0",
       "sha256": "bbf7c2e725915128b5815acd6fd31d419d38013d3498f86921e916fa2c2cb94f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_it.py",
@@ -12753,7 +12753,7 @@
     },
     {
       "id": "myreadingmanga_ja",
-      "name": "MyReadingManga",
+      "name": "MyReadingManga (ja)",
       "version": "0.61.0",
       "sha256": "a46b47712c2d5a4aa71fe1ff328aa272296dd35586391c3a627bb138cddc9914",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_ja.py",
@@ -12763,7 +12763,7 @@
     },
     {
       "id": "myreadingmanga_ko",
-      "name": "MyReadingManga",
+      "name": "MyReadingManga (ko)",
       "version": "0.61.0",
       "sha256": "46101606b01c006af25a680828a236dc978e021cccce847e0aa4a95b090efbf9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_ko.py",
@@ -12773,7 +12773,7 @@
     },
     {
       "id": "myreadingmanga_pt_br",
-      "name": "MyReadingManga",
+      "name": "MyReadingManga (pt-BR)",
       "version": "0.61.0",
       "sha256": "a4ec342b09309457a268cae3c31f9803e11817b166724075bfbf8f63685bd36b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_pt_br.py",
@@ -12783,7 +12783,7 @@
     },
     {
       "id": "myreadingmanga_ru",
-      "name": "MyReadingManga",
+      "name": "MyReadingManga (ru)",
       "version": "0.61.0",
       "sha256": "4098ef6de32313b4fe0b3a010d4bfd2083db9b469e861a9cfb0eee866cd7bbfb",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_ru.py",
@@ -12793,7 +12793,7 @@
     },
     {
       "id": "myreadingmanga_tr",
-      "name": "MyReadingManga",
+      "name": "MyReadingManga (tr)",
       "version": "0.61.0",
       "sha256": "620d00a3f3ed776c42650229a97e4f475616f93e7d46ae2f442df717fc3329b9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_tr.py",
@@ -12803,7 +12803,7 @@
     },
     {
       "id": "myreadingmanga_vi",
-      "name": "MyReadingManga",
+      "name": "MyReadingManga (vi)",
       "version": "0.61.0",
       "sha256": "8e37e26132390f0553541ba3b4302cbbf5ba8a63361c5995ee56b39fa8b7876e",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_vi.py",
@@ -12813,7 +12813,7 @@
     },
     {
       "id": "myreadingmanga_zh",
-      "name": "MyReadingManga",
+      "name": "MyReadingManga (zh)",
       "version": "0.61.0",
       "sha256": "7231f57d6e1062ef67bc5335e237cf07bf613589f9c75df5bfc6aa855094a74e",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_zh.py",
@@ -12823,7 +12823,7 @@
     },
     {
       "id": "namicomi_ar",
-      "name": "NamiComi",
+      "name": "NamiComi (ar)",
       "version": "0.6.0",
       "sha256": "e2f455dab26bce1cb6da7a358a08c6a708d3df850d10cc8190e6efcc9fe1c9b6",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ar.py",
@@ -12833,7 +12833,7 @@
     },
     {
       "id": "namicomi_bg",
-      "name": "NamiComi",
+      "name": "NamiComi (bg)",
       "version": "0.6.0",
       "sha256": "852a0298bd1910f4b36c43d66e366d8aa166b25e5e9760e35440d7d679a76bb7",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_bg.py",
@@ -12843,7 +12843,7 @@
     },
     {
       "id": "namicomi_ca",
-      "name": "NamiComi",
+      "name": "NamiComi (ca)",
       "version": "0.6.0",
       "sha256": "9912b672eac65154c67cf765234665292700bf99d98841d2f79c8e6c0d7c3cc4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ca.py",
@@ -12853,7 +12853,7 @@
     },
     {
       "id": "namicomi_cs",
-      "name": "NamiComi",
+      "name": "NamiComi (cs)",
       "version": "0.6.0",
       "sha256": "354986deb51c1a67001f5c0fad53eed770aac1f0b1d3fc47dd5b78f023c6b00d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_cs.py",
@@ -12863,7 +12863,7 @@
     },
     {
       "id": "namicomi_da",
-      "name": "NamiComi",
+      "name": "NamiComi (da)",
       "version": "0.6.0",
       "sha256": "e88aaf5863b136fe072c9ef45f88a2a0c4591d210f9776949b38e99793cc50fd",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_da.py",
@@ -12873,7 +12873,7 @@
     },
     {
       "id": "namicomi_de",
-      "name": "NamiComi",
+      "name": "NamiComi (de)",
       "version": "0.6.0",
       "sha256": "bdc47309712a3a92edbe231fa065f2f68b2b3cc4265a50a511f3aacafcc6726f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_de.py",
@@ -12883,7 +12883,7 @@
     },
     {
       "id": "namicomi_el",
-      "name": "NamiComi",
+      "name": "NamiComi (el)",
       "version": "0.6.0",
       "sha256": "a949b3d1e4d596b8c69216ef7d15ecd8fa4cdcf779c5e448ed0f63f584d1f49b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_el.py",
@@ -12893,7 +12893,7 @@
     },
     {
       "id": "namicomi_en",
-      "name": "NamiComi",
+      "name": "NamiComi (en)",
       "version": "0.6.0",
       "sha256": "b3fa80e12e1b5235c6dbb8a287de0809df78adb0a64052d7abf59166e0b9876a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_en.py",
@@ -12903,7 +12903,7 @@
     },
     {
       "id": "namicomi_es",
-      "name": "NamiComi",
+      "name": "NamiComi (es)",
       "version": "0.6.0",
       "sha256": "51a7e290a3f6a6fbb9e15f4559d5ca0e9f9ade3af6db41a9f7c7d9470f5a2429",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_es.py",
@@ -12913,7 +12913,7 @@
     },
     {
       "id": "namicomi_es_419",
-      "name": "NamiComi",
+      "name": "NamiComi (es-419)",
       "version": "0.6.0",
       "sha256": "068bf99b2278afc8ccbbdb659c6654f2ede84fd5aec9f9933cecd8609349f716",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_es_419.py",
@@ -12923,7 +12923,7 @@
     },
     {
       "id": "namicomi_et",
-      "name": "NamiComi",
+      "name": "NamiComi (et)",
       "version": "0.6.0",
       "sha256": "6b5e17c120fdd0cc83364caa4bf13358841d133825828bdd864eb63c4649e945",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_et.py",
@@ -12933,7 +12933,7 @@
     },
     {
       "id": "namicomi_fa",
-      "name": "NamiComi",
+      "name": "NamiComi (fa)",
       "version": "0.6.0",
       "sha256": "dfc15bc5b67d1dac789f1148082e29eb6b4dd8ade0edfdafbcec792951852b0e",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_fa.py",
@@ -12943,7 +12943,7 @@
     },
     {
       "id": "namicomi_fi",
-      "name": "NamiComi",
+      "name": "NamiComi (fi)",
       "version": "0.6.0",
       "sha256": "b90908e6de07be8deac6d4c8614c0757ec66e399d8d6838a761f629eb6fbe547",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_fi.py",
@@ -12953,7 +12953,7 @@
     },
     {
       "id": "namicomi_fil",
-      "name": "NamiComi",
+      "name": "NamiComi (fil)",
       "version": "0.6.0",
       "sha256": "955399b069efd37758c995d2708b7ff81c7d70d76dda564c4b906e6531cd0b78",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_fil.py",
@@ -12963,7 +12963,7 @@
     },
     {
       "id": "namicomi_fr",
-      "name": "NamiComi",
+      "name": "NamiComi (fr)",
       "version": "0.6.0",
       "sha256": "95eb96539953a7e4ecec8784c26180bb1c15a7a63e75adb4bd7f75c15a666435",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_fr.py",
@@ -12973,7 +12973,7 @@
     },
     {
       "id": "namicomi_ga",
-      "name": "NamiComi",
+      "name": "NamiComi (ga)",
       "version": "0.6.0",
       "sha256": "847b5eed8dd9788c0f8ac2f84294388582d93dda518c27af46dda9608f986667",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ga.py",
@@ -12983,7 +12983,7 @@
     },
     {
       "id": "namicomi_he",
-      "name": "NamiComi",
+      "name": "NamiComi (he)",
       "version": "0.6.0",
       "sha256": "1c52c6174db56e3ea360bb732818ad3dad41e35fbc815793ad9a8c7e5287dd9c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_he.py",
@@ -12993,7 +12993,7 @@
     },
     {
       "id": "namicomi_hi",
-      "name": "NamiComi",
+      "name": "NamiComi (hi)",
       "version": "0.6.0",
       "sha256": "267cd5099d0b282d44f1b001843c79bd9bbe1e1c9cd4d015c985cb8230505fd3",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_hi.py",
@@ -13003,7 +13003,7 @@
     },
     {
       "id": "namicomi_hr",
-      "name": "NamiComi",
+      "name": "NamiComi (hr)",
       "version": "0.6.0",
       "sha256": "cc2cb7a99aaa8b5f5eec03c7760ba593155506a5369ea9dba0bd4556adecead9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_hr.py",
@@ -13013,7 +13013,7 @@
     },
     {
       "id": "namicomi_hu",
-      "name": "NamiComi",
+      "name": "NamiComi (hu)",
       "version": "0.6.0",
       "sha256": "996c43ed6b13c9a42df0fed0681f19c47dc7137f1450753b1c219663c6c0fa58",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_hu.py",
@@ -13023,7 +13023,7 @@
     },
     {
       "id": "namicomi_id",
-      "name": "NamiComi",
+      "name": "NamiComi (id)",
       "version": "0.6.0",
       "sha256": "ada43de229d8c06107b49a3a5a7596ee80e25fbe1c632fba37ccb1dbdf4bc187",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_id.py",
@@ -13033,7 +13033,7 @@
     },
     {
       "id": "namicomi_is",
-      "name": "NamiComi",
+      "name": "NamiComi (is)",
       "version": "0.6.0",
       "sha256": "0bcd18bc6f063635b44a9a614ce9bd5987239d202dd2e7ad65fc5ab33195b845",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_is.py",
@@ -13043,7 +13043,7 @@
     },
     {
       "id": "namicomi_it",
-      "name": "NamiComi",
+      "name": "NamiComi (it)",
       "version": "0.6.0",
       "sha256": "abed29b0ccfe7484db7d4abc1c2f753ee82b6229cdc957d6f523252d1c93f3e6",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_it.py",
@@ -13053,7 +13053,7 @@
     },
     {
       "id": "namicomi_ja",
-      "name": "NamiComi",
+      "name": "NamiComi (ja)",
       "version": "0.6.0",
       "sha256": "7ae12b6ca727df3cd6aeacbe0f8f914274703ac9ff289762ec2522e841a0dd53",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ja.py",
@@ -13063,7 +13063,7 @@
     },
     {
       "id": "namicomi_ko",
-      "name": "NamiComi",
+      "name": "NamiComi (ko)",
       "version": "0.6.0",
       "sha256": "adb89447d28e64e60b0ab40ca301df1cace4110faffc1d37a693c522d7e16d20",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ko.py",
@@ -13073,7 +13073,7 @@
     },
     {
       "id": "namicomi_lt",
-      "name": "NamiComi",
+      "name": "NamiComi (lt)",
       "version": "0.6.0",
       "sha256": "98249b55c3e7aa731626e6b0701ad69090123e27148eab3ea96201621d5783d6",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_lt.py",
@@ -13083,7 +13083,7 @@
     },
     {
       "id": "namicomi_ms",
-      "name": "NamiComi",
+      "name": "NamiComi (ms)",
       "version": "0.6.0",
       "sha256": "57f86b4a6821efcafe0f5bbdeaadb308f9c11913cd641b3c8f7e5b3cfb9d02b7",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ms.py",
@@ -13093,7 +13093,7 @@
     },
     {
       "id": "namicomi_ne",
-      "name": "NamiComi",
+      "name": "NamiComi (ne)",
       "version": "0.6.0",
       "sha256": "a5b2e968a5ac905f517c1e2e1ec0e4d9f53cabda225e0f0d1ca92a99199e58d3",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ne.py",
@@ -13103,7 +13103,7 @@
     },
     {
       "id": "namicomi_nl",
-      "name": "NamiComi",
+      "name": "NamiComi (nl)",
       "version": "0.6.0",
       "sha256": "4379f2a5e777269ae205393fb8ac68287e7357b0be7e5aa4ebebf35aa675954e",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_nl.py",
@@ -13113,7 +13113,7 @@
     },
     {
       "id": "namicomi_no",
-      "name": "NamiComi",
+      "name": "NamiComi (no)",
       "version": "0.6.0",
       "sha256": "efad86dfd25dc8dd5efac426d0e9a8430eb9cd4ede7edf4a9cb3e561e039179d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_no.py",
@@ -13123,7 +13123,7 @@
     },
     {
       "id": "namicomi_pa",
-      "name": "NamiComi",
+      "name": "NamiComi (pa)",
       "version": "0.6.0",
       "sha256": "f43b56010ace2a5015a8fe39a5fb0b06be3b1c66b53b49be899cc79d197e2b67",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_pa.py",
@@ -13133,7 +13133,7 @@
     },
     {
       "id": "namicomi_pl",
-      "name": "NamiComi",
+      "name": "NamiComi (pl)",
       "version": "0.6.0",
       "sha256": "c8c8c791cd9fec29c7de7de34a5e68e7c388073eec101812ef074d7d810542bc",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_pl.py",
@@ -13143,7 +13143,7 @@
     },
     {
       "id": "namicomi_pt",
-      "name": "NamiComi",
+      "name": "NamiComi (pt)",
       "version": "0.6.0",
       "sha256": "362cb3c081a9366ab7a94a86f927d73de932f4b742008f9db5fb7e67625c4dd9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_pt.py",
@@ -13153,7 +13153,7 @@
     },
     {
       "id": "namicomi_pt_br",
-      "name": "NamiComi",
+      "name": "NamiComi (pt-BR)",
       "version": "0.6.0",
       "sha256": "727a7807ab1ed4656ab8c9ae8fa0de6464126ca0ebfc466b5d03070c76232dba",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_pt_br.py",
@@ -13163,7 +13163,7 @@
     },
     {
       "id": "namicomi_ru",
-      "name": "NamiComi",
+      "name": "NamiComi (ru)",
       "version": "0.6.0",
       "sha256": "7c8087c09bc7bbd37d8cc04f14de326fd56787c54df02c3ac54f1c9b2c5eb5ec",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ru.py",
@@ -13173,7 +13173,7 @@
     },
     {
       "id": "namicomi_sk",
-      "name": "NamiComi",
+      "name": "NamiComi (sk)",
       "version": "0.6.0",
       "sha256": "d08c0e57c2e837fc7c99c2d95bad371d8c7a203f91a9a25c80a89ae34718db13",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_sk.py",
@@ -13183,7 +13183,7 @@
     },
     {
       "id": "namicomi_sl",
-      "name": "NamiComi",
+      "name": "NamiComi (sl)",
       "version": "0.6.0",
       "sha256": "a842d59e77f95db60db4c7b82d68ce33ba902fd225372c3c429325becf396044",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_sl.py",
@@ -13193,7 +13193,7 @@
     },
     {
       "id": "namicomi_sv",
-      "name": "NamiComi",
+      "name": "NamiComi (sv)",
       "version": "0.6.0",
       "sha256": "1bfa5eb77218599b448e196bbc433149bebcfa2ed114f377d5a60683d1c6777c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_sv.py",
@@ -13203,7 +13203,7 @@
     },
     {
       "id": "namicomi_th",
-      "name": "NamiComi",
+      "name": "NamiComi (th)",
       "version": "0.6.0",
       "sha256": "d792b44060f25287d24ad1b3d04fe8aea789be897ae9e04049ce9aafe4b6e468",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_th.py",
@@ -13213,7 +13213,7 @@
     },
     {
       "id": "namicomi_tr",
-      "name": "NamiComi",
+      "name": "NamiComi (tr)",
       "version": "0.6.0",
       "sha256": "16b9809b92e749957908d5dbee8ca0ea82133f499001c2db5a0628ae967d7380",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_tr.py",
@@ -13223,7 +13223,7 @@
     },
     {
       "id": "namicomi_uk",
-      "name": "NamiComi",
+      "name": "NamiComi (uk)",
       "version": "0.6.0",
       "sha256": "09dff0a6a62e5f3649e1521a93915af1cc82d5f4349ee4bf0f2444988abac206",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_uk.py",
@@ -13233,7 +13233,7 @@
     },
     {
       "id": "namicomi_zh_hans",
-      "name": "NamiComi",
+      "name": "NamiComi (zh-Hans)",
       "version": "0.6.0",
       "sha256": "0973dcd83fd074fb5f92d758142d23a7c75ed254230452783a3ef7237aa2c975",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_zh_hans.py",
@@ -13243,7 +13243,7 @@
     },
     {
       "id": "namicomi_zh_hant",
-      "name": "NamiComi",
+      "name": "NamiComi (zh-Hant)",
       "version": "0.6.0",
       "sha256": "c19411778acc73a1ce41571a7102d53ce86130b090c59ba128218d454cf6861c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_zh_hant.py",
@@ -14183,7 +14183,7 @@
     },
     {
       "id": "onepiecefans_en",
-      "name": "One Piece Fans",
+      "name": "One Piece Fans (en)",
       "version": "0.1.0",
       "sha256": "223faec48cad3fca6ce984017102d53ba5dc2228d6523d56b4c3a71e0bf40195",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onepiecefans_en.py",
@@ -14193,7 +14193,7 @@
     },
     {
       "id": "onepiecefans_es",
-      "name": "One Piece Fans",
+      "name": "One Piece Fans (es)",
       "version": "0.1.0",
       "sha256": "aeeefa0ddab290269c8b412aaf896ec905de979af4263dce1b600552619728f0",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onepiecefans_es.py",
@@ -14233,7 +14233,7 @@
     },
     {
       "id": "onisaga_all",
-      "name": "OniSaga",
+      "name": "OniSaga (all)",
       "version": "0.4.0",
       "sha256": "795c7216a7f24eed21f45f25c995807e374b78edf671a1bdd64fc29aec84fd07",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_all.py",
@@ -14243,7 +14243,7 @@
     },
     {
       "id": "onisaga_en",
-      "name": "OniSaga",
+      "name": "OniSaga (en)",
       "version": "0.4.0",
       "sha256": "c068ba9a9ba6b4403e481aa35a46b87fa3f1b3296008f184f45d0b03de75959a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_en.py",
@@ -14253,7 +14253,7 @@
     },
     {
       "id": "onisaga_es",
-      "name": "OniSaga",
+      "name": "OniSaga (es)",
       "version": "0.4.0",
       "sha256": "3df6f76091fb2bd096102e4f6e965c17459ec3a287e2634a43e7d2a64094e1e4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_es.py",
@@ -14263,7 +14263,7 @@
     },
     {
       "id": "onisaga_es_419",
-      "name": "OniSaga",
+      "name": "OniSaga (es-419)",
       "version": "0.4.0",
       "sha256": "f923e954fa4bc3bb7378d5118d6602523df41b0cde13681655c3a552b87209db",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_es_419.py",
@@ -14273,7 +14273,7 @@
     },
     {
       "id": "onisaga_fr",
-      "name": "OniSaga",
+      "name": "OniSaga (fr)",
       "version": "0.4.0",
       "sha256": "8593ebbb139a6199b54ee6053ffbbe278ee7635b8a4a43200271884a247796ca",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_fr.py",
@@ -14283,7 +14283,7 @@
     },
     {
       "id": "onisaga_ja",
-      "name": "OniSaga",
+      "name": "OniSaga (ja)",
       "version": "0.4.0",
       "sha256": "7036af15e95f1456c5afb80b634e745ca0fb41846bb75fc716129199abf007cb",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_ja.py",
@@ -14293,7 +14293,7 @@
     },
     {
       "id": "onisaga_pt",
-      "name": "OniSaga",
+      "name": "OniSaga (pt)",
       "version": "0.4.0",
       "sha256": "c146ff19fb1d972fe4f90382ba463f31f3dea91a331c3d51e4a259b519b8106d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_pt.py",
@@ -14303,7 +14303,7 @@
     },
     {
       "id": "onisaga_pt_br",
-      "name": "OniSaga",
+      "name": "OniSaga (pt-BR)",
       "version": "0.4.0",
       "sha256": "9de6c1e72f7038f797febc5a4e6aad1232c6a235c672c593ac32f61a834bb71f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_pt_br.py",
@@ -14493,7 +14493,7 @@
     },
     {
       "id": "pandachaika_all",
-      "name": "PandaChaika",
+      "name": "PandaChaika (all)",
       "version": "0.4.0",
       "sha256": "df26bc2b9fe6822f41d4ac0aca9475bce179eb3cbbdfba9bd262df1ade5d123b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_all.py",
@@ -14503,7 +14503,7 @@
     },
     {
       "id": "pandachaika_ar",
-      "name": "PandaChaika",
+      "name": "PandaChaika (ar)",
       "version": "0.4.0",
       "sha256": "aac4a35e0d8860262400246a0160ab755378b9b08f48fc0acdcc774b9c8a1827",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_ar.py",
@@ -14513,7 +14513,7 @@
     },
     {
       "id": "pandachaika_cs",
-      "name": "PandaChaika",
+      "name": "PandaChaika (cs)",
       "version": "0.4.0",
       "sha256": "6463963389a4cabc044abb04db7c0f33d10ebf0ab5df793ff86b9cbb742dac76",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_cs.py",
@@ -14523,7 +14523,7 @@
     },
     {
       "id": "pandachaika_el",
-      "name": "PandaChaika",
+      "name": "PandaChaika (el)",
       "version": "0.4.0",
       "sha256": "53ad900f3f50c21954a780cee7e1f10df5aba64806ad3862abc597b04c6f2a28",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_el.py",
@@ -14533,7 +14533,7 @@
     },
     {
       "id": "pandachaika_en",
-      "name": "PandaChaika",
+      "name": "PandaChaika (en)",
       "version": "0.4.0",
       "sha256": "1e9b50e375c1493e86bc58450795c920e5451207d698ff9513b1e46be99569c2",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_en.py",
@@ -14543,7 +14543,7 @@
     },
     {
       "id": "pandachaika_es",
-      "name": "PandaChaika",
+      "name": "PandaChaika (es)",
       "version": "0.4.0",
       "sha256": "bcd64addcb46610a3cb3732f1e4688b9b09f1f50598a6fa569981172f04ef9aa",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_es.py",
@@ -14553,7 +14553,7 @@
     },
     {
       "id": "pandachaika_fi",
-      "name": "PandaChaika",
+      "name": "PandaChaika (fi)",
       "version": "0.4.0",
       "sha256": "07255282fe3b38072e705c7eee728d5e0fb2766fb4623dfa25e9581bda71515b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_fi.py",
@@ -14563,7 +14563,7 @@
     },
     {
       "id": "pandachaika_fr",
-      "name": "PandaChaika",
+      "name": "PandaChaika (fr)",
       "version": "0.4.0",
       "sha256": "856acf241b1c3a98d60bf79f3fb67c6b064ac90af9358b8aa1efa121b766070c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_fr.py",
@@ -14573,7 +14573,7 @@
     },
     {
       "id": "pandachaika_id",
-      "name": "PandaChaika",
+      "name": "PandaChaika (id)",
       "version": "0.4.0",
       "sha256": "e4390173e655d564dd8c570bef8761519ffc4f0bcd23b13e5398b9f8e52ec79c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_id.py",
@@ -14583,7 +14583,7 @@
     },
     {
       "id": "pandachaika_ja",
-      "name": "PandaChaika",
+      "name": "PandaChaika (ja)",
       "version": "0.4.0",
       "sha256": "9a6210fd9dbfe4d0c2307c9a7c2113675e378338c223443c5620180daeece60b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_ja.py",
@@ -14593,7 +14593,7 @@
     },
     {
       "id": "pandachaika_jv",
-      "name": "PandaChaika",
+      "name": "PandaChaika (jv)",
       "version": "0.4.0",
       "sha256": "1edc7f2ef9e53cec925fb000f24c14574f23ee9088f1bf980fb879fe330fee39",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_jv.py",
@@ -14603,7 +14603,7 @@
     },
     {
       "id": "pandachaika_ko",
-      "name": "PandaChaika",
+      "name": "PandaChaika (ko)",
       "version": "0.4.0",
       "sha256": "7cc627ab48561c10614077e6cc4338652382c0cd45c6971eccc94ced18fd3994",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_ko.py",
@@ -14613,7 +14613,7 @@
     },
     {
       "id": "pandachaika_pt",
-      "name": "PandaChaika",
+      "name": "PandaChaika (pt)",
       "version": "0.4.0",
       "sha256": "0d2abe4e3805302c646faef5633a3cc0bdb0a1184acf4292a6b1adb3ab3b4f88",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_pt.py",
@@ -14623,7 +14623,7 @@
     },
     {
       "id": "pandachaika_ru",
-      "name": "PandaChaika",
+      "name": "PandaChaika (ru)",
       "version": "0.4.0",
       "sha256": "15c9509de826db35833ec7794ade325b48efe161ff8d28c86e6539dbb659dff1",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_ru.py",
@@ -14633,7 +14633,7 @@
     },
     {
       "id": "pandachaika_th",
-      "name": "PandaChaika",
+      "name": "PandaChaika (th)",
       "version": "0.4.0",
       "sha256": "711863aa7bf1220130981147d5c249d89c5addea5fcced21fe38a9f3cac5f2b4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_th.py",
@@ -14643,7 +14643,7 @@
     },
     {
       "id": "pandachaika_tl",
-      "name": "PandaChaika",
+      "name": "PandaChaika (tl)",
       "version": "0.4.0",
       "sha256": "b214d3c017d359c67c7a177beecf774ae12441339dba2a57ccc5b45fe30a960e",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_tl.py",
@@ -14653,7 +14653,7 @@
     },
     {
       "id": "pandachaika_tr",
-      "name": "PandaChaika",
+      "name": "PandaChaika (tr)",
       "version": "0.4.0",
       "sha256": "3bcd0197732816d4e96c12d7f84bdabf58698090e3b03ca188dc43d9d07b7a51",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_tr.py",
@@ -14663,7 +14663,7 @@
     },
     {
       "id": "pandachaika_uk",
-      "name": "PandaChaika",
+      "name": "PandaChaika (uk)",
       "version": "0.4.0",
       "sha256": "0b7862154237163be57db9f35a88512c77caff06f1de1ba27d55c8738e46e65b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_uk.py",
@@ -14673,7 +14673,7 @@
     },
     {
       "id": "pandachaika_vi",
-      "name": "PandaChaika",
+      "name": "PandaChaika (vi)",
       "version": "0.4.0",
       "sha256": "5c2ce55692691faf5c61844d3d9810bbd650f5c7d667662f548fb5f892e61d0f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_vi.py",
@@ -14683,7 +14683,7 @@
     },
     {
       "id": "pandachaika_zh",
-      "name": "PandaChaika",
+      "name": "PandaChaika (zh)",
       "version": "0.4.0",
       "sha256": "2d5a8119fcdf1de54e498c711272a96f4162ae29b844453a95b36967ed8b354a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_zh.py",
@@ -14923,7 +14923,7 @@
     },
     {
       "id": "pixiv_en",
-      "name": "Pixiv",
+      "name": "Pixiv (en)",
       "version": "0.12.0",
       "sha256": "6614738fec61ffa9d233a5a9bc90c891c3aaaa3235946cee5f7a8d67bd30ab75",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pixiv_en.py",
@@ -14933,7 +14933,7 @@
     },
     {
       "id": "pixiv_ja",
-      "name": "Pixiv",
+      "name": "Pixiv (ja)",
       "version": "0.12.0",
       "sha256": "6dfaa06a29f4c212f3a1d83597089bb19d5a39f9b40f3aaf0e6364a690970147",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pixiv_ja.py",
@@ -14943,7 +14943,7 @@
     },
     {
       "id": "pixiv_ko",
-      "name": "Pixiv",
+      "name": "Pixiv (ko)",
       "version": "0.12.0",
       "sha256": "c92e2806b6cd39c6105c9e2999ded3ca22e9ac6457beeed8fbdce309cafd497f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pixiv_ko.py",
@@ -14953,7 +14953,7 @@
     },
     {
       "id": "pixiv_zh",
-      "name": "Pixiv",
+      "name": "Pixiv (zh)",
       "version": "0.12.0",
       "sha256": "5ce16f61077e0f2333ecef49983f200209c4bd349ad383715d086d8a170719d9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pixiv_zh.py",
@@ -14963,7 +14963,7 @@
     },
     {
       "id": "pixiv_zh_tw",
-      "name": "Pixiv",
+      "name": "Pixiv (zh-tw)",
       "version": "0.12.0",
       "sha256": "42d7c8fee8b125f272f53008137ec3e8565f40ba07932d7bfaaa8c86bc59fc8f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pixiv_zh_tw.py",
@@ -16193,7 +16193,7 @@
     },
     {
       "id": "seraphicdeviltry_en",
-      "name": "SeraphicDeviltry",
+      "name": "SeraphicDeviltry (en)",
       "version": "0.2.0",
       "sha256": "221976ca155031062834525eba4b8aab463f3e648da6bb93af7c72258e71805a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/seraphicdeviltry_en.py",
@@ -16203,7 +16203,7 @@
     },
     {
       "id": "seraphicdeviltry_es",
-      "name": "SeraphicDeviltry",
+      "name": "SeraphicDeviltry (es)",
       "version": "0.2.0",
       "sha256": "b7f8ab108f2c7bd870a1b2bddb38036c2d6c61953c9f2756271a13fce6128767",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/seraphicdeviltry_es.py",
@@ -16363,7 +16363,7 @@
     },
     {
       "id": "simplyhentai_de",
-      "name": "Simply Hentai",
+      "name": "Simply Hentai (de)",
       "version": "0.8.0",
       "sha256": "723634fbf5cc03e0a215618d54c6e09d02f15185cf3754abbe2624384e6ab5d0",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_de.py",
@@ -16373,7 +16373,7 @@
     },
     {
       "id": "simplyhentai_en",
-      "name": "Simply Hentai",
+      "name": "Simply Hentai (en)",
       "version": "0.8.0",
       "sha256": "60ef2dc82fa8f2e106d233ca5a7c053a5223123d4fd99235953ca3069112f9d6",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_en.py",
@@ -16383,7 +16383,7 @@
     },
     {
       "id": "simplyhentai_es",
-      "name": "Simply Hentai",
+      "name": "Simply Hentai (es)",
       "version": "0.8.0",
       "sha256": "9884f6827f8bc015d168513c370974c672712ae208b344bb25210ed74e560de8",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_es.py",
@@ -16393,7 +16393,7 @@
     },
     {
       "id": "simplyhentai_fr",
-      "name": "Simply Hentai",
+      "name": "Simply Hentai (fr)",
       "version": "0.8.0",
       "sha256": "52157841918eb761c81e8c291712648acacadd8e4d45852563341dc51a5d2fdf",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_fr.py",
@@ -16403,7 +16403,7 @@
     },
     {
       "id": "simplyhentai_it",
-      "name": "Simply Hentai",
+      "name": "Simply Hentai (it)",
       "version": "0.8.0",
       "sha256": "b02849169c3bdef4f4b5c932aa4b969c1d5bae94f90df3b7087e60f02b79f094",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_it.py",
@@ -16413,7 +16413,7 @@
     },
     {
       "id": "simplyhentai_ja",
-      "name": "Simply Hentai",
+      "name": "Simply Hentai (ja)",
       "version": "0.8.0",
       "sha256": "22aa1203cd50afaec0ed034f945e3a2cf23bd1724ce8335d2bbc202fb5595ded",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_ja.py",
@@ -16423,7 +16423,7 @@
     },
     {
       "id": "simplyhentai_ko",
-      "name": "Simply Hentai",
+      "name": "Simply Hentai (ko)",
       "version": "0.8.0",
       "sha256": "4b1042d5e2c43060a301583d81fc6b01d86c1181e4c7d04b8a43cbb3ed057c47",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_ko.py",
@@ -16433,7 +16433,7 @@
     },
     {
       "id": "simplyhentai_pl",
-      "name": "Simply Hentai",
+      "name": "Simply Hentai (pl)",
       "version": "0.8.0",
       "sha256": "9aa7fcf4ad1709272fef32830407bbfe3f4f2677660b5abe42a70a86ef885ed2",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_pl.py",
@@ -16443,7 +16443,7 @@
     },
     {
       "id": "simplyhentai_ru",
-      "name": "Simply Hentai",
+      "name": "Simply Hentai (ru)",
       "version": "0.8.0",
       "sha256": "8b5e8eb46e945edbe5eccf83d128c635c910bcf3ec2ae5044fbb9638829f8013",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_ru.py",
@@ -16453,7 +16453,7 @@
     },
     {
       "id": "simplyhentai_zh",
-      "name": "Simply Hentai",
+      "name": "Simply Hentai (zh)",
       "version": "0.8.0",
       "sha256": "ced5d070cb36f82672a4c7112f458cba591a6c51f62b7bc7483690fed1d27e6f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_zh.py",
@@ -16943,7 +16943,7 @@
     },
     {
       "id": "tappytoon_de",
-      "name": "Tappytoon",
+      "name": "Tappytoon (de)",
       "version": "0.10.0",
       "sha256": "dc9604d48cc821fd984990ade33ca92438d997bfbfd58164bbb8183234745693",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/tappytoon_de.py",
@@ -16953,7 +16953,7 @@
     },
     {
       "id": "tappytoon_en",
-      "name": "Tappytoon",
+      "name": "Tappytoon (en)",
       "version": "0.10.0",
       "sha256": "f0818dcf91e935bd35ab8f0bf190e52dec37af2dda435b44d5a87dd962515b08",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/tappytoon_en.py",
@@ -16963,7 +16963,7 @@
     },
     {
       "id": "tappytoon_fr",
-      "name": "Tappytoon",
+      "name": "Tappytoon (fr)",
       "version": "0.10.0",
       "sha256": "a36ac155c8ec98f0e156512e6afd69b44407197858239c699d3c23766f3e4e3b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/tappytoon_fr.py",
@@ -17053,7 +17053,7 @@
     },
     {
       "id": "templescan_en",
-      "name": "Temple Scan",
+      "name": "Temple Scan (en)",
       "version": "0.50.0",
       "sha256": "ac793008ef0be3b2f24d2f9073bfceb3ed7c484b1462a3de6c9bdb8a8784fb1c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/templescan_en.py",
@@ -17063,7 +17063,7 @@
     },
     {
       "id": "templescanesp_es",
-      "name": "Temple Scan",
+      "name": "Temple Scan (es)",
       "version": "0.12.0",
       "sha256": "198b4042cbbce246a527488415decd3c8db7c222ff6d312c59964a27a759d250",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/templescanesp_es.py",
@@ -17133,7 +17133,7 @@
     },
     {
       "id": "thelibraryofohara_ar",
-      "name": "The Library of Ohara",
+      "name": "The Library of Ohara (ar)",
       "version": "0.2.0",
       "sha256": "baaae9cfd268d3c7031e14881bad1a8891e62a9787b11c3a482bebad7f6dc224",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/thelibraryofohara_ar.py",
@@ -17143,7 +17143,7 @@
     },
     {
       "id": "thelibraryofohara_en",
-      "name": "The Library of Ohara",
+      "name": "The Library of Ohara (en)",
       "version": "0.2.0",
       "sha256": "267154717defd7978b2730bf5c956ecc4ca5ff12163eecf496579abe789f29f2",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/thelibraryofohara_en.py",
@@ -17153,7 +17153,7 @@
     },
     {
       "id": "thelibraryofohara_es",
-      "name": "The Library of Ohara",
+      "name": "The Library of Ohara (es)",
       "version": "0.2.0",
       "sha256": "16957001ddf97bf3c06f42418534350655078b0dda172d731dbecd45e011d905",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/thelibraryofohara_es.py",
@@ -17163,7 +17163,7 @@
     },
     {
       "id": "thelibraryofohara_fr",
-      "name": "The Library of Ohara",
+      "name": "The Library of Ohara (fr)",
       "version": "0.2.0",
       "sha256": "3275f3b8d2b9a61465c4892e50e259d433724f5295a0c221afde84377354dd6a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/thelibraryofohara_fr.py",
@@ -17173,7 +17173,7 @@
     },
     {
       "id": "thelibraryofohara_id",
-      "name": "The Library of Ohara",
+      "name": "The Library of Ohara (id)",
       "version": "0.2.0",
       "sha256": "3d94a8c76b9339e7916d5e0a408d3f64a242a65f47de6f33396d3f664e409c09",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/thelibraryofohara_id.py",
@@ -17183,7 +17183,7 @@
     },
     {
       "id": "thelibraryofohara_it",
-      "name": "The Library of Ohara",
+      "name": "The Library of Ohara (it)",
       "version": "0.2.0",
       "sha256": "6a8019d5e74b24cceb2ac4c19f94d39385cb578f4815d7983878d002d5ad40c0",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/thelibraryofohara_it.py",
@@ -17973,7 +17973,7 @@
     },
     {
       "id": "vinnieveritas_en",
-      "name": "Vinnie Veritas - CCC",
+      "name": "Vinnie Veritas - CCC (en)",
       "version": "0.3.0",
       "sha256": "79c95f388293231b7ca8f078460ea2b45fa3e009c5223c6b11d194928b448150",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/vinnieveritas_en.py",
@@ -17983,7 +17983,7 @@
     },
     {
       "id": "vinnieveritas_es",
-      "name": "Vinnie Veritas - CCC",
+      "name": "Vinnie Veritas - CCC (es)",
       "version": "0.3.0",
       "sha256": "6db007816649347b26365dbb632921b683c1390ea7fa323dba453c02215b1a5f",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/vinnieveritas_es.py",
@@ -18353,7 +18353,7 @@
     },
     {
       "id": "xkcd_en",
-      "name": "xkcd",
+      "name": "xkcd (en)",
       "version": "0.17.0",
       "sha256": "5e11a304ac5d6e4fa8f13c8d188db199ca9404acf2d453006b2ccb6af614f868",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/xkcd_en.py",
@@ -18363,7 +18363,7 @@
     },
     {
       "id": "xkcd_es",
-      "name": "xkcd",
+      "name": "xkcd (es)",
       "version": "0.17.0",
       "sha256": "b27c08378ee05d177f7974cb786fd312c3a3dece3bbd2602c184f6ed29013bec",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/xkcd_es.py",
@@ -18373,7 +18373,7 @@
     },
     {
       "id": "xkcd_fr",
-      "name": "xkcd",
+      "name": "xkcd (fr)",
       "version": "0.17.0",
       "sha256": "812bb9ced302a1ff35c3e06ac1fc9b358fe6643cb2b81ca91f519648ee06f252",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/xkcd_fr.py",
@@ -18383,7 +18383,7 @@
     },
     {
       "id": "xkcd_ru",
-      "name": "xkcd",
+      "name": "xkcd (ru)",
       "version": "0.17.0",
       "sha256": "7eb48ba850c45f69a65652997b9738917cb0f94940d55b5b5e2003f0b0af393c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/xkcd_ru.py",
@@ -18393,7 +18393,7 @@
     },
     {
       "id": "xkcd_zh",
-      "name": "xkcd",
+      "name": "xkcd (zh)",
       "version": "0.17.0",
       "sha256": "63442a6033183835e8d2f89236db92a8b1748b22101ffb46f1d72d2a94996358",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/xkcd_zh.py",
@@ -18603,7 +18603,7 @@
     },
     {
       "id": "yaoiscan_en",
-      "name": "YaoiScan",
+      "name": "YaoiScan (en)",
       "version": "0.0.0",
       "sha256": "8136d828fc6c3ff98cc67af97036aa45b8d69d69811224eb006ac7fcee604a55",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/yaoiscan_en.py",
@@ -18613,7 +18613,7 @@
     },
     {
       "id": "yaoiscan_fr",
-      "name": "YaoiScan",
+      "name": "YaoiScan (fr)",
       "version": "0.1.0",
       "sha256": "8d9c70b99c057ac8780ddec8f2b7bb83871ded99dcef03642e9cc556832ae646",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/yaoiscan_fr.py",
@@ -18623,7 +18623,7 @@
     },
     {
       "id": "yellownote_en",
-      "name": "小黄书",
+      "name": "小黄书 (en)",
       "version": "0.7.0",
       "sha256": "7129122dd8147ec205863b9b74f1b0bef6a188db4cab0141370d3a31ad7f5ead",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/yellownote_en.py",
@@ -18633,7 +18633,7 @@
     },
     {
       "id": "yellownote_es",
-      "name": "小黄书",
+      "name": "小黄书 (es)",
       "version": "0.7.0",
       "sha256": "b18d49e1f913138af82711be5d1c13f800c39334de1da4b59728484206eeb59c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/yellownote_es.py",
@@ -18643,7 +18643,7 @@
     },
     {
       "id": "yellownote_ko",
-      "name": "小黄书",
+      "name": "小黄书 (ko)",
       "version": "0.7.0",
       "sha256": "361a9bab553bcc4a28afe2eeec7ddff5c62c97e395f7c2441fceb4b8ad6b5119",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/yellownote_ko.py",
@@ -18653,7 +18653,7 @@
     },
     {
       "id": "yellownote_zh_hans",
-      "name": "小黄书",
+      "name": "小黄书 (zh-Hans)",
       "version": "0.7.0",
       "sha256": "aa54db56ba8fd0b9459bc7e844125b6be8ba058e498b2c86073c34b6bfabbdfb",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/yellownote_zh_hans.py",
@@ -18663,7 +18663,7 @@
     },
     {
       "id": "yellownote_zh_hant",
-      "name": "小黄书",
+      "name": "小黄书 (zh-Hant)",
       "version": "0.7.0",
       "sha256": "7153cb44838f6bb5a72bd5964c4c5cd21023a9d0ed2ac8fa333058d5ca813a48",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/yellownote_zh_hant.py",
@@ -18763,7 +18763,7 @@
     },
     {
       "id": "yskcomics_ar",
-      "name": "YSK Comics",
+      "name": "YSK Comics (ar)",
       "version": "0.1.0",
       "sha256": "77c7ea42c24685764b385637c634bfc32b7a26dfc642077c780c71cc5dda0bb6",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/yskcomics_ar.py",
@@ -18773,7 +18773,7 @@
     },
     {
       "id": "yskcomics_en",
-      "name": "YSK Comics",
+      "name": "YSK Comics (en)",
       "version": "0.1.0",
       "sha256": "a2ae2e30f2fe63d5bd0e5d70e57b962f02804c4fa6161004f20117a735761fbd",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/yskcomics_en.py",

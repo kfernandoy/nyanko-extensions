@@ -13,8 +13,16 @@ from nyanko_api.sources.contract import SOURCE_API_VERSION, Source
 
 
 def _local_file(repo: Path, url: str) -> Path:
-    path = urlsplit(url).path.lstrip("/")
-    target = (repo / path).resolve()
+    parts = [part for part in urlsplit(url).path.split("/") if part]
+    artifact = next(
+        (
+            parts[index:]
+            for index, part in enumerate(parts)
+            if part in {"bundles", "icons"}
+        ),
+        parts,
+    )
+    target = repo.joinpath(*artifact).resolve()
     if repo.resolve() not in target.parents:
         raise AssertionError(f"URL fuera del repositorio: {url}")
     return target
