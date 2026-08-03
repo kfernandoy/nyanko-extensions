@@ -480,7 +480,16 @@ class MadaraSource:
             if source_id in seen or not title:
                 continue
             seen.add(source_id)
-            result.append(SourceSeries(source_id=source_id, title=title, source_name=self.name))
+            image = _first(item, lambda node: node.tag == "img")
+            result.append(
+                SourceSeries(
+                    source_id=source_id,
+                    title=title,
+                    source_name=self.name,
+                    cover_url=_image_url(image, self.base_url) if image else None,
+                    web_url=source_id,
+                )
+            )
         if result:
             return result
         route = self.manga_substring.strip("/")
@@ -496,7 +505,16 @@ class MadaraSource:
             title = anchor.attrs.get("title", "").strip() or anchor.text().strip()
             if title and source_id not in seen:
                 seen.add(source_id)
-                result.append(SourceSeries(source_id=source_id, title=title, source_name=self.name))
+                image = _first(anchor, lambda node: node.tag == "img")
+                result.append(
+                    SourceSeries(
+                        source_id=source_id,
+                        title=title,
+                        source_name=self.name,
+                        cover_url=_image_url(image, self.base_url) if image else None,
+                        web_url=source_id,
+                    )
+                )
         return result
 
     @staticmethod
@@ -582,11 +600,14 @@ class GalleryAdultsSource(MadaraSource):
             )
             title = caption.text() if caption else link.text() if link else ""
             if link and title:
+                source_id = urljoin(base, link.attrs["href"])
                 result.append(
                     SourceSeries(
-                        source_id=urljoin(base, link.attrs["href"]),
+                        source_id=source_id,
                         title=title,
                         source_name=self.name,
+                        cover_url=_image_url(image, base) if image else None,
+                        web_url=source_id,
                     )
                 )
         return list({item.source_id: item for item in result}.values())

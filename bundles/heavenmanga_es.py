@@ -480,7 +480,16 @@ class MadaraSource:
             if source_id in seen or not title:
                 continue
             seen.add(source_id)
-            result.append(SourceSeries(source_id=source_id, title=title, source_name=self.name))
+            image = _first(item, lambda node: node.tag == "img")
+            result.append(
+                SourceSeries(
+                    source_id=source_id,
+                    title=title,
+                    source_name=self.name,
+                    cover_url=_image_url(image, self.base_url) if image else None,
+                    web_url=source_id,
+                )
+            )
         if result:
             return result
         route = self.manga_substring.strip("/")
@@ -496,7 +505,16 @@ class MadaraSource:
             title = anchor.attrs.get("title", "").strip() or anchor.text().strip()
             if title and source_id not in seen:
                 seen.add(source_id)
-                result.append(SourceSeries(source_id=source_id, title=title, source_name=self.name))
+                image = _first(anchor, lambda node: node.tag == "img")
+                result.append(
+                    SourceSeries(
+                        source_id=source_id,
+                        title=title,
+                        source_name=self.name,
+                        cover_url=_image_url(image, self.base_url) if image else None,
+                        web_url=source_id,
+                    )
+                )
         return result
 
     @staticmethod
@@ -552,7 +570,7 @@ import re
 from urllib.parse import urljoin
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourceSeries, _parse_html
+    from .madara import MadaraSource, SourceChapter, SourceSeries, _first, _image_url, _parse_html
 except ImportError:
     pass
 
@@ -661,7 +679,20 @@ class GenericSource(MadaraSource):
             source_id = urljoin(str(response.url), href)
             if source_id not in seen:
                 seen.add(source_id)
-                result.append(SourceSeries(source_id, title, self.name))
+                image = _first(anchor, lambda node: node.tag == "img")
+                if image is None and anchor.parent is not None:
+                    image = _first(anchor.parent, lambda node: node.tag == "img")
+                result.append(
+                    SourceSeries(
+                        source_id=source_id,
+                        title=title,
+                        source_name=self.name,
+                        cover_url=(
+                            _image_url(image, str(response.url)) if image else None
+                        ),
+                        web_url=source_id,
+                    )
+                )
         if result:
             return result
         try:
@@ -675,7 +706,25 @@ class GenericSource(MadaraSource):
                 source_id = urljoin(str(response.url), str(item_id))
                 if source_id not in seen:
                     seen.add(source_id)
-                    result.append(SourceSeries(source_id, str(title), self.name))
+                    cover = (
+                        item.get("cover_url")
+                        or item.get("cover")
+                        or item.get("thumbnail")
+                        or item.get("image")
+                    )
+                    result.append(
+                        SourceSeries(
+                            source_id=source_id,
+                            title=str(title),
+                            source_name=self.name,
+                            cover_url=(
+                                urljoin(str(response.url), cover)
+                                if isinstance(cover, str)
+                                else None
+                            ),
+                            web_url=source_id,
+                        )
+                    )
         return result
 
     @staticmethod
