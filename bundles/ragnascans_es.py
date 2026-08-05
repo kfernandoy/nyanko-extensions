@@ -623,7 +623,7 @@ class RagnaScansSource (MadaraSource ):
         if query .startswith (("http://","https://")):
         # Pegar la URL de una serie la abre directamente, como en el Kotlin.
             if urlparse (query ).netloc ==urlparse (self .base_url ).netloc :
-                return {"items":[await self .details (urlparse (query ).path .lstrip ("/"))],"has_more":False }
+                return {"items":[await self .details (self ._path (query ,self .base_url ))],"has_more":False }
         values =filters or {}
         params :list [tuple [str ,str ]]=[("page",str (page )),("q",query )]
         for key ,parameter in (("generos","generos[]"),("estado","estado[]"),("tipo","tipo[]")):
@@ -708,7 +708,7 @@ class RagnaScansSource (MadaraSource ):
                 found =_RAGNA_NUMBER .search (title )
                 result .append (
                 SourceChapter (
-                source_id =urlparse (urljoin (base ,item .attrs .get ("href",""))).path .lstrip ("/"),
+                source_id =self ._path (item .attrs .get ("href",""),base ),
                 title =title ,
                 series_id =series_id ,
                 source_name =self .name ,
@@ -765,7 +765,7 @@ class RagnaScansSource (MadaraSource ):
                 cover =_first (card ,lambda node :node .has_class ("mod-card-cover"))
                 items .append (
                 SourceSeries (
-                source_id =urlparse (urljoin (base ,card .attrs .get ("href",""))).path .lstrip ("/"),
+                source_id =self ._path (card .attrs .get ("href",""),base ),
                 title =heading .text ().strip (),
                 source_name =self .name ,
                 cover_url =urljoin (base ,cover .attrs .get ("src",""))if cover is not None else None ,
@@ -792,6 +792,12 @@ class RagnaScansSource (MadaraSource ):
             return f"{self .base_url }{value }"
         source =node .attrs .get ("src","")
         return ""if not source or source .startswith ("data:image")else urljoin (base ,source )
+
+    @staticmethod 
+    def _path (href :str ,base :str )->str :
+    # Los enlaces son "manga.php?id=16": sin la query todas las series colapsan.
+        parsed =urlparse (urljoin (base ,href ))
+        return f"{parsed .path .lstrip ('/')}{'?'+parsed .query if parsed .query else ''}"
 
     @staticmethod 
     def _meta_rows (root :_Node )->dict [str ,str ]:

@@ -16725,7 +16725,7 @@
       "id": "ragnascans_es",
       "name": "Ragna Scans",
       "version": "0.2.0",
-      "sha256": "cfb1fb30d99da1e8593ae3a52822876df3c912e652e938d824cc51d5354481f0",
+      "sha256": "5e67d2f5ce1deca290c948072089c57423342bc40d620ea73364fa1ed82e826c",
       "bundle_url": "http://127.0.0.1:8877/bundles/ragnascans_es.py",
       "icon_url": "http://127.0.0.1:8877/icons/ragnascans_es.png",
       "author": "Keiyoushi contributors",
