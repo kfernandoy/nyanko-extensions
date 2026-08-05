@@ -569,617 +569,380 @@ class MadaraSource :
             raise SourceNotFoundError (f"{self .display_name } no tiene fetcher inyectado")
         return await self .fetcher .request (method ,url ,**kwargs )
 
-"""Fuente HTTP adaptable para extensiones sin un motor compartido."""
 
-import json 
-import re 
-from urllib .parse import urljoin 
+"""Adaptador de ONF MANGAS: catalogo HTML y payloads en hexadecimal."""
+
+_ONF_GENRES =(
+('0','Todas las categorías'),
+('44','4-venida'),
+('38','A todo color'),
+('14','Acción'),
+('13','Adaptación'),
+('87','Adulto'),
+('43','Amor de chicas'),
+('61','Amor de chicos'),
+('66','Animales'),
+('71','Antología'),
+('83','Apocalipsis'),
+('42','Arreglarlo'),
+('7','Artes marciales'),
+('54','Autoeditado'),
+('15','Aventura'),
+('33','Cambio de sexo'),
+('64','Chicas magicas'),
+('22','Chicas monstruo'),
+('52','Ciencia ficción'),
+('70','Cocinando'),
+('80','Color del abanico'),
+('69','Color oficial'),
+('1','Comedia'),
+('18','Cómic web'),
+('97','Crimen'),
+('90','Culinario'),
+('92','Cultivación'),
+('84','Cyberpunk'),
+('12','Delincuentes'),
+('76','Delito'),
+('25','Demonios'),
+('68','Deportes'),
+('73','Dominó chino'),
+('65','Doujinshi'),
+('2','Drama'),
+('3','Ecchi'),
+('75','Extraterrestres'),
+('16','Fantasía'),
+('29','Fantasmas'),
+('49','Filosófico'),
+('85','Gore'),
+('8','Harem'),
+('81','Harem inverso'),
+('82','Hentai'),
+('28','Histórico'),
+('51','Horror'),
+('40','Incesto'),
+('55','Intercambio de género'),
+('11','Isekai'),
+('88','Jefe/Empleado'),
+('58','Juegos de vídeo'),
+('72','Juegos tradicionales'),
+('35','Loli'),
+('46','Mafia'),
+('17','Magia'),
+('63','Meca'),
+('53','Mecha'),
+('50','Médico'),
+('36','Militar'),
+('31','Misterio'),
+('24','Monstruos'),
+('78','Música'),
+('79','Ninja'),
+('95','Niños'),
+('62','Policía'),
+('59','Post-apocalíptico'),
+('21','Premiado'),
+('26','Psicológico'),
+('98','Realeza'),
+('57','Realidad virtual'),
+('6','Recuentos de la vida'),
+('9','Reencarnación'),
+('4','Romance'),
+('56','Samurai'),
+('27','Sangre'),
+('32','Shota'),
+('94','Shoujo Ai'),
+('96','Smut'),
+('23','Sobrenatural'),
+('74','Superhéroe'),
+('30','Supervivencia'),
+('48','Suspense'),
+('67','Suspenso'),
+('37','Tira larga'),
+('20','Trabajadores de oficina'),
+('47','Tragedia'),
+('34','Travestismo'),
+('39','Un trago'),
+('41','Vampiros'),
+('93','Venganza'),
+('19','Viaje en el tiempo'),
+('5','Vida escolar'),
+('91','Vida Laboral'),
+('86','Videojuegos'),
+('45','Villana'),
+('10','Violencia sexual'),
+('77','Wuxia'),
+('89','Yaoi'),
+('60','Zombis'),
+)
+
+_ONF_HEX_CHAPTERS =re .compile (r'const\s+_hex\s*=\s*"([0-9a-fA-F]*)"')
+_ONF_HEX_PAGES =re .compile (r'const\s+_hexP\s*=\s*"([0-9a-fA-F]*)"')
 
 
-
-class GenericSource (MadaraSource ):
-    search_paths :tuple [str ,...]=("search","")
-    popular_paths :tuple [str ,...]=("series","manga","comics","popular","")
-    latest_paths :tuple [str ,...]=("latest","updates","series","manga","")
-
-    async def search (self ,query :str ,limit :int =20 )->list [SourceSeries ]:
-        for path in self .search_paths :
-            for key in ("q","query","s","keyword"):
-                try :
-                    response =await self ._request (
-                    "GET",
-                    urljoin (f"{self .base_url }/",path ),
-                    params ={key :query .strip (),"page":"1"},
-                    )
-                    if getattr (response ,"status_code",200 )>=400 :
-                        continue 
-                    values =self ._adaptive_series (response )
-                    if values :
-                        return values [:limit ]
-                except Exception :
-                    continue 
-        return []
-
-    async def browse (self ,kind :str ,page :int =1 )->list [SourceSeries ]:
-        if kind not in {"popular","latest"}:
-            return []
-        paths =self .popular_paths if kind =="popular"else self .latest_paths 
-        for path in paths :
-            try :
-                response =await self ._request (
-                "GET",
-                urljoin (f"{self .base_url }/",path ),
-                params ={"page":str (page )},
-                )
-                if getattr (response ,"status_code",200 )>=400 :
-                    continue 
-                values =self ._adaptive_series (response )
-                if values :
-                    return values 
-            except Exception :
-                continue 
-        return []
-
-    async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
-        series_id =series .source_id if isinstance (series ,SourceSeries )else series 
-        response =await self ._request ("GET",urljoin (f"{self .base_url }/",series_id ))
-        response .raise_for_status ()
-        root =_parse_html (response .text )
-        result :list [SourceChapter ]=[]
-        for anchor in root .descendants ("a"):
-            href =anchor .attrs .get ("href","")
-            title =anchor .text ().strip ()or anchor .attrs .get ("title","").strip ()
-            marker =f"{href } {title }".lower ()
-            if not href or not any (value in marker for value in ("chapter","chap","capitulo","capítulo","episode","bolum","read/")):
-                continue 
-            found =re .search (r"\d+(?:\.\d+)?",title )
-            result .append (
-            SourceChapter (
-            source_id =urljoin (str (response .url ),href ),
-            title =title or "Capítulo",
-            series_id =series_id ,
-            source_name =self .name ,
-            number =float (found .group ())if found else None ,
-            )
-            )
-        if not result :
-            try :
-                payload =response .json ()
-            except (ValueError ,AttributeError ):
-                payload =None 
-            for item in self ._walk_dicts (payload ):
-                title =str (item .get ("title")or item .get ("name")or "")
-                item_id =item .get ("url")or item .get ("slug")or item .get ("id")
-                if not title or item_id is None or "chap"not in json .dumps (item ).lower ():
-                    continue 
-                found =re .search (r"\d+(?:\.\d+)?",title )
-                result .append (
-                SourceChapter (
-                source_id =urljoin (str (response .url ),str (item_id )),
-                title =title ,
-                series_id =series_id ,
-                source_name =self .name ,
-                number =float (found .group ())if found else None ,
-                )
-                )
-        return list ({item .source_id :item for item in result }.values ())
-
-    def _adaptive_series (self ,response )->list [SourceSeries ]:
-        root =_parse_html (response .text )
-        result :list [SourceSeries ]=[]
-        seen :set [str ]=set ()
-        for anchor in root .descendants ("a"):
-            href =anchor .attrs .get ("href","")
-            title =anchor .attrs .get ("title","").strip ()or anchor .text ().strip ()
-            parent =anchor .parent 
-            marker =""
-            while parent is not None :
-                marker +=f" {parent .attrs .get ('id','')} {parent .attrs .get ('class','')}"
-                parent =parent .parent 
-            if not href or not title or not any (value in marker .lower ()for value in ("manga","comic","series","novel","item","book")):
-                continue 
-            source_id =urljoin (str (response .url ),href )
-            if source_id not in seen :
-                seen .add (source_id )
-                image =_first (anchor ,lambda node :node .tag =="img")
-                if image is None and anchor .parent is not None :
-                    image =_first (anchor .parent ,lambda node :node .tag =="img")
-                result .append (
-                SourceSeries (
-                source_id =source_id ,
-                title =title ,
-                source_name =self .name ,
-                cover_url =(
-                _image_url (image ,str (response .url ))if image else None 
-                ),
-                web_url =source_id ,
-                )
-                )
-        if result :
-            return result 
-        try :
-            payload =response .json ()
-        except (ValueError ,AttributeError ):
-            return []
-        for item in self ._walk_dicts (payload ):
-            title =item .get ("title")or item .get ("name")
-            item_id =item .get ("url")or item .get ("href")or item .get ("slug")or item .get ("id")
-            if title and item_id is not None :
-                source_id =urljoin (str (response .url ),str (item_id ))
-                if source_id not in seen :
-                    seen .add (source_id )
-                    cover =(
-                    item .get ("cover_url")
-                    or item .get ("cover")
-                    or item .get ("thumbnail")
-                    or item .get ("image")
-                    )
-                    result .append (
-                    SourceSeries (
-                    source_id =source_id ,
-                    title =str (title ),
-                    source_name =self .name ,
-                    cover_url =(
-                    urljoin (str (response .url ),cover )
-                    if isinstance (cover ,str )
-                    else None 
-                    ),
-                    web_url =source_id ,
-                    )
-                    )
-        return result 
-
-    @staticmethod 
-    def _walk_dicts (value ):
-        if isinstance (value ,dict ):
-            yield value 
-            for child in value .values ():
-                yield from GenericSource ._walk_dicts (child )
-        elif isinstance (value ,list ):
-            for child in value :
-                yield from GenericSource ._walk_dicts (child )
-
-class GeneratedGenericSource (GenericSource ):
-
-    def get_preferences (self )->list [SourcePreference ]:
-    # Autogenerated via heuristic port
-        data =[]
-        return [SourcePreference (**item )for item in data ]
+class OnfMangasSource (MadaraSource ):
+    """Capitulos y paginas viajan como JSON en hexadecimal dentro de un script."""
 
     def get_filters (self )->list [SourceFilter ]:
-    # Autogenerated via heuristic port
-        data =[
-        {
-        "type":"select",
-        "id":"generic_filter",
-        "name":"Filtro",
-        "options":[
-        {
-        "name":"General",
-        "value":"general"
-        },
-        {
-        "name":"GL / Yuri",
-        "value":"yuri"
-        },
-        {
-        "name":"BL / Yaoi",
-        "value":"yaoi"
-        },
-        {
-        "name":"Doujinshis",
-        "value":"doujinshi"
-        },
-        {
-        "name":"Todas las categorías",
-        "value":"0"
-        },
-        {
-        "name":"4-venida",
-        "value":"44"
-        },
-        {
-        "name":"A todo color",
-        "value":"38"
-        },
-        {
-        "name":"Acción",
-        "value":"14"
-        },
-        {
-        "name":"Adaptación",
-        "value":"13"
-        },
-        {
-        "name":"Adulto",
-        "value":"87"
-        },
-        {
-        "name":"Amor de chicas",
-        "value":"43"
-        },
-        {
-        "name":"Amor de chicos",
-        "value":"61"
-        },
-        {
-        "name":"Animales",
-        "value":"66"
-        },
-        {
-        "name":"Antología",
-        "value":"71"
-        },
-        {
-        "name":"Apocalipsis",
-        "value":"83"
-        },
-        {
-        "name":"Arreglarlo",
-        "value":"42"
-        },
-        {
-        "name":"Artes marciales",
-        "value":"7"
-        },
-        {
-        "name":"Autoeditado",
-        "value":"54"
-        },
-        {
-        "name":"Aventura",
-        "value":"15"
-        },
-        {
-        "name":"Cambio de sexo",
-        "value":"33"
-        },
-        {
-        "name":"Chicas magicas",
-        "value":"64"
-        },
-        {
-        "name":"Chicas monstruo",
-        "value":"22"
-        },
-        {
-        "name":"Ciencia ficción",
-        "value":"52"
-        },
-        {
-        "name":"Cocinando",
-        "value":"70"
-        },
-        {
-        "name":"Color del abanico",
-        "value":"80"
-        },
-        {
-        "name":"Color oficial",
-        "value":"69"
-        },
-        {
-        "name":"Comedia",
-        "value":"1"
-        },
-        {
-        "name":"Cómic web",
-        "value":"18"
-        },
-        {
-        "name":"Crimen",
-        "value":"97"
-        },
-        {
-        "name":"Culinario",
-        "value":"90"
-        },
-        {
-        "name":"Cultivación",
-        "value":"92"
-        },
-        {
-        "name":"Cyberpunk",
-        "value":"84"
-        },
-        {
-        "name":"Delincuentes",
-        "value":"12"
-        },
-        {
-        "name":"Delito",
-        "value":"76"
-        },
-        {
-        "name":"Demonios",
-        "value":"25"
-        },
-        {
-        "name":"Deportes",
-        "value":"68"
-        },
-        {
-        "name":"Dominó chino",
-        "value":"73"
-        },
-        {
-        "name":"Doujinshi",
-        "value":"65"
-        },
-        {
-        "name":"Drama",
-        "value":"2"
-        },
-        {
-        "name":"Ecchi",
-        "value":"3"
-        },
-        {
-        "name":"Extraterrestres",
-        "value":"75"
-        },
-        {
-        "name":"Fantasía",
-        "value":"16"
-        },
-        {
-        "name":"Fantasmas",
-        "value":"29"
-        },
-        {
-        "name":"Filosófico",
-        "value":"49"
-        },
-        {
-        "name":"Gore",
-        "value":"85"
-        },
-        {
-        "name":"Harem",
-        "value":"8"
-        },
-        {
-        "name":"Harem inverso",
-        "value":"81"
-        },
-        {
-        "name":"Hentai",
-        "value":"82"
-        },
-        {
-        "name":"Histórico",
-        "value":"28"
-        },
-        {
-        "name":"Horror",
-        "value":"51"
-        },
-        {
-        "name":"Incesto",
-        "value":"40"
-        },
-        {
-        "name":"Intercambio de género",
-        "value":"55"
-        },
-        {
-        "name":"Isekai",
-        "value":"11"
-        },
-        {
-        "name":"Jefe/Empleado",
-        "value":"88"
-        },
-        {
-        "name":"Juegos de vídeo",
-        "value":"58"
-        },
-        {
-        "name":"Juegos tradicionales",
-        "value":"72"
-        },
-        {
-        "name":"Loli",
-        "value":"35"
-        },
-        {
-        "name":"Mafia",
-        "value":"46"
-        },
-        {
-        "name":"Magia",
-        "value":"17"
-        },
-        {
-        "name":"Meca",
-        "value":"63"
-        },
-        {
-        "name":"Mecha",
-        "value":"53"
-        },
-        {
-        "name":"Médico",
-        "value":"50"
-        },
-        {
-        "name":"Militar",
-        "value":"36"
-        },
-        {
-        "name":"Misterio",
-        "value":"31"
-        },
-        {
-        "name":"Monstruos",
-        "value":"24"
-        },
-        {
-        "name":"Música",
-        "value":"78"
-        },
-        {
-        "name":"Ninja",
-        "value":"79"
-        },
-        {
-        "name":"Niños",
-        "value":"95"
-        },
-        {
-        "name":"Policía",
-        "value":"62"
-        },
-        {
-        "name":"Post-apocalíptico",
-        "value":"59"
-        },
-        {
-        "name":"Premiado",
-        "value":"21"
-        },
-        {
-        "name":"Psicológico",
-        "value":"26"
-        },
-        {
-        "name":"Realeza",
-        "value":"98"
-        },
-        {
-        "name":"Realidad virtual",
-        "value":"57"
-        },
-        {
-        "name":"Recuentos de la vida",
-        "value":"6"
-        },
-        {
-        "name":"Reencarnación",
-        "value":"9"
-        },
-        {
-        "name":"Romance",
-        "value":"4"
-        },
-        {
-        "name":"Samurai",
-        "value":"56"
-        },
-        {
-        "name":"Sangre",
-        "value":"27"
-        },
-        {
-        "name":"Shota",
-        "value":"32"
-        },
-        {
-        "name":"Shoujo Ai",
-        "value":"94"
-        },
-        {
-        "name":"Smut",
-        "value":"96"
-        },
-        {
-        "name":"Sobrenatural",
-        "value":"23"
-        },
-        {
-        "name":"Superhéroe",
-        "value":"74"
-        },
-        {
-        "name":"Supervivencia",
-        "value":"30"
-        },
-        {
-        "name":"Suspense",
-        "value":"48"
-        },
-        {
-        "name":"Suspenso",
-        "value":"67"
-        },
-        {
-        "name":"Tira larga",
-        "value":"37"
-        },
-        {
-        "name":"Trabajadores de oficina",
-        "value":"20"
-        },
-        {
-        "name":"Tragedia",
-        "value":"47"
-        },
-        {
-        "name":"Travestismo",
-        "value":"34"
-        },
-        {
-        "name":"Un trago",
-        "value":"39"
-        },
-        {
-        "name":"Vampiros",
-        "value":"41"
-        },
-        {
-        "name":"Venganza",
-        "value":"93"
-        },
-        {
-        "name":"Viaje en el tiempo",
-        "value":"19"
-        },
-        {
-        "name":"Vida escolar",
-        "value":"5"
-        },
-        {
-        "name":"Vida Laboral",
-        "value":"91"
-        },
-        {
-        "name":"Videojuegos",
-        "value":"86"
-        },
-        {
-        "name":"Villana",
-        "value":"45"
-        },
-        {
-        "name":"Violencia sexual",
-        "value":"10"
-        },
-        {
-        "name":"Wuxia",
-        "value":"77"
-        },
-        {
-        "name":"Yaoi",
-        "value":"89"
-        },
-        {
-        "name":"Zombis",
-        "value":"60"
-        }
-        ],
-        "default":"general"
-        }
+        return [
+        SourceFilter ("tab","Categoría principal","select",[
+        ("general","General"),("yuri","GL / Yuri"),
+        ("yaoi","BL / Yaoi"),("doujinshi","Doujinshis"),
+        ],"general"),
+        SourceFilter ("genero","Género","select",list (_ONF_GENRES ),"0"),
         ]
-        return [SourceFilter (**item )for item in data ]
 
+    async def browse (self ,kind :str ,page :int =1 ):
+        if kind =="popular":
+            response =await self ._fetch ("GET",f"{self .base_url }/populares.php")
+            root =_parse_html (response .text )
+            base =str (response .url )or self .base_url 
+            items :list [SourceSeries ]=[]
+            for anchor in root .descendants ("a"):
+                if not (anchor .has_class ("pop-podium-card")or anchor .has_class ("pop-card")):
+                    continue 
+                heading =_first (
+                anchor ,
+                lambda node :node .has_class ("pop-podium-name")or node .has_class ("pop-name"),
+                )
+                href =anchor .attrs .get ("href","")
+                if heading is None or not heading .text ().strip ()or not href :
+                    continue 
+                image =_first (anchor ,lambda node :node .tag =="img")
+                items .append (
+                SourceSeries (
+                source_id =urlparse (urljoin (base ,href )).path .lstrip ("/"),
+                title =heading .text ().strip (),
+                source_name =self .name ,
+                cover_url =urljoin (base ,image .attrs .get ("src",""))if image is not None else None ,
+                web_url =urljoin (base ,href ),
+                )
+                )
+            return {"items":items ,"has_more":False }
+        if kind =="latest":
+            return await self ._grid ([
+            ("tab","general"),("genero","0"),("q",""),("page",str (page )),
+            ])
+        return {"items":[],"has_more":False }
+
+    async def search (self ,query :str ,page :int =1 ,filters :dict |None =None ):
+        values =filters or {}
+        params :list [tuple [str ,str ]]=[
+        ("q",query ),("page",str (page )),("tab",str (values .get ("tab")or "general")),
+        ]
+        genre =str (values .get ("genero")or "0")
+        # El sitio espera "generos[0]"; la categoria "0" no se envia.
+        if genre !="0":
+            params .append (("generos[0]",genre ))
+        return await self ._grid (params )
+
+    async def details (self ,series :SourceSeries |str )->SourceSeries :
+        series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
+        response =await self ._fetch ("GET",urljoin (f"{self .base_url }/",series_id ))
+        root =_parse_html (response .text )
+        base =str (response .url )or self .base_url 
+        heading =_first (root ,lambda node :node .has_class ("manga-title"))
+        if heading is None or not heading .text ().strip ():
+            raise SourceNotFoundError (f"{self .display_name }: ficha sin titulo")
+        author =_first (root ,lambda node :node .has_class ("author-link"))
+        summary =_first (root ,lambda node :node .has_class ("manga-description"))
+        poster =_first (root ,lambda node :node .has_class ("manga-poster"))
+        badges =[
+        node 
+        for holder in root .descendants ("div")
+        if holder .has_class ("manga-meta")
+        for node in holder .descendants ("span")
+        ]
+        text =badges [-1 ].text ().casefold ()if badges else ""
+        return SourceSeries (
+        source_id =series_id ,
+        title =heading .text ().strip (),
+        source_name =self .name ,
+        cover_url =urljoin (base ,poster .attrs .get ("src",""))if poster is not None else None ,
+        description =(summary .text ().strip ()if summary is not None else None )or None ,
+        author =(author .text ().strip ()if author is not None else None )or None ,
+        status ="ongoing"if "emisión"in text else "completed"if "finalizado"in text else None ,
+        content_tags =tuple (
+        value 
+        for node in root .descendants ()
+        if node .has_class ("genre-tag")and (value :=node .text ().strip ())
+        ),
+        web_url =urljoin (f"{self .base_url }/",series_id ),
+        )
+
+    async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
+        series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
+        response =await self ._fetch ("GET",urljoin (f"{self .base_url }/",series_id ))
+        entries =self ._hex_payload (response .text ,_ONF_HEX_CHAPTERS )
+        # El sitio ordena en el cliente: numero descendente y luego fecha.
+        entries .sort (
+        key =lambda item :(self ._number (item ),str (item .get ("fecha_subida")or "")),
+        reverse =True ,
+        )
+        result :list [SourceChapter ]=[]
+        for item in entries :
+            result .append (self ._chapter (item ,None ,series_id ))
+            for other in item .get ("otras_versiones")or []:
+                if isinstance (other ,dict ):
+                    result .append (self ._chapter (other ,item ,series_id ))
+        return result 
+
+    async def pages (self ,chapter :SourceChapter |str )->list [SourcePage ]:
+        chapter_id =chapter .source_id if isinstance (chapter ,SourceChapter )else str (chapter )
+        response =await self ._fetch ("GET",urljoin (f"{self .base_url }/",chapter_id ))
+        result :list [SourcePage ]=[]
+        for index ,item in enumerate (self ._hex_payload (response .text ,_ONF_HEX_PAGES )):
+            source =str (item .get ("src")or "")
+            if not source :
+                continue 
+            fallback =str (item .get ("fallback")or "").strip ()
+            result .append (
+            SourcePage (
+            source_id =f"{source }#fallback={fallback }"if fallback else source ,
+            chapter_id =chapter_id ,
+            index =index ,
+            filename =urlparse (source ).path .rsplit ("/",1 )[-1 ]or f"{index }.jpg",
+            source_name =self .name ,
+            )
+            )
+        return result 
+
+    async def page_bytes (self ,page :SourcePage |str )->SourcePageContent :
+        url =page .source_id if isinstance (page ,SourcePage )else str (page )
+        source ,_ ,fragment =url .partition ("#fallback=")
+        try :
+            return await super ().page_bytes (source if fragment else url )
+        except Exception :
+            if not fragment :
+                raise 
+                # El origen principal falla a menudo; el sitio publica un respaldo.
+            return await super ().page_bytes (fragment )
+
+            # -------------------------------------------------------------- internals
+    async def _grid (self ,params :list [tuple [str ,str ]])->dict :
+        response =await self ._fetch ("GET",f"{self .base_url }/mangas.php",params =params )
+        root =_parse_html (response .text )
+        base =str (response .url )or self .base_url 
+        items :list [SourceSeries ]=[]
+        for grid in root .descendants ("div"):
+            if not grid .has_class ("manga-grid"):
+                continue 
+            for card in grid .descendants ("div"):
+                if not card .has_class ("manga-card"):
+                    continue 
+                heading =_first (card ,lambda node :node .has_class ("manga-title"))
+                anchor =_first (card ,lambda node :node .tag =="a")
+                if heading is None or anchor is None :
+                    continue 
+                title ,href =heading .text ().strip (),anchor .attrs .get ("href","")
+                if not title or not href :
+                    continue 
+                image =next (
+                (
+                node 
+                for holder in card .descendants ()
+                if holder .has_class ("card-cover")
+                for node in holder .descendants ("img")
+                ),
+                None ,
+                )
+                items .append (
+                SourceSeries (
+                source_id =urlparse (urljoin (base ,href )).path .lstrip ("/"),
+                title =title ,
+                source_name =self .name ,
+                cover_url =urljoin (base ,image .attrs .get ("src",""))if image is not None else None ,
+                web_url =urljoin (base ,href ),
+                )
+                )
+        has_more =any (
+        anchor .has_class ("page-btn")and "siguiente"in anchor .text ().casefold ()
+        for holder in root .descendants ()
+        if holder .has_class ("pagination")
+        for anchor in holder .descendants ("a")
+        )
+        return {"items":items ,"has_more":has_more }
+
+    async def _fetch (self ,method :str ,url :str ,**kwargs :Any )->Any :
+        response =await self ._request (method ,url ,**kwargs )
+        response .raise_for_status ()
+        if "Verificando"in (response .text or "")[:8192 ]:
+        # El reto es un script que fija una cookie; aqui no hay motor JS.
+            raise ValueError (
+            f"{self .display_name } está pidiendo una verificación: ábrelo en WebView y vuelve a intentarlo",
+            )
+        return response 
+
+    def _chapter (self ,item :dict ,parent :dict |None ,series_id :str )->SourceChapter :
+        number =item .get ("numero")or (parent or {}).get ("numero")
+        title =(
+        item .get ("titulo_str")
+        or (parent or {}).get ("titulo_str")
+        or (f"Capítulo {number }"if number else "Capítulo sin número")
+        )
+        groups =[
+        str (group .get ("nombre")or "")
+        for group in item .get ("grupos_list")or []
+        if isinstance (group ,dict )
+        ]
+        stamp =(item if parent is None else parent ).get ("fecha_subida")
+        return SourceChapter (
+        source_id =str (item .get ("url")or "").lstrip ("/"),
+        title =str (title ),
+        series_id =series_id ,
+        source_name =self .name ,
+        number =self ._number (item ),
+        language =self .language ,
+        scanlator =" & ".join (groups ),
+        uploaded_at =self ._date (stamp ),
+        )
+
+    @staticmethod 
+    def _hex_payload (text :str ,pattern :Any )->list [dict ]:
+        found =pattern .search (text or "")
+        if not found or len (found .group (1 ))%2 :
+            return []
+        try :
+            decoded =bytes .fromhex (found .group (1 )).decode ("utf-8")
+            value =json .loads (decoded )
+        except (ValueError ,UnicodeDecodeError ):
+            return []
+        return [item for item in value or []if isinstance (item ,dict )]
+
+    @staticmethod 
+    def _number (item :dict )->float :
+        try :
+            return float (item .get ("numero"))
+        except (TypeError ,ValueError ):
+            return 0.0 
+
+    @staticmethod 
+    def _date (value :Any )->str |None :
+        from datetime import datetime 
+
+        if not value :
+            return None 
+        try :
+            return datetime .strptime (str (value ),"%Y-%m-%d %H:%M:%S").isoformat ()
+        except ValueError :
+            return None 
+
+
+class GeneratedOnfMangasSource (OnfMangasSource ):
     name ='onfmangas_es'
     display_name ='ONF MANGAS'
     base_url ='https://onfmangas.com'
     language ='es'
     requests_per_minute =60 
+    content_warning ='mixed'
+    extra_headers ={
+    'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0',
+    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language':'en-US,en;q=0.9',
+    'Sec-Fetch-Site':'none',
+    }
+    image_headers ={'Referer':'https://onfmangas.com/'}
 
 
-SOURCE =GeneratedGenericSource
+SOURCE =GeneratedOnfMangasSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

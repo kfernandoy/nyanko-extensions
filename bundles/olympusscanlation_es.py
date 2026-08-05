@@ -569,203 +569,243 @@ class MadaraSource :
             raise SourceNotFoundError (f"{self .display_name } no tiene fetcher inyectado")
         return await self .fetcher .request (method ,url ,**kwargs )
 
-"""Fuente HTTP adaptable para extensiones sin un motor compartido."""
 
-import json 
-import re 
-from urllib .parse import urljoin 
+"""Adaptador de Olympus Scanlation: catalogo cacheado y dominio autodescubierto."""
+
+_OLYMPUS_DIRECTORY ="https://olympus.pages.dev"
+_OLYMPUS_CACHE_SECONDS =60 *60 
+_OLYMPUS_PAGE =20 
+_OLYMPUS_STATUS ={1 :"ongoing",3 :"hiatus",4 :"completed",5 :"cancelled"}
 
 
+class OlympusScanlationSource (MadaraSource ):
+    """El slug de cada serie no viaja en la ficha: se aprende del listado."""
 
-class GenericSource (MadaraSource ):
-    search_paths :tuple [str ,...]=("search","")
-    popular_paths :tuple [str ,...]=("series","manga","comics","popular","")
-    latest_paths :tuple [str ,...]=("latest","updates","series","manga","")
+    fetch_domain =True 
 
-    async def search (self ,query :str ,limit :int =20 )->list [SourceSeries ]:
-        for path in self .search_paths :
-            for key in ("q","query","s","keyword"):
-                try :
-                    response =await self ._request (
-                    "GET",
-                    urljoin (f"{self .base_url }/",path ),
-                    params ={key :query .strip (),"page":"1"},
-                    )
-                    if getattr (response ,"status_code",200 )>=400 :
-                        continue 
-                    values =self ._adaptive_series (response )
-                    if values :
-                        return values [:limit ]
-                except Exception :
-                    continue 
-        return []
+    def __init__ (self ,fetcher :SourceFetcher |None =None )->None :
+        super ().__init__ (fetcher )
+        self ._series_cache :list [dict ]=[]
+        self ._series_at =0.0 
+        self ._slugs :dict [int ,str ]={}
+        self ._domain_checked =False 
 
-    async def browse (self ,kind :str ,page :int =1 )->list [SourceSeries ]:
-        if kind not in {"popular","latest"}:
-            return []
-        paths =self .popular_paths if kind =="popular"else self .latest_paths 
-        for path in paths :
-            try :
-                response =await self ._request (
-                "GET",
-                urljoin (f"{self .base_url }/",path ),
-                params ={"page":str (page )},
-                )
-                if getattr (response ,"status_code",200 )>=400 :
-                    continue 
-                values =self ._adaptive_series (response )
-                if values :
-                    return values 
-            except Exception :
-                continue 
-        return []
-
-    async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
-        series_id =series .source_id if isinstance (series ,SourceSeries )else series 
-        response =await self ._request ("GET",urljoin (f"{self .base_url }/",series_id ))
-        response .raise_for_status ()
-        root =_parse_html (response .text )
-        result :list [SourceChapter ]=[]
-        for anchor in root .descendants ("a"):
-            href =anchor .attrs .get ("href","")
-            title =anchor .text ().strip ()or anchor .attrs .get ("title","").strip ()
-            marker =f"{href } {title }".lower ()
-            if not href or not any (value in marker for value in ("chapter","chap","capitulo","capítulo","episode","bolum","read/")):
-                continue 
-            found =re .search (r"\d+(?:\.\d+)?",title )
-            result .append (
-            SourceChapter (
-            source_id =urljoin (str (response .url ),href ),
-            title =title or "Capítulo",
-            series_id =series_id ,
-            source_name =self .name ,
-            number =float (found .group ())if found else None ,
-            )
-            )
-        if not result :
-            try :
-                payload =response .json ()
-            except (ValueError ,AttributeError ):
-                payload =None 
-            for item in self ._walk_dicts (payload ):
-                title =str (item .get ("title")or item .get ("name")or "")
-                item_id =item .get ("url")or item .get ("slug")or item .get ("id")
-                if not title or item_id is None or "chap"not in json .dumps (item ).lower ():
-                    continue 
-                found =re .search (r"\d+(?:\.\d+)?",title )
-                result .append (
-                SourceChapter (
-                source_id =urljoin (str (response .url ),str (item_id )),
-                title =title ,
-                series_id =series_id ,
-                source_name =self .name ,
-                number =float (found .group ())if found else None ,
-                )
-                )
-        return list ({item .source_id :item for item in result }.values ())
-
-    def _adaptive_series (self ,response )->list [SourceSeries ]:
-        root =_parse_html (response .text )
-        result :list [SourceSeries ]=[]
-        seen :set [str ]=set ()
-        for anchor in root .descendants ("a"):
-            href =anchor .attrs .get ("href","")
-            title =anchor .attrs .get ("title","").strip ()or anchor .text ().strip ()
-            parent =anchor .parent 
-            marker =""
-            while parent is not None :
-                marker +=f" {parent .attrs .get ('id','')} {parent .attrs .get ('class','')}"
-                parent =parent .parent 
-            if not href or not title or not any (value in marker .lower ()for value in ("manga","comic","series","novel","item","book")):
-                continue 
-            source_id =urljoin (str (response .url ),href )
-            if source_id not in seen :
-                seen .add (source_id )
-                image =_first (anchor ,lambda node :node .tag =="img")
-                if image is None and anchor .parent is not None :
-                    image =_first (anchor .parent ,lambda node :node .tag =="img")
-                result .append (
-                SourceSeries (
-                source_id =source_id ,
-                title =title ,
-                source_name =self .name ,
-                cover_url =(
-                _image_url (image ,str (response .url ))if image else None 
-                ),
-                web_url =source_id ,
-                )
-                )
-        if result :
-            return result 
-        try :
-            payload =response .json ()
-        except (ValueError ,AttributeError ):
-            return []
-        for item in self ._walk_dicts (payload ):
-            title =item .get ("title")or item .get ("name")
-            item_id =item .get ("url")or item .get ("href")or item .get ("slug")or item .get ("id")
-            if title and item_id is not None :
-                source_id =urljoin (str (response .url ),str (item_id ))
-                if source_id not in seen :
-                    seen .add (source_id )
-                    cover =(
-                    item .get ("cover_url")
-                    or item .get ("cover")
-                    or item .get ("thumbnail")
-                    or item .get ("image")
-                    )
-                    result .append (
-                    SourceSeries (
-                    source_id =source_id ,
-                    title =str (title ),
-                    source_name =self .name ,
-                    cover_url =(
-                    urljoin (str (response .url ),cover )
-                    if isinstance (cover ,str )
-                    else None 
-                    ),
-                    web_url =source_id ,
-                    )
-                    )
-        return result 
-
-    @staticmethod 
-    def _walk_dicts (value ):
-        if isinstance (value ,dict ):
-            yield value 
-            for child in value .values ():
-                yield from GenericSource ._walk_dicts (child )
-        elif isinstance (value ,list ):
-            for child in value :
-                yield from GenericSource ._walk_dicts (child )
-
-class GeneratedGenericSource (GenericSource ):
+    @property 
+    def api_url (self )->str :
+        return self .base_url .replace ("https://","https://panel.")
 
     def get_preferences (self )->list [SourcePreference ]:
-    # Autogenerated via heuristic port
-        data =[
-        {
-        "type":"checkbox",
-        "id":"pref_adult",
-        "name":"Show Adult Content",
-        "default":False 
-        }
+        return [
+        SourcePreference (
+        "fetchDomain","Buscar dominio automáticamente","checkbox",default =True ,
+        )
         ]
-        return [SourcePreference (**item )for item in data ]
 
     def get_filters (self )->list [SourceFilter ]:
-    # Autogenerated via heuristic port
-        data =[]
-        return [SourceFilter (**item )for item in data ]
+        return []
 
+    async def browse (self ,kind :str ,page :int =1 ):
+        await self ._ensure_series ()
+        if kind =="popular":
+            payload =await self ._get (f"{self .base_url }/api/rankings",{
+            "page":str (page ),"period":"total_ranking",
+            })
+        elif kind =="latest":
+            payload =await self ._get (f"{self .base_url }/api/new-chapters",{"page":str (page )})
+        else :
+            return {"items":[],"has_more":False }
+        items =[
+        self ._series (item )
+        for item in payload .get ("data")or []
+        if isinstance (item ,dict )and item .get ("type")=="comic"
+        ]
+        return {
+        "items":items ,
+        "has_more":int (payload .get ("current_page")or 0 )<int (payload .get ("last_page")or 0 ),
+        }
+
+    async def search (self ,query :str ,page :int =1 ,filters :dict |None =None ):
+    # No hay endpoint de busqueda: se filtra el listado completo cacheado.
+        await self ._ensure_series ()
+        needle =query .strip ().casefold ()
+        matches =[
+        item for item in self ._series_cache 
+        if needle in str (item .get ("name")or "").casefold ()
+        ]
+        start =(page -1 )*_OLYMPUS_PAGE 
+        return {
+        "items":[self ._series (item )for item in matches [start :start +_OLYMPUS_PAGE ]],
+        "has_more":page *_OLYMPUS_PAGE <len (matches ),
+        }
+
+    async def details (self ,series :SourceSeries |str )->SourceSeries :
+        series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
+        slug =await self ._slug (series_id )
+        payload =await self ._get (f"{self .base_url }/api/series/{slug }",{"type":"comic"})
+        data =payload .get ("data")or {}
+        return SourceSeries (
+        source_id =str (data .get ("id")or series_id ),
+        title =str (data .get ("name")or ""),
+        source_name =self .name ,
+        cover_url =data .get ("cover")or None ,
+        description =str (data .get ("summary")or "")or None ,
+        status =_OLYMPUS_STATUS .get (int ((data .get ("status")or {}).get ("id")or 0 )),
+        content_tags =tuple (
+        str (genre .get ("name")or "").strip ()
+        for genre in data .get ("genres")or []
+        if isinstance (genre ,dict )
+        ),
+        web_url =f"{self .base_url }/series/comic-{slug }",
+        )
+
+    async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
+        series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
+        slug =await self ._slug (series_id )
+        entries :list [dict ]=[]
+        total ,page =None ,1 
+        while True :
+            payload =await self ._get (f"{self .api_url }/api/series/{slug }/chapters",{
+            "page":str (page ),"direction":"desc","type":"comic",
+            })
+            batch =[item for item in payload .get ("data")or []if isinstance (item ,dict )]
+            entries .extend (batch )
+            total =int ((payload .get ("meta")or {}).get ("total")or 0 )if total is None else total 
+            if not batch or len (entries )>=total :
+                break 
+            page +=1 
+        return [
+        SourceChapter (
+        source_id =f"{series_id }/{item .get ('id')}",
+        title =f"Capitulo {item .get ('name')}",
+        series_id =series_id ,
+        source_name =self .name ,
+        number =self ._float (item .get ("name")),
+        language =self .language ,
+        uploaded_at =self ._date (item .get ("published_at")),
+        )
+        for item in entries 
+        ]
+
+    async def pages (self ,chapter :SourceChapter |str )->list [SourcePage ]:
+        chapter_id =chapter .source_id if isinstance (chapter ,SourceChapter )else str (chapter )
+        series_id ,_ ,identifier =chapter_id .partition ("/")
+        slug =await self ._slug (series_id )
+        payload =await self ._get (f"{self .base_url }/api/capitulo/comic-{slug }/{identifier }",{})
+        urls =[str (value )for value in (payload .get ("chapter")or {}).get ("pages")or []]
+        return [
+        SourcePage (
+        source_id =value ,
+        chapter_id =chapter_id ,
+        index =index ,
+        filename =urlparse (value ).path .rsplit ("/",1 )[-1 ]or f"{index }.jpg",
+        source_name =self .name ,
+        )
+        for index ,value in enumerate (urls )
+        ]
+
+        # -------------------------------------------------------------- internals
+    async def _ensure_domain (self )->None :
+        if self ._domain_checked or not self .fetch_domain :
+            return 
+        self ._domain_checked =True 
+        try :
+            response =await self ._request ("GET",_OLYMPUS_DIRECTORY )
+            response .raise_for_status ()
+            root =_parse_html (response .text )
+            meta =_first (
+            root ,
+            lambda node :node .tag =="meta"and node .attrs .get ("property")=="og:url",
+            )
+            target =meta .attrs .get ("content","")if meta is not None else ""
+            if not target :
+                return 
+            resolved =await self ._request ("GET",target )
+            host =urlparse (str (resolved .url )or target ).netloc 
+            if host :
+            # El dominio cambia a menudo; la app no persiste, se usa por sesion.
+                self .base_url =f"https://{host }"
+        except Exception :
+            return 
+
+    async def _ensure_series (self )->None :
+        import time 
+
+        await self ._ensure_domain ()
+        now =time .time ()
+        if self ._series_cache and now -self ._series_at <_OLYMPUS_CACHE_SECONDS :
+            return 
+        payload =await self ._get (f"{self .base_url }/api/series/list",{})
+        comics =[
+        item 
+        for item in payload .get ("data")or []
+        if isinstance (item ,dict )and item .get ("type")=="comic"
+        ]
+        self ._series_cache =comics 
+        self ._series_at =now 
+        self ._slugs .update (
+        {int (item ["id"]):str (item .get ("slug")or "")for item in comics if item .get ("id")is not None }
+        )
+
+    async def _slug (self ,series_id :str )->str :
+        await self ._ensure_series ()
+        try :
+            key =int (series_id )
+        except (TypeError ,ValueError ):
+            return series_id 
+        slug =self ._slugs .get (key )
+        if not slug :
+            raise SourceNotFoundError (f"{self .display_name }: serie {series_id } sin slug conocido")
+        return slug 
+
+    async def _get (self ,url :str ,params :dict )->dict :
+        response =await self ._request ("GET",url ,params =params )
+        response .raise_for_status ()
+        return response .json ()or {}
+
+    def _series (self ,item :dict )->SourceSeries :
+        identifier =item .get ("id")
+        if identifier is not None and item .get ("slug"):
+            self ._slugs [int (identifier )]=str (item ["slug"])
+        return SourceSeries (
+        source_id =str (identifier ),
+        title =str (item .get ("name")or ""),
+        source_name =self .name ,
+        cover_url =item .get ("cover")or None ,
+        web_url =f"{self .base_url }/series/comic-{item .get ('slug')}",
+        )
+
+    @staticmethod 
+    def _float (value :Any )->float |None :
+        try :
+            return float (value )
+        except (TypeError ,ValueError ):
+            return None 
+
+    @staticmethod 
+    def _date (value :Any )->str |None :
+        from datetime import datetime 
+
+        if not value :
+            return None 
+        try :
+            return datetime .strptime (str (value ),"%Y-%m-%dT%H:%M:%S.%fZ").replace (
+            microsecond =0 ,
+            ).isoformat ()
+        except ValueError :
+            return None 
+
+
+class GeneratedOlympusScanlationSource (OlympusScanlationSource ):
     name ='olympusscanlation_es'
     display_name ='Olympus Scanlation'
     base_url ='https://olympusxyz.com'
     language ='es'
-    requests_per_minute =60 
+    requests_per_minute =30 
+    content_warning ='safe'
+    image_headers ={'Referer':'https://olympusxyz.com/'}
 
 
-SOURCE =GeneratedGenericSource
+SOURCE =GeneratedOlympusScanlationSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 
