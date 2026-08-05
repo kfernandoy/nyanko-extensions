@@ -108,5 +108,35 @@ class InMangaTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(fetcher.requests[-1][2]["headers"]["Referer"], "https://inmanga.com/")
 
 
+class InMangaFragmentoRealTest(unittest.IsolatedAsyncioTestCase):
+    """getMangasConsultResult responde un fragmento suelto, sin <body> que lo envuelva."""
+
+    async def test_anchors_de_primer_nivel_sin_body(self):
+        # El Kotlin usa "body > a" porque Jsoup normaliza el fragmento a documento completo;
+        # aqui los anchors cuelgan de la raiz sin etiqueta. Exigir "body" los descartaba todos.
+        cards = "".join(
+            f'<a href="/ver/manga/Gato-{index}/uuid-{index}" class="manga-result col-md-4">'
+            f'<div class="panel widget"><div class="list-group">'
+            f'<h4 class="m0 list-group-item ellipsed-text">Gato {index}</h4></div>'
+            f'<img data-src="https://cdn1.intomanga.com/i/m/uuid-{index}/t/o/x.jpg"'
+            f' src="../content/img/loading-gear.gif" class="lazy"></div></a>'
+            for index in range(10)
+        )
+        fragment = f'<div class="col-xs-12 mb-lg"><h4 class=""><span id="favoriteMangaAlert"></span></h4></div>\n{cards}'
+        fetcher = Fetcher([Response("https://inmanga.com/manga/getMangasConsultResult", fragment)])
+        source = source_class()(fetcher)
+
+        popular = await source.browse("popular")
+
+        self.assertEqual(len(popular["items"]), 10)
+        self.assertEqual(popular["items"][0].source_id, "/ver/manga/Gato-0/uuid-0")
+        self.assertEqual(popular["items"][0].title, "Gato 0")
+        # data-src manda sobre src, que es el gif de carga.
+        self.assertEqual(
+            popular["items"][0].cover_url,
+            "https://cdn1.intomanga.com/i/m/uuid-0/t/o/x.jpg",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

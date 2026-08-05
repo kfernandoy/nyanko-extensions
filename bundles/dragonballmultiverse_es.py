@@ -3814,7 +3814,11 @@ class InMangaSource(GenericSource):
         root = _parse_html(response.text)
         items: list[SourceSeries] = []
         for anchor in root.descendants("a"):
-            if anchor.parent is None or anchor.parent.tag != "body" or not anchor.attrs.get("href"):
+            # El Kotlin selecciona "body > a": Jsoup envuelve el fragmento en un documento
+            # completo, pero aqui los anchors de primer nivel cuelgan de la raiz sin etiqueta.
+            if anchor.parent is None or not anchor.attrs.get("href"):
+                continue
+            if anchor.parent.tag not in {"", "body", "html"}:
                 continue
             title = _first(anchor, lambda node: node.tag == "h4" and node.has_class("m0"))
             if title is None:
