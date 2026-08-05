@@ -569,591 +569,627 @@ class MadaraSource:
             raise SourceNotFoundError(f"{self.display_name} no tiene fetcher inyectado")
         return await self.fetcher.request(method, url, **kwargs)
 
-"""Fuente HTTP adaptable para extensiones sin un motor compartido."""
 
-import json
-import re
-from urllib.parse import urljoin
+"""Adaptador de OniSaga: catalogo y capitulos detras de componentes Livewire."""
 
-try:
-    from .madara import MadaraSource, SourceChapter, SourceFilter,
-    SourcePreference,
-    SourceSeries, _first, _image_url, _parse_html
-except ImportError:
-    pass
+_ONISAGA_READER_TOKEN = re.compile(r"""readerToken["']?\s*:\s*["']([^"']+)["']""")
+_ONISAGA_PAGE_ORDER = re.compile(r"""["']?order["']?\s*:\s*(\d+)""")
+_ONISAGA_CHAPTER_NUMBER = re.compile(r"Chapter\s+([\d.]+)")
+_ONISAGA_RELATIVE = re.compile(r"(\d+)\s+(minute|hour|day|week|month|year)s?\s+ago")
+_ONISAGA_ORIGIN = re.compile(r"(Japanese|Korean|Chinese|English)", re.I)
+_ONISAGA_YEAR = re.compile(r"^\d{4}$")
+_ONISAGA_RATING = re.compile(r"(\d)\.0(?=[/ ])")
+_ONISAGA_INTERPUNCT = re.compile(r"\s*·\s*")
+_ONISAGA_LANGS = {
+    "en": "EN", "fr": "FR", "ja": "JA", "pt-BR": "PT-BR",
+    "pt": "PT", "es-419": "ES-LA", "es": "ES",
+}
+_ONISAGA_ALL_LANGS = ("EN", "FR", "JA", "PT-BR", "PT", "ES-LA", "ES")
+_ONISAGA_TYPES = (
+    ("", "All"), ("MANGA", "Manga"), ("MANHWA", "Manhwa"), ("MANHUA", "Manhua"),
+    ("NOVEL", "Novel"), ("ONE-SHOT", "One-Shot"), ("DOUJINSHI", "Doujinshi"),
+)
+_ONISAGA_STATUSES = (
+    ("", "All"), ("ongoing", "Ongoing"), ("completed", "Completed"),
+    ("hiatus", "Hiatus"), ("releasing", "Releasing"),
+)
+_ONISAGA_SORTS = (
+    ("created_at", "Newest"), ("view", "Most Viewed"), ("release_date", "Release Date"),
+    ("like_count", "Top Rated (Likes)"), ("title", "Name A-Z"),
+    ("vote_average", "Top Rated (Score)"), ("fan_favorites", "Fan Favorites"),
+)
+_ONISAGA_MIN_CHAPTERS = (("", "Any"), ("10", "10+"), ("50", "50+"), ("100", "100+"), ("200", "200+"))
+_ONISAGA_TYPE_BADGES = ("manga", "manhwa", "manhua", "shounen", "seinen", "shoujo", "josei")
+_ONISAGA_GENRES = (
+    ("1", "Action"), ("61", "Adaptation"), ("67", "Adult"), ("6", "Adventure"), ("84", "Aliens"),
+    ("43", "Avant Garde"), ("78", "Award Winning"), ("31", "Boys Love"), ("2", "Comedy"),
+    ("90", "Comics"), ("59", "Crazy MC"), ("98", "Crime"), ("57", "Demon"), ("5", "Demons"),
+    ("79", "Doujinshi"), ("15", "Drama"), ("56", "Dungeons"), ("29", "Ecchi"), ("68", "Erotica"),
+    ("7", "Fantasy"), ("62", "Full Color"), ("46", "Game"), ("75", "Gender Bender"),
+    ("63", "Genderswap"), ("49", "Genius MC"), ("28", "Girls Love"), ("80", "Gore"),
+    ("42", "Gourmet"), ("37", "Harem"), ("76", "Hentai"), ("66", "Historical"), ("16", "Horror"),
+    ("3", "Isekai"), ("34", "Iyashikei"), ("35", "Josei"), ("38", "Kids"), ("70", "Lolicon"),
+    ("64", "Long Strip"), ("8", "Magic"), ("99", "Magical Girls"), ("41", "Mahou Shoujo"),
+    ("11", "Martial Arts"), ("45", "Mature"), ("36", "Mecha"), ("101", "Medical"),
+    ("17", "Military"), ("88", "Monster Girls"), ("81", "Monsters"), ("47", "Murim"),
+    ("30", "Music"), ("19", "Mystery"), ("54", "Necromancer"), ("55", "Overpowered"),
+    ("12", "Parody"), ("100", "Philosophical"), ("85", "Post-Apocalyptic"), ("18", "Psychological"),
+    ("52", "Regression"), ("48", "Reincarnation"), ("51", "Revenge"), ("44", "Reverse Harem"),
+    ("20", "Romance"), ("86", "Samurai"), ("21", "School"), ("24", "School Life"), ("13", "Sci-Fi"),
+    ("14", "Seinen"), ("82", "Self-Published"), ("77", "Shotacon"), ("27", "Shoujo"),
+    ("73", "Shoujo Ai"), ("4", "Shounen"), ("72", "Shounen Ai"), ("26", "Slice of Life"),
+    ("69", "Smut"), ("22", "Space"), ("32", "Sports"), ("9", "Super Power"), ("89", "Superhero"),
+    ("10", "Supernatural"), ("87", "Survival"), ("39", "Suspense"), ("50", "System"),
+    ("40", "Thriller"), ("23", "Time Travel"), ("58", "Tower"), ("25", "Tragedy"),
+    ("33", "Vampire"), ("53", "Villain"), ("60", "Violence"), ("65", "Web Comic"),
+    ("113", "Wuxia"), ("74", "Yaoi"), ("71", "Yuri"),
+)
 
 
-class GenericSource(MadaraSource):
-    search_paths: tuple[str, ...] = ("search", "")
-    popular_paths: tuple[str, ...] = ("series", "manga", "comics", "popular", "")
-    latest_paths: tuple[str, ...] = ("latest", "updates", "series", "manga", "")
+def _onisaga_detach(node: _Node) -> None:
+    parent = node.parent
+    if parent is not None and node in parent.children:
+        parent.children.remove(node)
 
-    async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:
-        for path in self.search_paths:
-            for key in ("q", "query", "s", "keyword"):
-                try:
-                    response = await self._request(
-                        "GET",
-                        urljoin(f"{self.base_url}/", path),
-                        params={key: query.strip(), "page": "1"},
-                    )
-                    if getattr(response, "status_code", 200) >= 400:
-                        continue
-                    values = self._adaptive_series(response)
-                    if values:
-                        return values[:limit]
-                except Exception:
-                    continue
-        return []
 
-    async def browse(self, kind: str, page: int = 1) -> list[SourceSeries]:
-        if kind not in {"popular", "latest"}:
-            return []
-        paths = self.popular_paths if kind == "popular" else self.latest_paths
-        for path in paths:
-            try:
-                response = await self._request(
-                    "GET",
-                    urljoin(f"{self.base_url}/", path),
-                    params={"page": str(page)},
-                )
-                if getattr(response, "status_code", 200) >= 400:
-                    continue
-                values = self._adaptive_series(response)
-                if values:
-                    return values
-            except Exception:
-                continue
-        return []
+def _onisaga_ancestor(node: _Node, *classes: str) -> _Node | None:
+    current = node.parent
+    while current is not None:
+        if all(current.has_class(name) for name in classes):
+            return current
+        current = current.parent
+    return None
 
-    async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
-        series_id = series.source_id if isinstance(series, SourceSeries) else series
-        response = await self._request("GET", urljoin(f"{self.base_url}/", series_id))
-        response.raise_for_status()
-        root = _parse_html(response.text)
-        result: list[SourceChapter] = []
-        for anchor in root.descendants("a"):
-            href = anchor.attrs.get("href", "")
-            title = anchor.text().strip() or anchor.attrs.get("title", "").strip()
-            marker = f"{href} {title}".lower()
-            if not href or not any(value in marker for value in ("chapter", "chap", "capitulo", "capítulo", "episode", "bolum", "read/")):
-                continue
-            found = re.search(r"\d+(?:\.\d+)?", title)
-            result.append(
-                SourceChapter(
-                    source_id=urljoin(str(response.url), href),
-                    title=title or "Capítulo",
-                    series_id=series_id,
-                    source_name=self.name,
-                    number=float(found.group()) if found else None,
-                )
-            )
-        if not result:
-            try:
-                payload = response.json()
-            except (ValueError, AttributeError):
-                payload = None
-            for item in self._walk_dicts(payload):
-                title = str(item.get("title") or item.get("name") or "")
-                item_id = item.get("url") or item.get("slug") or item.get("id")
-                if not title or item_id is None or "chap" not in json.dumps(item).lower():
-                    continue
-                found = re.search(r"\d+(?:\.\d+)?", title)
-                result.append(
-                    SourceChapter(
-                        source_id=urljoin(str(response.url), str(item_id)),
-                        title=title,
-                        series_id=series_id,
-                        source_name=self.name,
-                        number=float(found.group()) if found else None,
-                    )
-                )
-        return list({item.source_id: item for item in result}.values())
 
-    def _adaptive_series(self, response) -> list[SourceSeries]:
-        root = _parse_html(response.text)
-        result: list[SourceSeries] = []
-        seen: set[str] = set()
-        for anchor in root.descendants("a"):
-            href = anchor.attrs.get("href", "")
-            title = anchor.attrs.get("title", "").strip() or anchor.text().strip()
-            parent = anchor.parent
-            marker = ""
-            while parent is not None:
-                marker += f" {parent.attrs.get('id', '')} {parent.attrs.get('class', '')}"
-                parent = parent.parent
-            if not href or not title or not any(value in marker.lower() for value in ("manga", "comic", "series", "novel", "item", "book")):
-                continue
-            source_id = urljoin(str(response.url), href)
-            if source_id not in seen:
-                seen.add(source_id)
-                image = _first(anchor, lambda node: node.tag == "img")
-                if image is None and anchor.parent is not None:
-                    image = _first(anchor.parent, lambda node: node.tag == "img")
-                result.append(
-                    SourceSeries(
-                        source_id=source_id,
-                        title=title,
-                        source_name=self.name,
-                        cover_url=(
-                            _image_url(image, str(response.url)) if image else None
-                        ),
-                        web_url=source_id,
-                    )
-                )
-        if result:
-            return result
-        try:
-            payload = response.json()
-        except (ValueError, AttributeError):
-            return []
-        for item in self._walk_dicts(payload):
-            title = item.get("title") or item.get("name")
-            item_id = item.get("url") or item.get("href") or item.get("slug") or item.get("id")
-            if title and item_id is not None:
-                source_id = urljoin(str(response.url), str(item_id))
-                if source_id not in seen:
-                    seen.add(source_id)
-                    cover = (
-                        item.get("cover_url")
-                        or item.get("cover")
-                        or item.get("thumbnail")
-                        or item.get("image")
-                    )
-                    result.append(
-                        SourceSeries(
-                            source_id=source_id,
-                            title=str(title),
-                            source_name=self.name,
-                            cover_url=(
-                                urljoin(str(response.url), cover)
-                                if isinstance(cover, str)
-                                else None
-                            ),
-                            web_url=source_id,
-                        )
-                    )
-        return result
+class OniSagaSource(MadaraSource):
+    """El sitio es Livewire: hay que reenviar snapshot y token en cada pagina."""
 
-    @staticmethod
-    def _walk_dicts(value):
-        if isinstance(value, dict):
-            yield value
-            for child in value.values():
-                yield from GenericSource._walk_dicts(child)
-        elif isinstance(value, list):
-            for child in value:
-                yield from GenericSource._walk_dicts(child)
+    image_delay_seconds = 2.0
 
-class GeneratedGenericSource(GenericSource):
+    def __init__(self, fetcher: SourceFetcher | None = None) -> None:
+        super().__init__(fetcher)
+        self._state: tuple[str, str, str] | None = None  # (url, snapshot, token)
+        self._reader_token = ""
+        self._last_image_at = 0.0
+
+    @property
+    def language_code(self) -> str | None:
+        return _ONISAGA_LANGS.get(self.language)
 
     def get_preferences(self) -> list[SourcePreference]:
-        # Autogenerated via heuristic port
-        data = [
-                {
-                                "type": "checkbox",
-                                "id": "pref_adult",
-                                "name": "Show Adult Content",
-                                "default": false
-                }
-]
-        return [SourcePreference(**item) for item in data]
+        return [
+            SourcePreference("pref_nsfw", "Show NSFW / 18+ Content", "checkbox", default=False),
+            SourcePreference("pref_type", "Type Filter", "select", list(_ONISAGA_TYPES), ""),
+            SourcePreference("pref_status", "Status Filter", "select", list(_ONISAGA_STATUSES), ""),
+            SourcePreference("pref_rate_limit", "Image Requests Limit", "select", [
+                ("1500", "1 image per 1.50 seconds"), ("1750", "1 image per 1.75 seconds"),
+                ("2000", "1 image per 2.00 seconds"), ("2250", "1 image per 2.25 seconds"),
+                ("2500", "1 image per 2.50 seconds"),
+            ], "2000"),
+        ]
 
     def get_filters(self) -> list[SourceFilter]:
-        # Autogenerated via heuristic port
-        data = [
-                {
-                                "type": "select",
-                                "id": "generic_filter",
-                                "name": "Filtro",
-                                "options": [
-                                                {
-                                                                "name": "Action",
-                                                                "value": "1"
-                                                },
-                                                {
-                                                                "name": "Adaptation",
-                                                                "value": "61"
-                                                },
-                                                {
-                                                                "name": "Adult",
-                                                                "value": "67"
-                                                },
-                                                {
-                                                                "name": "Adventure",
-                                                                "value": "6"
-                                                },
-                                                {
-                                                                "name": "Aliens",
-                                                                "value": "84"
-                                                },
-                                                {
-                                                                "name": "Avant Garde",
-                                                                "value": "43"
-                                                },
-                                                {
-                                                                "name": "Award Winning",
-                                                                "value": "78"
-                                                },
-                                                {
-                                                                "name": "Boys Love",
-                                                                "value": "31"
-                                                },
-                                                {
-                                                                "name": "Comedy",
-                                                                "value": "2"
-                                                },
-                                                {
-                                                                "name": "Comics",
-                                                                "value": "90"
-                                                },
-                                                {
-                                                                "name": "Crazy MC",
-                                                                "value": "59"
-                                                },
-                                                {
-                                                                "name": "Crime",
-                                                                "value": "98"
-                                                },
-                                                {
-                                                                "name": "Demon",
-                                                                "value": "57"
-                                                },
-                                                {
-                                                                "name": "Demons",
-                                                                "value": "5"
-                                                },
-                                                {
-                                                                "name": "Doujinshi",
-                                                                "value": "79"
-                                                },
-                                                {
-                                                                "name": "Drama",
-                                                                "value": "15"
-                                                },
-                                                {
-                                                                "name": "Dungeons",
-                                                                "value": "56"
-                                                },
-                                                {
-                                                                "name": "Ecchi",
-                                                                "value": "29"
-                                                },
-                                                {
-                                                                "name": "Erotica",
-                                                                "value": "68"
-                                                },
-                                                {
-                                                                "name": "Fantasy",
-                                                                "value": "7"
-                                                },
-                                                {
-                                                                "name": "Full Color",
-                                                                "value": "62"
-                                                },
-                                                {
-                                                                "name": "Game",
-                                                                "value": "46"
-                                                },
-                                                {
-                                                                "name": "Gender Bender",
-                                                                "value": "75"
-                                                },
-                                                {
-                                                                "name": "Genderswap",
-                                                                "value": "63"
-                                                },
-                                                {
-                                                                "name": "Genius MC",
-                                                                "value": "49"
-                                                },
-                                                {
-                                                                "name": "Girls Love",
-                                                                "value": "28"
-                                                },
-                                                {
-                                                                "name": "Gore",
-                                                                "value": "80"
-                                                },
-                                                {
-                                                                "name": "Gourmet",
-                                                                "value": "42"
-                                                },
-                                                {
-                                                                "name": "Harem",
-                                                                "value": "37"
-                                                },
-                                                {
-                                                                "name": "Hentai",
-                                                                "value": "76"
-                                                },
-                                                {
-                                                                "name": "Historical",
-                                                                "value": "66"
-                                                },
-                                                {
-                                                                "name": "Horror",
-                                                                "value": "16"
-                                                },
-                                                {
-                                                                "name": "Isekai",
-                                                                "value": "3"
-                                                },
-                                                {
-                                                                "name": "Iyashikei",
-                                                                "value": "34"
-                                                },
-                                                {
-                                                                "name": "Josei",
-                                                                "value": "35"
-                                                },
-                                                {
-                                                                "name": "Kids",
-                                                                "value": "38"
-                                                },
-                                                {
-                                                                "name": "Lolicon",
-                                                                "value": "70"
-                                                },
-                                                {
-                                                                "name": "Long Strip",
-                                                                "value": "64"
-                                                },
-                                                {
-                                                                "name": "Magic",
-                                                                "value": "8"
-                                                },
-                                                {
-                                                                "name": "Magical Girls",
-                                                                "value": "99"
-                                                },
-                                                {
-                                                                "name": "Mahou Shoujo",
-                                                                "value": "41"
-                                                },
-                                                {
-                                                                "name": "Martial Arts",
-                                                                "value": "11"
-                                                },
-                                                {
-                                                                "name": "Mature",
-                                                                "value": "45"
-                                                },
-                                                {
-                                                                "name": "Mecha",
-                                                                "value": "36"
-                                                },
-                                                {
-                                                                "name": "Medical",
-                                                                "value": "101"
-                                                },
-                                                {
-                                                                "name": "Military",
-                                                                "value": "17"
-                                                },
-                                                {
-                                                                "name": "Monster Girls",
-                                                                "value": "88"
-                                                },
-                                                {
-                                                                "name": "Monsters",
-                                                                "value": "81"
-                                                },
-                                                {
-                                                                "name": "Murim",
-                                                                "value": "47"
-                                                },
-                                                {
-                                                                "name": "Music",
-                                                                "value": "30"
-                                                },
-                                                {
-                                                                "name": "Mystery",
-                                                                "value": "19"
-                                                },
-                                                {
-                                                                "name": "Necromancer",
-                                                                "value": "54"
-                                                },
-                                                {
-                                                                "name": "Overpowered",
-                                                                "value": "55"
-                                                },
-                                                {
-                                                                "name": "Parody",
-                                                                "value": "12"
-                                                },
-                                                {
-                                                                "name": "Philosophical",
-                                                                "value": "100"
-                                                },
-                                                {
-                                                                "name": "Post-Apocalyptic",
-                                                                "value": "85"
-                                                },
-                                                {
-                                                                "name": "Psychological",
-                                                                "value": "18"
-                                                },
-                                                {
-                                                                "name": "Regression",
-                                                                "value": "52"
-                                                },
-                                                {
-                                                                "name": "Reincarnation",
-                                                                "value": "48"
-                                                },
-                                                {
-                                                                "name": "Revenge",
-                                                                "value": "51"
-                                                },
-                                                {
-                                                                "name": "Reverse Harem",
-                                                                "value": "44"
-                                                },
-                                                {
-                                                                "name": "Romance",
-                                                                "value": "20"
-                                                },
-                                                {
-                                                                "name": "Samurai",
-                                                                "value": "86"
-                                                },
-                                                {
-                                                                "name": "School",
-                                                                "value": "21"
-                                                },
-                                                {
-                                                                "name": "School Life",
-                                                                "value": "24"
-                                                },
-                                                {
-                                                                "name": "Sci-Fi",
-                                                                "value": "13"
-                                                },
-                                                {
-                                                                "name": "Seinen",
-                                                                "value": "14"
-                                                },
-                                                {
-                                                                "name": "Self-Published",
-                                                                "value": "82"
-                                                },
-                                                {
-                                                                "name": "Shotacon",
-                                                                "value": "77"
-                                                },
-                                                {
-                                                                "name": "Shoujo",
-                                                                "value": "27"
-                                                },
-                                                {
-                                                                "name": "Shoujo Ai",
-                                                                "value": "73"
-                                                },
-                                                {
-                                                                "name": "Shounen",
-                                                                "value": "4"
-                                                },
-                                                {
-                                                                "name": "Shounen Ai",
-                                                                "value": "72"
-                                                },
-                                                {
-                                                                "name": "Slice of Life",
-                                                                "value": "26"
-                                                },
-                                                {
-                                                                "name": "Smut",
-                                                                "value": "69"
-                                                },
-                                                {
-                                                                "name": "Space",
-                                                                "value": "22"
-                                                },
-                                                {
-                                                                "name": "Sports",
-                                                                "value": "32"
-                                                },
-                                                {
-                                                                "name": "Super Power",
-                                                                "value": "9"
-                                                },
-                                                {
-                                                                "name": "Superhero",
-                                                                "value": "89"
-                                                },
-                                                {
-                                                                "name": "Supernatural",
-                                                                "value": "10"
-                                                },
-                                                {
-                                                                "name": "Survival",
-                                                                "value": "87"
-                                                },
-                                                {
-                                                                "name": "Suspense",
-                                                                "value": "39"
-                                                },
-                                                {
-                                                                "name": "System",
-                                                                "value": "50"
-                                                },
-                                                {
-                                                                "name": "Thriller",
-                                                                "value": "40"
-                                                },
-                                                {
-                                                                "name": "Time Travel",
-                                                                "value": "23"
-                                                },
-                                                {
-                                                                "name": "Tower",
-                                                                "value": "58"
-                                                },
-                                                {
-                                                                "name": "Tragedy",
-                                                                "value": "25"
-                                                },
-                                                {
-                                                                "name": "Vampire",
-                                                                "value": "33"
-                                                },
-                                                {
-                                                                "name": "Villain",
-                                                                "value": "53"
-                                                },
-                                                {
-                                                                "name": "Violence",
-                                                                "value": "60"
-                                                },
-                                                {
-                                                                "name": "Web Comic",
-                                                                "value": "65"
-                                                },
-                                                {
-                                                                "name": "Wuxia",
-                                                                "value": "113"
-                                                },
-                                                {
-                                                                "name": "Yaoi",
-                                                                "value": "74"
-                                                },
-                                                {
-                                                                "name": "Yuri",
-                                                                "value": "71"
-                                                }
-                                ],
-                                "default": "1"
-                }
-]
-        return [SourceFilter(**item) for item in data]
+        return [
+            SourceFilter("platform", "Type", "select", list(_ONISAGA_TYPES), ""),
+            SourceFilter("genre", "Genres", "tri_state", list(_ONISAGA_GENRES), []),
+            SourceFilter("status", "Status", "select", list(_ONISAGA_STATUSES), ""),
+            SourceFilter("min_chapters", "Min Chapters", "select", list(_ONISAGA_MIN_CHAPTERS), ""),
+            SourceFilter("group", "Group", "text", default=""),
+            SourceFilter("release_start", "Release Start Date (YYYY-MM-DD)", "text", default=""),
+            SourceFilter("release_end", "Release End Date (YYYY-MM-DD)", "text", default=""),
+            SourceFilter("sort", "Sort", "select", list(_ONISAGA_SORTS), "view"),
+        ]
 
+    async def browse(self, kind: str, page: int = 1):
+        if kind not in {"popular", "latest"}:
+            return {"items": [], "has_more": False}
+        updates = self._updates(sort="view" if kind == "popular" else "created_at")
+        return await self._livewire_page(f"{self.base_url}/browse", page, updates)
+
+    async def search(self, query: str, page: int = 1, filters: dict | None = None):
+        query = query.strip()
+        url = f"{self.base_url}/search/{query}" if query else f"{self.base_url}/browse"
+        return await self._livewire_page(url, page, self._updates_from_filters(filters or {}))
+
+    async def details(self, series: SourceSeries | str) -> SourceSeries:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        response = await self._request("GET", self._manga_url(series_id))
+        response.raise_for_status()
+        root = _parse_html(response.text)
+        return self._details(root, series_id)
+
+    async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        url = self._manga_url(series_id)
+        response = await self._request("GET", url)
+        response.raise_for_status()
+        root = _parse_html(response.text)
+        self._strip_nsfw_overlay(root)
+        state = self._livewire_state(root, "manga.chapter-list")
+        if state is None:
+            return []
+        snapshot, token = state
+        codes = [self.language_code] if self.language_code else list(_ONISAGA_ALL_LANGS)
+        result: list[SourceChapter] = []
+        for code in codes:
+            result.extend(await self._chapters_for(url, snapshot, token, code, series_id))
+        unique = list({chapter.source_id: chapter for chapter in result}.values())
+        unique.sort(key=lambda chapter: chapter.number or 0.0, reverse=True)
+        return unique
+
+    async def pages(self, chapter: SourceChapter | str) -> list[SourcePage]:
+        chapter_id = chapter.source_id if isinstance(chapter, SourceChapter) else str(chapter)
+        url = urljoin(f"{self.base_url}/", chapter_id.lstrip("/"))
+        response = await self._request("GET", url)
+        response.raise_for_status()
+        found = _ONISAGA_READER_TOKEN.search(response.text)
+        if not found:
+            raise SourceNotFoundError(f"{self.display_name}: la pagina no trae readerToken")
+        self._reader_token = found.group(1)
+        count = len(_ONISAGA_PAGE_ORDER.findall(response.text))
+        return [
+            SourcePage(
+                source_id=f"{chapter_id}#{index}",
+                chapter_id=chapter_id,
+                index=index,
+                filename=f"{index}.jpg",
+                source_name=self.name,
+            )
+            for index in range(count)
+        ]
+
+    async def page_bytes(self, page: SourcePage | str) -> SourcePageContent:
+        value = page.source_id if isinstance(page, SourcePage) else str(page)
+        chapter_id, _, order = value.rpartition("#")
+        chapter_url = urljoin(f"{self.base_url}/", chapter_id.lstrip("/"))
+        image_url = await self._image_url(chapter_url, order)
+        response = await self._request(
+            "GET", image_url, headers={"Referer": chapter_url},
+        )
+        response.raise_for_status()
+        return SourcePageContent(
+            media_type=response.headers.get("Content-Type", "image/jpeg"),
+            chunks=iter([response.content]),
+        )
+
+    # -------------------------------------------------------------- livewire
+    async def _livewire_page(self, url: str, page: int, updates: dict | None) -> dict:
+        state = self._state if self._state and self._state[0] == url else None
+        if state is None:
+            response = await self._request("GET", url)
+            response.raise_for_status()
+            root = _parse_html(response.text)
+            if page == 1 and updates is None:
+                return self._manga_list(root)
+            found = self._livewire_state(root, "post-filter")
+            if found is None:
+                raise SourceNotFoundError(f"{self.display_name}: sin estado Livewire")
+            state = (url, found[0], found[1])
+            self._state = state
+        payload = await self._livewire_call(
+            url,
+            state[1],
+            state[2],
+            updates or self._updates(),
+            [{"type": "call", "path": "", "method": "gotoPage", "params": [str(page)]}],
+        )
+        component = (payload.get("components") or [{}])[0]
+        if component.get("snapshot"):
+            self._state = (url, component["snapshot"], state[2])
+        html = ((component.get("effects") or {}).get("html")) or ""
+        return self._manga_list(_parse_html(html))
+
+    async def _chapters_for(
+        self, url: str, snapshot: str, token: str, code: str, series_id: str,
+    ) -> list[SourceChapter]:
+        current, previous, chapters = snapshot, 0, []
+        while True:
+            payload = await self._livewire_call(
+                url, current, token, {"language": code},
+                [{"type": "call", "path": "", "method": "loadMoreChapters", "params": []}],
+            )
+            component = (payload.get("components") or [{}])[0]
+            html = ((component.get("effects") or {}).get("html")) or ""
+            if not html:
+                break
+            chapters = self._chapters_from(
+                _parse_html(html), code, self.language_code is None, series_id,
+            )
+            if len(chapters) <= previous:
+                break
+            previous = len(chapters)
+            if not component.get("snapshot"):
+                break
+            current = component["snapshot"]
+        return chapters
+
+    async def _livewire_call(
+        self, referer: str, snapshot: str, token: str, updates: dict, calls: list[dict],
+    ) -> dict:
+        response = await self._request(
+            "POST",
+            f"{self.base_url}/livewire/update",
+            json={
+                "_token": token,
+                "components": [{"snapshot": snapshot, "updates": updates, "calls": calls}],
+            },
+            headers={
+                "X-Livewire": "",
+                "Accept": "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+                "Origin": self.base_url,
+                "Referer": referer.partition("?")[0],
+            },
+        )
+        response.raise_for_status()
+        return response.json() or {}
+
+    @staticmethod
+    def _livewire_state(root: _Node, component: str) -> tuple[str, str] | None:
+        token = next(
+            (
+                node.attrs.get("content", "")
+                for node in root.descendants("meta")
+                if node.attrs.get("name") == "csrf-token" and node.attrs.get("content", "").strip()
+            ),
+            "",
+        ) or next(
+            (
+                node.attrs.get("value", "")
+                for node in root.descendants("input")
+                if node.attrs.get("name") == "_token" and node.attrs.get("value", "").strip()
+            ),
+            "",
+        )
+        if not token:
+            return None
+        for node in root.descendants():
+            for key, value in node.attrs.items():
+                if key.endswith("snapshot") and component in value:
+                    return value, token
+        return None
+
+    # --------------------------------------------------------------- parsing
+    def _manga_list(self, root: _Node) -> dict:
+        items: list[SourceSeries] = []
+        for card in root.descendants("div"):
+            if not (card.has_class("relative") and card.has_class("group")):
+                continue
+            entry = self._card(card)
+            if entry is not None:
+                items.append(entry)
+        has_more = any(
+            "nextPage" in value and "disabled" not in node.attrs
+            for node in root.descendants()
+            for key, value in node.attrs.items()
+            if key == "wire:click"
+        )
+        return {"items": items, "has_more": has_more}
+
+    def _card(self, card: _Node) -> SourceSeries | None:
+        # La preferencia de contenido 18+ no vuelve a la fuente: se mantiene oculta.
+        if _first(card, lambda node: node.tag == "span" and "18+" in node.text()) is not None:
+            return None
+        anchor = _first(
+            card, lambda node: node.tag == "a" and "/manga/" in node.attrs.get("href", ""),
+        )
+        if anchor is None:
+            return None
+        parts = [part for part in urlparse(
+            urljoin(f"{self.base_url}/", anchor.attrs.get("href", "")),
+        ).path.split("/") if part]
+        if len(parts) < 2 or parts[0].casefold() != "manga":
+            return None
+        heading = _first(
+            card,
+            lambda node: "data-flux-heading" in node.attrs or node.tag in {"h3", "h4"},
+        ) or _first(card, lambda node: node.tag == "a" and node.attrs.get("title"))
+        heading = heading or anchor
+        title = heading.attrs.get("title", "").strip() or heading.text().strip()
+        if not title:
+            return None
+        image = _first(
+            card, lambda node: node.tag == "img" and node.attrs.get("alt", "").strip(),
+        ) or _first(card, lambda node: node.tag == "img")
+        return SourceSeries(
+            source_id=parts[1],
+            title=title,
+            source_name=self.name,
+            cover_url=self._image(image) if image is not None else None,
+            web_url=f"{self.base_url}/manga/{parts[1]}",
+        )
+
+    def _details(self, root: _Node, series_id: str) -> SourceSeries:
+        self._strip_nsfw_overlay(root)
+        heading = _first(root, lambda node: node.tag == "h1") or _first(
+            root, lambda node: "data-flux-heading" in node.attrs,
+        )
+        if heading is None:
+            raise SourceNotFoundError(f"{self.display_name}: ficha sin titulo")
+        badges = next(
+            (
+                node
+                for node in root.descendants("div")
+                if all(node.has_class(name) for name in
+                       ("flex", "items-center", "gap-2", "justify-center", "mb-2"))
+            ),
+            None,
+        )
+        info = next(
+            (
+                node
+                for node in root.descendants("div")
+                if node.has_class("flex") and node.has_class("flex-col")
+            ),
+            None,
+        )
+        types = [
+            text.capitalize()
+            for node in (badges.descendants("div") if badges is not None else [])
+            if "data-flux-badge" in node.attrs and (text := node.text().strip().casefold())
+            in _ONISAGA_TYPE_BADGES
+        ]
+        tags = [
+            text
+            for node in (info.descendants("a") if info is not None else [])
+            if "/genre/" in node.attrs.get("href", "") and (text := node.text().strip())
+        ]
+        summary = _first(root, lambda node: node.tag == "p" and node.has_class("leading-relaxed"))
+        return SourceSeries(
+            source_id=series_id,
+            title=heading.text().strip(),
+            source_name=self.name,
+            cover_url=None,
+            description=(summary.text().strip() if summary is not None else None) or None,
+            author=", ".join(
+                text
+                for node in (info.descendants("a") if info is not None else [])
+                if "/author/" in node.attrs.get("href", "") and (text := node.text().strip())
+            ) or None,
+            status=self._status(root),
+            content_tags=tuple(types + tags),
+            web_url=self._manga_url(series_id),
+        )
+
+    def _chapters_from(
+        self, root: _Node, code: str, is_all: bool, series_id: str,
+    ) -> list[SourceChapter]:
+        result: list[SourceChapter] = []
+        for anchor in root.descendants("a"):
+            if not anchor.has_class("gap-4"):
+                continue
+            heading = _first(anchor, lambda node: "data-flux-heading" in node.attrs)
+            number = self._chapter_number(anchor, heading)
+            href = anchor.attrs.get("href", "")
+            if number is None or "/read/" not in href:
+                continue
+            result.append(
+                self._chapter(href, number, code if is_all else "", series_id, anchor),
+            )
+        for dropdown in root.descendants("ui-dropdown"):
+            button = _first(dropdown, lambda node: node.tag == "button")
+            if button is None:
+                continue
+            heading = _first(button, lambda node: "data-flux-heading" in node.attrs)
+            number = self._chapter_number(button, heading)
+            if number is None:
+                continue
+            unknown = 1
+            for link in dropdown.descendants("a"):
+                if "data-flux-menu-item" not in link.attrs:
+                    continue
+                href = link.attrs.get("href", "")
+                if "/read/" not in href:
+                    continue
+                label = _first(link, lambda node: node.tag == "span" and node.has_class("text-sm"))
+                group = label.text().strip() if label is not None else ""
+                if not group or group.casefold() == "unknown group":
+                    group = f"Unknown {unknown}"
+                    unknown += 1
+                result.append(
+                    self._chapter(
+                        href, number, f"{code} - {group}" if is_all else group, series_id, button,
+                    )
+                )
+        return result
+
+    def _chapter(
+        self, href: str, number: str, scanlator: str, series_id: str, holder: _Node,
+    ) -> SourceChapter:
+        text = _first(holder, lambda node: node.tag == "p" and "data-flux-text" in node.attrs)
+        details = [
+            part
+            for part in _ONISAGA_INTERPUNCT.split(
+                (text.text().replace(" - ", " · ") if text is not None else ""),
+            )
+            if part
+        ]
+        stamp = next(
+            (
+                part
+                for part in details
+                if any(word in part.casefold() for word in ("ago", "today", "yesterday"))
+            ),
+            "",
+        )
+        return SourceChapter(
+            source_id=urlparse(urljoin(f"{self.base_url}/", href)).path.lstrip("/"),
+            title=f"Chapter {number}",
+            series_id=series_id,
+            source_name=self.name,
+            number=self._float(number),
+            language=self.language,
+            scanlator=scanlator,
+            uploaded_at=self._relative_date(stamp),
+        )
+
+    # -------------------------------------------------------------- internals
+    async def _image_url(self, chapter_url: str, order: str) -> str:
+        import asyncio
+        import time
+
+        identifier = chapter_url.rstrip("/").rsplit("/", 1)[-1]
+        api = f"{self.base_url}/api/chapter/{identifier}/page/{order}"
+        for _ in range(3):
+            # El propio Kotlin espacia estas llamadas para no comerse un 429.
+            wait = self.image_delay_seconds - (time.monotonic() - self._last_image_at)
+            if wait > 0:
+                await asyncio.sleep(wait)
+            self._last_image_at = time.monotonic()
+            response = await self._request(
+                "GET",
+                api,
+                headers={
+                    "X-Reader-Token": self._reader_token,
+                    "Sec-Fetch-Mode": "cors",
+                    "Sec-Fetch-Site": "same-origin",
+                    "Referer": chapter_url,
+                },
+            )
+            headers = getattr(response, "headers", None) or {}
+            if headers.get("x-reader-token-next"):
+                self._reader_token = headers["x-reader-token-next"]
+            if getattr(response, "status_code", 200) == 429:
+                continue
+            payload = response.json() or {}
+            if payload.get("url"):
+                return str(payload["url"])
+            refreshed = await self._request("GET", chapter_url)
+            found = _ONISAGA_READER_TOKEN.search(refreshed.text)
+            if not found:
+                raise SourceNotFoundError(f"{self.display_name}: {payload.get('message')}")
+            self._reader_token = found.group(1)
+        raise SourceNotFoundError(f"{self.display_name}: sin imagen tras 3 intentos")
+
+    def _updates(self, sort: str = "created_at") -> dict:
+        return {
+            "platform": "", "status": "", "sort": sort, "min_chapters": "",
+            "group": None, "release_start": None, "release_end": None,
+            "genre": [], "excludeGenre": [],
+        }
+
+    def _updates_from_filters(self, values: dict) -> dict | None:
+        chosen = values.get("genre") or {}
+        include = [key for key, state in chosen.items() if state == "include"] if isinstance(chosen, dict) else []
+        exclude = [key for key, state in chosen.items() if state == "exclude"] if isinstance(chosen, dict) else []
+        updates = {
+            "platform": str(values.get("platform") or ""),
+            "status": str(values.get("status") or ""),
+            "sort": str(values.get("sort") or "created_at"),
+            "min_chapters": str(values.get("min_chapters") or ""),
+            "group": str(values["group"]).strip() or None if values.get("group") else None,
+            "release_start": str(values["release_start"]).strip() or None if values.get("release_start") else None,
+            "release_end": str(values["release_end"]).strip() or None if values.get("release_end") else None,
+            "genre": include,
+            "excludeGenre": exclude,
+        }
+        default = self._updates()
+        return None if updates == default else updates
+
+    def _manga_url(self, series_id: str) -> str:
+        slug = series_id.rstrip("/").rsplit("/", 1)[-1]
+        return f"{self.base_url}/manga/{slug}"
+
+    def _image(self, node: _Node) -> str | None:
+        value = (
+            node.attrs.get("data-src")
+            or node.attrs.get("data-lazy-src")
+            or node.attrs.get("src")
+            or ""
+        )
+        if not value or value.startswith("data:"):
+            return None
+        return urljoin(f"{self.base_url}/", value)
+
+    @staticmethod
+    def _strip_nsfw_overlay(root: _Node) -> None:
+        marker = _first(root, lambda node: node.tag == "span" and "18+" in node.text())
+        if marker is None:
+            return
+        overlay = _onisaga_ancestor(marker, "absolute", "inset-0", "z-20")
+        if overlay is not None:
+            _onisaga_detach(overlay)
+
+    @staticmethod
+    def _chapter_number(holder: _Node, heading: _Node | None) -> str | None:
+        if heading is not None:
+            text = heading.text().replace("Chapter ", "").strip()
+            if text:
+                return text
+        fallback = _first(holder, lambda node: node.has_class("w-10"))
+        return fallback.text().strip() if fallback is not None else None
+
+    @staticmethod
+    def _status(root: _Node) -> str | None:
+        marker = _first(
+            root,
+            lambda node: node.tag == "span"
+            and any(
+                child.tag == "span" and child.has_class("size-1.5")
+                for child in node.children
+                if isinstance(child, _Node)
+            ),
+        )
+        text = marker.text().casefold() if marker is not None else ""
+        if not text:
+            candidate = _first(
+                root,
+                lambda node: node.tag == "span"
+                and node.has_class("inline-flex")
+                and any(
+                    word in node.text()
+                    for word in ("Completed", "Ongoing", "Hiatus", "Cancelled")
+                ),
+            )
+            text = candidate.text().casefold() if candidate is not None else ""
+        for words, value in (
+            (("ongoing", "releasing"), "ongoing"),
+            (("completed",), "completed"),
+            (("hiatus",), "hiatus"),
+            (("cancelled", "dropped"), "cancelled"),
+        ):
+            if any(word in text for word in words):
+                return value
+        return None
+
+    @staticmethod
+    def _float(value: str) -> float | None:
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
+
+    @staticmethod
+    def _relative_date(value: str) -> str | None:
+        from datetime import datetime, timedelta
+
+        text = value.casefold()
+        now = datetime.now().replace(microsecond=0)
+        if not text:
+            return None
+        if "today" in text:
+            return now.isoformat()
+        if "yesterday" in text:
+            return (now - timedelta(days=1)).isoformat()
+        found = _ONISAGA_RELATIVE.search(text)
+        if not found:
+            return None
+        amount, unit = int(found.group(1)), found.group(2)
+        spans = {
+            "minute": timedelta(minutes=1), "hour": timedelta(hours=1), "day": timedelta(days=1),
+            "week": timedelta(weeks=1), "month": timedelta(days=30), "year": timedelta(days=365),
+        }
+        return (now - spans[unit] * amount).isoformat()
+
+
+class GeneratedOniSagaSource(OniSagaSource):
     name = 'onisaga_es_419'
     display_name = 'OniSaga'
     base_url = 'https://onisaga.com'
     language = 'es-419'
-    requests_per_minute = 60
+    requests_per_minute = 240
+    content_warning = 'mixed'
+    image_headers = {'Referer': 'https://onisaga.com/'}
 
 
-SOURCE = GeneratedGenericSource
+SOURCE = GeneratedOniSagaSource
