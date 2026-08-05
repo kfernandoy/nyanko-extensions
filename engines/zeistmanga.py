@@ -2,12 +2,13 @@
 
 import json
 import re
-from urllib.parse import unquote, urljoin
+from urllib.parse import quote, unquote, urljoin
 
 try:
     from .madara import (
         MadaraSource,
         SourceChapter,
+        SourceFilter,
         SourcePage,
         SourceSeries,
         _first,
@@ -30,16 +31,24 @@ class ZeistMangaSource(MadaraSource):
     chapter_profile = "default"
     chapter_categories: tuple[str, ...] = ()
     use_old_chapter_feed = False
+    paginate_chapter_feed = False
     pages_profile = "default"
     latest_order = "published"
     strip_series_query = False
+    has_filters = False
+    has_language_filter = True
+    excluded_categories = ("Anime",)
+    status_filters: tuple[tuple[str, str], ...] = ()
+    type_filters: tuple[tuple[str, str], ...] = ()
+    genre_filters: tuple[tuple[str, str], ...] = ()
+    details_profile = "default"
 
     def __init__(self, fetcher=None) -> None:
         super().__init__(fetcher)
         if self.request_referer:
             self.capabilities.headers["Referer"] = self.request_referer
 
-    async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:
+    async def search(self, query: str, page: int = 1, filters: dict | None = None):
         if self.search_profile == "hanmokku":
             response = await self._request(
                 "GET",
@@ -48,7 +57,7 @@ class ZeistMangaSource(MadaraSource):
             )
             response.raise_for_status()
             root = _parse_html(response.text)
-            return [
+            items = [
                 SourceSeries(
                     source_id=urljoin(str(response.url), anchor.attrs["href"]),
                     title=anchor.text().strip(),
@@ -58,17 +67,70 @@ class ZeistMangaSource(MadaraSource):
                 if anchor.has_class("ck")
                 and anchor.attrs.get("href")
                 and anchor.text().strip()
-            ][:limit]
+            ][:20]
+            return {"items": items, "has_more": False}
+        params = {"max-results": 21, "start-index": 20 * (page - 1) + 1}
+        category = self.manga_category
+        if query.strip():
+            params["q"] = f"label:{self.manga_category} {query.strip()}"
+        elif self.has_filters:
+            values = filters or {}
+            selected = [
+                values.get("status", self.status_filters[0][0] if self.status_filters else ""),
+                values.get("type", self.type_filters[0][0] if self.type_filters else ""),
+            ]
+            if self.has_language_filter:
+                selected.append(values.get("language", ""))
+            genres = values.get("genres", [])
+            if isinstance(genres, list):
+                selected.extend(genres)
+            suffix = "/".join(quote(str(value), safe="") for value in selected if value)
+            if suffix:
+                category += f"/{suffix}"
         response = await self._feed(
-            self.manga_category,
-            params={"q": f"label:{self.manga_category} {query.strip()}", "max-results": 21},
+            category,
+            params=params,
         )
-        return self._series_from_feed(response.json())[:limit]
+        items = self._series_from_feed(response.json())
+        return {"items": items[:20], "has_more": len(items) == 21}
+
+    def get_filters(self) -> list[SourceFilter]:
+        if not self.has_filters:
+            return []
+        statuses = list(self.status_filters) or [
+            ("", "Todos"), ("Ongoing", "En curso"), ("Completed", "Completado"),
+            ("Dropped", "Abandonado"), ("Upcoming", "Proximos"),
+            ("Hiatus", "En hiatus"), ("Cancelled", "Cancelado"),
+        ]
+        types = list(self.type_filters) or [
+            ("", "Todos"), ("Manga", "Manga"), ("Manhua", "Manhua"),
+            ("Manhwa", "Manhwa"), ("Novel", "Novela"),
+            ("Web Novel (JP)", "Web Novel (JP)"), ("Web Novel (KR)", "Web Novel (KR)"),
+            ("Web Novel (CN)", "Web Novel (CN)"), ("Doujinshi", "Doujinshi"),
+        ]
+        filters = [
+            SourceFilter("status", "Estado", "select", statuses, statuses[0][0]),
+            SourceFilter("type", "Tipo", "select", types, types[0][0]),
+        ]
+        if self.has_language_filter:
+            filters.append(SourceFilter("language", "Idioma", "select", [
+                ("", "Todos"), ("Indonesian", "Indonesian"), ("English", "English"),
+            ], ""))
+        genres = list(self.genre_filters) or [
+            (value, value) for value in (
+                "Action", "Adventurer", "Comedy", "Dementia", "Drama", "Ecchi", "Fantasy",
+                "Game", "Harem", "Historical", "Horror", "Josei", "Magic", "Martial Arts",
+                "Mecha", "Military", "Music", "Mystery", "Parody", "Police", "Psychological",
+                "Romance", "Samurai", "School", "Sci-fi", "Seinen", "Shoujo", "Shoujo Ai",
+                "Shounen", "Slice of Life", "Space", "Sports", "Super Power", "SuperNatural",
+                "Thriller", "Vampire", "Work Life", "Yuri",
+            )
+        ]
+        filters.append(SourceFilter("genres", "Genero", "multi_select", genres, []))
+        return filters
 
     async def browse(self, kind: str, page: int = 1) -> list[SourceSeries]:
-        if kind == "popular":
-            if self.popular_is_latest:
-                return await self.browse("latest", page)
+        if kind == "popular" and not self.popular_is_latest:
             if self.popular_profile == "serieslist" and page > 1:
                 response = await self._feed(
                     self.manga_category,
@@ -80,7 +142,9 @@ class ZeistMangaSource(MadaraSource):
             response = await self._request("GET", self.base_url)
             response.raise_for_status()
             return self._popular(response.text, str(response.url))
-        if kind != "latest":
+        if kind == "latest" and not self.supports_latest:
+            return []
+        if kind not in {"popular", "latest"}:
             return []
         response = await self._feed(
             self.manga_category,
@@ -94,6 +158,35 @@ class ZeistMangaSource(MadaraSource):
 
     def _popular(self, html: str, response_url: str) -> list[SourceSeries]:
         root = _parse_html(html)
+        if self.popular_profile == "gistamis":
+            result: list[SourceSeries] = []
+            for figure in root.descendants("figure"):
+                if not (
+                    self._has_ancestor_class(figure, "PopularPosts")
+                    and self._has_ancestor_class(figure, "grid")
+                    and not any(
+                        node.tag == "span" and node.attrs.get("data") == "Capitulo"
+                        for node in figure.descendants()
+                    )
+                ):
+                    continue
+                anchor = _first(
+                    figure,
+                    lambda node: node.tag == "a"
+                    and bool(node.attrs.get("href"))
+                    and bool(node.text().strip()),
+                )
+                if anchor is None:
+                    continue
+                image = _first(figure, lambda node: node.tag == "img")
+                result.append(SourceSeries(
+                    source_id=urljoin(response_url, anchor.attrs["href"]),
+                    title=anchor.text().strip(),
+                    source_name=self.name,
+                    cover_url=_image_url(image, response_url) if image else None,
+                    web_url=urljoin(response_url, anchor.attrs["href"]),
+                ))
+            return result
         if self.popular_profile != "default":
             containers = [
                 node
@@ -154,7 +247,7 @@ class ZeistMangaSource(MadaraSource):
         result: list[SourceSeries] = []
         for entry in (payload.get("feed") or {}).get("entry") or []:
             categories = {item.get("term") for item in entry.get("category") or []}
-            if self.manga_category not in categories or "Anime" in categories:
+            if self.manga_category not in categories or categories & set(self.excluded_categories):
                 continue
             link = next(
                 (item.get("href") for item in entry.get("link") or [] if item.get("rel") == "alternate"),
@@ -162,13 +255,104 @@ class ZeistMangaSource(MadaraSource):
             )
             title = (entry.get("title") or {}).get("$t", "")
             if link and title:
-                result.append(SourceSeries(source_id=link, title=title, source_name=self.name))
+                thumbnail = (entry.get("media$thumbnail") or {}).get("url", "")
+                if thumbnail:
+                    thumbnail = re.sub(r"/s.+?-c/", "/w600/", thumbnail)
+                    thumbnail = re.sub(r"=s(?!.*=s).+?-c$", "=w600", thumbnail)
+                else:
+                    content = (entry.get("content") or {}).get("$t", "")
+                    image = _first(_parse_html(content), lambda node: node.tag == "img")
+                    thumbnail = _image_url(image, self.base_url) if image else ""
+                result.append(SourceSeries(
+                    source_id=link,
+                    title=title,
+                    source_name=self.name,
+                    cover_url=thumbnail or None,
+                    web_url=link,
+                ))
         return result
+
+    async def details(self, series: SourceSeries | str) -> SourceSeries:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        if self.details_profile != "gistamis":
+            return series if isinstance(series, SourceSeries) else SourceSeries(
+                source_id=series_id, title=series_id.rstrip("/").rsplit("/", 1)[-1], source_name=self.name,
+            )
+        response = await self._request("GET", series_id)
+        response.raise_for_status()
+        root = _parse_html(response.text)
+        profile = _first(root, lambda node: node.has_class("grid") and node.has_class("gtc-235fr"))
+        if profile is None:
+            raise ValueError("No se encontró la ficha del manga")
+        image = _first(profile, lambda node: node.tag == "img")
+        synopsis = _first(profile, lambda node: node.attrs.get("id") == "synopsis")
+        alt_holder = _first(
+            profile,
+            lambda node: node.tag == "div" and node.has_class("y6x11p")
+            and "Otros Nombres" in node.text(),
+        )
+        alt_name = _first(alt_holder, lambda node: node.tag == "span" and node.has_class("dt")) if alt_holder else None
+        description = synopsis.text().strip() if synopsis else ""
+        if alt_name and alt_name.text().strip():
+            description = f"{description}\n\nOtros Nombres: {alt_name.text().strip()}".strip()
+        genres = tuple(
+            node.text().strip()
+            for node in profile.descendants("a")
+            if node.attrs.get("rel") == "tag"
+            and self._has_ancestor_class(node, "mt-15")
+            and node.text().strip()
+        )
+        author = artist = status = None
+        status_found = False
+        for info in (node for node in profile.descendants() if node.has_class("y6x11p")):
+            label = " ".join(child.strip() for child in info.children if isinstance(child, str) and child.strip())
+            value = " ".join(
+                node.text().strip() for node in info.descendants("span")
+                if node.has_class("dt") and node.text().strip()
+            )
+            if not value:
+                continue
+            if any(name in label for name in ("Status", "Estado", "الحالة")):
+                if not status_found:
+                    status = self._zeist_status(value)
+                status_found = True
+            elif any(name in label for name in ("Author", "Autor", "Mangaka")):
+                author = value
+            elif any(name in label for name in ("Artist", "Artista", "الرسام", "Çizer")):
+                artist = value
+        title = series.title if isinstance(series, SourceSeries) else series_id.rstrip("/").rsplit("/", 1)[-1]
+        return SourceSeries(
+            source_id=series_id,
+            title=title,
+            source_name=self.name,
+            cover_url=_image_url(image, str(response.url)) if image else None,
+            description=description or None,
+            author=author,
+            artist=artist,
+            status=status,
+            content_tags=genres,
+            metadata=series.metadata if isinstance(series, SourceSeries) else {},
+            web_url=str(response.url),
+        )
+
+    @staticmethod
+    def _zeist_status(value: str) -> str | None:
+        normalized = value.casefold().strip()
+        if normalized in {"ongoing", "en curso", "en emisión", "activo", "ativo", "lançando", "مستمر", "مستمرة"}:
+            return "ongoing"
+        if normalized in {"completed", "completo", "finalizado", "مكتمل", "مكتملة"}:
+            return "completed"
+        if normalized in {"hiatus", "pausado"}:
+            return "hiatus"
+        if normalized in {"cancelled", "dropped", "dropado", "abandonado", "cancelado"}:
+            return "cancelled"
+        return None
 
     async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
         series_id = series.source_id if isinstance(series, SourceSeries) else series
         response = await self._request("GET", series_id)
         response.raise_for_status()
+        chapter_entries = None
         if self.chapter_profile == "html_list":
             return self._html_chapters(response.text, series_id, str(response.url))
         if self.use_old_chapter_feed:
@@ -191,13 +375,33 @@ class ZeistMangaSource(MadaraSource):
             chapter_response.raise_for_status()
         else:
             category, feed = self._chapter_feed(response.text)
-            chapter_response = await self._feed(
-                category,
-                suffix=feed,
-                params={"start-index": 1, "max-results": 999999},
-            )
+            if self.paginate_chapter_feed:
+                probe = await self._feed(category, suffix=feed, params={"start-index": 1, "max-results": 0})
+                probe_payload = probe.json()
+                total_value = (
+                    probe_payload.get("openSearch$totalResults")
+                    or (probe_payload.get("feed") or {}).get("openSearch$totalResults")
+                    or {"$t": "150"}
+                )
+                total = int(total_value.get("$t", 150))
+                chapter_entries = []
+                start = 1
+                while len(chapter_entries) < total:
+                    batch = await self._feed(category, suffix=feed, params={"start-index": start, "max-results": 150})
+                    entries = (batch.json().get("feed") or {}).get("entry") or []
+                    if not entries:
+                        break
+                    chapter_entries.extend(entries)
+                    start += len(entries)
+            else:
+                chapter_response = await self._feed(
+                    category,
+                    suffix=feed,
+                    params={"start-index": 1, "max-results": 999999},
+                )
         result: list[SourceChapter] = []
-        for entry in (chapter_response.json().get("feed") or {}).get("entry") or []:
+        entries = chapter_entries if chapter_entries is not None else (chapter_response.json().get("feed") or {}).get("entry") or []
+        for entry in entries:
             categories = {item.get("term") for item in entry.get("category") or []}
             expected = set(self.chapter_categories or (self.chapter_category,))
             if not categories & expected:
@@ -247,6 +451,31 @@ class ZeistMangaSource(MadaraSource):
             urls = re.findall(r'"(https?://[^"]+)"', script)
             if urls:
                 return self._source_pages(urls, chapter_id)
+        elif self.pages_profile == "reader_separators":
+            urls = [
+                _image_url(image, str(response.url))
+                for image in root.descendants("img")
+                if self._has_ancestor_class(image, "separator")
+                and self._has_ancestor_id_contains(image, "reader")
+            ]
+            return self._source_pages(urls, chapter_id)
+        elif self.pages_profile == "check_box_separators":
+            urls = [
+                _image_url(image, str(response.url))
+                for image in root.descendants("img")
+                if self._has_ancestor_class(image, "separator")
+                and self._has_ancestor_class(image, "check-box")
+            ]
+            return self._source_pages(urls, chapter_id)
+        elif self.pages_profile == "article_images":
+            urls = [
+                _image_url(image, str(response.url))
+                for image in root.descendants("img")
+                if self._has_ancestor_tag(image, "p")
+                and self._has_ancestor_class(image, "post")
+                and self._has_ancestor_tag_class(image, "article", "oh")
+            ]
+            return self._source_pages(urls, chapter_id)
         if self.pages_profile == "separator_links":
             urls = [
                 urljoin(str(response.url), node.attrs["href"])
@@ -260,8 +489,6 @@ class ZeistMangaSource(MadaraSource):
             if (
                 self.pages_profile == "broad_separators"
                 and self._has_ancestor_class(image, "separator")
-                or self.pages_profile == "article_images"
-                and self._has_ancestor_class(image, "post")
                 or self._has_ancestor_class(image, "separator")
                 and self._has_ancestor_class(image, "check-box")
                 or self._has_ancestor_id_contains(image, "reader")
@@ -398,6 +625,24 @@ class ZeistMangaSource(MadaraSource):
         parent = getattr(node, "parent", None)
         while parent is not None:
             if value.lower() in parent.attrs.get("id", "").lower():
+                return True
+            parent = parent.parent
+        return False
+
+    @staticmethod
+    def _has_ancestor_tag(node: object, tag: str) -> bool:
+        parent = getattr(node, "parent", None)
+        while parent is not None:
+            if parent.tag == tag:
+                return True
+            parent = parent.parent
+        return False
+
+    @staticmethod
+    def _has_ancestor_tag_class(node: object, tag: str, class_name: str) -> bool:
+        parent = getattr(node, "parent", None)
+        while parent is not None:
+            if parent.tag == tag and parent.has_class(class_name):
                 return True
             parent = parent.parent
         return False

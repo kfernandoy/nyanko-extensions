@@ -1,0 +1,4 @@
+# Los sha256 de index.json se calculan sobre los bytes en disco. Cualquier
+# conversion de fin de linea al hacer checkout romperia la verificacion de
+# integridad de cada bundle, asi que se almacenan y extraen verbatim.
+* -text

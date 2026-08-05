@@ -6,6 +6,7 @@ try:
     from .madara import (
         MadaraSource,
         SourceChapter,
+        SourceFilter,
         SourcePage,
         SourceSeries,
         _first,
@@ -19,6 +20,23 @@ except ImportError:
 class MoonlightTLSource(MadaraSource):
     profile = "regular"
     requests_per_minute = 120
+
+    def __init__(self, fetcher=None) -> None:
+        super().__init__(fetcher)
+        self._comics: list[dict] = []
+
+    def get_filters(self) -> list[SourceFilter]:
+        return [
+            SourceFilter("sort", "Ordenar por", "select", [
+                ("name", "Nombre"), ("views", "Vistas"),
+                ("updated_at", "Actualizado"), ("created_at", "Creado"),
+            ], "updated_at"),
+            SourceFilter("ascending", "Ascendente", "checkbox", default=False),
+            SourceFilter("status", "Estado", "select", [
+                ("0", "Todos"), ("1", "En curso"), ("2", "Pausado"),
+                ("3", "Abandonado"), ("4", "Completado"),
+            ], "0"),
+        ]
 
     @staticmethod
     def _rows(payload) -> list[dict]:
@@ -49,30 +67,78 @@ class MoonlightTLSource(MadaraSource):
                         source_id=f"{self.base_url}/ver/{slug}",
                         title=title,
                         source_name=self.name,
+                        cover_url=str(row.get("urlImg") or "") or None,
+                        web_url=f"{self.base_url}/ver/{slug}",
                     )
                 )
         return result
 
-    async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:
-        response = await self._request("GET", f"{self.base_url}/api/comics")
-        response.raise_for_status()
+    async def search(self, query: str, page: int = 1, filters: dict | None = None):
+        if query.strip() and len(query.strip()) < 2:
+            raise ValueError("La búsqueda debe tener al menos 2 caracteres")
+        if not self._comics:
+            response = await self._request("GET", f"{self.base_url}/api/comics")
+            response.raise_for_status()
+            self._comics = self._rows(response.json().get("response", []))
         needle = query.strip().casefold()
-        rows = self._rows(response.json().get("response", []))
         matches = [
             row
-            for row in rows
-            if needle in str(row.get("name", "")).casefold()
+            for row in self._comics
+            if not needle or needle in str(row.get("name", "")).casefold()
             or needle in str(row.get("alternativeName", "")).casefold()
         ]
-        return self._series(matches)[:limit]
+        values = filters or {}
+        status = int(values.get("status", 0) or 0)
+        if status:
+            matches = [row for row in matches if int(row.get("state_id") or 0) == status]
+        sort = str(values.get("sort", "updated_at"))
+        if sort == "views":
+            matches.sort(key=lambda row: int((row.get("trending") or {}).get("visitas") or 0))
+        else:
+            key = {"name": "name", "updated_at": "actualizacionCap", "created_at": "created_at"}.get(sort, "actualizacionCap")
+            matches.sort(key=lambda row: str(row.get(key) or ""))
+        if not values.get("ascending", False):
+            matches.reverse()
+        start = (page - 1) * 15
+        return {"items": self._series(matches[start:start + 15]), "has_more": len(matches) > start + 15}
 
-    async def browse(self, kind: str, page: int = 1) -> list[SourceSeries]:
+    async def browse(self, kind: str, page: int = 1):
         if kind not in {"popular", "latest"} or page != 1:
-            return []
+            return {"items": [], "has_more": False}
         endpoint = "topSerie" if kind == "popular" else "lastUpdates"
         response = await self._request("GET", f"{self.base_url}/api/{endpoint}")
         response.raise_for_status()
-        return self._series(response.json().get("response", []))
+        return {"items": self._series(response.json().get("response", [])), "has_more": False}
+
+    async def details(self, series: SourceSeries | str) -> SourceSeries:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        slug = series_id.rstrip("/").rsplit("/", 1)[-1]
+        response = await self._request("GET", f"{self.base_url}/api/showProject/{slug}")
+        response.raise_for_status()
+        row = response.json().get("response", {})
+        alternative = str(row.get("alternativeName") or "").strip()
+        description = str(row.get("sinopsis") or "").strip()
+        if alternative:
+            description = f"{description}\n\nNombres alternativos: {alternative}".strip()
+        nested_names = lambda values, key: ", ".join(
+            str((item.get(key) or {}).get("name", "")).strip()
+            for item in values or [] if str((item.get(key) or {}).get("name", "")).strip()
+        )
+        return SourceSeries(
+            source_id=series_id,
+            title=str(row.get("name") or slug),
+            source_name=self.name,
+            cover_url=str(row.get("urlImg") or "") or None,
+            description=description or None,
+            author=nested_names(row.get("autors"), "autor") or None,
+            artist=nested_names(row.get("artists"), "artist") or None,
+            status={1: "ongoing", 2: "hiatus", 3: "cancelled", 4: "completed"}.get(row.get("state_id")),
+            content_tags=tuple(
+                name for item in row.get("genders", [])
+                if (name := str((item.get("gender") or {}).get("name", "")).strip())
+            ),
+            web_url=f"{self.base_url}/ver/{slug}",
+        )
 
     async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
         series_id = series.source_id if isinstance(series, SourceSeries) else series
@@ -96,6 +162,7 @@ class MoonlightTLSource(MadaraSource):
                     series_id=series_id,
                     source_name=self.name,
                     number=float(number) if isinstance(number, (int, float)) else None,
+                    language=self.language,
                     uploaded_at=row.get("created_at"),
                 )
             )
@@ -124,7 +191,11 @@ class MoonlightTLSource(MadaraSource):
         urls: list[str] = []
         for image in root.descendants("img"):
             if self.profile == "asteria":
-                selected = image.has_class("block")
+                selected = bool(
+                    image.has_class("block") and image.parent is not None
+                    and image.parent.tag == "div" and image.parent.parent is not None
+                    and image.parent.parent.tag == "main"
+                )
             else:
                 parent = image.parent
                 selected = bool(

@@ -4,10 +4,53 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import re
 import shutil
+import tokenize
 from pathlib import Path
+
+
+def _extract_kotlin_metadata(module: Path) -> str:
+    files = [*module.rglob("*.kt"), *module.rglob("*.gradle.kts")]
+    contents = [source_file.read_text(encoding="utf-8", errors="ignore") for source_file in files]
+    for marker, value in (
+        ("ContentWarning.NSFW", "nsfw"),
+        ("ContentWarning.MIXED", "mixed"),
+        ("ContentWarning.SAFE", "safe"),
+    ):
+        if any(marker in content for content in contents):
+            return value
+    return "nsfw" if any("adult" in content.lower() for content in contents) else "unknown"
+
+
+def _manual_bundle(path: Path) -> bytes:
+    source = path.read_text(encoding="utf-8")
+    lines = source.splitlines(keepends=True)
+    for index in range(len(lines) - 1):
+        if lines[index].strip() == "try:" and lines[index + 1].lstrip().startswith("from .madara import"):
+            end = index + 2
+            while end < len(lines) and lines[end].strip() != "except ImportError:":
+                end += 1
+            if end + 1 < len(lines) and lines[end + 1].strip() == "pass":
+                del lines[index : end + 2]
+            break
+    source = "".join(lines)
+    source = source.replace(
+        "r'<meta[^>]+name=[\"']csrf-token[\"'][^>]+content=[\"']([^\"']+)[\"']'",
+        "r\"\"\"<meta[^>]+name=[\"']csrf-token[\"'][^>]+content=[\"']([^\"']+)[\"']\"\"\"",
+    )
+    source = source.replace(
+        "r'<[^>]+class=[\"'][^\"']*page-item[^\"']*[\"'][^>]*>.*?<a[^>]+rel=[\"'][^\"']*next[^\"']*[\"'][^>]+href=[\"']([^\"']+)[\"']'",
+        "r\"\"\"<[^>]+class=[\"'][^\"']*page-item[^\"']*[\"'][^>]*>.*?<a[^>]+rel=[\"'][^\"']*next[^\"']*[\"'][^>]+href=[\"']([^\"']+)[\"']\"\"\"",
+    )
+    replacements = {"true": "True", "false": "False", "null": "None"}
+    source = tokenize.untokenize(
+        (token.type, replacements.get(token.string, token.string))
+        for token in tokenize.generate_tokens(io.StringIO(source).readline)
+    )
+    return source.encode()
 
 
 def _source_icon(build_path: Path, source_root: Path, engine_name: str) -> Path:
@@ -157,6 +200,11 @@ def _slug(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", value.lower()).strip("_")
 
 
+def _expand_source(source: str, language: str) -> str:
+    source = re.sub(r"\blang\s*=\s*it\b", f'lang = "{language}"', source)
+    return re.sub(r"\$(?:it\b|\{it\})", language, source)
+
+
 def _disambiguate_names(
     extensions: list[dict[str, object]],
     languages: dict[str, str],
@@ -237,7 +285,9 @@ def _supported_madara(
         return None
 
     strategy = _match(r"useLoadMoreRequest\s*=\s*LoadMoreStrategy\.(\w+)", kotlin, "AutoDetect")
-    rpm = int(_match(r"\.rateLimit\(\s*(\d+)", kotlin, "1")) * 60
+    capacity = int(_match(r"\.rateLimit\(\s*(\d+)", kotlin, "1"))
+    seconds = int(_match(r"\.rateLimit\(\s*\d+\s*,\s*(\d+)\.seconds", kotlin, "1"))
+    rpm = capacity * 60 // seconds
     return {
         "id": f"{_slug(module.name)}_{_slug(language)}",
         "name": display_name,
@@ -251,7 +301,7 @@ def _supported_madara(
         ),
         "load_more": {"Always": "always", "Never": "never"}.get(strategy, "auto"),
         "new_chapters": bool(
-            re.search(r"useNewChapterEndpoint\s*=\s*true", kotlin)
+            re.search(r"useNewChapterEndpoint[^=]*=\s*true", kotlin)
         ),
         "chapter_url_suffix": _match(
             r'chapterUrlSuffix[^=]*=\s*"([^"]*)"',
@@ -268,6 +318,7 @@ def _supported_madara(
             "isekaiscantop": "arraydata",
             "kuroimanga": "login_guard",
             "laviniafansub": "login_guard",
+            "lectormangalat": "page_break_only",
             "leitordemangas": "preloaded",
             "littletyrant": "base64_pages",
             "lunascans": "login_guard",
@@ -302,6 +353,22 @@ def _supported_madara(
             if module.name == "littletyrant"
             else {}
         ),
+        "date_format": _match(r'dateFormat\s*=\s*SimpleDateFormat\("([^"]+)"', kotlin, "MMMM dd, yyyy"),
+        "date_locale": _match(r'SimpleDateFormat\([^\n]+Locale\("([^"]+)"\)', kotlin, "en"),
+        "details_profile": "hades" if module.name == "hadesnofansub" else "default",
+        "adapter_class": {
+            "doujinshell": "DoujinsHellSource",
+            "dragontranslationorg": "DragonTranslationOrgSource",
+            "emperorscan": "EmperorScanSource",
+            "esmi2manga": "EsMi2MangaSource",
+            "haremdekira": "HaremDeKiraSource",
+            "infrafandub": "InfraFandubSource",
+            "mangacrab": "MangaCrabSource",
+            "mangasnosekai": "MangasNoSekaiSource",
+            "manhuaonline": "SamuraiScanSource",
+            "manhwalatino": "ManhwaLatinoSource",
+        }.get(module.name, "MadaraSource"),
+        "content_warning": _extract_kotlin_metadata(module),
     }
 
 
@@ -462,6 +529,15 @@ def _supported_mangathemesia(
             "manhwaindo": "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7",
             "mangastop": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
         }.get(module.name, ""),
+        "project_directory": (
+            _match(r'projectPageString\s*=\s*"([^"]+)"', kotlin, "/project")
+            if re.search(r"hasProjectPage\s*=\s*true", kotlin)
+            else ""
+        ),
+        "date_format": _match(r'dateFormat\s*=\s*SimpleDateFormat\("([^"]+)"', kotlin, "MMMM dd, yyyy"),
+        "date_locale": _match(r'SimpleDateFormat\([^\n]+Locale\("([^"]+)"\)', kotlin, "en"),
+        "adapter_class": "MangaTVSource" if module.name == "mangatv" else "MangaThemesiaSource",
+        "content_warning": _extract_kotlin_metadata(module),
     }
 
 
@@ -577,6 +653,7 @@ def _supported_iken(module: Path, build: str) -> dict[str, object] | None:
         "per_page": int(_match(r"perPage\s*(?::\s*Int)?\s*=\s*(\d+)", kotlin, "18")),
         "sort_pages": bool(re.search(r"sortPagesByFilename\s*=\s*true", kotlin)),
         "chapters_api": bool(re.search(r"useChaptersApi\s*=\s*true", kotlin)),
+        "content_warning": _extract_kotlin_metadata(module),
     }
 
 
@@ -663,6 +740,7 @@ def _supported_foolslide(module: Path, build: str) -> dict[str, object] | None:
             kotlin,
         ),
         "profile": "juinjutsu" if module.name == "juinjutsuteamreader" else "default",
+        "content_warning": _extract_kotlin_metadata(module),
     }
 
 
@@ -763,7 +841,7 @@ def _supported_generic(
     version = _match(r"versionCode\s*=\s*(\d+)", build, "1")
     if not base_url:
         return None
-    return {
+    extension = {
         "id": f"{_slug(module.name)}_{_slug(language)}",
         "name": display_name,
         "version": f"0.{version}.0",
@@ -771,6 +849,124 @@ def _supported_generic(
         "language": language,
         "rpm": int(_match(r"\.rateLimit\(\s*(\d+)", kotlin, "1")) * 60,
     }
+    if module.name == "ikigaimangas":
+        filters = next(module.rglob("Filters.kt")).read_text(encoding="utf-8")
+        extension.update({
+            "sort_options": tuple((value, name) for name, value in re.findall(
+                r'SortProperty\("([^"]+)",\s*"([^"]+)"\)', filters,
+            )),
+            "status_options": tuple((value, name) for name, value in re.findall(
+                r'Status\("([^"]+)",\s*(\d+)L\)', filters,
+            )),
+            "genre_options": tuple((value, name) for name, value in re.findall(
+                r'Genre\("([^"]+)",\s*(\d+)L\)', filters,
+            )),
+        })
+    elif module.name == "ikuhentai":
+        filters = next(module.rglob("Filters.kt")).read_text(encoding="utf-8")
+        sort_section = filters.partition("class SortBy")[2].partition("class Genre")[0]
+        extension.update({
+            "sort_options": tuple((value, name) for name, value in re.findall(
+                r'Pair\("([^"]+)",\s*"([^"]*)"\)', sort_section,
+            )),
+            "status_options": tuple((value, name) for name, value in re.findall(
+                r'Status\("([^"]+)",\s*"([^"]+)"\)', filters,
+            )),
+            "genre_options": tuple((value, name) for name, value in re.findall(
+                r'Genre\("([^"]+)",\s*"([^"]+)"\)', filters,
+            )),
+        })
+    elif module.name == "lectorjpg":
+        extension["genre_options"] = tuple((value, name) for name, value in re.findall(
+            r'Genre\("([^"]+)",\s*"([^"]+)"\)', kotlin,
+        ))
+    elif module.name == "leercapitulo":
+        filters = next(module.rglob("Filters.kt")).read_text(encoding="utf-8")
+
+        def options(name: str, next_name: str = "") -> tuple[tuple[str, str], ...]:
+            block = filters.partition(f"class {name}")[2]
+            if next_name:
+                block = block.partition(f"class {next_name}")[0]
+            return tuple((value, label) for label, value in re.findall(r'Pair\("([^"]+)",\s*"([^"]*)"\)', block))
+
+        extension.update({
+            "rpm": 20,
+            "genre_options": options("GenreFilter", "AlphabeticFilter"),
+            "alphabet_options": options("AlphabeticFilter", "StatusFilter"),
+            "status_options": options("StatusFilter", "UriPartFilter"),
+        })
+    elif module.name == "leermangaesp":
+        filters = next(module.rglob("Filters.kt")).read_text(encoding="utf-8")
+        extension.update({
+            "genre_options": tuple((value, name) for name, value in re.findall(r'Genre\("([^"]+)",\s*"([^"]+)"\)', filters)),
+            "type_options": tuple((value, name) for name, value in re.findall(r'Pair\("([^"]+)",\s*"([^"]*)"\)', filters)),
+        })
+    elif module.name == "lmtoonline":
+        filters = next(module.rglob("Filters.kt")).read_text(encoding="utf-8")
+
+        def filter_block(name: str) -> str:
+            start = filters.find("listOf(", filters.find(f"{name}(", filters.find("fun getFilters")))
+            if start < 0:
+                return ""
+            start += len("listOf(")
+            depth = 1
+            for index, char in enumerate(filters[start:], start):
+                depth += (char == "(") - (char == ")")
+                if depth == 0:
+                    return filters[start:index]
+            return ""
+
+        extension.update({
+            "genre_options": tuple((value, value) for value in re.findall(r'"([^"]+)"', filter_block("GenreFilter"))),
+            **{
+                f"{name}_options": tuple((value, label) for label, value in re.findall(r'Pair\("([^"]+)",\s*"([^"]*)"\)', filter_block(f"{name.capitalize()}Filter")))
+                for name in ("status", "demographic", "type", "nsfw", "order")
+            },
+        })
+    elif module.name == "mangamx":
+        filters = next(module.rglob("Filters.kt")).read_text(encoding="utf-8")
+
+        def options(name: str, next_name: str) -> tuple[tuple[str, str], ...]:
+            block = filters.partition(f"class {name}")[2].partition(f"class {next_name}")[0]
+            return tuple((value, label) for label, value in re.findall(r'Pair\("([^"]+)",\s*"([^"]+)"\)', block))
+
+        extension.update({
+            "status_options": options("StatusFilter", "TypeFilter"),
+            "type_options": options("TypeFilter", "GenreFilter"),
+            "genre_options": options("GenreFilter", "AdultContentFilter"),
+            "sort_options": (("visitas", "Visitas"), ("id", "Recientes"), ("nombre", "Alfabético")),
+        })
+    return extension
+
+
+def _supported_heavenmanga(module: Path, build: str) -> dict[str, object] | None:
+    extension = _supported_generic(module, build)
+    if extension is None:
+        return None
+    filters = next(module.rglob("Filters.kt")).read_text(encoding="utf-8")
+
+    def options(start: str, end: str = "") -> tuple[tuple[str, str], ...]:
+        section = filters.partition(f"class {start}")[2]
+        if end:
+            section = section.partition(f"class {end}")[0]
+        return tuple(re.findall(r'Pair\("([^"]+)",\s*"([^"]*)"\)', section))
+
+    extension.update({
+        "genre_options": options("GenreFilter", "AlphabeticoFilter"),
+        "alphabet_options": options("AlphabeticoFilter", "ListaCompletasFilter"),
+        "list_options": options("ListaCompletasFilter"),
+    })
+    return extension
+
+
+def _supported_hentaihall(module: Path, build: str) -> dict[str, object] | None:
+    extension = _supported_generic(module, build)
+    if extension is None:
+        return None
+    filters = next(module.rglob("Filters.kt")).read_text(encoding="utf-8")
+    genre_block = _match(r"GENRES\s*=\s*listOf\(([\s\S]*?)\)\s*$", filters)
+    extension["genres"] = tuple(re.findall(r'"([^"]+)"', genre_block))
+    return extension
 
 
 def _supported_mangadex(module: Path, build: str, language: str) -> dict[str, object]:
@@ -860,7 +1056,7 @@ def _supported_zeistmanga(module: Path, build: str) -> dict[str, object] | None:
             "Series",
         ),
         "chapter_category": _match(
-            r'chapterCategory\s*(?::\s*String)?\s*=\s*"([^"]+)"',
+            r'chapterCategory\s*(?::\s*String)?\s*=\s*"([^"]*)"',
             kotlin,
             "Chapter",
         ),
@@ -876,6 +1072,7 @@ def _supported_zeistmanga(module: Path, build: str) -> dict[str, object] | None:
         }.get(module.name, "default"),
         "popular_is_latest": popular_is_latest,
         "popular_profile": {
+            "gistamishouse": "gistamis",
             "inazumanga": "pop_card",
             "shadowceviri": "gallery",
             "ulascomic": "serieslist",
@@ -894,6 +1091,8 @@ def _supported_zeistmanga(module: Path, build: str) -> dict[str, object] | None:
         "chapter_categories": ("Capitulo", "Cap") if module.name == "gistamishouse" else (),
         "old_feed": bool(re.search(r"useOldChapterFeed\s*=\s*true", kotlin)),
         "pages_profile": {
+            "darkroomfansub": "reader_separators",
+            "datgarscanlation": "check_box_separators",
             "gistamishouse": "article_images",
             "inazumanga": "textarea_raw",
             "mikoroku": "broad_separators",
@@ -904,6 +1103,36 @@ def _supported_zeistmanga(module: Path, build: str) -> dict[str, object] | None:
         }.get(module.name, "default"),
         "latest_order": "updated" if module.name == "ulascomic" else "published",
         "strip_series_query": module.name == "murimscan",
+        "supports_latest": not bool(re.search(r"supportsLatest\s*=\s*false", kotlin)),
+        "requests_per_minute": int(_match(r"\.rateLimit\((\d+)\s*\)", kotlin, "1")) * 60
+        if ".rateLimit(" in kotlin else 60,
+        "has_filters": bool(re.search(r"hasFilters\s*=\s*true", kotlin)),
+        "has_language_filter": not bool(re.search(r"hasLanguageFilter\s*=\s*false", kotlin)),
+        "excluded_categories": (
+            ("Anime", "Novela") if module.name == "gistamishouse" else ("Anime",)
+        ),
+        "status_filters": (
+            (("Activo", "Activo"), ("Completo", "Completo"), ("Cancelado", "Cancelado"),
+             ("Futuro", "Futuro"), ("Pausado", "Pausado"))
+            if module.name == "gistamishouse" else ()
+        ),
+        "type_filters": (
+            (("Manga", "Manga"), ("Manhua", "Manhua"), ("Manhwa", "Manhwa"))
+            if module.name == "gistamishouse" else ()
+        ),
+        "genre_filters": (
+            tuple((value, value) for value in (
+                "Acción", "Aventura", "Comedia", "Dementia", "Demonios", "Drama", "Ecchi",
+                "Fantasía", "Videojuegos", "Harem", "Histórico", "Horror", "Josei", "Magia",
+                "Arte marcial", "Mecha", "Militar", "Música", "Misterio", "Parody", "Policia",
+                "Filosófico", "Romance", "Samurai", "Escolar", "Sci-Fi", "Seinen", "Shoujo",
+                "GL", "BL", "HET", "Shounen", "Vida cotidiana", "Espacio", "Deportes",
+                "Super poderes", "Sobrenatural", "Thriller", "Vampiro", "Vida laboral",
+            )) if module.name == "gistamishouse" else ()
+        ),
+        "details_profile": "gistamis" if module.name == "gistamishouse" else "default",
+        "content_warning": _extract_kotlin_metadata(module),
+        "paginate_chapter_feed": module.name == "datgarscanlation",
     }
 
 
@@ -1340,6 +1569,7 @@ def _supported_moonlighttl(module: Path, build: str) -> dict[str, object] | None
         "base_url": base_url.rstrip("/"),
         "language": language,
         "profile": "asteria" if module.name == "lectorasteria" else "regular",
+        "content_warning": _extract_kotlin_metadata(module),
     }
 
 
@@ -1883,7 +2113,7 @@ def _supported_mangahub(module: Path, build: str) -> dict[str, object] | None:
 
 def _madara_bundle(engine: str, extension: dict[str, object]) -> bytes:
     config = (
-        "\n\nclass GeneratedMadaraSource(MadaraSource):\n"
+        f"\n\nclass GeneratedMadaraSource({extension['adapter_class']}):\n"
         f"    name = {extension['id']!r}\n"
         f"    display_name = {extension['name']!r}\n"
         f"    base_url = {extension['base_url']!r}\n"
@@ -1897,6 +2127,10 @@ def _madara_bundle(engine: str, extension: dict[str, object]) -> bytes:
         f"    pages_profile = {extension['pages_profile']!r}\n"
         f"    extra_headers = {extension['extra_headers']!r}\n"
         f"    image_headers = {extension['image_headers']!r}\n"
+        f"    date_format = {extension['date_format']!r}\n"
+        f"    date_locale = {extension['date_locale']!r}\n"
+        f"    details_profile = {extension['details_profile']!r}\n"
+        f"    content_warning = {extension['content_warning']!r}\n"
         "\n\nSOURCE = GeneratedMadaraSource\n"
     )
     return (engine.rstrip() + config).encode()
@@ -1908,7 +2142,7 @@ def _mangathemesia_bundle(
     extension: dict[str, object],
 ) -> bytes:
     config = (
-        "\n\nclass GeneratedMangaThemesiaSource(MangaThemesiaSource):\n"
+        f"\n\nclass GeneratedMangaThemesiaSource({extension['adapter_class']}):\n"
         f"    name = {extension['id']!r}\n"
         f"    display_name = {extension['name']!r}\n"
         f"    base_url = {extension['base_url']!r}\n"
@@ -1927,6 +2161,10 @@ def _mangathemesia_bundle(
         f"    page_element_classes = {extension['page_element_classes']!r}\n"
         f"    request_referer = {extension['request_referer']!r}\n"
         f"    accept_language = {extension['accept_language']!r}\n"
+        f"    project_directory = {extension['project_directory']!r}\n"
+        f"    date_format = {extension['date_format']!r}\n"
+        f"    date_locale = {extension['date_locale']!r}\n"
+        f"    content_warning = {extension['content_warning']!r}\n"
         "\n\nSOURCE = GeneratedMangaThemesiaSource\n"
     )
     return (common_engine.rstrip() + "\n\n" + theme_engine.rstrip() + config).encode()
@@ -1997,6 +2235,7 @@ def _iken_bundle(
         f"    per_page = {extension['per_page']!r}\n"
         f"    sort_pages_by_filename = {extension['sort_pages']!r}\n"
         f"    use_chapters_api = {extension['chapters_api']!r}\n"
+        f"    content_warning = {extension['content_warning']!r}\n"
         "\n\nSOURCE = GeneratedIkenSource\n"
     )
     return (common_engine.rstrip() + "\n\n" + theme_engine.rstrip() + config).encode()
@@ -2035,6 +2274,7 @@ def _foolslide_bundle(
         f"    language = {extension['language']!r}\n"
         f"    url_modifier = {extension['url_modifier']!r}\n"
         f"    profile = {extension['profile']!r}\n"
+        f"    content_warning = {extension['content_warning']!r}\n"
         "\n\nSOURCE = GeneratedFoolSlideSource\n"
     )
     return (common_engine.rstrip() + "\n\n" + theme_engine.rstrip() + config).encode()
@@ -2100,16 +2340,109 @@ def _generic_bundle(
     generic_engine: str,
     extension: dict[str, object],
 ) -> bytes:
+    extension_id = str(extension["id"])
+    adapter_class = (
+        "DragonBallMultiverseSource" if extension_id.startswith("dragonballmultiverse_")
+        else "DynastySource" if extension_id == "dynasty_es"
+        else "EnchiladaScanSource" if extension_id == "enchiladascan_es"
+        else "HentaiModeSource" if extension_id == "hentaimode_es"
+        else "IkigaiMangasSource" if extension_id == "ikigaimangas_es"
+        else "IkuhentaiSource" if extension_id == "ikuhentai_es"
+        else "InMangaSource" if extension_id == "inmanga_es"
+        else "InsanosScanSource" if extension_id == "insanosscan_es"
+        else "JeazScansSource" if extension_id == "jeazscans_es"
+        else "KoinoboriScanSource" if extension_id == "koinoboriscan_es"
+        else "LeerCapituloSource" if extension_id == "leercapitulo_es"
+        else "LeerMangaEspSource" if extension_id == "leermangaesp_es"
+        else "LectorJpgSource" if extension_id == "lectorjpg_es"
+        else "MangoLibreriaSource" if extension_id == "lectormonline_es"
+        else "LmtosSource" if extension_id == "lmtoonline_es"
+        else "MangaOniSource" if extension_id == "mangamx_es"
+        else "MangasInSource" if extension_id == "mangasin_es"
+        else "GenericSource"
+    )
+    extra = (
+        f"    genre_options = {extension['genre_options']!r}\n"
+        f"    alphabet_options = {extension['alphabet_options']!r}\n"
+        f"    status_options = {extension['status_options']!r}\n"
+        if extension_id == "leercapitulo_es"
+        else (
+            f"    type_options = {extension['type_options']!r}\n"
+            f"    genre_options = {extension['genre_options']!r}\n"
+        ) if extension_id == "leermangaesp_es"
+        else (
+            f"    genre_options = {extension['genre_options']!r}\n"
+            f"    status_options = {extension['status_options']!r}\n"
+            f"    demographic_options = {extension['demographic_options']!r}\n"
+            f"    type_options = {extension['type_options']!r}\n"
+            f"    nsfw_options = {extension['nsfw_options']!r}\n"
+            f"    order_options = {extension['order_options']!r}\n"
+        ) if extension_id == "lmtoonline_es"
+        else (
+            f"    status_options = {extension['status_options']!r}\n"
+            f"    type_options = {extension['type_options']!r}\n"
+            f"    genre_options = {extension['genre_options']!r}\n"
+            f"    sort_options = {extension['sort_options']!r}\n"
+        ) if extension_id == "mangamx_es"
+        else f"    genre_options = {extension['genre_options']!r}\n" if extension_id == "lectorjpg_es" else (
+        f"    sort_options = {extension['sort_options']!r}\n"
+        f"    status_options = {extension['status_options']!r}\n"
+        f"    genre_options = {extension['genre_options']!r}\n"
+        if extension_id in {"ikigaimangas_es", "ikuhentai_es"}
+        else ""
+    ))
     config = (
-        "\n\nclass GeneratedGenericSource(GenericSource):\n"
+        f"\n\nclass GeneratedGenericSource({adapter_class}):\n"
         f"    name = {extension['id']!r}\n"
         f"    display_name = {extension['name']!r}\n"
         f"    base_url = {extension['base_url']!r}\n"
         f"    language = {extension['language']!r}\n"
         f"    requests_per_minute = {extension['rpm']!r}\n"
+        f"    content_warning = {extension['content_warning']!r}\n"
+        f"{extra}"
         "\n\nSOURCE = GeneratedGenericSource\n"
     )
     return (common_engine.rstrip() + "\n\n" + generic_engine.rstrip() + config).encode()
+
+
+def _heavenmanga_bundle(
+    common_engine: str,
+    heavenmanga_engine: str,
+    extension: dict[str, object],
+) -> bytes:
+    config = (
+        "\n\nclass GeneratedHeavenMangaSource(HeavenMangaSource):\n"
+        f"    name = {extension['id']!r}\n"
+        f"    display_name = {extension['name']!r}\n"
+        f"    base_url = {extension['base_url']!r}\n"
+        f"    language = {extension['language']!r}\n"
+        f"    requests_per_minute = {extension['rpm']!r}\n"
+        f"    genre_options = {extension['genre_options']!r}\n"
+        f"    alphabet_options = {extension['alphabet_options']!r}\n"
+        f"    list_options = {extension['list_options']!r}\n"
+        f"    content_warning = {extension['content_warning']!r}\n"
+        "\n\nSOURCE = GeneratedHeavenMangaSource\n"
+    )
+    return (common_engine.rstrip() + "\n\n" + heavenmanga_engine.rstrip() + config).encode()
+
+
+def _hentaihall_bundle(
+    common_engine: str,
+    hentaihall_engine: str,
+    extension: dict[str, object],
+) -> bytes:
+    config = (
+        "\n\nclass GeneratedHentaiHallSource(HentaiHallSource):\n"
+        f"    name = {extension['id']!r}\n"
+        f"    display_name = {extension['name']!r}\n"
+        f"    base_url = {extension['base_url']!r}\n"
+        f"    language = {extension['language']!r}\n"
+        f"    requests_per_minute = {extension['rpm']!r}\n"
+        f"    genres = {extension['genres']!r}\n"
+        f"    content_warning = {extension['content_warning']!r}\n"
+        "\n\nSOURCE = GeneratedHentaiHallSource\n"
+    )
+    return (common_engine.rstrip() + "\n\n" + hentaihall_engine.rstrip() + config).encode()
 
 
 def _mangadex_bundle(engine: str, extension: dict[str, object]) -> bytes:
@@ -2151,6 +2484,17 @@ def _zeistmanga_bundle(
         f"    pages_profile = {extension['pages_profile']!r}\n"
         f"    latest_order = {extension['latest_order']!r}\n"
         f"    strip_series_query = {extension['strip_series_query']!r}\n"
+        f"    supports_latest = {extension['supports_latest']!r}\n"
+        f"    requests_per_minute = {extension['requests_per_minute']!r}\n"
+        f"    has_filters = {extension['has_filters']!r}\n"
+        f"    has_language_filter = {extension['has_language_filter']!r}\n"
+        f"    excluded_categories = {extension['excluded_categories']!r}\n"
+        f"    status_filters = {extension['status_filters']!r}\n"
+        f"    type_filters = {extension['type_filters']!r}\n"
+        f"    genre_filters = {extension['genre_filters']!r}\n"
+        f"    details_profile = {extension['details_profile']!r}\n"
+        f"    content_warning = {extension['content_warning']!r}\n"
+        f"    paginate_chapter_feed = {extension['paginate_chapter_feed']!r}\n"
         "\n\nSOURCE = GeneratedZeistMangaSource\n"
     )
     return (common_engine.rstrip() + "\n\n" + theme_engine.rstrip() + config).encode()
@@ -2457,6 +2801,7 @@ def _moonlighttl_bundle(
         f"    base_url = {extension['base_url']!r}\n"
         f"    language = {extension['language']!r}\n"
         f"    profile = {extension['profile']!r}\n"
+        f"    content_warning = {extension['content_warning']!r}\n"
         "\n\nSOURCE = GeneratedMoonlightTLSource\n"
     )
     return (common_engine.rstrip() + "\n\n" + theme_engine.rstrip() + config).encode()
@@ -2868,6 +3213,11 @@ def _mangahub_bundle(
 
 
 def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, int], dict[str, int]]:
+    v4_engine = (repo / "engines" / "v4.py").read_bytes()
+
+    def finalize(bundle: bytes) -> bytes:
+        return bundle.rstrip() + b"\n\n" + v4_engine.rstrip() + b"\n\nSOURCE = adapt_source(SOURCE)\n"
+
     madara_engine = (repo / "engines" / "madara.py").read_text(encoding="utf-8")
     mangathemesia_engine = (repo / "engines" / "mangathemesia.py").read_text(encoding="utf-8")
     pizzareader_engine = (repo / "engines" / "pizzareader.py").read_text(encoding="utf-8")
@@ -2880,6 +3230,8 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
     wpcomics_engine = (repo / "engines" / "wpcomics.py").read_text(encoding="utf-8")
     gigaviewer_engine = (repo / "engines" / "gigaviewer.py").read_text(encoding="utf-8")
     generic_engine = (repo / "engines" / "generic.py").read_text(encoding="utf-8")
+    heavenmanga_engine = (repo / "engines" / "heavenmanga.py").read_text(encoding="utf-8")
+    hentaihall_engine = (repo / "engines" / "hentaihall.py").read_text(encoding="utf-8")
     mangadex_engine = (repo / "engines" / "mangadex.py").read_text(encoding="utf-8")
     zeistmanga_engine = (repo / "engines" / "zeistmanga.py").read_text(encoding="utf-8")
     guya_engine = (repo / "engines" / "guya.py").read_text(encoding="utf-8")
@@ -3009,7 +3361,12 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             for language in languages:
                 extension = _supported_mangadex(build_path.parent, build, language)
                 extension_id = str(extension["id"])
+                extension["content_warning"] = _extract_kotlin_metadata(build_path.parent)
                 bundle_bytes = _mangadex_bundle(mangadex_engine, extension)
+                manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
+                if manual_path.exists():
+                    bundle_bytes = _manual_bundle(manual_path)
+                bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
                 generated.append(
@@ -3034,7 +3391,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 for source in source_blocks
                 for variant in (
                     [
-                        re.sub(r"\blang\s*=\s*it\b", f'lang = "{language}"', source)
+                        _expand_source(source, language)
                         for language in languages
                     ]
                     if re.search(r"\blang\s*=\s*it\b", source) and languages
@@ -3043,7 +3400,24 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             ]
             icon = _source_icon(build_path, source_root, engine_name)
             for source in variants:
-                extension = _supported_generic(build_path.parent, build, source)
+                is_heavenmanga = build_path.parent.name == "heavenmanga"
+                is_hentaihall = build_path.parent.name == "hentaihall"
+                is_ikigaimangas = build_path.parent.name == "ikigaimangas"
+                is_ikuhentai = build_path.parent.name == "ikuhentai"
+                is_inmanga = build_path.parent.name == "inmanga"
+                is_insanosscan = build_path.parent.name == "insanosscan"
+                is_koinoboriscan = build_path.parent.name == "koinoboriscan"
+                is_leercapitulo = build_path.parent.name == "leercapitulo"
+                is_leermangaesp = build_path.parent.name == "leermangaesp"
+                is_lectorjpg = build_path.parent.name == "lectorjpg"
+                is_lmtoonline = build_path.parent.name == "lmtoonline"
+                extension = (
+                    _supported_heavenmanga(build_path.parent, build)
+                    if is_heavenmanga
+                    else _supported_hentaihall(build_path.parent, build)
+                    if is_hentaihall
+                    else _supported_generic(build_path.parent, build, source)
+                )
                 if extension is None:
                     skipped[engine_name] += 1
                     continue
@@ -3056,7 +3430,18 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                         extension_id = f"{extension['id']}_{suffix}"
                         suffix += 1
                     extension["id"] = extension_id
-                bundle_bytes = _generic_bundle(madara_engine, generic_engine, extension)
+                extension["content_warning"] = _extract_kotlin_metadata(build_path.parent)
+                bundle_bytes = (
+                    _heavenmanga_bundle(madara_engine, heavenmanga_engine, extension)
+                    if is_heavenmanga
+                    else _hentaihall_bundle(madara_engine, hentaihall_engine, extension)
+                    if is_hentaihall
+                    else _generic_bundle(madara_engine, generic_engine, extension)
+                )
+                manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
+                if manual_path.exists() and not (is_heavenmanga or is_hentaihall or is_ikigaimangas or is_ikuhentai or is_inmanga or is_insanosscan or is_koinoboriscan or is_leercapitulo or is_leermangaesp or is_lectorjpg or is_lmtoonline or build_path.parent.name == "mangamx"):
+                    bundle_bytes = _manual_bundle(manual_path)
+                bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
                 generated.append(
@@ -3079,7 +3464,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             if len(source_blocks) == 1 and re.search(r"\blang\s*=\s*it\b", source_blocks[0]):
                 languages = re.findall(r'"([^"]+)"', _match(r"listOf\(([^)]+)\)", build))
                 variants = [
-                    re.sub(r"\blang\s*=\s*it\b", f'lang = "{language}"', source_blocks[0])
+                    _expand_source(source_blocks[0], language)
                     for language in languages
                 ]
             if len(variants) != 1 or variants != source_blocks:
@@ -3090,7 +3475,12 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                         skipped[engine_name] += 1
                         continue
                     extension_id = str(extension["id"])
+                    extension["content_warning"] = _extract_kotlin_metadata(build_path.parent)
                     bundle_bytes = _madara_bundle(madara_engine, extension)
+                    manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
+                    if manual_path.exists():
+                        bundle_bytes = _manual_bundle(manual_path)
+                    bundle_bytes = finalize(bundle_bytes)
                     (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                     shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
                     generated.append(
@@ -3120,6 +3510,10 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                     mangathemesia_engine,
                     extension,
                 )
+                manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
+                if manual_path.exists():
+                    bundle_bytes = _manual_bundle(manual_path)
+                bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
                 generated.append(
@@ -3144,7 +3538,12 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             icon = _source_icon(build_path, source_root, engine_name)
             for extension in extensions:
                 extension_id = str(extension["id"])
+                extension["content_warning"] = _extract_kotlin_metadata(build_path.parent)
                 bundle_bytes = _galleryadults_bundle(madara_engine, galleryadults_engine, extension)
+                manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
+                if manual_path.exists():
+                    bundle_bytes = _manual_bundle(manual_path)
+                bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
                 generated.append(
@@ -3169,7 +3568,12 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             icon = _source_icon(build_path, source_root, engine_name)
             for extension in extensions:
                 extension_id = str(extension["id"])
+                extension["content_warning"] = _extract_kotlin_metadata(build_path.parent)
                 bundle_bytes = _hentaihand_bundle(madara_engine, hentaihand_engine, extension)
+                manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
+                if manual_path.exists():
+                    bundle_bytes = _manual_bundle(manual_path)
+                bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
                 generated.append(
@@ -3199,6 +3603,10 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                     vercomics_engine,
                     extension,
                 )
+                manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
+                if manual_path.exists():
+                    bundle_bytes = _manual_bundle(manual_path)
+                bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
                 generated.append(
@@ -3325,6 +3733,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
 
         extension_id = str(extension["id"])
         if engine_name == "madara":
+            extension["content_warning"] = _extract_kotlin_metadata(build_path.parent)
             bundle_bytes = _madara_bundle(madara_engine, extension)
         elif engine_name == "mangathemesia":
             bundle_bytes = _mangathemesia_bundle(
@@ -3626,6 +4035,10 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 mangahub_engine,
                 extension,
             )
+        manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
+        if manual_path.exists() and build_path.parent.name not in {"lectormangalat", "mangacrab", "mangaesp", "mangatv"}:
+            bundle_bytes = _manual_bundle(manual_path)
+        bundle_bytes = finalize(bundle_bytes)
         (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
 
         icon = _source_icon(build_path, source_root, engine_name)
@@ -3650,7 +4063,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
         bundle = (bundles_dir / f"{item['id']}.py").read_text(encoding="utf-8")
         matches = re.findall(r"""^\s+language\s*=\s*['"]([^'"]+)['"]""", bundle, re.M)
         if matches:
-            languages[str(item["id"])] = matches[-1]
+            item["language"] = languages[str(item["id"])] = matches[-1]
     _disambiguate_names(generated, languages)
 
     by_id = {item["id"]: item for item in manual}

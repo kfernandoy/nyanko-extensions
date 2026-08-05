@@ -4,12 +4,39 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import inspect
 import json
 import struct
 from pathlib import Path
 from urllib.parse import urlsplit
 
 from nyanko_api.sources.contract import SOURCE_API_VERSION, Source
+
+
+def _assert_v4(source: object, extension_id: str) -> None:
+    for method_name, parameters in {
+        "search": ["query", "page", "filters"],
+        "browse": ["kind", "page", "filters"],
+        "chapters": ["series"],
+        "pages": ["chapter"],
+        "page_bytes": ["page"],
+    }.items():
+        method = getattr(source, method_name)
+        assert inspect.iscoroutinefunction(method), f"{extension_id}: {method_name} no es async"
+        actual = list(inspect.signature(method).parameters)
+        assert actual == parameters, (
+            f"{extension_id}: firma {method_name}{tuple(actual)}; "
+            f"esperada {tuple(parameters)}"
+        )
+
+    for getter_name in ("get_filters", "get_preferences"):
+        getter = getattr(source, getter_name)
+        if inspect.iscoroutinefunction(getter):
+            continue
+        values = getter()
+        assert isinstance(values, list), f"{extension_id}: {getter_name} no devuelve list"
+        ids = [value.id for value in values]
+        assert len(ids) == len(set(ids)), f"{extension_id}: IDs duplicados en {getter_name}"
 
 
 def _local_file(repo: Path, url: str) -> Path:
@@ -37,6 +64,7 @@ def _load_source(path: Path, extension_id: str) -> object:
     source = module.SOURCE()
     assert isinstance(source, Source), f"{extension_id}: no cumple Source"
     assert source.api_version == SOURCE_API_VERSION, f"{extension_id}: API incompatible"
+    _assert_v4(source, extension_id)
     return source
 
 

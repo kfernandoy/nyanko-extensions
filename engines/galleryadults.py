@@ -35,11 +35,14 @@ class GalleryAdultsSource(MadaraSource):
             )
             title = caption.text() if caption else link.text() if link else ""
             if link and title:
+                source_id = urljoin(base, link.attrs["href"])
                 result.append(
                     SourceSeries(
-                        source_id=urljoin(base, link.attrs["href"]),
+                        source_id=source_id,
                         title=title,
                         source_name=self.name,
+                        cover_url=_image_url(image, base) if image else None,
+                        web_url=source_id,
                     )
                 )
         return list({item.source_id: item for item in result}.values())

@@ -13,6 +13,7 @@ try:
     from .madara import (
         MadaraSource,
         SourceChapter,
+        SourceFilter,
         SourcePage,
         SourcePageContent,
         SourceSeries,
@@ -40,6 +41,7 @@ class MangaThemesiaSource(MadaraSource):
     page_element_classes: tuple[str, ...] = ()
     request_referer = ""
     accept_language = ""
+    project_directory = ""
 
     def __init__(self, fetcher=None) -> None:
         super().__init__(fetcher)
@@ -76,7 +78,17 @@ class MangaThemesiaSource(MadaraSource):
             chunks=iter([content]),
         )
 
-    async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:
+    def get_filters(self) -> list[SourceFilter]:
+        return [
+            SourceFilter("projects", "Solo proyectos", "checkbox", default=False)
+        ] if self.project_directory else []
+
+    async def search(
+        self,
+        query: str,
+        page: int = 1,
+        filters: dict | None = None,
+    ) -> list[SourceSeries]:
         profile = self.search_profile
         if profile == "rizz":
             response = await self._request(
@@ -87,8 +99,8 @@ class MangaThemesiaSource(MadaraSource):
             )
             response.raise_for_status()
             return self._rizz_series(response.json())[:limit]
-        path = f"{self.manga_directory.rstrip('/')}/"
-        params = {"title": query.strip(), "page": "1"}
+        path = f"{self.project_directory if (filters or {}).get('projects') else self.manga_directory.rstrip('/')}/"
+        params = {"title": query.strip(), "page": str(page)}
         if profile == "comic_asura":
             path, params = "/advanced-search", {"name": query.strip(), "page": "1"}
         elif profile == "s":
@@ -106,7 +118,7 @@ class MangaThemesiaSource(MadaraSource):
             path, params = f"/cari/{slug}/1.html", {}
         elif profile == "rokari":
             path, params = "/", {"s": query.strip(), "page": "1"}
-        return (await self._listing(params, path=path))[:limit]
+        return await self._listing(params, path=path)
 
     async def browse(self, kind: str, page: int = 1) -> list[SourceSeries]:
         if kind == "latest" and not self.supports_latest:
@@ -170,7 +182,12 @@ class MangaThemesiaSource(MadaraSource):
             if source_id in seen or not title:
                 continue
             seen.add(source_id)
-            result.append(SourceSeries(source_id=source_id, title=title, source_name=self.name))
+            image = _first(item, lambda node: node.tag == "img")
+            result.append(SourceSeries(
+                source_id=source_id, title=title, source_name=self.name,
+                cover_url=_image_url(image, str(response.url)) if image else None,
+                web_url=source_id,
+            ))
         return result
 
     def _rizz_series(self, payload: list[dict]) -> list[SourceSeries]:
@@ -282,6 +299,7 @@ class MangaThemesiaSource(MadaraSource):
             match = re.search(r"(?:chapter|cap(?:í|i)tulo|ch)[^\d]*(\d+(?:\.\d+)?)", title, re.I)
             if match is None:
                 match = re.search(r"(\d+(?:\.\d+)?)", title)
+            date = _first(item, lambda node: node.has_class("chapterdate"))
             result.append(
                 SourceChapter(
                     source_id=source_id,
@@ -289,6 +307,7 @@ class MangaThemesiaSource(MadaraSource):
                     series_id=series_id,
                     source_name=self.name,
                     number=float(match.group(1)) if match else None,
+                    uploaded_at=self._madara_date(date.text() if date else ""),
                 )
             )
         return result
@@ -463,3 +482,103 @@ class MangaThemesiaSource(MadaraSource):
                 return True
             parent = parent.parent
         return False
+
+
+class MangaTVSource(MangaThemesiaSource):
+    async def search(self, query: str, page: int = 1, filters: dict | None = None) -> list[SourceSeries]:
+        return await self._listing({"s": query.strip(), "page": str(page)})
+
+    async def browse(self, kind: str, page: int = 1) -> list[SourceSeries]:
+        return await self._listing({"s": "", "page": str(page)}) if kind in {"popular", "latest"} else []
+
+    async def details(self, series: SourceSeries | str) -> SourceSeries:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        response = await self._request("GET", urljoin(f"{self.base_url}/", series_id))
+        response.raise_for_status()
+        root = _parse_html(response.text)
+
+        def labeled(label: str):
+            for node in root.descendants("div"):
+                if not (node.has_class("wd-full") or node.has_class("imptdt")):
+                    continue
+                heading = _first(node, lambda item: item.tag == "b")
+                own_text = " ".join(item.strip() for item in node.children if isinstance(item, str))
+                if label in f"{own_text} {heading.text() if heading else ''}".casefold():
+                    return node
+            return None
+
+        title = _first(root, lambda node: node.tag == "h1" and node.has_class("entry-title"))
+        image = _first(root, lambda node: node.tag == "img" and self._has_class_ancestor(node, "thumb"))
+        synopsis = labeled("sinopsis")
+        description = _first(synopsis, lambda node: node.tag == "span") if synopsis else None
+        status_row = labeled("estado")
+        status = _first(status_row, lambda node: node.tag in {"i", "span"}) if status_row else None
+        genre_row = labeled("generos")
+        genres = [
+            anchor.text().strip().capitalize()
+            for anchor in genre_row.descendants("a") if anchor.text().strip()
+        ] if genre_row else []
+        type_row = labeled("tipo")
+        type_node = _first(type_row, lambda node: node.tag in {"a", "i", "span"}) if type_row else None
+        if type_node and type_node.text().strip():
+            genres.append(type_node.text().strip())
+        return SourceSeries(
+            source_id=series_id,
+            title=title.text().strip() if title else series.title if isinstance(series, SourceSeries) else series_id.rstrip("/").rsplit("/", 1)[-1],
+            source_name=self.name,
+            cover_url=_image_url(image, str(response.url)) if image else None,
+            description=description.text().strip() if description else None,
+            status=self._madara_status(status.text() if status else ""),
+            content_tags=tuple(dict.fromkeys(genres)),
+            metadata=series.metadata if isinstance(series, SourceSeries) else {},
+            web_url=str(response.url),
+        )
+
+    async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        response = await self._request("GET", urljoin(f"{self.base_url}/", series_id))
+        response.raise_for_status()
+        root = _parse_html(response.text)
+        chapter_list = _first(root, lambda node: node.attrs.get("id") == "chapterlist")
+        result = []
+        for item in chapter_list.descendants("li") if chapter_list else []:
+            link_box = _first(item, lambda node: node.has_class("dt"))
+            anchor = _first(link_box, lambda node: node.tag == "a" and bool(node.attrs.get("href"))) if link_box else None
+            if anchor is None:
+                continue
+            title = " ".join(
+                node.text().strip() for node in item.descendants()
+                if node.has_class("chapternum") and node.text().strip()
+            ) or anchor.text().strip()
+            number = re.search(r"\d+(?:\.\d+)?", title)
+            date = _first(item, lambda node: node.has_class("chapterdate"))
+            result.append(SourceChapter(
+                source_id=urljoin(str(response.url), anchor.attrs["href"]),
+                title=title or "Capítulo", series_id=series_id, source_name=self.name,
+                number=float(number.group()) if number else None, language=self.language,
+                uploaded_at=self._madara_date(date.text() if date else ""),
+            ))
+        return result
+
+    async def pages(self, chapter: SourceChapter | str) -> list[SourcePage]:
+        chapter_id = chapter.source_id if isinstance(chapter, SourceChapter) else str(chapter)
+        response = await self._request("GET", urljoin(f"{self.base_url}/", chapter_id))
+        response.raise_for_status()
+        root = _parse_html(response.text)
+        packed = next((script.text() for script in root.descendants("script") if "eval(" in script.text()), "")
+        unpacked = self._unpack_packer(packed)
+        found = re.search(r'''["']images["']\s*:\s*(\[.*?])''', unpacked, re.S)
+        if found is None:
+            return []
+        try:
+            encoded = json.loads(re.sub(r",\s*]", "]", found.group(1)))
+        except json.JSONDecodeError:
+            return []
+        urls = []
+        for value in encoded:
+            try:
+                decoded = base64.b64decode(str(value)).decode()
+            except (ValueError, UnicodeDecodeError):
+                continue
+            urls.append(f"https:{decoded}")
+        return self._source_pages(urls, chapter_id)

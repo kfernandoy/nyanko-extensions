@@ -23,6 +23,7 @@ class MangaDexSource:
     language = "en"
     languages = ("en",)
     api_version = SOURCE_API_VERSION
+    content_warning = "safe"
 
     def __init__(self, fetcher: SourceFetcher | None = None) -> None:
         self.fetcher = fetcher
@@ -35,6 +36,7 @@ class MangaDexSource:
                 "Origin": "https://mangadex.org",
             },
             requests_per_minute=60,
+            content_warning=self.content_warning,
         )
 
     async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:
@@ -129,7 +131,26 @@ class MangaDexSource:
         return params
 
     def _series(self, item: dict[str, Any]) -> SourceSeries:
-        return SourceSeries(item["id"], self._title(item.get("attributes", {})), self.name)
+        manga_id = item["id"]
+        filename = next(
+            (
+                relation.get("attributes", {}).get("fileName")
+                for relation in item.get("relationships", [])
+                if relation.get("type") == "cover_art"
+            ),
+            None,
+        )
+        return SourceSeries(
+            source_id=manga_id,
+            title=self._title(item.get("attributes", {})),
+            source_name=self.name,
+            cover_url=(
+                f"https://uploads.mangadex.org/covers/{manga_id}/{filename}.256.jpg"
+                if filename
+                else None
+            ),
+            web_url=f"https://mangadex.org/title/{manga_id}",
+        )
 
     def _chapter(self, item: dict[str, Any], series_id: str) -> SourceChapter:
         attributes = item.get("attributes", {})

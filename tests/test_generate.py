@@ -2,10 +2,18 @@ from __future__ import annotations
 
 import unittest
 
-from tools.generate import _disambiguate_names
+from tools.generate import _disambiguate_names, _expand_source
 
 
 class GenerateTest(unittest.TestCase):
+    def test_source_expansion_resolves_kotlin_it(self):
+        source = 'lang = it\nbaseUrl = "https://example.com/$it/${it}"'
+
+        self.assertEqual(
+            _expand_source(source, "fr"),
+            'lang = "fr"\nbaseUrl = "https://example.com/fr/fr"',
+        )
+
     def test_repeated_names_include_language(self):
         extensions = [
             {"id": "demo_en", "name": "Demo"},
