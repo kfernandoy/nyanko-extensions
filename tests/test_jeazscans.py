@@ -114,5 +114,56 @@ class JeazScansTest(unittest.IsolatedAsyncioTestCase):
         ))
 
 
+class JeazScansRediseñoTest(unittest.IsolatedAsyncioTestCase):
+    """La home y el lector se rehicieron en agosto de 2026; el markup viejo sigue arriba."""
+
+    async def test_home_nueva_ignora_top_rankings_vacio(self):
+        # "Top Rankings" sigue en el HTML pero la rellena JS: llega sin tarjetas.
+        home = """
+        <section class="popular-section"><h2>Popular hoy</h2>
+          <a href="manga.php?id=241" class="popular-card"><img src="/uploads/gato.webp" alt="Gato">
+            <span class="popular-info"><strong>Gato</strong></span></a></section>
+        <section><h3>Últimos lanzamientos</h3>
+          <article class="release-card manga-card"><a href="manga.php?id=250" class="release-cover">
+            <img src="/uploads/perro.webp" alt="Perro"></a>
+            <a href="manga.php?id=250" class="release-title">Perro</a></article></section>
+        <section><h3>Top Rankings</h3><div class="space-y-1"></div></section>
+        """
+        fetcher = Fetcher([
+            Response("https://lectorhub.j5z.xyz/", home),
+            Response("https://lectorhub.j5z.xyz/", home),
+        ])
+        source = source_class()(fetcher)
+
+        popular = await source.browse("popular")
+        latest = await source.browse("latest")
+
+        self.assertEqual([item.title for item in popular["items"]], ["Gato"])
+        self.assertEqual(popular["items"][0].source_id, "/manga.php?id=241")
+        self.assertEqual(popular["items"][0].cover_url, "https://lectorhub.j5z.xyz/uploads/gato.webp")
+        self.assertEqual([item.title for item in latest["items"]], ["Perro"])
+
+    async def test_lector_nuevo_sin_protected_img_y_sin_duplicar_noscript(self):
+        # Cada page-container repite su imagen dentro de <noscript>: misma URL, no es otra pagina.
+        reader = """
+        <div id="pagesContainer">
+          <div class="page-container reader-page-shell"><img src="/uploads/gato/1/01.png" class="reader-page-image">
+            <noscript><img src="/uploads/gato/1/01.png"></noscript></div>
+          <div class="page-container reader-page-shell"><img src="/uploads/gato/1/02.png" class="reader-page-image">
+            <noscript><img src="/uploads/gato/1/02.png"></noscript></div>
+        </div>
+        """
+        fetcher = Fetcher([Response("https://lectorhub.j5z.xyz/leer/gato/capitulo-1", reader)])
+        source = source_class()(fetcher)
+
+        pages = await source.pages("/leer/gato/capitulo-1")
+
+        self.assertEqual([page.source_id for page in pages], [
+            "https://lectorhub.j5z.xyz/uploads/gato/1/01.png",
+            "https://lectorhub.j5z.xyz/uploads/gato/1/02.png",
+        ])
+        self.assertEqual(len(fetcher.requests), 1, "no debe caer al fallback de api_lector.php")
+
+
 if __name__ == "__main__":
     unittest.main()

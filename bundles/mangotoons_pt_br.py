@@ -4141,13 +4141,18 @@ class JeazScansSource(GenericSource):
         response = await self._request("GET", urljoin(f"{self.base_url}/", chapter_id))
         response.raise_for_status()
         root = _parse_html(response.text)
+        # El lector servia img.protected-img con data-verify; ahora sirve un <img src> normal
+        # dentro de div.page-container, asi que la clase ya no puede ser obligatoria.
         images = [
             image for image in root.descendants("img")
-            if (image.has_class("protected-img") and self._has_class_ancestor(image, "page-container"))
+            if self._has_class_ancestor(image, "page-container")
             or self._has_class_ancestor(image, "reader-body")
             or self._has_class_ancestor(image, "reading-content")
         ]
-        urls = [url for image in images if (url := self._page_url(image, str(response.url)))]
+        # Cada page-container repite su imagen dentro de un <noscript>: misma URL, sobra.
+        urls = list(dict.fromkeys(
+            url for image in images if (url := self._page_url(image, str(response.url)))
+        ))
         if not urls:
             slug, chapter_number = self._slug_and_chapter(response)
             if not slug or not chapter_number:
@@ -4173,45 +4178,74 @@ class JeazScansSource(GenericSource):
             source_name=self.name,
         ) for index, url in enumerate(urls, 1)]
 
+    # La home sirve "Popular hoy" (a.popular-card) y "Ultimos lanzamientos"
+    # (article.manga-card). "Top Rankings" sigue ahi pero la rellena JS: llega vacia.
+    _HOME_MARKERS = {
+        "popular": ("popular hoy", "top rankings"),
+        "latest": ("lanzamientos",),
+    }
+    _HOME_CARD_CLASSES = {"popular": ("popular-card",), "latest": ("manga-card",)}
+
     def _home(self, response, kind: str) -> list[SourceSeries]:
         root = _parse_html(response.text)
-        marker = "top rankings" if kind == "popular" else "lanzamientos"
-        section = next(
-            (
-                node for node in root.descendants("section")
-                if any(marker in heading.text().casefold() for heading in node.descendants("h3"))
-            ),
-            None,
-        )
-        if section is None:
-            return []
-        containers = (
-            [node for node in section.descendants("a") if "manga.php?id=" in node.attrs.get("href", "")]
-            if kind == "popular"
-            else [node for node in section.descendants() if node.has_class("manga-card")]
-        )
+        markers = self._HOME_MARKERS[kind]
+        classes = self._HOME_CARD_CLASSES[kind]
+        sections = [
+            node for node in root.descendants("section")
+            if any(
+                marker in heading.text().casefold()
+                for marker in markers
+                for tag in ("h2", "h3")
+                for heading in node.descendants(tag)
+            )
+        ]
         result: list[SourceSeries] = []
-        for container in containers:
-            anchor = container if container.tag == "a" else _first(
-                container, lambda node: node.tag == "a" and "manga.php?id=" in node.attrs.get("href", ""),
-            )
-            title = _first(
-                container,
-                lambda node: node.tag in ({"h4", "h5"} if kind == "popular" else {"figcaption"}),
-            )
-            if anchor is None or title is None:
-                continue
-            url = urljoin(str(response.url), anchor.attrs["href"])
-            parsed = urlparse(url)
-            image = _first(container, lambda node: node.tag == "img")
-            result.append(SourceSeries(
-                source_id=urlunparse(("", "", parsed.path, parsed.params, parsed.query, "")),
-                title=title.text().strip(),
-                source_name=self.name,
-                cover_url=_image_url(image, str(response.url)) if image else None,
-                web_url=url,
-            ))
+        seen: set[str] = set()
+        for section in sections:
+            containers = [
+                node for node in section.descendants()
+                if any(node.has_class(value) for value in classes)
+            ] or [
+                node for node in section.descendants("a")
+                if "manga.php?id=" in node.attrs.get("href", "")
+            ]
+            for container in containers:
+                anchor = container if (
+                    container.tag == "a" and "manga.php?id=" in container.attrs.get("href", "")
+                ) else _first(
+                    container,
+                    lambda node: node.tag == "a" and "manga.php?id=" in node.attrs.get("href", ""),
+                )
+                if anchor is None:
+                    continue
+                image = _first(container, lambda node: node.tag == "img")
+                title = self._home_title(container, image)
+                if not title:
+                    continue
+                url = urljoin(str(response.url), anchor.attrs["href"])
+                parsed = urlparse(url)
+                source_id = urlunparse(("", "", parsed.path, parsed.params, parsed.query, ""))
+                if source_id in seen:
+                    continue
+                seen.add(source_id)
+                result.append(SourceSeries(
+                    source_id=source_id,
+                    title=title,
+                    source_name=self.name,
+                    cover_url=_image_url(image, str(response.url)) if image else None,
+                    web_url=url,
+                ))
         return result
+
+    @staticmethod
+    def _home_title(container: _Node, image: _Node | None) -> str:
+        # release-title y popular-info>strong son el markup actual; h4/h5/figcaption, el anterior.
+        node = _first(container, lambda item: item.tag == "a" and item.has_class("release-title"))
+        node = node or _first(container, lambda item: item.tag == "strong")
+        node = node or _first(container, lambda item: item.tag in {"h4", "h5", "figcaption"})
+        if node is not None and node.text().strip():
+            return node.text().strip()
+        return (image.attrs.get("alt", "").strip() if image else "") or ""
 
     def _page_url(self, image: _Node, base_url: str) -> str | None:
         if image.attrs.get("data-verify"):
