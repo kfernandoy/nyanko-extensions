@@ -1,4 +1,4 @@
-"""Implementación común de galerías Masonry para Nyanko Source v3."""
+"""Implementación común de galerías Masonry para Nyanko Source v4."""
 
 from urllib.parse import quote, urljoin, urlsplit
 

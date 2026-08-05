@@ -1,4 +1,4 @@
-"""Implementación común de Bakkin Reader X para Nyanko Source v3."""
+"""Implementación común de Bakkin Reader X para Nyanko Source v4."""
 
 from urllib.parse import urljoin
 

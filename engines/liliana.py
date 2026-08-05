@@ -1,4 +1,4 @@
-"""Implementación común de sitios Liliana para Nyanko Source v3."""
+"""Implementación común de sitios Liliana para Nyanko Source v4."""
 
 import json
 import re

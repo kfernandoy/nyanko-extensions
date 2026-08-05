@@ -1,4 +1,4 @@
-"""Implementación común del tema MangaThemesia para Nyanko Source v3."""
+"""Implementación común del tema MangaThemesia para Nyanko Source v4."""
 
 import ast
 import base64

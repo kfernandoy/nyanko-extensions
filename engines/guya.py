@@ -1,4 +1,4 @@
-"""Implementación común de la API Guya/Cubari para Nyanko Source v3."""
+"""Implementación común de la API Guya/Cubari para Nyanko Source v4."""
 
 try:
     from .madara import (

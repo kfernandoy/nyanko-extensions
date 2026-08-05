@@ -1,4 +1,4 @@
-"""Implementación común de sitios NatsuId para Nyanko Source v3."""
+"""Implementación común de sitios NatsuId para Nyanko Source v4."""
 
 import re
 from urllib.parse import parse_qs, urljoin, urlsplit

@@ -1,4 +1,4 @@
-"""Implementación común del tema Madara para bundles Nyanko Source v3."""
+"""Implementación común del tema Madara para bundles Nyanko Source v4."""
 
 from __future__ import annotations
 
@@ -2352,28 +2352,61 @@ from typing import Any
 
 from nyanko_api.sources.contract import Paginated, SourceFilter, SourcePreference
 
+_PAGE_SIZE = 20
+
+
+def _parameters(method: Any) -> Mapping[str, Any]:
+    return inspect.signature(method).parameters
+
 
 def _arguments(method: Any, page: int, filters: Mapping[str, Any] | None) -> dict[str, Any]:
-    parameters = inspect.signature(method).parameters
+    parameters = _parameters(method)
     arguments: dict[str, Any] = {}
     if "page" in parameters:
         arguments["page"] = page
     if "filters" in parameters:
         arguments["filters"] = filters
     if "limit" in parameters:
-        arguments["limit"] = 20
+        # Un metodo v3 sin `page` solo se controla por `limit`: se pide el
+        # acumulado hasta la pagina solicitada y luego se recorta el tramo. El
+        # elemento extra es el sondeo que distingue "no hay mas" de "justo cabia".
+        arguments["limit"] = _PAGE_SIZE if "page" in parameters else page * _PAGE_SIZE + 1
     return arguments
 
 
-def _paginated(value: Any, has_more: bool) -> Paginated:
+def _unwrap(value: Any) -> tuple[list[Any], bool | None]:
+    """Normaliza un retorno v3 a ``(items, has_more)``; ``None`` si no lo declara."""
     if isinstance(value, Paginated):
-        return value
+        return list(value.items), value.has_more
     if isinstance(value, dict):
+        declared = value.get("has_more", value.get("has_next_page"))
         items = value.get("items", value.get("results", []))
-        has_more = bool(value.get("has_more", value.get("has_next_page", has_more)))
-    else:
-        items = value or []
-    return Paginated(items=list(items), has_more=has_more and bool(items))
+        return list(items or []), None if declared is None else bool(declared)
+    return list(value or []), None
+
+
+def _paginated(value: Any, has_more: bool) -> Paginated:
+    items, declared = _unwrap(value)
+    if declared is not None:
+        has_more = declared
+    return Paginated(items=items, has_more=has_more and bool(items))
+
+
+def _window(value: Any, page: int) -> Paginated:
+    """Pagina en el cliente un metodo v3 que devuelve el acumulado de una vez."""
+    items, declared = _unwrap(value)
+    start = (page - 1) * _PAGE_SIZE
+    window = items[start : start + _PAGE_SIZE]
+    has_more = len(items) > start + _PAGE_SIZE if declared is None else declared
+    return Paginated(items=window, has_more=has_more and bool(window))
+
+
+def _consumes_filters(legacy_source: type) -> bool:
+    return any(
+        "filters" in _parameters(method)
+        for name in ("search", "browse")
+        if callable(method := getattr(legacy_source, name, None))
+    )
 
 
 def _options(options: Any) -> list[tuple[str, str]] | None:
@@ -2414,10 +2447,14 @@ def _preferences(values: Any) -> list[SourcePreference]:
 
 
 def adapt_source(legacy_source: type) -> type:
+    # Un filtro que ningun metodo v3 acepta no se anuncia: la UI mostraria
+    # controles que el adaptador descarta en silencio.
+    publishes_filters = _consumes_filters(legacy_source)
+
     class SourceV4(legacy_source):
         async def get_filters(self) -> list[SourceFilter]:
             getter = getattr(super(), "get_filters", None)
-            if not getter:
+            if not getter or not publishes_filters:
                 return []
             values = getter()
             if inspect.isawaitable(values):
@@ -2435,11 +2472,10 @@ def adapt_source(legacy_source: type) -> type:
             filters: Mapping[str, Any] | None = None,
         ) -> Paginated:
             method = super().search
-            arguments = _arguments(method, page, filters)
-            return _paginated(
-                await method(query, **arguments),
-                "page" in inspect.signature(method).parameters,
-            )
+            result = await method(query, **_arguments(method, page, filters))
+            if "page" in _parameters(method):
+                return _paginated(result, True)
+            return _window(result, page)
 
         async def browse(
             self,

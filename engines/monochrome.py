@@ -1,4 +1,4 @@
-"""Implementación común de Monochrome CMS para Nyanko Source v3."""
+"""Implementación común de Monochrome CMS para Nyanko Source v4."""
 
 try:
     from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries

@@ -1,4 +1,4 @@
-"""Implementación común de sitios GroupLe para Nyanko Source v3."""
+"""Implementación común de sitios GroupLe para Nyanko Source v4."""
 
 import re
 from urllib.parse import urljoin
