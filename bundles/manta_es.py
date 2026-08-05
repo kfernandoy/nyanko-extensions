@@ -569,317 +569,243 @@ class MadaraSource :
             raise SourceNotFoundError (f"{self .display_name } no tiene fetcher inyectado")
         return await self .fetcher .request (method ,url ,**kwargs )
 
-"""Fuente HTTP adaptable para extensiones sin un motor compartido."""
 
-import json 
-import re 
-from urllib .parse import urljoin 
+"""Adaptador de Manta Comics: API propia con textos por idioma."""
+
+_MANTA_COVERS =("1280x1840_480","1280x1840_720","1440x3072","1440x1440_480")
+# El sitio considera desbloqueado solo estos dos estados.
+_MANTA_UNLOCKED =(110 ,130 )
+_MANTA_CATEGORIES ={
+"es":(
+("tagId=288","Nueva"),("tagId=289","Exclusiva"),("tagId=287","Finalizada"),
+("tagId=355","Romantasía"),("tagId=3","Romance"),("tagId=16","BL"),
+("tagId=13","Comedia"),("tagId=7","Histórico"),("tagId=11","Vida cotidiana"),
+),
+"en":(
+("tagId=359","Unlimited"),("tagId=288","New"),("tagId=289","Exclusive"),
+("tagId=287","Completed"),("tagId=354","Event"),("tagId=355","Romantasy"),
+("tagId=3","Romance"),("tagId=14","Fantasy/Sci-Fi"),("tagId=2","Drama"),
+("tagId=231","Thriller"),("tagId=16","BL"),("tagId=17","GL"),
+("tagId=249","Nonfiction"),("tagId=361","Action & Adventure"),("tagId=13","Comedy"),
+("tagId=7","Historical"),("tagId=1","Horror"),("tagId=74","School life"),
+("tagId=11","Slice of life"),("tagId=6","Sports"),("tagId=362","Suspense & Thriller"),
+),
+}
 
 
+class MantaComicsSource (MadaraSource ):
+    """base_url incluye el idioma; la API cuelga del host a secas."""
 
-class GenericSource (MadaraSource ):
-    search_paths :tuple [str ,...]=("search","")
-    popular_paths :tuple [str ,...]=("series","manga","comics","popular","")
-    latest_paths :tuple [str ,...]=("latest","updates","series","manga","")
+    supports_latest =False 
 
-    async def search (self ,query :str ,limit :int =20 )->list [SourceSeries ]:
-        for path in self .search_paths :
-            for key in ("q","query","s","keyword"):
-                try :
-                    response =await self ._request (
-                    "GET",
-                    urljoin (f"{self .base_url }/",path ),
-                    params ={key :query .strip (),"page":"1"},
-                    )
-                    if getattr (response ,"status_code",200 )>=400 :
-                        continue 
-                    values =self ._adaptive_series (response )
-                    if values :
-                        return values [:limit ]
-                except Exception :
-                    continue 
-        return []
+    def __init__ (self ,fetcher :SourceFetcher |None =None )->None :
+        super ().__init__ (fetcher )
+        headers ={
+        "User-Agent":"Nyanko/0.2.4",
+        "Origin":self .api_url ,
+        "Accept-Language":self .language ,
+        }
+        self .capabilities =SourceCapabilities (
+        search =True ,
+        browse =True ,
+        headers =headers ,
+        requests_per_minute =self .requests_per_minute ,
+        content_warning =self .content_warning ,
+        requires_auth =self .requires_auth ,
+        )
+        self .image_headers =dict (headers )
 
-    async def browse (self ,kind :str ,page :int =1 )->list [SourceSeries ]:
-        if kind not in {"popular","latest"}:
-            return []
-        paths =self .popular_paths if kind =="popular"else self .latest_paths 
-        for path in paths :
-            try :
-                response =await self ._request (
-                "GET",
-                urljoin (f"{self .base_url }/",path ),
-                params ={"page":str (page )},
-                )
-                if getattr (response ,"status_code",200 )>=400 :
-                    continue 
-                values =self ._adaptive_series (response )
-                if values :
-                    return values 
-            except Exception :
-                continue 
-        return []
-
-    async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
-        series_id =series .source_id if isinstance (series ,SourceSeries )else series 
-        response =await self ._request ("GET",urljoin (f"{self .base_url }/",series_id ))
-        response .raise_for_status ()
-        root =_parse_html (response .text )
-        result :list [SourceChapter ]=[]
-        for anchor in root .descendants ("a"):
-            href =anchor .attrs .get ("href","")
-            title =anchor .text ().strip ()or anchor .attrs .get ("title","").strip ()
-            marker =f"{href } {title }".lower ()
-            if not href or not any (value in marker for value in ("chapter","chap","capitulo","capítulo","episode","bolum","read/")):
-                continue 
-            found =re .search (r"\d+(?:\.\d+)?",title )
-            result .append (
-            SourceChapter (
-            source_id =urljoin (str (response .url ),href ),
-            title =title or "Capítulo",
-            series_id =series_id ,
-            source_name =self .name ,
-            number =float (found .group ())if found else None ,
-            )
-            )
-        if not result :
-            try :
-                payload =response .json ()
-            except (ValueError ,AttributeError ):
-                payload =None 
-            for item in self ._walk_dicts (payload ):
-                title =str (item .get ("title")or item .get ("name")or "")
-                item_id =item .get ("url")or item .get ("slug")or item .get ("id")
-                if not title or item_id is None or "chap"not in json .dumps (item ).lower ():
-                    continue 
-                found =re .search (r"\d+(?:\.\d+)?",title )
-                result .append (
-                SourceChapter (
-                source_id =urljoin (str (response .url ),str (item_id )),
-                title =title ,
-                series_id =series_id ,
-                source_name =self .name ,
-                number =float (found .group ())if found else None ,
-                )
-                )
-        return list ({item .source_id :item for item in result }.values ())
-
-    def _adaptive_series (self ,response )->list [SourceSeries ]:
-        root =_parse_html (response .text )
-        result :list [SourceSeries ]=[]
-        seen :set [str ]=set ()
-        for anchor in root .descendants ("a"):
-            href =anchor .attrs .get ("href","")
-            title =anchor .attrs .get ("title","").strip ()or anchor .text ().strip ()
-            parent =anchor .parent 
-            marker =""
-            while parent is not None :
-                marker +=f" {parent .attrs .get ('id','')} {parent .attrs .get ('class','')}"
-                parent =parent .parent 
-            if not href or not title or not any (value in marker .lower ()for value in ("manga","comic","series","novel","item","book")):
-                continue 
-            source_id =urljoin (str (response .url ),href )
-            if source_id not in seen :
-                seen .add (source_id )
-                image =_first (anchor ,lambda node :node .tag =="img")
-                if image is None and anchor .parent is not None :
-                    image =_first (anchor .parent ,lambda node :node .tag =="img")
-                result .append (
-                SourceSeries (
-                source_id =source_id ,
-                title =title ,
-                source_name =self .name ,
-                cover_url =(
-                _image_url (image ,str (response .url ))if image else None 
-                ),
-                web_url =source_id ,
-                )
-                )
-        if result :
-            return result 
-        try :
-            payload =response .json ()
-        except (ValueError ,AttributeError ):
-            return []
-        for item in self ._walk_dicts (payload ):
-            title =item .get ("title")or item .get ("name")
-            item_id =item .get ("url")or item .get ("href")or item .get ("slug")or item .get ("id")
-            if title and item_id is not None :
-                source_id =urljoin (str (response .url ),str (item_id ))
-                if source_id not in seen :
-                    seen .add (source_id )
-                    cover =(
-                    item .get ("cover_url")
-                    or item .get ("cover")
-                    or item .get ("thumbnail")
-                    or item .get ("image")
-                    )
-                    result .append (
-                    SourceSeries (
-                    source_id =source_id ,
-                    title =str (title ),
-                    source_name =self .name ,
-                    cover_url =(
-                    urljoin (str (response .url ),cover )
-                    if isinstance (cover ,str )
-                    else None 
-                    ),
-                    web_url =source_id ,
-                    )
-                    )
-        return result 
-
-    @staticmethod 
-    def _walk_dicts (value ):
-        if isinstance (value ,dict ):
-            yield value 
-            for child in value .values ():
-                yield from GenericSource ._walk_dicts (child )
-        elif isinstance (value ,list ):
-            for child in value :
-                yield from GenericSource ._walk_dicts (child )
-
-class GeneratedGenericSource (GenericSource ):
-
-    def get_preferences (self )->list [SourcePreference ]:
-    # Autogenerated via heuristic port
-        data =[]
-        return [SourcePreference (**item )for item in data ]
+    @property 
+    def api_url (self )->str :
+        parsed =urlparse (self .base_url )
+        return f"{parsed .scheme }://{parsed .netloc }"
 
     def get_filters (self )->list [SourceFilter ]:
-    # Autogenerated via heuristic port
-        data =[
-        {
-        "type":"select",
-        "id":"generic_filter",
-        "name":"Filtro",
-        "options":[
-        {
-        "name":"Nueva",
-        "value":"tagId=288"
-        },
-        {
-        "name":"Exclusiva",
-        "value":"tagId=289"
-        },
-        {
-        "name":"Finalizada",
-        "value":"tagId=287"
-        },
-        {
-        "name":"Romantasía",
-        "value":"tagId=355"
-        },
-        {
-        "name":"Romance",
-        "value":"tagId=3"
-        },
-        {
-        "name":"BL",
-        "value":"tagId=16"
-        },
-        {
-        "name":"Comedia",
-        "value":"tagId=13"
-        },
-        {
-        "name":"Histórico",
-        "value":"tagId=7"
-        },
-        {
-        "name":"Vida cotidiana",
-        "value":"tagId=11"
-        },
-        {
-        "name":"Unlimited",
-        "value":"tagId=359"
-        },
-        {
-        "name":"New",
-        "value":"tagId=288"
-        },
-        {
-        "name":"Exclusive",
-        "value":"tagId=289"
-        },
-        {
-        "name":"Completed",
-        "value":"tagId=287"
-        },
-        {
-        "name":"Event",
-        "value":"tagId=354"
-        },
-        {
-        "name":"Romantasy",
-        "value":"tagId=355"
-        },
-        {
-        "name":"Fantasy/Sci-Fi",
-        "value":"tagId=14"
-        },
-        {
-        "name":"Drama",
-        "value":"tagId=2"
-        },
-        {
-        "name":"Thriller",
-        "value":"tagId=231"
-        },
-        {
-        "name":"GL",
-        "value":"tagId=17"
-        },
-        {
-        "name":"Nonfiction",
-        "value":"tagId=249"
-        },
-        {
-        "name":"Action & Adventure",
-        "value":"tagId=361"
-        },
-        {
-        "name":"Comedy",
-        "value":"tagId=13"
-        },
-        {
-        "name":"Historical",
-        "value":"tagId=7"
-        },
-        {
-        "name":"Horror",
-        "value":"tagId=1"
-        },
-        {
-        "name":"School life",
-        "value":"tagId=74"
-        },
-        {
-        "name":"Slice of life",
-        "value":"tagId=11"
-        },
-        {
-        "name":"Sports",
-        "value":"tagId=6"
-        },
-        {
-        "name":"Suspense & Thriller",
-        "value":"tagId=362"
-        }
-        ],
-        "default":"tagId=288"
-        }
+        options =_MANTA_CATEGORIES .get (self .language ,_MANTA_CATEGORIES ["en"])
+        return [
+        SourceFilter (
+        "category",
+        "Categoría"if self .language =="es"else "Category",
+        "select",
+        list (options ),
+        options [0 ][0 ],
+        )
         ]
-        return [SourceFilter (**item )for item in data ]
 
+    async def browse (self ,kind :str ,page :int =1 ):
+    # No hay recientes: populares reusa el listado "New" de la API.
+        if kind !="popular":
+            return {"items":[],"has_more":False }
+        return await self ._series ([("cat","New"),("lang",self .language )])
+
+    async def search (self ,query :str ,page :int =1 ,filters :dict |None =None ):
+        params :list [tuple [str ,str ]]=[("lang",self .language )]
+        if query .strip ():
+            params .append (("q",query .strip ()))
+        else :
+            selected =str ((filters or {}).get ("category")or "")or "tagId=288"
+            key ,_ ,value =selected .partition ("=")
+            params .append ((key ,value ))
+        return await self ._series (params )
+
+    async def details (self ,series :SourceSeries |str )->SourceSeries :
+        series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
+        payload =await self ._get (f"/front/v1/series/{series_id }")
+        holder =(payload .get ("data")or {})
+        data =holder .get ("data")or {}
+        creators =[item for item in data .get ("creators")or []if isinstance (item ,dict )]
+        artists =[str (item .get ("name")or "")for item in creators if item .get ("role")=="Illustration"]
+        authors =[str (item .get ("name")or "")for item in creators if item .get ("role")!="Illustration"]
+        if not authors :
+            authors =[str (item .get ("name")or "")for item in creators ]
+        description =data .get ("description")or {}
+        known =series if isinstance (series ,SourceSeries )else None 
+        return SourceSeries (
+        source_id =series_id ,
+        title =known .title if known else series_id ,
+        source_name =self .name ,
+        cover_url =(known .cover_url if known else None )or self ._cover (holder .get ("image")),
+        description ="\n\n".join (
+        value 
+        for value in (description .get ("short"),description .get ("long"))
+        if value 
+        )or None ,
+        author =", ".join (authors )or None ,
+        artist =", ".join (artists )or None ,
+        status ="completed"if data .get ("isCompleted")is True else "ongoing",
+        content_tags =tuple (
+        self ._localized ((tag or {}).get ("name"))
+        for tag in data .get ("tags")or []
+        if isinstance (tag ,dict )
+        ),
+        web_url =f"{self .base_url }/series/{series_id }",
+        )
+
+    async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
+        series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
+        payload =await self ._get (f"/front/v1/series/{series_id }")
+        episodes =((payload .get ("data")or {}).get ("episodes"))or []
+        result :list [SourceChapter ]=[]
+        for episode in episodes :
+            if not isinstance (episode ,dict )or self ._locked (episode .get ("lockData")):
+                continue 
+            result .append (
+            SourceChapter (
+            source_id =str (episode .get ("id")),
+            title =self ._episode_title (episode ),
+            series_id =series_id ,
+            source_name =self .name ,
+            number =float (episode .get ("ord")or 0 ),
+            language =self .language ,
+            uploaded_at =self ._timestamp (episode .get ("openAt"))or self ._timestamp (episode .get ("createdAt")),
+            )
+            )
+        return result [::-1 ]
+
+    async def pages (self ,chapter :SourceChapter |str )->list [SourcePage ]:
+        chapter_id =chapter .source_id if isinstance (chapter ,SourceChapter )else str (chapter )
+        payload =await self ._get (f"/front/v1/episodes/{chapter_id }")
+        images =((payload .get ("data")or {}).get ("cutImages"))or []
+        urls =[
+        str (image .get ("downloadUrl")or "")
+        for image in images 
+        if isinstance (image ,dict )
+        ]
+        return [
+        SourcePage (
+        source_id =value ,
+        chapter_id =chapter_id ,
+        index =index ,
+        filename =urlparse (value ).path .rsplit ("/",1 )[-1 ]or f"{index }.jpg",
+        source_name =self .name ,
+        )
+        for index ,value in enumerate (value for value in urls if value )
+        ]
+
+    async def _series (self ,params :list [tuple [str ,str ]])->dict :
+        response =await self ._request (
+        "GET",f"{self .api_url }/manta/v1/search/series",params =params ,
+        )
+        response .raise_for_status ()
+        payload =response .json ()or {}
+        return {
+        "items":[
+        SourceSeries (
+        source_id =str (item .get ("id")),
+        title =self ._localized (((item .get ("data")or {}).get ("title"))),
+        source_name =self .name ,
+        cover_url =self ._cover (item .get ("image"))or None ,
+        web_url =f"{self .base_url }/series/{item .get ('id')}",
+        )
+        for item in payload .get ("data")or []
+        if isinstance (item ,dict )
+        ],
+        "has_more":False ,
+        }
+
+    async def _get (self ,path :str )->dict :
+        response =await self ._request (
+        "GET",f"{self .api_url }{path }",params ={"lang":self .language },
+        )
+        response .raise_for_status ()
+        return response .json ()or {}
+
+    def _localized (self ,value :Any )->str :
+        if not isinstance (value ,dict ):
+            return str (value or "")
+        english ,spanish =value .get ("en"),value .get ("es")
+        if self .language =="es":
+            return str (spanish or english or "")
+        return str (english or spanish or "")
+
+    def _episode_title (self ,episode :dict )->str :
+        title =(episode .get ("data")or {}).get ("title")
+        if title :
+            return str (title )
+        word ="Episodio"if self .language =="es"else "Episode"
+        return f"{word } {episode .get ('ord')}"
+
+    @staticmethod 
+    def _cover (value :Any )->str :
+        if not isinstance (value ,dict ):
+            return ""
+        for key in _MANTA_COVERS :
+            image =value .get (key )
+            if isinstance (image ,dict )and image .get ("downloadUrl"):
+                return str (image ["downloadUrl"])
+        return ""
+
+    @staticmethod 
+    def _locked (value :Any )->bool :
+        if not isinstance (value ,dict ):
+            return False 
+        state =value .get ("state")
+        return state is not None and state not in _MANTA_UNLOCKED 
+
+    @staticmethod 
+    def _timestamp (value :Any )->str |None :
+        from datetime import datetime 
+
+        if not value :
+            return None 
+        text =str (value ).split (".")[0 ].split ("+")[0 ].split ("Z")[0 ]
+        try :
+            return datetime .strptime (text ,"%Y-%m-%dT%H:%M:%S").isoformat ()
+        except ValueError :
+            return None 
+
+
+class GeneratedMantaComicsSource (MantaComicsSource ):
     name ='manta_es'
     display_name ='Manta'
     base_url ='https://manta.net/es'
     language ='es'
     requests_per_minute =60 
+    content_warning ='mixed'
+    image_headers ={'Referer':'https://manta.net/es/'}
 
 
-SOURCE =GeneratedGenericSource
+SOURCE =GeneratedMantaComicsSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 
