@@ -569,206 +569,206 @@ class MadaraSource:
             raise SourceNotFoundError(f"{self.display_name} no tiene fetcher inyectado")
         return await self.fetcher.request(method, url, **kwargs)
 
-"""Fuente HTTP adaptable para extensiones sin un motor compartido."""
 
-import json
-import re
-from urllib.parse import urljoin
+"""Adaptador de Simply Hentai: API v3 con el idioma como etiqueta."""
 
-try:
-    from .madara import MadaraSource, SourceChapter, SourceFilter,
-    SourcePreference,
-    SourceSeries, _first, _image_url, _parse_html
-except ImportError:
-    pass
+_SIMPLYHENTAI_API = "https://api.simply-hentai.com/v3"
+_SIMPLYHENTAI_LANGS = {
+    "en": "english", "ja": "japanese", "zh": "chinese", "ko": "korean", "es": "spanish",
+    "ru": "russian", "fr": "french", "de": "german", "it": "italian", "pl": "polish",
+}
 
 
-class GenericSource(MadaraSource):
-    search_paths: tuple[str, ...] = ("search", "")
-    popular_paths: tuple[str, ...] = ("series", "manga", "comics", "popular", "")
-    latest_paths: tuple[str, ...] = ("latest", "updates", "series", "manga", "")
+class SimplyHentaiSource(MadaraSource):
+    """Cada album es una sola serie con un unico capitulo de todas las paginas."""
 
-    async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:
-        for path in self.search_paths:
-            for key in ("q", "query", "s", "keyword"):
-                try:
-                    response = await self._request(
-                        "GET",
-                        urljoin(f"{self.base_url}/", path),
-                        params={key: query.strip(), "page": "1"},
-                    )
-                    if getattr(response, "status_code", 200) >= 400:
-                        continue
-                    values = self._adaptive_series(response)
-                    if values:
-                        return values[:limit]
-                except Exception:
-                    continue
-        return []
-
-    async def browse(self, kind: str, page: int = 1) -> list[SourceSeries]:
-        if kind not in {"popular", "latest"}:
-            return []
-        paths = self.popular_paths if kind == "popular" else self.latest_paths
-        for path in paths:
-            try:
-                response = await self._request(
-                    "GET",
-                    urljoin(f"{self.base_url}/", path),
-                    params={"page": str(page)},
-                )
-                if getattr(response, "status_code", 200) >= 400:
-                    continue
-                values = self._adaptive_series(response)
-                if values:
-                    return values
-            except Exception:
-                continue
-        return []
-
-    async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
-        series_id = series.source_id if isinstance(series, SourceSeries) else series
-        response = await self._request("GET", urljoin(f"{self.base_url}/", series_id))
-        response.raise_for_status()
-        root = _parse_html(response.text)
-        result: list[SourceChapter] = []
-        for anchor in root.descendants("a"):
-            href = anchor.attrs.get("href", "")
-            title = anchor.text().strip() or anchor.attrs.get("title", "").strip()
-            marker = f"{href} {title}".lower()
-            if not href or not any(value in marker for value in ("chapter", "chap", "capitulo", "capítulo", "episode", "bolum", "read/")):
-                continue
-            found = re.search(r"\d+(?:\.\d+)?", title)
-            result.append(
-                SourceChapter(
-                    source_id=urljoin(str(response.url), href),
-                    title=title or "Capítulo",
-                    series_id=series_id,
-                    source_name=self.name,
-                    number=float(found.group()) if found else None,
-                )
-            )
-        if not result:
-            try:
-                payload = response.json()
-            except (ValueError, AttributeError):
-                payload = None
-            for item in self._walk_dicts(payload):
-                title = str(item.get("title") or item.get("name") or "")
-                item_id = item.get("url") or item.get("slug") or item.get("id")
-                if not title or item_id is None or "chap" not in json.dumps(item).lower():
-                    continue
-                found = re.search(r"\d+(?:\.\d+)?", title)
-                result.append(
-                    SourceChapter(
-                        source_id=urljoin(str(response.url), str(item_id)),
-                        title=title,
-                        series_id=series_id,
-                        source_name=self.name,
-                        number=float(found.group()) if found else None,
-                    )
-                )
-        return list({item.source_id: item for item in result}.values())
-
-    def _adaptive_series(self, response) -> list[SourceSeries]:
-        root = _parse_html(response.text)
-        result: list[SourceSeries] = []
-        seen: set[str] = set()
-        for anchor in root.descendants("a"):
-            href = anchor.attrs.get("href", "")
-            title = anchor.attrs.get("title", "").strip() or anchor.text().strip()
-            parent = anchor.parent
-            marker = ""
-            while parent is not None:
-                marker += f" {parent.attrs.get('id', '')} {parent.attrs.get('class', '')}"
-                parent = parent.parent
-            if not href or not title or not any(value in marker.lower() for value in ("manga", "comic", "series", "novel", "item", "book")):
-                continue
-            source_id = urljoin(str(response.url), href)
-            if source_id not in seen:
-                seen.add(source_id)
-                image = _first(anchor, lambda node: node.tag == "img")
-                if image is None and anchor.parent is not None:
-                    image = _first(anchor.parent, lambda node: node.tag == "img")
-                result.append(
-                    SourceSeries(
-                        source_id=source_id,
-                        title=title,
-                        source_name=self.name,
-                        cover_url=(
-                            _image_url(image, str(response.url)) if image else None
-                        ),
-                        web_url=source_id,
-                    )
-                )
-        if result:
-            return result
-        try:
-            payload = response.json()
-        except (ValueError, AttributeError):
-            return []
-        for item in self._walk_dicts(payload):
-            title = item.get("title") or item.get("name")
-            item_id = item.get("url") or item.get("href") or item.get("slug") or item.get("id")
-            if title and item_id is not None:
-                source_id = urljoin(str(response.url), str(item_id))
-                if source_id not in seen:
-                    seen.add(source_id)
-                    cover = (
-                        item.get("cover_url")
-                        or item.get("cover")
-                        or item.get("thumbnail")
-                        or item.get("image")
-                    )
-                    result.append(
-                        SourceSeries(
-                            source_id=source_id,
-                            title=str(title),
-                            source_name=self.name,
-                            cover_url=(
-                                urljoin(str(response.url), cover)
-                                if isinstance(cover, str)
-                                else None
-                            ),
-                            web_url=source_id,
-                        )
-                    )
-        return result
-
-    @staticmethod
-    def _walk_dicts(value):
-        if isinstance(value, dict):
-            yield value
-            for child in value.values():
-                yield from GenericSource._walk_dicts(child)
-        elif isinstance(value, list):
-            for child in value:
-                yield from GenericSource._walk_dicts(child)
-
-class GeneratedGenericSource(GenericSource):
+    @property
+    def language_tag(self) -> str:
+        return _SIMPLYHENTAI_LANGS.get(self.language, self.language)
 
     def get_preferences(self) -> list[SourcePreference]:
-        # Autogenerated via heuristic port
-        data = [
-                {
-                                "type": "checkbox",
-                                "id": "pref_adult",
-                                "name": "Show Adult Content",
-                                "default": false
-                }
-]
-        return [SourcePreference(**item) for item in data]
+        return [
+            SourcePreference(
+                id="blacklist",
+                name="Blacklist",
+                type="text",
+                default="",
+            )
+        ]
 
     def get_filters(self) -> list[SourceFilter]:
-        # Autogenerated via heuristic port
-        data = []
-        return [SourceFilter(**item) for item in data]
+        return [
+            SourceFilter("sort", "Sort by", "select", [
+                ("", "Relevance"), ("upload-date", "Upload Date"), ("popularity", "Popularity"),
+            ], ""),
+            SourceFilter("series", "Series", "text", default=""),
+            SourceFilter("tags", "Tags", "text", default=""),
+            SourceFilter("artists", "Artists", "text", default=""),
+            SourceFilter("translators", "Translators", "text", default=""),
+            SourceFilter("characters", "Characters", "text", default=""),
+        ]
 
+    async def browse(self, kind: str, page: int = 1):
+        if kind not in {"popular", "latest"}:
+            return {"items": [], "has_more": False}
+        params = [("type", "language"), ("page", str(page))]
+        if kind == "latest":
+            params.append(("sort", "newest"))
+        payload = await self._get(f"/tag/{self.language_tag}", params)
+        albums = (payload.get("data") or {}).get("albums") or []
+        return {
+            "items": [self._series(item) for item in albums if isinstance(item, dict)],
+            "has_more": self._has_next(payload),
+        }
+
+    async def search(self, query: str, page: int = 1, filters: dict | None = None):
+        values = filters or {}
+        params: list[tuple[str, str]] = [
+            ("query", query),
+            ("page", str(page)),
+            # La lista negra vive en las preferencias, que hoy no vuelven a la fuente.
+            ("blacklist", ""),
+            ("filter[language][0]", self.language_tag[:1].upper() + self.language_tag[1:]),
+        ]
+        if str(values.get("sort") or ""):
+            params.append(("sort", str(values["sort"])))
+        if str(values.get("series") or "").strip():
+            params.append(("filter[series_title][0]", str(values["series"]).strip()))
+        for key, parameter in (
+            ("tags", "filter[tags]"), ("artists", "filter[artists]"),
+            ("translators", "filter[translators]"), ("characters", "filter[characters]"),
+        ):
+            raw = str(values.get(key) or "")
+            if not raw.strip():
+                continue
+            params.extend(
+                (f"{parameter}[{index}]", part.strip())
+                for index, part in enumerate(raw.split(","))
+            )
+        payload = await self._get("/search/complex", params)
+        return {
+            "items": [
+                self._series(item["object"])
+                for item in payload.get("data") or []
+                if isinstance(item, dict) and isinstance(item.get("object"), dict)
+            ],
+            "has_more": self._has_next(payload),
+        }
+
+    async def details(self, series: SourceSeries | str) -> SourceSeries:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        album = await self._album(series_id)
+        description = str(album.get("description") or "")
+        parts = [f"{description}\n\n"] if description else []
+        parts.append(f"Series: {(album.get('series') or {}).get('title', '')}\n")
+        parts.append(
+            "Characters: "
+            + ", ".join(str(item.get("title") or "") for item in album.get("characters") or [])
+        )
+        artists = ", ".join(str(item.get("title") or "") for item in album.get("artists") or [])
+        return SourceSeries(
+            source_id=self._path(album),
+            title=str(album.get("title") or ""),
+            source_name=self.name,
+            cover_url=((album.get("preview") or {}).get("sizes") or {}).get("thumb") or None,
+            description="".join(parts),
+            author=artists or None,
+            artist=artists or None,
+            content_tags=tuple(
+                str(item.get("title") or "") for item in album.get("tags") or []
+            ),
+            web_url=urljoin(f"{self.base_url}/", self._path(album)),
+        )
+
+    async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        album = await self._album(series_id)
+        path = self._path(album)
+        return [
+            SourceChapter(
+                source_id=f"{path}/all-pages",
+                title="Chapter",
+                series_id=path,
+                source_name=self.name,
+                number=1.0,
+                language=self.language,
+                scanlator=", ".join(
+                    str(item.get("title") or "") for item in album.get("translators") or []
+                ),
+                uploaded_at=self._date(album.get("created_at")),
+            )
+        ]
+
+    async def pages(self, chapter: SourceChapter | str) -> list[SourcePage]:
+        chapter_id = chapter.source_id if isinstance(chapter, SourceChapter) else str(chapter)
+        payload = await self._get(f"/manga/{self._album_slug(chapter_id)}/pages", [])
+        return [
+            SourcePage(
+                source_id=str((image.get("sizes") or {}).get("full") or ""),
+                chapter_id=chapter_id,
+                index=int(image.get("page_num") or index),
+                filename=urlparse(
+                    str((image.get("sizes") or {}).get("full") or "")
+                ).path.rsplit("/", 1)[-1] or f"{index}.jpg",
+                source_name=self.name,
+            )
+            for index, image in enumerate((payload.get("data") or {}).get("pages") or [])
+            if isinstance(image, dict) and (image.get("sizes") or {}).get("full")
+        ]
+
+    async def _album(self, series_id: str) -> dict:
+        payload = await self._get(f"/manga/{self._album_slug(series_id)}", [])
+        return payload.get("data") or {}
+
+    async def _get(self, path: str, params: list[tuple[str, str]]) -> dict:
+        response = await self._request("GET", f"{_SIMPLYHENTAI_API}{path}", params=params)
+        response.raise_for_status()
+        return response.json() or {}
+
+    def _series(self, item: dict) -> SourceSeries:
+        path = f"{(item.get('series') or {}).get('slug', '')}/{item.get('slug') or ''}"
+        return SourceSeries(
+            source_id=path,
+            title=str(item.get("title") or ""),
+            source_name=self.name,
+            cover_url=((item.get("preview") or {}).get("sizes") or {}).get("thumb") or None,
+            web_url=urljoin(f"{self.base_url}/", path),
+        )
+
+    @staticmethod
+    def _path(album: dict) -> str:
+        return f"{(album.get('series') or {}).get('slug', '')}/{album.get('slug') or ''}"
+
+    @staticmethod
+    def _album_slug(path: str) -> str:
+        # El id es "<serie>/<album>"; el Kotlin toma el segundo tramo de la ruta.
+        parts = [part for part in path.split("/") if part]
+        return parts[1] if len(parts) > 1 else (parts[0] if parts else "")
+
+    @staticmethod
+    def _has_next(payload: dict) -> bool:
+        return (payload.get("pagination") or {}).get("next") is not None
+
+    @staticmethod
+    def _date(value: Any) -> str | None:
+        from datetime import datetime
+
+        if not value:
+            return None
+        try:
+            return datetime.strptime(str(value), "%Y-%m-%dT%H:%M:%S.%f").isoformat()
+        except ValueError:
+            return None
+
+
+class GeneratedSimplyHentaiSource(SimplyHentaiSource):
     name = 'simplyhentai_en'
     display_name = 'Simply Hentai'
     base_url = 'https://www.simply-hentai.com'
     language = 'en'
     requests_per_minute = 60
+    content_warning = 'nsfw'
+    image_headers = {'Referer': 'https://www.simply-hentai.com/'}
 
 
-SOURCE = GeneratedGenericSource
+SOURCE = GeneratedSimplyHentaiSource
