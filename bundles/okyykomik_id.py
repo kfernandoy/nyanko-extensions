@@ -2843,7 +2843,7 @@ class ZeistMangaSource(MadaraSource):
 class GeneratedZeistMangaSource(ZeistMangaSource):
     name = 'okyykomik_id'
     display_name = 'OkyyKomik'
-    base_url = 'http://www.okyykomik.my.id'
+    base_url = 'https://www.okyykomik.my.id'
     language = 'id'
     manga_category = 'Series'
     chapter_category = 'Chapter'

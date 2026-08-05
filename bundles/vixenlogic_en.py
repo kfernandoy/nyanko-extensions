@@ -5391,10 +5391,10 @@ class HentaiModeSource(GenericSource):
             node = node.parent
 
 class GeneratedGenericSource(GenericSource):
-    name = 'siyahmelek_tr'
-    display_name = 'Siyah Melek'
-    base_url = 'https://siyahmelek.live'
-    language = 'tr'
+    name = 'vixenlogic_en'
+    display_name = 'Vixen Logic'
+    base_url = 'https://www.vixenlogic.com'
+    language = 'en'
     requests_per_minute = 60
     content_warning = 'nsfw'
 

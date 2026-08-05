@@ -2445,7 +2445,7 @@ class GeneratedIkenSource(IkenSource):
     language = 'en'
     per_page = 18
     sort_pages_by_filename = False
-    use_chapters_api = True
+    use_chapters_api = False
     content_warning = 'safe'
 
 

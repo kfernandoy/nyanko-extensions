@@ -2302,9 +2302,9 @@ class MangaCatalogSource(MadaraSource):
 class GeneratedMangaCatalogSource(MangaCatalogSource):
     name = 'readchainsawmanmangaonline_en'
     display_name = 'Read Chainsaw Man Manga Online'
-    base_url = 'https://ww5.readchainsawman.com'
+    base_url = 'https://ww6.readchainsawman.com'
     language = 'en'
-    source_list = (('Chainsaw Man', 'https://ww5.readchainsawman.com/manga/chainsaw-man/'), ('17-21', 'https://ww5.readchainsawman.com/manga/17-21-fujimoto-tatsuki-tanpenshuu/'), ('Fire Punch', 'https://ww5.readchainsawman.com/manga/fire-punch/'), ('Nayuta', 'https://ww5.readchainsawman.com/manga/yogen-no-nayuta/'), ('Look Back', 'https://ww5.readchainsawman.com/manga/look-back/'), ('Light Novel', 'https://ww5.readchainsawman.com/manga/chainsaw-man-buddy-stories/'), ('Colored', 'https://ww5.readchainsawman.com/manga/chainsaw-man-colored/'), ('Listen to Song', 'https://ww5.readchainsawman.com/manga/futsuu-ni-kiite-kure/'), ('Goodbye, Eri', 'https://ww5.readchainsawman.com/manga/sayonara-eri-goodbye-eri/'), ('22-26', 'https://ww5.readchainsawman.com/manga/22-26-fujimoto-tatsuki-tanpenshuu/'), ('Chainsaw Man Colored', 'https://ww5.readchainsawman.com/manga/chainsaw-man-colored/'), ('Chainsaw Man: Buddy Stories', 'https://ww5.readchainsawman.com/manga/chainsaw-man-buddy-stories/'))
+    source_list = (('Chainsaw Man', 'https://ww6.readchainsawman.com/manga/chainsaw-man/'), ('17-21', 'https://ww6.readchainsawman.com/manga/17-21-fujimoto-tatsuki-tanpenshuu/'), ('Fire Punch', 'https://ww6.readchainsawman.com/manga/fire-punch/'), ('Nayuta', 'https://ww6.readchainsawman.com/manga/yogen-no-nayuta/'), ('Look Back', 'https://ww6.readchainsawman.com/manga/look-back/'), ('Light Novel', 'https://ww6.readchainsawman.com/manga/chainsaw-man-buddy-stories/'), ('Colored', 'https://ww6.readchainsawman.com/manga/chainsaw-man-colored/'), ('Listen to Song', 'https://ww6.readchainsawman.com/manga/futsuu-ni-kiite-kure/'), ('Goodbye, Eri', 'https://ww6.readchainsawman.com/manga/sayonara-eri-goodbye-eri/'), ('22-26', 'https://ww6.readchainsawman.com/manga/22-26-fujimoto-tatsuki-tanpenshuu/'), ('Chainsaw Man Colored', 'https://ww6.readchainsawman.com/manga/chainsaw-man-colored/'), ('Chainsaw Man: Buddy Stories', 'https://ww6.readchainsawman.com/manga/chainsaw-man-buddy-stories/'))
 
 
 SOURCE = GeneratedMangaCatalogSource

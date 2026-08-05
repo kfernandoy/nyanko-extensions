@@ -5393,9 +5393,9 @@ class HentaiModeSource(GenericSource):
 class GeneratedGenericSource(GenericSource):
     name = 'egotoons_pt_br'
     display_name = 'Ego Toons'
-    base_url = 'https://www.egotoons.com'
+    base_url = 'https://egotoons.com'
     language = 'pt-BR'
-    requests_per_minute = 120
+    requests_per_minute = 60
     content_warning = 'mixed'
 
 

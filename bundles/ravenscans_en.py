@@ -2779,9 +2779,9 @@ class MangaTVSource(MangaThemesiaSource):
 class GeneratedMangaThemesiaSource(MangaThemesiaSource):
     name = 'ravenscans_en'
     display_name = 'Raven Scans'
-    base_url = 'https://ravenscans.org'
+    base_url = 'https://ravenscans.net'
     language = 'en'
-    manga_directory = '/manga'
+    manga_directory = '/series'
     reader_id = 'readerarea'
     supports_latest = True
     requests_per_minute = 60

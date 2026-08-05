@@ -2364,7 +2364,7 @@ class FMReaderSource(MadaraSource):
 class GeneratedFMReaderSource(FMReaderSource):
     name = 'rawlh_ja'
     display_name = 'WeLoveManga'
-    base_url = 'https://weloma.art'
+    base_url = 'https://weloma.net'
     language = 'ja'
     profile = 'welove'
 

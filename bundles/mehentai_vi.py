@@ -2339,7 +2339,7 @@ class ManhwaZSource(MadaraSource):
 class GeneratedManhwaZSource(ManhwaZSource):
     name = 'mehentai_vi'
     display_name = 'MeHentai'
-    base_url = 'https://mehentai.blog'
+    base_url = 'https://mehentai.live'
     language = 'vi'
     search_path = 'tim-kiem'
     popular_catalog_path = ''

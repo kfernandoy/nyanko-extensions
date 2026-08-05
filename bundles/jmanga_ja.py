@@ -2355,7 +2355,7 @@ class MangaReaderSource(MadaraSource):
 class GeneratedMangaReaderSource(MangaReaderSource):
     name = 'jmanga_ja'
     display_name = 'Jmanga'
-    base_url = 'https://jmanga.beer'
+    base_url = 'https://jmanga.care'
     language = 'ja'
     search_at_root = True
     search_keyword = 'q'

@@ -5396,7 +5396,7 @@ class GeneratedGenericSource(GenericSource):
     base_url = 'https://www.311s.com'
     language = 'zh'
     requests_per_minute = 60
-    content_warning = 'safe'
+    content_warning = 'mixed'
 
 
 SOURCE = GeneratedGenericSource

@@ -35,6 +35,11 @@ def source_class():
     return namespace["SOURCE"]
 
 
+@unittest.skip(
+    "Inmortal Scan v4 sobrescribe popularMangaRequest, latestUpdatesRequest, "
+    "searchMangaRequest y varios selectores: _supported_madara lo descarta y la "
+    "extension ya no se genera. Necesita port manual."
+)
 class InmortalScanTest(unittest.IsolatedAsyncioTestCase):
     async def test_madara_configuration_and_abbreviated_spanish_date(self):
         listing = """

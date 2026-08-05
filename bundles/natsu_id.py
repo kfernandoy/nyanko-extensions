@@ -2367,7 +2367,7 @@ class NatsuIdSource(MadaraSource):
 class GeneratedNatsuIdSource(NatsuIdSource):
     name = 'natsu_id'
     display_name = 'Natsu'
-    base_url = 'https://natsu.tv'
+    base_url = 'https://natsu.one'
     language = 'id'
     chapter_page = '999'
 

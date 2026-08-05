@@ -5395,7 +5395,7 @@ class GeneratedGenericSource(GenericSource):
     display_name = 'MinoTruyen Manga'
     base_url = 'https://minotruyenv5.xyz'
     language = 'vi'
-    requests_per_minute = 180
+    requests_per_minute = 60
     content_warning = 'mixed'
 
 

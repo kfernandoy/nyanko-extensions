@@ -2302,9 +2302,9 @@ class MangaCatalogSource(MadaraSource):
 class GeneratedMangaCatalogSource(MangaCatalogSource):
     name = 'readjujutsukaisenmangaonline_en'
     display_name = 'Read Jujutsu Kaisen Manga Online'
-    base_url = 'https://ww5.readjujutsukaisen.com'
+    base_url = 'https://ww6.readjujutsukaisen.com'
     language = 'en'
-    source_list = (('Jujutsu Kaisen', 'https://ww5.readjujutsukaisen.com/manga/jujutsu-kaisen/'), ('Jujutsu Kaisen 0', 'https://ww5.readjujutsukaisen.com/manga/jujutsu-kaisen-0/'), ('JJK Colored', 'https://ww5.readjujutsukaisen.com/manga/jujutsu-kaisen-colored/'), ('Fan Scan', 'https://ww5.readjujutsukaisen.com/manga/jujutsu-kaisen-fan-scan/'), ('JJK Light Novel', 'https://ww5.readjujutsukaisen.com/manga/jujutsu-kaisen-first-light-novel/'), ('2nd Light Novel', 'https://ww5.readjujutsukaisen.com/manga/jujutsu-kaisen-second-light-novel/'), ('No.9', 'https://ww5.readjujutsukaisen.com/manga/no-9/'), ('Fanbook', 'https://ww5.readjujutsukaisen.com/manga/jujutsu-kaisen-official-fanbook/'))
+    source_list = (('Jujutsu Kaisen', 'https://ww6.readjujutsukaisen.com/manga/jujutsu-kaisen/'), ('Jujutsu Kaisen 0', 'https://ww6.readjujutsukaisen.com/manga/jujutsu-kaisen-0/'), ('JJK Colored', 'https://ww6.readjujutsukaisen.com/manga/jujutsu-kaisen-colored/'), ('Fan Scan', 'https://ww6.readjujutsukaisen.com/manga/jujutsu-kaisen-fan-scan/'), ('JJK Light Novel', 'https://ww6.readjujutsukaisen.com/manga/jujutsu-kaisen-first-light-novel/'), ('2nd Light Novel', 'https://ww6.readjujutsukaisen.com/manga/jujutsu-kaisen-second-light-novel/'), ('No.9', 'https://ww6.readjujutsukaisen.com/manga/no-9/'), ('Fanbook', 'https://ww6.readjujutsukaisen.com/manga/jujutsu-kaisen-official-fanbook/'))
 
 
 SOURCE = GeneratedMangaCatalogSource

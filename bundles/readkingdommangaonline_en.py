@@ -2302,9 +2302,9 @@ class MangaCatalogSource(MadaraSource):
 class GeneratedMangaCatalogSource(MangaCatalogSource):
     name = 'readkingdommangaonline_en'
     display_name = 'Read Kingdom Manga Online'
-    base_url = 'https://ww5.readkingdom.com'
+    base_url = 'https://ww6.readkingdom.com'
     language = 'en'
-    source_list = (('Kingdom', 'https://ww5.readkingdom.com/manga/kingdom/'), ('Li Mu', 'https://ww5.readkingdom.com/manga/li-mu/'), ('Meng Wu & Chu Zi', 'https://ww5.readkingdom.com/manga/meng-wu-and-chu-zi-one-shot/'))
+    source_list = (('Kingdom', 'https://ww6.readkingdom.com/manga/kingdom/'), ('Li Mu', 'https://ww6.readkingdom.com/manga/li-mu/'), ('Meng Wu & Chu Zi', 'https://ww6.readkingdom.com/manga/meng-wu-and-chu-zi-one-shot/'))
 
 
 SOURCE = GeneratedMangaCatalogSource

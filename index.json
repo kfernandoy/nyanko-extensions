@@ -48,7 +48,7 @@
     {
       "id": "ahottie_all",
       "name": "AHottie",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "sha256": "1ccb4b1efb55b7dc6d8343009a620f6ad86f2cf55e9f4dc5b009c3d8138df0db",
       "bundle_url": "http://127.0.0.1:8877/bundles/ahottie_all.py",
       "icon_url": "http://127.0.0.1:8877/icons/ahottie_all.png",
@@ -411,7 +411,7 @@
     {
       "id": "allanime_en",
       "name": "AllManga",
-      "version": "0.24.0",
+      "version": "0.26.0",
       "sha256": "41e8853d0c92a164f6d35de584204a10ea04ac08460599d13e4f39922807adc2",
       "bundle_url": "http://127.0.0.1:8877/bundles/allanime_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/allanime_en.png",
@@ -422,7 +422,7 @@
     {
       "id": "allhentai_ru",
       "name": "AllHentai",
-      "version": "0.25.0",
+      "version": "0.26.0",
       "sha256": "d5be2311fe61292f7e50a9447089d1d8d16cb369516f8af4e0bc9a834c0cdd00",
       "bundle_url": "http://127.0.0.1:8877/bundles/allhentai_ru.py",
       "icon_url": "http://127.0.0.1:8877/icons/allhentai_ru.png",
@@ -462,6 +462,17 @@
       "author": "Keiyoushi contributors",
       "engine": "madara",
       "language": "all"
+    },
+    {
+      "id": "alphamanga_en",
+      "name": "Alpha Manga",
+      "version": "0.1.0",
+      "sha256": "fd1c7e5a2a57b926e0f1d9d1f4e2e7fd32638d2124f704df4c645113164ac655",
+      "bundle_url": "http://127.0.0.1:8877/bundles/alphamanga_en.py",
+      "icon_url": "http://127.0.0.1:8877/icons/alphamanga_en.png",
+      "author": "Keiyoushi contributors",
+      "engine": "custom",
+      "language": "en"
     },
     {
       "id": "alphapolis_ja",
@@ -852,7 +863,7 @@
       "id": "arvenscans_en",
       "name": "Vortex Scans",
       "version": "0.62.0",
-      "sha256": "3ad0a8ba894e7f060cb375e8b39b2357c0524783dbb36dc5db3a086d50cc8313",
+      "sha256": "f51e3b42a6a18a6de8fec24e8e34b2090f7aad8e07cd0e168b7d8ce315b645fa",
       "bundle_url": "http://127.0.0.1:8877/bundles/arvenscans_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/arvenscans_en.png",
       "author": "Keiyoushi contributors",
@@ -935,17 +946,6 @@
       "author": "Keiyoushi contributors",
       "engine": "galleryadults",
       "language": "zh"
-    },
-    {
-      "id": "asmotoon_en",
-      "name": "Asmodeus Scans",
-      "version": "0.2.0",
-      "sha256": "1faa8706f456231007168f9ebd6e39fcac416ee846a9b147b73c0e30aa0a9cec",
-      "bundle_url": "http://127.0.0.1:8877/bundles/asmotoon_en.py",
-      "icon_url": "http://127.0.0.1:8877/icons/asmotoon_en.png",
-      "author": "Keiyoushi contributors",
-      "engine": "keyoapp",
-      "language": "en"
     },
     {
       "id": "assortedscans_en",
@@ -1049,7 +1049,7 @@
     {
       "id": "atsumaru_en",
       "name": "Atsumaru",
-      "version": "0.19.0",
+      "version": "0.20.0",
       "sha256": "ddd56688e84bbe1076e8a7202ae111bf55784a4fdc576bb6e7fbba63ed5f9884",
       "bundle_url": "http://127.0.0.1:8877/bundles/atsumaru_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/atsumaru_en.png",
@@ -1071,7 +1071,7 @@
     {
       "id": "azora_ar",
       "name": "Azora",
-      "version": "0.45.0",
+      "version": "0.46.0",
       "sha256": "f21deb76c5bca5f0c08f437c3b3934cd4c882bf1f69d2b02421bc1c8abd03553",
       "bundle_url": "http://127.0.0.1:8877/bundles/azora_ar.py",
       "icon_url": "http://127.0.0.1:8877/icons/azora_ar.png",
@@ -1225,7 +1225,7 @@
     {
       "id": "batcave_en",
       "name": "BatCave",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "sha256": "052ae03358e07dfbb54ac7163fb2930f8b96d722aa03e2b38bdd233b0f9ad5af",
       "bundle_url": "http://127.0.0.1:8877/bundles/batcave_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/batcave_en.png",
@@ -1335,7 +1335,7 @@
     {
       "id": "bilimanga_zh",
       "name": "嗶哩漫畫",
-      "version": "0.12.0",
+      "version": "0.13.0",
       "sha256": "6375ba00a4300110d7b1cab03c1dd9d66d3f3cc085edc8087a37a742ccdc82ba",
       "bundle_url": "http://127.0.0.1:8877/bundles/bilimanga_zh.py",
       "icon_url": "http://127.0.0.1:8877/icons/bilimanga_zh.png",
@@ -1687,7 +1687,7 @@
     {
       "id": "chochox_es",
       "name": "ChoChoX",
-      "version": "0.0.0",
+      "version": "0.1.0",
       "sha256": "1bd649341f351dfbb205432a21566388b496fd46bc6ef12082f8205c1b7382df",
       "bundle_url": "http://127.0.0.1:8877/bundles/chochox_es.py",
       "icon_url": "http://127.0.0.1:8877/icons/chochox_es.png",
@@ -2655,7 +2655,7 @@
     {
       "id": "cosmicscansid_id",
       "name": "CosmicScans",
-      "version": "0.55.0",
+      "version": "0.56.0",
       "sha256": "3377c5bff4c777405cdb12165e2283fce4f0dae7b56166e8b8098a471b3b82df",
       "bundle_url": "http://127.0.0.1:8877/bundles/cosmicscansid_id.py",
       "icon_url": "http://127.0.0.1:8877/icons/cosmicscansid_id.png",
@@ -2996,7 +2996,7 @@
     {
       "id": "deviantart_all",
       "name": "DeviantArt",
-      "version": "0.10.0",
+      "version": "0.11.0",
       "sha256": "6a883442b7c2d633c9c3258f2a42b4a5b416a10bfaf42087e06b5011486c6729",
       "bundle_url": "http://127.0.0.1:8877/bundles/deviantart_all.py",
       "icon_url": "http://127.0.0.1:8877/icons/deviantart_all.png",
@@ -3018,7 +3018,7 @@
     {
       "id": "dgmanga_uk",
       "name": "DGManga",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "sha256": "d241d843e24b7d170e648b423bc832013fc2460dd48571deb9a02787a4ba930f",
       "bundle_url": "http://127.0.0.1:8877/bundles/dgmanga_uk.py",
       "icon_url": "http://127.0.0.1:8877/icons/dgmanga_uk.png",
@@ -3238,7 +3238,7 @@
     {
       "id": "doujinio_en",
       "name": "Doujin.io - J18",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "sha256": "4ae142081be70b603013cbf89c163adb72828de61613d07f1c82372418722504",
       "bundle_url": "http://127.0.0.1:8877/bundles/doujinio_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/doujinio_en.png",
@@ -3777,7 +3777,7 @@
     {
       "id": "dualeotruyen_vi",
       "name": "Dưa Leo Truyện",
-      "version": "0.25.0",
+      "version": "0.26.0",
       "sha256": "d1143c77136c3aa6881b72dc74e3ccc757afc7740783466ab77234aceb98fe01",
       "bundle_url": "http://127.0.0.1:8877/bundles/dualeotruyen_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/dualeotruyen_vi.png",
@@ -3876,8 +3876,8 @@
     {
       "id": "egotoons_pt_br",
       "name": "Ego Toons",
-      "version": "0.8.0",
-      "sha256": "0bfe25fc93a9ea3ec52ad9e8b70215fa6512c951d2f91bc728f770f3c62987d2",
+      "version": "0.9.0",
+      "sha256": "8cc2fdd6d66bcdef0b4155976192b36c2c8642012dc1476d645631ec77f920d3",
       "bundle_url": "http://127.0.0.1:8877/bundles/egotoons_pt_br.py",
       "icon_url": "http://127.0.0.1:8877/icons/egotoons_pt_br.png",
       "author": "Keiyoushi contributors",
@@ -4272,7 +4272,7 @@
     {
       "id": "favcomic_zh",
       "name": "喜漫漫画",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "sha256": "7b1444b2f23c2bca7bc7e1ca8af8392926ea854a3fb538ea7dce7474b90d704e",
       "bundle_url": "http://127.0.0.1:8877/bundles/favcomic_zh.py",
       "icon_url": "http://127.0.0.1:8877/icons/favcomic_zh.png",
@@ -4426,7 +4426,7 @@
     {
       "id": "fourkhd_all",
       "name": "4KHD",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "sha256": "5a1d18b351c3c6ee61a166b0f9fe4b44e7ba8ce27c2fee60320bf9851821238e",
       "bundle_url": "http://127.0.0.1:8877/bundles/fourkhd_all.py",
       "icon_url": "http://127.0.0.1:8877/icons/fourkhd_all.png",
@@ -4690,7 +4690,7 @@
     {
       "id": "goctruyentranhvui_vi",
       "name": "Goc Truyen Tranh Vui",
-      "version": "0.16.0",
+      "version": "0.18.0",
       "sha256": "f19544e39337fa1536c711bc9705808b5f726383e5ad3b2063cbb9c2db5776b2",
       "bundle_url": "http://127.0.0.1:8877/bundles/goctruyentranhvui_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/goctruyentranhvui_vi.png",
@@ -6263,7 +6263,7 @@
     {
       "id": "hentainexus_en",
       "name": "HentaiNexus",
-      "version": "0.18.0",
+      "version": "0.20.0",
       "sha256": "9e7beb1d99b1202464d4ad293c7c839f22c299161e6ceb843527975f9840ab22",
       "bundle_url": "http://127.0.0.1:8877/bundles/hentainexus_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/hentainexus_en.png",
@@ -6769,7 +6769,7 @@
     {
       "id": "honeymanga_uk",
       "name": "HoneyManga",
-      "version": "0.8.0",
+      "version": "0.9.0",
       "sha256": "4ee6a221135bdd3d2b4b393d962cf8ddf95d3f97637720752cbe078ec1ddc441",
       "bundle_url": "http://127.0.0.1:8877/bundles/honeymanga_uk.py",
       "icon_url": "http://127.0.0.1:8877/icons/honeymanga_uk.png",
@@ -6857,7 +6857,7 @@
     {
       "id": "horahentai_pt_br",
       "name": "Hora Hentai",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "sha256": "a947197b5ff29d1ae0b7f559b59fb44832df1834dd496778fac8c559062e63a1",
       "bundle_url": "http://127.0.0.1:8877/bundles/horahentai_pt_br.py",
       "icon_url": "http://127.0.0.1:8877/icons/horahentai_pt_br.png",
@@ -7121,7 +7121,7 @@
     {
       "id": "infinityscans_en",
       "name": "InfinityScans",
-      "version": "0.11.0",
+      "version": "0.12.0",
       "sha256": "fe2fd9f771f3bf6647a8003ab7b81e444fa8a9246598dbf141003e3c2e29528d",
       "bundle_url": "http://127.0.0.1:8877/bundles/infinityscans_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/infinityscans_en.png",
@@ -7171,17 +7171,6 @@
       "icon_url": "http://127.0.0.1:8877/icons/inmanga_es.png",
       "author": "Keiyoushi contributors",
       "engine": "custom",
-      "language": "es"
-    },
-    {
-      "id": "inmortalscan_es",
-      "name": "Inmortal Scan",
-      "version": "0.3.0",
-      "sha256": "75979b7143dd939e91123cc8adf773bca1d9f3319120a98ccf36b7b0816602c7",
-      "bundle_url": "http://127.0.0.1:8877/bundles/inmortalscan_es.py",
-      "icon_url": "http://127.0.0.1:8877/icons/inmortalscan_es.png",
-      "author": "Keiyoushi contributors",
-      "engine": "madara",
       "language": "es"
     },
     {
@@ -7352,8 +7341,8 @@
     {
       "id": "jmanga_ja",
       "name": "Jmanga",
-      "version": "0.1.0",
-      "sha256": "393203b2d50d72efd2896a9ba3d0393df2399ba568abb25fe829acbaa33f655d",
+      "version": "0.2.0",
+      "sha256": "804f5664d7b870ef434c0e8356b0a93168c869fa3283306d348d6b21decfafe9",
       "bundle_url": "http://127.0.0.1:8877/bundles/jmanga_ja.py",
       "icon_url": "http://127.0.0.1:8877/icons/jmanga_ja.png",
       "author": "Keiyoushi contributors",
@@ -7451,7 +7440,7 @@
     {
       "id": "kagane_ar",
       "name": "Kagane (ar)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "298924e74552bfeb47667f8e41a2b0e3437667cd76c84779aec828fff4c62bf9",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_ar.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_ar.png",
@@ -7462,7 +7451,7 @@
     {
       "id": "kagane_de",
       "name": "Kagane (de)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "126ef3cdc4c1d00ce55c6e1a5edbfde9d42620f67194c692031e3b0cbf188021",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_de.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_de.png",
@@ -7473,7 +7462,7 @@
     {
       "id": "kagane_en",
       "name": "Kagane (en)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "4d65807d0b7f58f2c538c0b12de592036818cc6e138d3f08a90a294039c06a37",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_en.png",
@@ -7484,7 +7473,7 @@
     {
       "id": "kagane_es",
       "name": "Kagane (es)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "9c4a15079b359a02b95663ac2c267a3469553378ba22b8bd0c60a6230f7bd8c2",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_es.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_es.png",
@@ -7495,7 +7484,7 @@
     {
       "id": "kagane_es_419",
       "name": "Kagane (es-419)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "3255b690646a2741781fd3c5744a2dd08a45bd8a2c65758c1f03da7ee7dc5ecf",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_es_419.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_es_419.png",
@@ -7506,7 +7495,7 @@
     {
       "id": "kagane_fr",
       "name": "Kagane (fr)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "59fc302026c2740a8ab7f1c2922034e13f7803f966f54b097ee68dbf1e1325ee",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_fr.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_fr.png",
@@ -7517,7 +7506,7 @@
     {
       "id": "kagane_hi",
       "name": "Kagane (hi)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "71db647015a0870b0df215503ec7f9fa8ac3a241be366a693ac9609604210595",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_hi.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_hi.png",
@@ -7528,7 +7517,7 @@
     {
       "id": "kagane_id",
       "name": "Kagane (id)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "f1b5715b693e4f9a552373f127efb2fd7552317bb8cee152e4b294743dd91842",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_id.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_id.png",
@@ -7539,7 +7528,7 @@
     {
       "id": "kagane_it",
       "name": "Kagane (it)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "b32ea49d41395095cb1e41ff79b2d2c27e78dfa592556e94b224e039ce7bc5af",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_it.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_it.png",
@@ -7550,7 +7539,7 @@
     {
       "id": "kagane_ja",
       "name": "Kagane (ja)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "14728bbe9d12656b2ef6f4ecf5c7f1f791e2544389b80a8a27f34dbfb73ec4aa",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_ja.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_ja.png",
@@ -7561,7 +7550,7 @@
     {
       "id": "kagane_ko",
       "name": "Kagane (ko)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "ef436adec53c32a5acfeccea7584f266846b18fa9728de7a64585b4e05353e10",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_ko.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_ko.png",
@@ -7572,7 +7561,7 @@
     {
       "id": "kagane_pl",
       "name": "Kagane (pl)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "d752e8644d8cb12a6137f8553e72e54e8f4ef5ef8cfb5b46d9d415b98aa8b529",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_pl.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_pl.png",
@@ -7583,7 +7572,7 @@
     {
       "id": "kagane_pt",
       "name": "Kagane (pt)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "d5e57f41b70589d4479b0591fcaa0ac345dabc2db0c79c528fcc60c20b499f83",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_pt.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_pt.png",
@@ -7594,7 +7583,7 @@
     {
       "id": "kagane_pt_br",
       "name": "Kagane (pt-BR)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "ebb1be8b82f12421fde9405a396070153f43336bc29ce1be4463d7dec5b43975",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_pt_br.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_pt_br.png",
@@ -7605,7 +7594,7 @@
     {
       "id": "kagane_ru",
       "name": "Kagane (ru)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "b20a5b0f8d647a671258a1d4db3808f2829fb5c4df7a8cfae79e285267e8b715",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_ru.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_ru.png",
@@ -7616,7 +7605,7 @@
     {
       "id": "kagane_th",
       "name": "Kagane (th)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "f80b832f08fdc80f61f404d7c402285a2342279d9e71009cf27438f76bfa5cfe",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_th.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_th.png",
@@ -7627,7 +7616,7 @@
     {
       "id": "kagane_vi",
       "name": "Kagane (vi)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "e6a14d6ebd6ad5ee1d9b30db8b532c9935248072b9a4f4ea1d02fc54f10f33e8",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_vi.png",
@@ -7638,7 +7627,7 @@
     {
       "id": "kagane_zh",
       "name": "Kagane (zh)",
-      "version": "0.28.0",
+      "version": "0.31.0",
       "sha256": "f54dba10f713ce91c3de72205be834637d60c09683c52251de3c5b8ecfb7bda8",
       "bundle_url": "http://127.0.0.1:8877/bundles/kagane_zh.py",
       "icon_url": "http://127.0.0.1:8877/icons/kagane_zh.png",
@@ -7727,7 +7716,7 @@
       "id": "kaynscans_en",
       "name": "Kayn Scans",
       "version": "0.5.0",
-      "sha256": "1265fd71230d930673955d4d4fab0bd5713fe8a8c6013049b6d7bfe4a12dbb81",
+      "sha256": "da40684fb90d9792a88bca4ff2d9e0a4f8c74ea40c096c1b3466f50bd8f34cb2",
       "bundle_url": "http://127.0.0.1:8877/bundles/kaynscans_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/kaynscans_en.png",
       "author": "Keiyoushi contributors",
@@ -7847,7 +7836,7 @@
     {
       "id": "kirakira_vi",
       "name": "KiraKira",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "sha256": "cdc4271c8433cf1c60f82b05b8b9aa38452f4288ccd309d6abff5ace39bbf7fc",
       "bundle_url": "http://127.0.0.1:8877/bundles/kirakira_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/kirakira_vi.png",
@@ -7898,6 +7887,17 @@
       "author": "Keiyoushi contributors",
       "engine": "custom",
       "language": "all"
+    },
+    {
+      "id": "kivaratoons_pt_br",
+      "name": "KivaraToons",
+      "version": "0.1.0",
+      "sha256": "f008ffd1c377e22d7c3fcea12febd3d4b94937c40d98c1d9d7c631b0083512a3",
+      "bundle_url": "http://127.0.0.1:8877/bundles/kivaratoons_pt_br.py",
+      "icon_url": "http://127.0.0.1:8877/icons/kivaratoons_pt_br.png",
+      "author": "Keiyoushi contributors",
+      "engine": "custom",
+      "language": "pt-BR"
     },
     {
       "id": "kiwiyascans_fr",
@@ -8177,7 +8177,7 @@
     {
       "id": "komiknesia_id",
       "name": "KomikNesia",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "sha256": "305505be8fc585bf226386493c728eaeff3bccf4976adb8884508467ebb9d9f1",
       "bundle_url": "http://127.0.0.1:8877/bundles/komiknesia_id.py",
       "icon_url": "http://127.0.0.1:8877/icons/komiknesia_id.png",
@@ -8804,7 +8804,7 @@
     {
       "id": "loppytoon_vi",
       "name": "LoppyToon",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "sha256": "fc26ec2fe435c0178853edfe172ecf35d670df84c25b7f9e39499047bf1b90dd",
       "bundle_url": "http://127.0.0.1:8877/bundles/loppytoon_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/loppytoon_vi.png",
@@ -8892,7 +8892,7 @@
     {
       "id": "luottruyen_vi",
       "name": "LuotTruyen",
-      "version": "0.7.0",
+      "version": "0.10.0",
       "sha256": "ac84b736e2a05e9c31634ea0e4b9deaec4d6006e66163d4ef0d60f2e07c985da",
       "bundle_url": "http://127.0.0.1:8877/bundles/luottruyen_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/luottruyen_vi.png",
@@ -9057,7 +9057,7 @@
     {
       "id": "luvevaland_vi",
       "name": "LuvEvaLand",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "sha256": "3e7b54b6170b711a949149d980f597bb8c5c49db7df3be21e56d471aa6f05316",
       "bundle_url": "http://127.0.0.1:8877/bundles/luvevaland_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/luvevaland_vi.png",
@@ -9079,7 +9079,7 @@
     {
       "id": "lxhentai_vi",
       "name": "LXManga",
-      "version": "0.33.0",
+      "version": "0.34.0",
       "sha256": "35a263784c37daed82a99f1bb3702e9a674892237a2ef14aa68373195637f313",
       "bundle_url": "http://127.0.0.1:8877/bundles/lxhentai_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/lxhentai_vi.png",
@@ -9123,7 +9123,7 @@
     {
       "id": "madokami_en",
       "name": "Madokami",
-      "version": "0.14.0",
+      "version": "0.16.0",
       "sha256": "af09b2eb5d417768cd242e53ba867aad65abeb6c7eb212109a937474bb620c01",
       "bundle_url": "http://127.0.0.1:8877/bundles/madokami_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/madokami_en.png",
@@ -9827,7 +9827,7 @@
     {
       "id": "mangabat_en",
       "name": "Mangabat",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "sha256": "b70d7e9aa83602d5e550e8a9daf3e0f1f30565c4bb29391fe29df703b4f4692a",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangabat_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangabat_en.png",
@@ -9882,12 +9882,12 @@
     {
       "id": "mangabuddy_en",
       "name": "MangaK",
-      "version": "0.30.0",
+      "version": "0.31.0",
       "sha256": "23c6cb0d793098c73d3773e7f4b40f2fb236faac80fad1d151c31103239afb93",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangabuddy_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangabuddy_en.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
+      "engine": "mangak",
       "language": "en"
     },
     {
@@ -10795,7 +10795,7 @@
     {
       "id": "mangadotnet_en",
       "name": "Mangadotnet",
-      "version": "0.15.0",
+      "version": "0.16.0",
       "sha256": "eb13a5837bd3cda52e7cbfdf670be1fd13a5d799b51c0bb2ebaa46f2e941a8d2",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangadotnet_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangadotnet_en.png",
@@ -10850,7 +10850,7 @@
     {
       "id": "mangafire_en",
       "name": "MangaFire (en)",
-      "version": "0.26.0",
+      "version": "0.28.0",
       "sha256": "823565e5274c98341d363e2869d6f57b71a92dadf3df261bc70b6f88f08eb927",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangafire_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangafire_en.png",
@@ -10861,7 +10861,7 @@
     {
       "id": "mangafire_es",
       "name": "MangaFire (es)",
-      "version": "0.26.0",
+      "version": "0.28.0",
       "sha256": "f82c0fef72757255056dc0615499e67865d76622ec477a69ec0ab0e01638c1d2",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangafire_es.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangafire_es.png",
@@ -10872,7 +10872,7 @@
     {
       "id": "mangafire_es_419",
       "name": "MangaFire (es-419)",
-      "version": "0.26.0",
+      "version": "0.28.0",
       "sha256": "8d52d6be701e00fe2936c5e12fe59995a9f40b0400e6cb7c10a9df9eaedcda75",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangafire_es_419.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangafire_es_419.png",
@@ -10883,7 +10883,7 @@
     {
       "id": "mangafire_fr",
       "name": "MangaFire (fr)",
-      "version": "0.26.0",
+      "version": "0.28.0",
       "sha256": "eec766306f3e0d41f2d7ae312f89944a2cd96db1ccd0668961eb68312a0c98f2",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangafire_fr.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangafire_fr.png",
@@ -10894,7 +10894,7 @@
     {
       "id": "mangafire_ja",
       "name": "MangaFire (ja)",
-      "version": "0.26.0",
+      "version": "0.28.0",
       "sha256": "990eb6226d55648db67fc6a4d518278614509e8b595f1a621c0f9c5c1e5bdf35",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangafire_ja.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangafire_ja.png",
@@ -10905,7 +10905,7 @@
     {
       "id": "mangafire_pt",
       "name": "MangaFire (pt)",
-      "version": "0.26.0",
+      "version": "0.28.0",
       "sha256": "98e7a0db2434889137cdd635e21bd16fe00ac9592c477c72aa6c8b6b562bb306",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangafire_pt.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangafire_pt.png",
@@ -10916,7 +10916,7 @@
     {
       "id": "mangafire_pt_br",
       "name": "MangaFire (pt-BR)",
-      "version": "0.26.0",
+      "version": "0.28.0",
       "sha256": "a51de418ee70297a52c4503da1bd651ae745a7c6d049ae5422ab4f0ea0129d2d",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangafire_pt_br.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangafire_pt_br.png",
@@ -11224,7 +11224,7 @@
     {
       "id": "mangakakalot_en",
       "name": "Mangakakalot",
-      "version": "0.8.0",
+      "version": "0.9.0",
       "sha256": "78e3655c38d0ffaaae07c964fcbd6b96e802f078fa9670e93447c9c5e5da1da1",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangakakalot_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangakakalot_en.png",
@@ -11301,7 +11301,7 @@
     {
       "id": "mangakuri_id",
       "name": "Mangakuri",
-      "version": "0.33.0",
+      "version": "0.34.0",
       "sha256": "618a547b57d8b48ade5770758cd41cd3082e9ff13bf384dcd38087f08b74b5ff",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangakuri_id.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangakuri_id.png",
@@ -11356,7 +11356,7 @@
     {
       "id": "mangalek_ar",
       "name": "مانجا ليك",
-      "version": "0.12.0",
+      "version": "0.13.0",
       "sha256": "fbd9da577688f3cfe3a6d4e2506e4d148be3704b023a5ecdec81982d740ce58e",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangalek_ar.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangalek_ar.png",
@@ -11400,7 +11400,7 @@
     {
       "id": "mangalivre_pt_br",
       "name": "Manga Livre",
-      "version": "0.81.0",
+      "version": "0.87.0",
       "sha256": "d3deec3d25acf4fefaa9b9fcd456bc8dfe8dd69ce00a7271d194d118324d0dd5",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangalivre_pt_br.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangalivre_pt_br.png",
@@ -11415,6 +11415,17 @@
       "sha256": "595dd8aa652bb9ff7176b90a628e318a68a62367c4544195c8dcfa05075e02e1",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangalivreblog_pt_br.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangalivreblog_pt_br.png",
+      "author": "Keiyoushi contributors",
+      "engine": "custom",
+      "language": "pt-BR"
+    },
+    {
+      "id": "mangalivreorg_pt_br",
+      "name": "MangaLivre.org",
+      "version": "0.2.0",
+      "sha256": "de2907d63b652ac1760575599e786c72421b0752a151498d4b90550d4f822f79",
+      "bundle_url": "http://127.0.0.1:8877/bundles/mangalivreorg_pt_br.py",
+      "icon_url": "http://127.0.0.1:8877/icons/mangalivreorg_pt_br.png",
       "author": "Keiyoushi contributors",
       "engine": "custom",
       "language": "pt-BR"
@@ -11565,7 +11576,7 @@
     {
       "id": "manganelo_en",
       "name": "Manganato",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "sha256": "ed474bd65466af7a706aea00d87fff171c3d7c548b872804f3c62ba8ac4e9800",
       "bundle_url": "http://127.0.0.1:8877/bundles/manganelo_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/manganelo_en.png",
@@ -11686,7 +11697,7 @@
     {
       "id": "mangaplus_de",
       "name": "MANGA Plus by SHUEISHA (de)",
-      "version": "0.62.0",
+      "version": "0.65.0",
       "sha256": "8fec7c55b4f05f92b805ded629c9b64e33a85d6b01bcf31a2353fb81a892947e",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangaplus_de.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangaplus_de.png",
@@ -11697,7 +11708,7 @@
     {
       "id": "mangaplus_en",
       "name": "MANGA Plus by SHUEISHA (en)",
-      "version": "0.62.0",
+      "version": "0.65.0",
       "sha256": "ebc0823d895f8598ab717d679de8d9ef00680bcd539897e31d1f83fc69b1b2c1",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangaplus_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangaplus_en.png",
@@ -11708,7 +11719,7 @@
     {
       "id": "mangaplus_es",
       "name": "MANGA Plus by SHUEISHA (es)",
-      "version": "0.62.0",
+      "version": "0.65.0",
       "sha256": "ddde81a20b134619afb60a3f0120f1970fb6b23ee408923b4fc515b4ba3b7c05",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangaplus_es.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangaplus_es.png",
@@ -11719,7 +11730,7 @@
     {
       "id": "mangaplus_fr",
       "name": "MANGA Plus by SHUEISHA (fr)",
-      "version": "0.62.0",
+      "version": "0.65.0",
       "sha256": "926a93baf4dc7c216ee1a4392efcc9736f7adb819060d75a00f05cbf15e4bea4",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangaplus_fr.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangaplus_fr.png",
@@ -11730,7 +11741,7 @@
     {
       "id": "mangaplus_id",
       "name": "MANGA Plus by SHUEISHA (id)",
-      "version": "0.62.0",
+      "version": "0.65.0",
       "sha256": "cc3a2525be6eee1bb142da589dbb3460a6f3805c58981442a230b325ebf3cc08",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangaplus_id.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangaplus_id.png",
@@ -11741,7 +11752,7 @@
     {
       "id": "mangaplus_pt_br",
       "name": "MANGA Plus by SHUEISHA (pt-BR)",
-      "version": "0.62.0",
+      "version": "0.65.0",
       "sha256": "32855926e1e058aed59cce008d83cc491d691a2084e88a4c57eba861e84a5b7d",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangaplus_pt_br.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangaplus_pt_br.png",
@@ -11752,7 +11763,7 @@
     {
       "id": "mangaplus_ru",
       "name": "MANGA Plus by SHUEISHA (ru)",
-      "version": "0.62.0",
+      "version": "0.65.0",
       "sha256": "83e444e2c6f827977a051746d48d8e4a5237908124bca9cb509938993c03df60",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangaplus_ru.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangaplus_ru.png",
@@ -11763,7 +11774,7 @@
     {
       "id": "mangaplus_th",
       "name": "MANGA Plus by SHUEISHA (th)",
-      "version": "0.62.0",
+      "version": "0.65.0",
       "sha256": "472dbd709498fe0cf290ade60657bce30ef0c70d30c0aa2829c09757a658952a",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangaplus_th.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangaplus_th.png",
@@ -11774,7 +11785,7 @@
     {
       "id": "mangaplus_vi",
       "name": "MANGA Plus by SHUEISHA (vi)",
-      "version": "0.62.0",
+      "version": "0.65.0",
       "sha256": "ba355a8aabdabbb45e0c7a685d9e88e82a9be0f5f892e0a23322e6e42f86b287",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangaplus_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangaplus_vi.png",
@@ -12082,8 +12093,8 @@
     {
       "id": "mangatale_id",
       "name": "Ikiru",
-      "version": "0.48.0",
-      "sha256": "4853488aa829bd6b07d1ce3e0bd3f705c2b3901270ed7c1a8621680822a06e35",
+      "version": "0.49.0",
+      "sha256": "84e3372ff6272fa8bc8aa03fa20963c5eb6810265468404c4264b8d8a7e00e32",
       "bundle_url": "http://127.0.0.1:8877/bundles/mangatale_id.py",
       "icon_url": "http://127.0.0.1:8877/icons/mangatale_id.png",
       "author": "Keiyoushi contributors",
@@ -12765,7 +12776,7 @@
       "id": "manhuashe_zh",
       "name": "漫画社",
       "version": "0.1.0",
-      "sha256": "603cd6671f79967de71ba6b4cf471df3137034443aabf676b41bfc3cac58e8b6",
+      "sha256": "2dfde51d27ccf9ceba6673f2a9c6f4faeeee29de0f89a99bc540ecd12eb8d07d",
       "bundle_url": "http://127.0.0.1:8877/bundles/manhuashe_zh.py",
       "icon_url": "http://127.0.0.1:8877/icons/manhuashe_zh.png",
       "author": "Keiyoushi contributors",
@@ -12830,7 +12841,7 @@
     {
       "id": "manhwa18_en",
       "name": "Manhwa18",
-      "version": "0.13.0",
+      "version": "0.14.0",
       "sha256": "7aa0a2eb8f18f083a4eb345f75ec57df4ffb1456084f0e270bc4efe9f6baa061",
       "bundle_url": "http://127.0.0.1:8877/bundles/manhwa18_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/manhwa18_en.png",
@@ -13226,7 +13237,7 @@
     {
       "id": "manta_en",
       "name": "Manta (en)",
-      "version": "0.9.0",
+      "version": "0.11.0",
       "sha256": "bcefa7bb049574ce7977269cf2e25abea036b2d5bc2f5004755d871d45402e12",
       "bundle_url": "http://127.0.0.1:8877/bundles/manta_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/manta_en.png",
@@ -13237,7 +13248,7 @@
     {
       "id": "manta_es",
       "name": "Manta (es)",
-      "version": "0.9.0",
+      "version": "0.11.0",
       "sha256": "d7d229e8fae9665c78f0e1c01f2e672bc58cc9b11d1dbda73e2fbc4afa0f536c",
       "bundle_url": "http://127.0.0.1:8877/bundles/manta_es.py",
       "icon_url": "http://127.0.0.1:8877/icons/manta_es.png",
@@ -13303,7 +13314,7 @@
     {
       "id": "medamtruyen_vi",
       "name": "MeDamTruyen",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "sha256": "80e700018680e7920099f21ea86722a009b3c5a49bfd5084cb5354727fce3b50",
       "bundle_url": "http://127.0.0.1:8877/bundles/medamtruyen_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/medamtruyen_vi.png",
@@ -13336,8 +13347,8 @@
     {
       "id": "mehentai_vi",
       "name": "MeHentai",
-      "version": "0.6.0",
-      "sha256": "dac30288885efc8a930fe27e03114c8fe53f36955b719d7a5165c50b1ebb78bc",
+      "version": "0.7.0",
+      "sha256": "2c0490a8f60cdebfaa0ed64e0d4f5b7599dbb1485fc39533bc5e5c0af28f1061",
       "bundle_url": "http://127.0.0.1:8877/bundles/mehentai_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/mehentai_vi.png",
       "author": "Keiyoushi contributors",
@@ -13380,7 +13391,7 @@
     {
       "id": "meosss_vi",
       "name": "MeoSSS",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "sha256": "004ced78a9360da7a434a078fc5eb85d6df14d1dcdb36d07954a32aad7d25f6d",
       "bundle_url": "http://127.0.0.1:8877/bundles/meosss_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/meosss_vi.png",
@@ -13391,8 +13402,8 @@
     {
       "id": "meosua_vi",
       "name": "MeoSua",
-      "version": "0.3.0",
-      "sha256": "1165faacc2329000d4a4471b361a307ffa278d0d0a7a04cc5a951487bd745350",
+      "version": "0.4.0",
+      "sha256": "bc992f84f43cd1094e56d9820164583c590f0df0ee61bea8f1ae6eec3837764d",
       "bundle_url": "http://127.0.0.1:8877/bundles/meosua_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/meosua_vi.png",
       "author": "Keiyoushi contributors",
@@ -13567,7 +13578,7 @@
     {
       "id": "mimi_vi",
       "name": "MiMi",
-      "version": "0.6.0",
+      "version": "0.7.0",
       "sha256": "0e1f7c675582a90d94a98d90db38a1e9acc674882fe7a4c2845bc9a1f6d83995",
       "bundle_url": "http://127.0.0.1:8877/bundles/mimi_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/mimi_vi.png",
@@ -13578,7 +13589,7 @@
     {
       "id": "mimihentai_vi",
       "name": "MiMiHentai",
-      "version": "0.6.0",
+      "version": "0.7.0",
       "sha256": "7eaa98705e7b23d44a128b6cac278f5be12c05ef685ebd425776da0ff9f1d61a",
       "bundle_url": "http://127.0.0.1:8877/bundles/mimihentai_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/mimihentai_vi.png",
@@ -13600,8 +13611,8 @@
     {
       "id": "minotruyen_vi",
       "name": "MinoTruyen Manga",
-      "version": "0.4.0",
-      "sha256": "9f04dc77451217e76a142b3208f3eb2939481475f12340ba83dd4db027465503",
+      "version": "0.5.0",
+      "sha256": "fcb510d2436649f939cab0d34085096b5fb50d6be1d8cabba4205ecc284267a1",
       "bundle_url": "http://127.0.0.1:8877/bundles/minotruyen_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/minotruyen_vi.png",
       "author": "Keiyoushi contributors",
@@ -13611,8 +13622,8 @@
     {
       "id": "minotruyen_vi_minotruyen_comics",
       "name": "MinoTruyen Comics",
-      "version": "0.4.0",
-      "sha256": "3b4596995fd9a57317ab10b692e7a88970f9d4a50ba3e60f45751430982e74b1",
+      "version": "0.5.0",
+      "sha256": "09bc1870fce62156934662e607bc4411ed43fc6eefba28b7ff421ae3d52ffa70",
       "bundle_url": "http://127.0.0.1:8877/bundles/minotruyen_vi_minotruyen_comics.py",
       "icon_url": "http://127.0.0.1:8877/icons/minotruyen_vi_minotruyen_comics.png",
       "author": "Keiyoushi contributors",
@@ -13622,8 +13633,8 @@
     {
       "id": "minotruyen_vi_minotruyen_hentai",
       "name": "MinoTruyen Hentai",
-      "version": "0.4.0",
-      "sha256": "8077be698480d62f4d207b88f82653c0cf9ce8d910ec41e9a04d791e1afb26c6",
+      "version": "0.5.0",
+      "sha256": "476d712d6d0952f03a2f2403c64c059b7bc82f9502d2c1015de1578982fa9dcd",
       "bundle_url": "http://127.0.0.1:8877/bundles/minotruyen_vi_minotruyen_hentai.py",
       "icon_url": "http://127.0.0.1:8877/icons/minotruyen_vi_minotruyen_hentai.png",
       "author": "Keiyoushi contributors",
@@ -13688,7 +13699,7 @@
     {
       "id": "moetruyen_vi",
       "name": "MoeTruyen",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "sha256": "d5d845f3a5e5904c383f00d3b5c6442cbdca290ea86324a6d947b7b04d7f0cb8",
       "bundle_url": "http://127.0.0.1:8877/bundles/moetruyen_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/moetruyen_vi.png",
@@ -13699,7 +13710,7 @@
     {
       "id": "moetruyensuicao_vi",
       "name": "MoeTruyenSuiCao (unoriginal)",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "sha256": "4ab7c7464186f4e534cd4b26cecd66d0657becdf55c36bfb83a9a7df40f96ca7",
       "bundle_url": "http://127.0.0.1:8877/bundles/moetruyensuicao_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/moetruyensuicao_vi.png",
@@ -14601,8 +14612,8 @@
     {
       "id": "natsu_id",
       "name": "Natsu",
-      "version": "0.32.0",
-      "sha256": "7615013ddcfb0457ca92a53bcaf5c551fc416fc773efa838e35e8ade46d4525a",
+      "version": "0.33.0",
+      "sha256": "3a4b1726e814a0eb8942f41b1c2b99fa4ec3a0641a809aac7c84af575b2c8956",
       "bundle_url": "http://127.0.0.1:8877/bundles/natsu_id.py",
       "icon_url": "http://127.0.0.1:8877/icons/natsu_id.png",
       "author": "Keiyoushi contributors",
@@ -14711,7 +14722,7 @@
     {
       "id": "nettruyens_vi",
       "name": "NetTruyenS (unoriginal)",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "sha256": "5f71d5e4825c417f72e68c45a77e78ec1359f80ac7291c37bd68f44828a6098c",
       "bundle_url": "http://127.0.0.1:8877/bundles/nettruyens_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/nettruyens_vi.png",
@@ -14821,7 +14832,7 @@
     {
       "id": "nhentaiclub_vi",
       "name": "NhentaiClub",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "sha256": "709f3a9948ab5dc36a13ecbdfcfa40656df257e2659e7abd47c51ee0dff32f76",
       "bundle_url": "http://127.0.0.1:8877/bundles/nhentaiclub_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/nhentaiclub_vi.png",
@@ -15380,15 +15391,15 @@
       "language": "en"
     },
     {
-      "id": "noyacg_zh",
+      "id": "noyacg_zh_hant",
       "name": "NoyAcg",
-      "version": "0.4.0",
-      "sha256": "111d819662529e5697576c2755c56e4ab777b099472967efa7ce36f0b09c4acf",
-      "bundle_url": "http://127.0.0.1:8877/bundles/noyacg_zh.py",
-      "icon_url": "http://127.0.0.1:8877/icons/noyacg_zh.png",
+      "version": "0.6.0",
+      "sha256": "dbb88a274a888164faa1d960809305b48d3a9a4166946bd8d8a97fa879e0bec5",
+      "bundle_url": "http://127.0.0.1:8877/bundles/noyacg_zh_hant.py",
+      "icon_url": "http://127.0.0.1:8877/icons/noyacg_zh_hant.png",
       "author": "Keiyoushi contributors",
       "engine": "custom",
-      "language": "zh"
+      "language": "zh-Hant"
     },
     {
       "id": "ntrmanga_th",
@@ -15479,6 +15490,17 @@
       "language": "en"
     },
     {
+      "id": "oduto_ar",
+      "name": "Oduto",
+      "version": "0.1.0",
+      "sha256": "df47569d0e6c68e477fe159c04d1e53b2dcc98c9607c44040ef4f82bf32eeb85",
+      "bundle_url": "http://127.0.0.1:8877/bundles/oduto_ar.py",
+      "icon_url": "http://127.0.0.1:8877/icons/oduto_ar.png",
+      "author": "Keiyoushi contributors",
+      "engine": "custom",
+      "language": "ar"
+    },
+    {
       "id": "oglaf_en",
       "name": "Oglaf",
       "version": "0.4.0",
@@ -15525,8 +15547,8 @@
     {
       "id": "okyykomik_id",
       "name": "OkyyKomik",
-      "version": "0.0.0",
-      "sha256": "7ef69312a98385bc3b6a87c4c92223308b68d4f848a6669854a814aece2870b6",
+      "version": "0.2.0",
+      "sha256": "e7037fdac29946fcc26845921faafcdc366207532bf958561f4f0e0d80cfc0b0",
       "bundle_url": "http://127.0.0.1:8877/bundles/okyykomik_id.py",
       "icon_url": "http://127.0.0.1:8877/icons/okyykomik_id.png",
       "author": "Keiyoushi contributors",
@@ -15910,7 +15932,7 @@
     {
       "id": "otakusic_vi",
       "name": "Otakusic",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "sha256": "fd2efe49ea7d787c28287c4e10bcae8aea08d79ab7f00fa76585f5e7152fb6a8",
       "bundle_url": "http://127.0.0.1:8877/bundles/otakusic_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/otakusic_vi.png",
@@ -16163,7 +16185,7 @@
     {
       "id": "panomic_vi",
       "name": "Panomic",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "sha256": "979cb7c1f4d824b4c5aafe52db6476086ce23acfdf8ceea8bc29b8609baa7117",
       "bundle_url": "http://127.0.0.1:8877/bundles/panomic_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/panomic_vi.png",
@@ -16790,8 +16812,8 @@
     {
       "id": "ravenscans_en",
       "name": "Raven Scans",
-      "version": "0.2.0",
-      "sha256": "8cc56f68ede0565ce480d899c6415cfffca09937eada9cfe19fd19b22cc44e56",
+      "version": "0.4.0",
+      "sha256": "22e592ca87a05a84a2a25900ca3e43f15bfd16f4a1a76108bba76eb84ac405f8",
       "bundle_url": "http://127.0.0.1:8877/bundles/ravenscans_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/ravenscans_en.png",
       "author": "Keiyoushi contributors",
@@ -16878,8 +16900,8 @@
     {
       "id": "rawlh_ja",
       "name": "WeLoveManga",
-      "version": "0.5.0",
-      "sha256": "0f10ce346b6160bf563b29284747cafeb3d462a410f2673266bfeae2597443db",
+      "version": "0.6.0",
+      "sha256": "cdc14e766866da7333bf108f3c67a6365ff024e643c2de8cf5c201b43ffcd9f6",
       "bundle_url": "http://127.0.0.1:8877/bundles/rawlh_ja.py",
       "icon_url": "http://127.0.0.1:8877/icons/rawlh_ja.png",
       "author": "Keiyoushi contributors",
@@ -16955,8 +16977,8 @@
     {
       "id": "readattackontitanshingekinokyojinmanga_en",
       "name": "Read Attack on Titan Shingeki no Kyojin Manga",
-      "version": "0.6.0",
-      "sha256": "15afcbd33ed5ac1a5fd8bc12f884a75c331904ae2a6150b26f1461f6250fd061",
+      "version": "0.7.0",
+      "sha256": "993622324642b4a0a2e546948a9251cba1d1482b0b90c9f6e91a5ddf81e63bb7",
       "bundle_url": "http://127.0.0.1:8877/bundles/readattackontitanshingekinokyojinmanga_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/readattackontitanshingekinokyojinmanga_en.png",
       "author": "Keiyoushi contributors",
@@ -16999,8 +17021,8 @@
     {
       "id": "readchainsawmanmangaonline_en",
       "name": "Read Chainsaw Man Manga Online",
-      "version": "0.2.0",
-      "sha256": "573d6c39a8e17ebe8af24017124e9499aeec9728dc0c63ccdbdfcd4954dabfbd",
+      "version": "0.3.0",
+      "sha256": "05619674b4d41f9e8aecc2e14206406b7c4ad0b5b16f1b31bca5580e4b89aa4f",
       "bundle_url": "http://127.0.0.1:8877/bundles/readchainsawmanmangaonline_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/readchainsawmanmangaonline_en.png",
       "author": "Keiyoushi contributors",
@@ -17065,8 +17087,8 @@
     {
       "id": "readjujutsukaisenmangaonline_en",
       "name": "Read Jujutsu Kaisen Manga Online",
-      "version": "0.2.0",
-      "sha256": "c8b22c6f42769d6d29fd034ac3a58975a88c230f4a98c704d2a3aaf75fe4b5b0",
+      "version": "0.3.0",
+      "sha256": "31f025112b5dfcbb721c930c932b71f5a3619545e6cc75f6247356c09169ddaa",
       "bundle_url": "http://127.0.0.1:8877/bundles/readjujutsukaisenmangaonline_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/readjujutsukaisenmangaonline_en.png",
       "author": "Keiyoushi contributors",
@@ -17076,8 +17098,8 @@
     {
       "id": "readkingdommangaonline_en",
       "name": "Read Kingdom Manga Online",
-      "version": "0.1.0",
-      "sha256": "6e1fa41bb2a4889302e299dd5f59940b96981ff172df1b6d7e2897075ffa6adf",
+      "version": "0.2.0",
+      "sha256": "b0f15adf657b9b9df8281e7bf784b5dde992fb02f0bb98e85eede752915cf67d",
       "bundle_url": "http://127.0.0.1:8877/bundles/readkingdommangaonline_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/readkingdommangaonline_en.png",
       "author": "Keiyoushi contributors",
@@ -17153,8 +17175,8 @@
     {
       "id": "readtokyoghoulretokyoghoulmangaonline_en",
       "name": "Read Tokyo Ghoul Re & Tokyo Ghoul Manga Online",
-      "version": "0.4.0",
-      "sha256": "d1bb2ba8cfb1f91c4d7b720b56a7c07917c165293dec3e17acebb71323b98a93",
+      "version": "0.5.0",
+      "sha256": "f961fd3bac5cc1c3d546759e04c95dfd6a9ae8fd1369f96265298b90dd85416d",
       "bundle_url": "http://127.0.0.1:8877/bundles/readtokyoghoulretokyoghoulmangaonline_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/readtokyoghoulretokyoghoulmangaonline_en.png",
       "author": "Keiyoushi contributors",
@@ -17351,7 +17373,7 @@
     {
       "id": "rizzcomic_en",
       "name": "Rizz Comic",
-      "version": "0.13.0",
+      "version": "0.14.0",
       "sha256": "e4e9bfb271f146debce92f1160e0df640e55071de26c6cd5e222d3bbfd0cd19c",
       "bundle_url": "http://127.0.0.1:8877/bundles/rizzcomic_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/rizzcomic_en.png",
@@ -17527,7 +17549,7 @@
     {
       "id": "sabrinaonline_en",
       "name": "Sabrina Online",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "sha256": "ba18ee567102ccb733e71f686fd7c0a1a02b4b487bc7eb42c9ee5950ff4e8503",
       "bundle_url": "http://127.0.0.1:8877/bundles/sabrinaonline_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/sabrinaonline_en.png",
@@ -17578,6 +17600,17 @@
       "author": "Keiyoushi contributors",
       "engine": "custom",
       "language": "all"
+    },
+    {
+      "id": "sangchanhteam_vi",
+      "name": "SangChanhTeam",
+      "version": "0.1.0",
+      "sha256": "4872e372193bfa2da1c92a146e9de27cf2a7877c8fdc6416010822bbef40f061",
+      "bundle_url": "http://127.0.0.1:8877/bundles/sangchanhteam_vi.py",
+      "icon_url": "http://127.0.0.1:8877/icons/sangchanhteam_vi.png",
+      "author": "Keiyoushi contributors",
+      "engine": "custom",
+      "language": "vi"
     },
     {
       "id": "sapphirescan_es",
@@ -17725,7 +17758,7 @@
     {
       "id": "seikowo_vi",
       "name": "Seikowo",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "sha256": "86198f573c03c3a347ccdb92994e71c469a85f0261988a09249c6e61d2b6bc47",
       "bundle_url": "http://127.0.0.1:8877/bundles/seikowo_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/seikowo_vi.png",
@@ -18121,7 +18154,7 @@
     {
       "id": "sinhsieusao_vi",
       "name": "SinhSieuSao",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "sha256": "04b42bbfdf2a165d32a03bc9ce1fb7a4c8a2357eeb620499ac4dcf6ca518349b",
       "bundle_url": "http://127.0.0.1:8877/bundles/sinhsieusao_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/sinhsieusao_vi.png",
@@ -18165,8 +18198,8 @@
     {
       "id": "siyahmelek_tr",
       "name": "Siyah Melek",
-      "version": "0.62.0",
-      "sha256": "4c221110743e0fb4b39dfc28e6283703bbae1731561722d37824a80fba41cc06",
+      "version": "0.63.0",
+      "sha256": "a6c1a725424d0b5f39a3e93659309ae1c892ff8365833b665c9a7d258b85f573",
       "bundle_url": "http://127.0.0.1:8877/bundles/siyahmelek_tr.py",
       "icon_url": "http://127.0.0.1:8877/icons/siyahmelek_tr.png",
       "author": "Keiyoushi contributors",
@@ -18218,6 +18251,17 @@
       "language": "tr"
     },
     {
+      "id": "slimereadunoriginal_pt_br",
+      "name": "SlimeRead (unoriginal)",
+      "version": "0.1.0",
+      "sha256": "cf8f5af5d45782fa9ddb9edc398c74bb875657a0c31b63a10a1931d528a79a82",
+      "bundle_url": "http://127.0.0.1:8877/bundles/slimereadunoriginal_pt_br.py",
+      "icon_url": "http://127.0.0.1:8877/icons/slimereadunoriginal_pt_br.png",
+      "author": "Keiyoushi contributors",
+      "engine": "custom",
+      "language": "pt-BR"
+    },
+    {
       "id": "slowmanga_th",
       "name": "Slow Manga",
       "version": "0.1.0",
@@ -18231,7 +18275,7 @@
     {
       "id": "soaicacomic_vi",
       "name": "SoaiCaComic",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "sha256": "7584747115f03145e1d898cbf8888c8af59aa0592a3dd7b8a79d624cef0ca722",
       "bundle_url": "http://127.0.0.1:8877/bundles/soaicacomic_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/soaicacomic_vi.png",
@@ -18704,7 +18748,7 @@
     {
       "id": "teamlanhlung_vi",
       "name": "Team Lạnh Lùng",
-      "version": "0.34.0",
+      "version": "0.35.0",
       "sha256": "2574d2bf8c339e925f1a37ed7184a24f18a47f04fa523cb0b74868e013731263",
       "bundle_url": "http://127.0.0.1:8877/bundles/teamlanhlung_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/teamlanhlung_vi.png",
@@ -18935,7 +18979,7 @@
     {
       "id": "thienthaitruyen_vi",
       "name": "ThienThaiTruyen",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "sha256": "f1359a314782dcea6b13f8c1085976ee9f6c14e2beaffe39286455319ca825ee",
       "bundle_url": "http://127.0.0.1:8877/bundles/thienthaitruyen_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/thienthaitruyen_vi.png",
@@ -19144,12 +19188,12 @@
     {
       "id": "toonilyme_en",
       "name": "Toonily.me",
-      "version": "0.0.0",
-      "sha256": "0df1d13f19b7e2e29fbcd3764eae59f7e1d3d86b7410d691ceadd831edb60659",
+      "version": "0.1.0",
+      "sha256": "f2df3ef2496c221f0577975d517921836941b011a430c128ef361399a44d41c1",
       "bundle_url": "http://127.0.0.1:8877/bundles/toonilyme_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/toonilyme_en.png",
       "author": "Keiyoushi contributors",
-      "engine": "madtheme",
+      "engine": "mangak",
       "language": "en"
     },
     {
@@ -19254,7 +19298,7 @@
     {
       "id": "toptruyen_vi",
       "name": "Top Truyen",
-      "version": "0.32.0",
+      "version": "0.34.0",
       "sha256": "76429a826d23b4cc0c806937fc5b04c440a9cff8f396c4afde644b97518aa433",
       "bundle_url": "http://127.0.0.1:8877/bundles/toptruyen_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/toptruyen_vi.png",
@@ -19331,7 +19375,7 @@
     {
       "id": "truyen18_vi",
       "name": "Truyen18",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "sha256": "3ced692fb61a2fbda290dd13a88b737ba49ecb2a4aad51b7774431445ba41217",
       "bundle_url": "http://127.0.0.1:8877/bundles/truyen18_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/truyen18_vi.png",
@@ -19353,7 +19397,7 @@
     {
       "id": "truyenhentai18_vi",
       "name": "Truyện Hentai 18+",
-      "version": "0.11.0",
+      "version": "0.12.0",
       "sha256": "3dfb7d388c6fa652e2aae30d9500283dba843567124cb213773896f85294625b",
       "bundle_url": "http://127.0.0.1:8877/bundles/truyenhentai18_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/truyenhentai18_vi.png",
@@ -19364,7 +19408,7 @@
     {
       "id": "truyenhentaivn_vi",
       "name": "TruyenHentaivn",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "sha256": "bd33c679caa29141757ae346a8c50de7d67aeecbdcf190e85fa52cddf0eaa2fd",
       "bundle_url": "http://127.0.0.1:8877/bundles/truyenhentaivn_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/truyenhentaivn_vi.png",
@@ -19375,7 +19419,7 @@
     {
       "id": "truyenhentaiz_vi",
       "name": "TruyenHentaiz",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "sha256": "d876afc159c17d7d63e51011b05cfa8890db0d9d3daa5feb289e610ededb486b",
       "bundle_url": "http://127.0.0.1:8877/bundles/truyenhentaiz_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/truyenhentaiz_vi.png",
@@ -19430,7 +19474,7 @@
     {
       "id": "truyentvn_vi",
       "name": "TruyenTVN",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "sha256": "e1729a00acf84643c8f4965cabd1a0e9bd7d83949fc6a8a509219cc1ce1785bf",
       "bundle_url": "http://127.0.0.1:8877/bundles/truyentvn_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/truyentvn_vi.png",
@@ -19463,7 +19507,7 @@
     {
       "id": "tuitruyen_vi",
       "name": "TuiTruyen",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "sha256": "8fe4200e9d884c6a9b7418ae241af13ab5a5a2363916aa403ba752a16bb4ca02",
       "bundle_url": "http://127.0.0.1:8877/bundles/tuitruyen_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/tuitruyen_vi.png",
@@ -19507,7 +19551,7 @@
     {
       "id": "tusachxinhxinh_vi",
       "name": "TuSachXinhXinh",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "sha256": "3862ec30ab71efbed60265beaedf4d3ff3c4b5fd1e3caba7b219cbf156adb1a7",
       "bundle_url": "http://127.0.0.1:8877/bundles/tusachxinhxinh_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/tusachxinhxinh_vi.png",
@@ -19694,7 +19738,7 @@
     {
       "id": "vcp_es",
       "name": "VCP",
-      "version": "0.9.0",
+      "version": "0.1.0",
       "sha256": "460954f12e2cf783aa37b71f0887697bb1b48ac479580b91ea64d678a4caeb1c",
       "bundle_url": "http://127.0.0.1:8877/bundles/vcp_es.py",
       "icon_url": "http://127.0.0.1:8877/icons/vcp_es.png",
@@ -19749,7 +19793,7 @@
     {
       "id": "vihentai_vi",
       "name": "ViHentai",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "sha256": "cb9391261c265064ca4ae4319de5a760fa055a784072918933d26a8d516c0efa",
       "bundle_url": "http://127.0.0.1:8877/bundles/vihentai_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/vihentai_vi.png",
@@ -19760,7 +19804,7 @@
     {
       "id": "vinahentai_vi",
       "name": "VinaHentai",
-      "version": "0.11.0",
+      "version": "0.13.0",
       "sha256": "7f53c2bde8a49f9c910bf4dcd09d5ce12bd9787c02e0871e1736e5432446fb61",
       "bundle_url": "http://127.0.0.1:8877/bundles/vinahentai_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/vinahentai_vi.png",
@@ -19791,9 +19835,31 @@
       "language": "es"
     },
     {
+      "id": "visionhaze_en",
+      "name": "Vision Haze",
+      "version": "0.1.0",
+      "sha256": "961fd56eb4068c4454b22c76428b8c81dd1e2aadfed4317680419ae0a833d175",
+      "bundle_url": "http://127.0.0.1:8877/bundles/visionhaze_en.py",
+      "icon_url": "http://127.0.0.1:8877/icons/visionhaze_en.png",
+      "author": "Keiyoushi contributors",
+      "engine": "custom",
+      "language": "en"
+    },
+    {
+      "id": "vixenlogic_en",
+      "name": "Vixen Logic",
+      "version": "0.1.0",
+      "sha256": "6c9ff1ea800db70a676f5955ff173a1ebc56c2aa4a653453a2a6a69f4aa00b54",
+      "bundle_url": "http://127.0.0.1:8877/bundles/vixenlogic_en.py",
+      "icon_url": "http://127.0.0.1:8877/icons/vixenlogic_en.png",
+      "author": "Keiyoushi contributors",
+      "engine": "custom",
+      "language": "en"
+    },
+    {
       "id": "vizshonenjump_en",
       "name": "VIZ Shonen Jump",
-      "version": "0.28.0",
+      "version": "0.29.0",
       "sha256": "2298c9a6158afaac777a739a49d897d12f07ba407dbfdcc4e45cfb3303841d62",
       "bundle_url": "http://127.0.0.1:8877/bundles/vizshonenjump_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/vizshonenjump_en.png",
@@ -19804,7 +19870,7 @@
     {
       "id": "vizshonenjump_en_viz_manga",
       "name": "VIZ Manga",
-      "version": "0.28.0",
+      "version": "0.29.0",
       "sha256": "b1496182e4a24ee5d15aab44c01d0765b5c4e31472e704cff4c02afad409a4f6",
       "bundle_url": "http://127.0.0.1:8877/bundles/vizshonenjump_en_viz_manga.py",
       "icon_url": "http://127.0.0.1:8877/icons/vizshonenjump_en_viz_manga.png",
@@ -19815,7 +19881,7 @@
     {
       "id": "vmp_es",
       "name": "VMP",
-      "version": "0.9.0",
+      "version": "0.1.0",
       "sha256": "504b33705329637f6917f3b89ecbedff1733ff414d0a2523df08425fab7ac5f6",
       "bundle_url": "http://127.0.0.1:8877/bundles/vmp_es.py",
       "icon_url": "http://127.0.0.1:8877/icons/vmp_es.png",
@@ -19837,7 +19903,7 @@
     {
       "id": "voyceme_en",
       "name": "VoyceMe",
-      "version": "0.6.0",
+      "version": "0.7.0",
       "sha256": "a1f592d7443bcdc73a4a975e2f5d3aa0f80f44f226a73595dccbc05cbbd03c0a",
       "bundle_url": "http://127.0.0.1:8877/bundles/voyceme_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/voyceme_en.png",
@@ -19848,7 +19914,7 @@
     {
       "id": "vyvymanga_en",
       "name": "VyvyManga",
-      "version": "0.40.0",
+      "version": "0.41.0",
       "sha256": "8ceb79e1b922f13b552f4e545c9c91d19bfd3d277d342444a93561345bb4ce7b",
       "bundle_url": "http://127.0.0.1:8877/bundles/vyvymanga_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/vyvymanga_en.png",
@@ -19892,8 +19958,8 @@
     {
       "id": "warforrayuba_en",
       "name": "War For Rayuba",
-      "version": "0.3.0",
-      "sha256": "ef637966e61b36844548969f28a14318c60812d71f71f897c83f765bb1606dc7",
+      "version": "0.4.0",
+      "sha256": "f1e5680f968d4917f0a53472d128ea9572dd29323ba28962e18aaef1739a27f5",
       "bundle_url": "http://127.0.0.1:8877/bundles/warforrayuba_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/warforrayuba_en.png",
       "author": "Keiyoushi contributors",
@@ -19913,14 +19979,69 @@
     },
     {
       "id": "webcomics_en",
-      "name": "Webcomics",
-      "version": "0.10.0",
+      "name": "Webcomics (en)",
+      "version": "0.11.0",
       "sha256": "72554f001508b653de3fbf1553550a0436d1b349f545006ae5c1cb58d5572fa1",
       "bundle_url": "http://127.0.0.1:8877/bundles/webcomics_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/webcomics_en.png",
       "author": "Keiyoushi contributors",
       "engine": "custom",
       "language": "en"
+    },
+    {
+      "id": "webcomics_en_webcomics",
+      "name": "Webcomics (en)",
+      "version": "0.10.0",
+      "sha256": "fb1f4f421a6b10a14aede42bd3ccb76b3a4d1f7880d1c06149f4f5808a146dd6",
+      "bundle_url": "http://127.0.0.1:8877/bundles/webcomics_en_webcomics.py",
+      "icon_url": "http://127.0.0.1:8877/icons/webcomics_en_webcomics.png",
+      "author": "Keiyoushi contributors",
+      "engine": "custom",
+      "language": "en"
+    },
+    {
+      "id": "webcomics_es",
+      "name": "Webcomics (es)",
+      "version": "0.11.0",
+      "sha256": "37b8d0781bb8672617938a3d4edd7c453cb6caca98be3dd924be03ddb00b5572",
+      "bundle_url": "http://127.0.0.1:8877/bundles/webcomics_es.py",
+      "icon_url": "http://127.0.0.1:8877/icons/webcomics_es.png",
+      "author": "Keiyoushi contributors",
+      "engine": "custom",
+      "language": "es"
+    },
+    {
+      "id": "webcomics_fr",
+      "name": "Webcomics (fr)",
+      "version": "0.11.0",
+      "sha256": "93a8fdbe2175c4ebd91b054b280822e3c406de8065dad537ed853b2295122cf9",
+      "bundle_url": "http://127.0.0.1:8877/bundles/webcomics_fr.py",
+      "icon_url": "http://127.0.0.1:8877/icons/webcomics_fr.png",
+      "author": "Keiyoushi contributors",
+      "engine": "custom",
+      "language": "fr"
+    },
+    {
+      "id": "webcomics_id",
+      "name": "Webcomics (id)",
+      "version": "0.11.0",
+      "sha256": "334b51187e87eb795be5546cf729e13bfdfb9b68d23b8886cbaa1dc5c6061952",
+      "bundle_url": "http://127.0.0.1:8877/bundles/webcomics_id.py",
+      "icon_url": "http://127.0.0.1:8877/icons/webcomics_id.png",
+      "author": "Keiyoushi contributors",
+      "engine": "custom",
+      "language": "id"
+    },
+    {
+      "id": "webcomics_pt",
+      "name": "Webcomics (pt)",
+      "version": "0.11.0",
+      "sha256": "da441a9897fd02b618dfa795663e94d088219ce7a2060fc433f612cf1a569dc6",
+      "bundle_url": "http://127.0.0.1:8877/bundles/webcomics_pt.py",
+      "icon_url": "http://127.0.0.1:8877/icons/webcomics_pt.png",
+      "author": "Keiyoushi contributors",
+      "engine": "custom",
+      "language": "pt"
     },
     {
       "id": "webdexscans_en",
@@ -19991,7 +20112,7 @@
     {
       "id": "weebcentral_en",
       "name": "Weeb Central",
-      "version": "0.23.0",
+      "version": "0.25.0",
       "sha256": "33584ef20e5ec359baeb32a09c08d615539d35ad5d49116f626e66743af9c3e7",
       "bundle_url": "http://127.0.0.1:8877/bundles/weebcentral_en.py",
       "icon_url": "http://127.0.0.1:8877/icons/weebcentral_en.png",
@@ -20013,7 +20134,7 @@
     {
       "id": "westmanga_id",
       "name": "West Manga",
-      "version": "0.43.0",
+      "version": "0.44.0",
       "sha256": "25bd94424e8c8096f2107b6868f456af59fdc7191ea232faeffbd400f96f3032",
       "bundle_url": "http://127.0.0.1:8877/bundles/westmanga_id.py",
       "icon_url": "http://127.0.0.1:8877/icons/westmanga_id.png",
@@ -20695,7 +20816,7 @@
     {
       "id": "yurigarden_vi",
       "name": "YuriGarden",
-      "version": "0.10.0",
+      "version": "0.11.0",
       "sha256": "16881f7f56829d4d727e73a05a9466fc34b5c4edd85ab82014b29b2b5266e46b",
       "bundle_url": "http://127.0.0.1:8877/bundles/yurigarden_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/yurigarden_vi.png",
@@ -20717,7 +20838,7 @@
     {
       "id": "yurineko_vi",
       "name": "YuriNeko",
-      "version": "0.6.0",
+      "version": "0.7.0",
       "sha256": "1c875ad4bce9b8e3cbc3d44d2f22a1bded7facf33952e50999eb6327b777c075",
       "bundle_url": "http://127.0.0.1:8877/bundles/yurineko_vi.py",
       "icon_url": "http://127.0.0.1:8877/icons/yurineko_vi.png",
@@ -20750,7 +20871,7 @@
     {
       "id": "zaimanhua_zh",
       "name": "再漫画",
-      "version": "0.18.0",
+      "version": "0.19.0",
       "sha256": "97ce1c50933eb60db0aa14fd07552fa3772875f6cbb9ef2921a1c7320762f178",
       "bundle_url": "http://127.0.0.1:8877/bundles/zaimanhua_zh.py",
       "icon_url": "http://127.0.0.1:8877/icons/zaimanhua_zh.png",

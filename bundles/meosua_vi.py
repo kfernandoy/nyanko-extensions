@@ -5395,7 +5395,7 @@ class GeneratedGenericSource(GenericSource):
     display_name = 'MeoSua'
     base_url = 'https://meosua.org'
     language = 'vi'
-    requests_per_minute = 180
+    requests_per_minute = 60
     content_warning = 'mixed'
 
 

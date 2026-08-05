@@ -2367,7 +2367,7 @@ class NatsuIdSource(MadaraSource):
 class GeneratedNatsuIdSource(NatsuIdSource):
     name = 'mangatale_id'
     display_name = 'Ikiru'
-    base_url = 'https://06.ikiru.wtf'
+    base_url = 'https://07.ikiru.wtf'
     language = 'id'
     chapter_page = '999'
 

@@ -5391,12 +5391,12 @@ class HentaiModeSource(GenericSource):
             node = node.parent
 
 class GeneratedGenericSource(GenericSource):
-    name = 'siyahmelek_tr'
-    display_name = 'Siyah Melek'
-    base_url = 'https://siyahmelek.live'
-    language = 'tr'
-    requests_per_minute = 60
-    content_warning = 'nsfw'
+    name = 'webcomics_en_webcomics'
+    display_name = 'Webcomics'
+    base_url = 'https://webcomicsapp.com'
+    language = 'en'
+    requests_per_minute = 180
+    content_warning = 'safe'
 
 
 SOURCE = GeneratedGenericSource

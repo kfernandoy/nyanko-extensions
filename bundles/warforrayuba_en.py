@@ -5395,7 +5395,7 @@ class GeneratedGenericSource(GenericSource):
     display_name = 'War For Rayuba'
     base_url = 'https://xrabohrok.github.io/WarMap/#'
     language = 'en'
-    requests_per_minute = 240
+    requests_per_minute = 60
     content_warning = 'safe'
 
 
