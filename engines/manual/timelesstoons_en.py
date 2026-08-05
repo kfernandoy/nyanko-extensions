@@ -1,4 +1,4 @@
-"""Implementación común del tema Madara para bundles Nyanko Source v3."""
+"""Implementación común del tema Madara para bundles Nyanko Source v4."""
 
 from __future__ import annotations
 
@@ -569,7 +569,7 @@ class MadaraSource:
             raise SourceNotFoundError(f"{self.display_name} no tiene fetcher inyectado")
         return await self.fetcher.request(method, url, **kwargs)
 
-"""Implementación común de sitios Keyoapp para Nyanko Source v3."""
+"""Implementación común de sitios Keyoapp para Nyanko Source v4."""
 
 import json
 import re

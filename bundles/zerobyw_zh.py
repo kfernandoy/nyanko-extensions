@@ -1,4 +1,4 @@
-"""Implementación común del tema Madara para bundles Nyanko Source v3."""
+"""Implementación común del tema Madara para bundles Nyanko Source v4."""
 
 from __future__ import annotations 
 
