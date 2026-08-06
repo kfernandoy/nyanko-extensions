@@ -132,6 +132,7 @@ class MangaDexSource :
         params .extend (("contentRating[]",rating )for rating in CONTENT_RATINGS )
         return params 
 
+<<<<<<< HEAD
     def _series (self ,item :dict [str ,Any ])->SourceSeries :
         manga_id =item ["id"]
         filename =next (
@@ -152,6 +153,57 @@ class MangaDexSource :
         else None 
         ),
         web_url =f"https://mangadex.org/title/{manga_id }",
+=======
+    def _series(self, item: dict[str, Any]) -> SourceSeries:
+        manga_id = item["id"]
+        filename = next(
+            (
+                relation.get("attributes", {}).get("fileName")
+                for relation in item.get("relationships", [])
+                if relation.get("type") == "cover_art"
+            ),
+            None,
+        )
+        return SourceSeries(
+            source_id=manga_id,
+            title=self._title(item.get("attributes", {})),
+            source_name=self.name,
+            cover_url=(
+                f"https://uploads.mangadex.org/covers/{manga_id}/{filename}.256.jpg"
+                if filename
+                else None
+            ),
+            web_url=f"https://mangadex.org/title/{manga_id}",
+        )
+
+    def _chapter(self, item: dict[str, Any], series_id: str) -> SourceChapter:
+        attributes = item.get("attributes", {})
+        number_text = attributes.get("chapter")
+        try:
+            number = float(number_text) if number_text not in (None, "") else None
+        except ValueError:
+            number = None
+        pages = int(attributes.get("pages") or 0)
+        label = f"Capítulo {number_text}" if number_text else "Oneshot"
+        if attributes.get("title"):
+            label += f" · {attributes['title']}"
+        if pages == 0:
+            label += " · sin páginas"
+        groups = [
+            relation.get("attributes", {}).get("name", "")
+            for relation in item.get("relationships", [])
+            if relation.get("type") == "scanlation_group"
+        ]
+        return SourceChapter(
+            source_id=f"{item['id']}|empty" if pages == 0 else item["id"],
+            title=label,
+            series_id=series_id,
+            source_name=self.name,
+            number=number,
+            scanlator=" & ".join(filter(None, groups)),
+            language=attributes.get("translatedLanguage", ""),
+            uploaded_at=attributes.get("publishAt"),
+>>>>>>> 125d88c69c55d2ed1d8eb882a26de355c24e5fcb
         )
 
     def _chapter (self ,item :dict [str ,Any ],series_id :str )->SourceChapter :

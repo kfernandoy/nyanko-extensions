@@ -2198,6 +2198,7 @@ import re
 from urllib.parse import urljoin
 
 try:
+<<<<<<< HEAD
     from .madara import (
         MadaraSource,
         SourceChapter,
@@ -2209,6 +2210,9 @@ try:
         _image_url,
         _parse_html,
     )
+=======
+    from .madara import MadaraSource, SourceChapter, SourceSeries, _first, _image_url, _parse_html
+>>>>>>> 125d88c69c55d2ed1d8eb882a26de355c24e5fcb
 except ImportError:
     pass
 
@@ -2367,6 +2371,7 @@ class HeavenMangaSource(MadaraSource):
             image = _first(container, lambda node: node.tag == "img")
             if title is None or anchor is None:
                 continue
+<<<<<<< HEAD
             source_id = urljoin(str(response.url), anchor.attrs["href"])
             items.append(SourceSeries(
                 source_id=source_id, title=title.text().strip(), source_name=self.name,
@@ -2420,6 +2425,58 @@ class HeavenMangaSource(MadaraSource):
                 web_url=source_id,
             ))
         return {"items": items, "has_more": self._has_next(root)}
+=======
+            source_id = urljoin(str(response.url), href)
+            if source_id not in seen:
+                seen.add(source_id)
+                image = _first(anchor, lambda node: node.tag == "img")
+                if image is None and anchor.parent is not None:
+                    image = _first(anchor.parent, lambda node: node.tag == "img")
+                result.append(
+                    SourceSeries(
+                        source_id=source_id,
+                        title=title,
+                        source_name=self.name,
+                        cover_url=(
+                            _image_url(image, str(response.url)) if image else None
+                        ),
+                        web_url=source_id,
+                    )
+                )
+        if result:
+            return result
+        try:
+            payload = response.json()
+        except (ValueError, AttributeError):
+            return []
+        for item in self._walk_dicts(payload):
+            title = item.get("title") or item.get("name")
+            item_id = item.get("url") or item.get("href") or item.get("slug") or item.get("id")
+            if title and item_id is not None:
+                source_id = urljoin(str(response.url), str(item_id))
+                if source_id not in seen:
+                    seen.add(source_id)
+                    cover = (
+                        item.get("cover_url")
+                        or item.get("cover")
+                        or item.get("thumbnail")
+                        or item.get("image")
+                    )
+                    result.append(
+                        SourceSeries(
+                            source_id=source_id,
+                            title=str(title),
+                            source_name=self.name,
+                            cover_url=(
+                                urljoin(str(response.url), cover)
+                                if isinstance(cover, str)
+                                else None
+                            ),
+                            web_url=source_id,
+                        )
+                    )
+        return result
+>>>>>>> 125d88c69c55d2ed1d8eb882a26de355c24e5fcb
 
     @staticmethod
     def _has_next(root: _Node) -> bool:
