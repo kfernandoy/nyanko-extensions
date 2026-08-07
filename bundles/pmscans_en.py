@@ -381,6 +381,7 @@ class MadaraSource:
                 items = self._fallback_chapter_nodes(_parse_html(response.text))
 
         result: list[SourceChapter] = []
+        seen_chapters: set[str] = set()
         for item in items:
             anchor = _first(item, lambda node: node.tag == "a" and bool(node.attrs.get("href")))
             if anchor is None:
@@ -401,6 +402,11 @@ class MadaraSource:
             chapter_url = urljoin(series_url, anchor.attrs["href"]).split("?style=paged", 1)[0]
             if self.chapter_url_suffix and not chapter_url.endswith(self.chapter_url_suffix):
                 chapter_url += self.chapter_url_suffix
+            # El fallback recorre li, div y tr por separado: en un markup anidado
+            # el mismo ancla cae dentro de varios contenedores y entra una vez por cada uno.
+            if chapter_url in seen_chapters:
+                continue
+            seen_chapters.add(chapter_url)
             match = re.search(r"(?:chapter|cap(?:í|i)tulo|ch)[^\d]*(\d+(?:\.\d+)?)", title, re.I)
             result.append(
                 SourceChapter(

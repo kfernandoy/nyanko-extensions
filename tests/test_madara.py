@@ -129,7 +129,37 @@ class TempleScanCoversTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(series[0].cover_url, "https://aedexnox.akan01.com/wp-content/clasico.jpg")
 
 
-class ChapterListTest(unittest.IsolatedAsyncioTestCase):
+class ChapterDeduplicationTest(unittest.IsolatedAsyncioTestCase):
+    """El fallback recorre li, div y tr: un ancla anidada entra una vez por contenedor."""
+
+    async def test_the_nested_fallback_no_longer_repeats_a_chapter(self):
+        markup = """
+        <html><body>
+          <div class="chapters">
+            <div class="wrap">
+              <li><a href="/serie/deja-de-fumar/capitulo-105/">Capitulo 105</a></li>
+            </div>
+            <li><a href="/serie/deja-de-fumar/capitulo-104/">Capitulo 104</a></li>
+          </div>
+        </body></html>
+        """
+        source = source_class(manga_substring="serie")(
+            Fetcher([Response("https://aedexnox.akan01.com/serie/deja-de-fumar/", markup)])
+        )
+
+        chapters = await source.chapters("https://aedexnox.akan01.com/serie/deja-de-fumar/")
+
+        ids = [item.source_id for item in chapters]
+        self.assertEqual(len(ids), len(set(ids)), f"capitulos repetidos: {ids}")
+        self.assertEqual(
+            ids,
+            [
+                "https://aedexnox.akan01.com/serie/deja-de-fumar/capitulo-105/?style=list",
+                "https://aedexnox.akan01.com/serie/deja-de-fumar/capitulo-104/?style=list",
+            ],
+        )
+        self.assertEqual([item.number for item in chapters], [105.0, 104.0])
+
     async def test_the_classic_madara_list_is_untouched(self):
         markup = """
         <html><body><ul>
