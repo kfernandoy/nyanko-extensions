@@ -1,6 +1,6 @@
 """Ejercita cada extension contra su sitio real y reporta que carril funciona.
 
-Uso: python smoke.py [--lang es] [--only id,id] [--concurrency 8] [--timeout 90]
+Uso: python tools/smoke.py [--lang es] [--only id,id] [--concurrency 8] [--timeout 90] [--samples-per-engine 15]
 
 Recorre browse(popular), browse(latest), search, details, chapters, pages y
 page_bytes, parando en el primer fallo de la cadena que depende del anterior.
@@ -15,12 +15,12 @@ import json
 import pathlib
 import sys
 import time
-import traceback
+import random
+from collections import defaultdict
 
 import httpx
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-
 
 class Fetcher:
     """Contrato SourceFetcher sobre httpx, respetando el rpm de la fuente."""
@@ -43,7 +43,6 @@ class Fetcher:
         merged = {**self.headers, **dict(kwargs.pop("headers", None) or {})}
         return await self.client.request(method, url, headers=merged, **kwargs)
 
-
 def load(extension_id: str):
     path = ROOT / "bundles" / f"{extension_id}.py"
     spec = importlib.util.spec_from_file_location(f"smoke_{extension_id}", path)
@@ -51,18 +50,16 @@ def load(extension_id: str):
     spec.loader.exec_module(module)
     return module.SOURCE
 
-
 def brief(error: BaseException) -> str:
     text = f"{type(error).__name__}: {error}".replace("\n", " ").strip()
     return text[:160]
 
-
-async def probe(extension_id: str, timeout: float) -> dict:
-    result = {"id": extension_id, "steps": {}, "requests": 0}
+async def probe(extension_id: str, timeout: float, engine: str) -> dict:
+    result = {"id": extension_id, "engine": engine, "steps": {}, "requests": 0}
     try:
         factory = load(extension_id)
-    except Exception as error:  # noqa: BLE001
-        result["steps"]["load"] = brief(error)
+    except Exception as error:
+        result["steps"]["load"] = {"status": "error", "error": brief(error)}
         return result
 
     source = factory()
@@ -83,25 +80,44 @@ async def probe(extension_id: str, timeout: float) -> dict:
         async def step(name: str, coro):
             try:
                 value = await asyncio.wait_for(coro, timeout=timeout)
-            except Exception as error:  # noqa: BLE001
-                result["steps"][name] = brief(error)
+            except Exception as error:
+                result["steps"][name] = {"status": "error", "error": brief(error)}
                 return None
-            count = getattr(value, "items", None)
-            if count is not None:
-                result["steps"][name] = f"ok ({len(count)})" if count else "vacio"
+            
+            items = getattr(value, "items", None)
+            if items is not None:
+                covers = sum(1 for i in items if getattr(i, "cover_url", None))
+                result["steps"][name] = {"status": "ok", "items": len(items), "cover": covers}
             else:
-                result["steps"][name] = "ok"
+                if name == "details" and value:
+                    v_dict = {"status": "ok"}
+                    for f in ["cover_url", "description", "author", "artist", "status", "content_tags"]:
+                        val = getattr(value, f, None)
+                        v_dict[f] = 1 if val else 0
+                    result["steps"][name] = v_dict
+                elif name == "chapters" and value:
+                    result["steps"][name] = {"status": "ok", "items": len(value)}
+                elif name == "pages" and value:
+                    result["steps"][name] = {"status": "ok", "items": len(value)}
+                else:
+                    result["steps"][name] = {"status": "ok"}
             return value
 
         popular = await step("popular", source.browse("popular", 1))
         latest = await step("latest", source.browse("latest", 1))
-        await step("search", source.search("a", 1, None))
+        
+        # safely handle search which may fail
+        try:
+            await step("search", source.search("a", 1, None))
+        except Exception:
+            pass
 
         items = []
         for candidate in (popular, latest):
             if candidate is not None and getattr(candidate, "items", None):
                 items = candidate.items
                 break
+                
         if not items:
             result["requests"] = fetcher.count
             return result
@@ -129,13 +145,15 @@ async def probe(extension_id: str, timeout: float) -> dict:
             try:
                 size = sum(len(chunk) for chunk in (content.chunks or []))
                 result["bytes"] = size
+                base_dict = {"status": "ok", "bytes": size}
                 if size < 512:
-                    result["steps"]["page_bytes"] = f"solo {size} bytes"
-            except Exception as error:  # noqa: BLE001
-                result["steps"]["page_bytes"] = brief(error)
+                    base_dict["warning"] = f"solo {size} bytes"
+                result["steps"]["page_bytes"] = base_dict
+            except Exception as error:
+                result["steps"]["page_bytes"] = {"status": "error", "error": brief(error)}
+                
     result["requests"] = fetcher.count
     return result
-
 
 async def main() -> None:
     parser = argparse.ArgumentParser()
@@ -143,44 +161,87 @@ async def main() -> None:
     parser.add_argument("--only", default="")
     parser.add_argument("--concurrency", type=int, default=8)
     parser.add_argument("--timeout", type=float, default=90.0)
+    parser.add_argument("--samples-per-engine", type=int, default=0)
     parser.add_argument("--out", default="smoke.json")
     args = parser.parse_args()
 
     payload = json.loads((ROOT / "index.json").read_text(encoding="utf-8"))
-    ids = [
-        item["id"]
+    
+    # Filter by language
+    extensions = [
+        item
         for item in payload["extensions"]
         if str(item.get("language", "")).lower().startswith(args.lang)
     ]
+    
     if args.only:
         wanted = {value.strip() for value in args.only.split(",") if value.strip()}
-        ids = [value for value in ids if value in wanted]
+        extensions = [item for item in extensions if item["id"] in wanted]
+
+    if args.samples_per_engine > 0 and not args.only:
+        # Stratified sampling
+        by_engine = defaultdict(list)
+        for item in extensions:
+            by_engine[item.get("engine", "custom")].append(item)
+            
+        sampled_extensions = []
+        for eng, items in by_engine.items():
+            if len(items) > args.samples_per_engine:
+                # Randomize to not always hit the same ones
+                sampled_extensions.extend(random.sample(items, args.samples_per_engine))
+            else:
+                sampled_extensions.extend(items)
+        extensions = sampled_extensions
+        random.shuffle(extensions) # global shuffle to mix requests
 
     gate = asyncio.Semaphore(args.concurrency)
     done = 0
 
-    async def run(extension_id: str) -> dict:
+    async def run(ext: dict) -> dict:
         nonlocal done
+        extension_id = ext["id"]
+        engine = ext.get("engine", "custom")
         async with gate:
             try:
                 value = await asyncio.wait_for(
-                    probe(extension_id, args.timeout), timeout=args.timeout * 3,
+                    probe(extension_id, args.timeout, engine), timeout=args.timeout * 3,
                 )
-            except Exception as error:  # noqa: BLE001
-                value = {"id": extension_id, "steps": {"harness": brief(error)}}
+            except Exception as error:
+                value = {"id": extension_id, "engine": engine, "steps": {"harness": {"status": "error", "error": brief(error)}}}
             done += 1
-            print(f"[{done}/{len(ids)}] {extension_id}", flush=True)
+            print(f"[{done}/{len(extensions)}] {extension_id} ({engine})", flush=True)
             return value
 
-    results = await asyncio.gather(*(run(value) for value in ids))
+    results = await asyncio.gather(*(run(ext) for ext in extensions))
     pathlib.Path(args.out).write_text(
         json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8",
     )
     print(f"\nEscrito {args.out} con {len(results)} resultados")
+    
+    # Aggregate and print
+    agg = defaultdict(lambda: {"total": 0, "popular_items": 0, "popular_covers": 0})
+    for r in results:
+        e = r.get("engine", "custom")
+        agg[e]["total"] += 1
+        steps = r.get("steps", {})
+        if "popular" in steps and steps["popular"].get("status") == "ok":
+            agg[e]["popular_items"] += steps["popular"].get("items", 0)
+            agg[e]["popular_covers"] += steps["popular"].get("cover", 0)
+            
+    print("\nResumen por motor (cover en popular):")
+    for e, stat in sorted(agg.items(), key=lambda x: x[1]["total"], reverse=True):
+        cov = stat["popular_covers"]
+        tot = stat["popular_items"]
+        if tot > 0:
+            print(f" - {e} ({stat['total']} probados): cover {cov}/{tot} ({cov/tot:.0%})")
+        else:
+            print(f" - {e} ({stat['total']} probados): no items in popular")
 
 
 if __name__ == "__main__":
     import warnings
-
     warnings.filterwarnings("ignore")
+    # For Windows asyncio compatibility
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())
