@@ -18,9 +18,9 @@ from nyanko_api.sources.contract import (
     SourceCapabilities,
     SourceChapter,
     SourceFetcher,
+    SourceFilter,
     SourcePage,
     SourcePageContent,
-    SourceFilter,
     SourcePreference,
     SourceSeries,
 )
@@ -99,13 +99,32 @@ def _first(node: _Node, predicate: Any) -> _Node | None:
     return next((item for item in node.descendants() if predicate(item)), None)
 
 
+_BACKGROUND_IMAGE = re.compile(r"background(?:-image)?\s*:[^;]*?url\(\s*(['\"]?)(.*?)\1\s*\)", re.I | re.S)
+
+
+def _style_image_url(node: _Node, base_url: str) -> str:
+    """Portada servida como CSS en el propio nodo, no como <img>.
+
+    Los temas Madara re-skineados con Tailwind pintan la portada con
+    ``style="background-image:url(...)"`` sobre el ancla de la serie y no
+    emiten ni un solo ``<img>``.
+    """
+    found = _BACKGROUND_IMAGE.search(node.attrs.get("style", ""))
+    if found is None:
+        return ""
+    value = found.group(2).strip()
+    return urljoin(base_url, value) if value else ""
+
+
 def _image_url(node: _Node, base_url: str) -> str:
     for key in (
         "data-lm-orig-src",
+        "data-sec-src",
         "data-src",
         "data-lazy-src",
         "data-cfsrc",
         "data-manga-src",
+        "data-src-base64",
         "src",
     ):
         if node.attrs.get(key):
@@ -115,7 +134,25 @@ def _image_url(node: _Node, base_url: str) -> str:
         for item in node.attrs.get("srcset", "").split(",")
         if item.strip()
     ]
-    return urljoin(base_url, candidates[-1]) if candidates else ""
+    if candidates:
+        return urljoin(base_url, candidates[-1])
+    return _style_image_url(node, base_url)
+
+
+def _cover_url(container: _Node, base_url: str) -> str | None:
+    """Portada del contenedor: primero el <img>, si no el background del CSS.
+
+    Es aditivo: el fallback de ``background-image`` solo entra cuando no hay
+    ningun ``<img>`` con URL utilizable, asi que no puede cambiar el resultado
+    de los sitios que hoy funcionan.
+    """
+    image = _first(container, lambda node: node.tag == "img")
+    if image is not None and (url := _image_url(image, base_url)):
+        return url
+    if url := _style_image_url(container, base_url):
+        return url
+    styled = _first(container, lambda node: bool(_style_image_url(node, base_url)))
+    return _style_image_url(styled, base_url) if styled is not None else None
 
 
 class MadaraSource:
@@ -132,6 +169,10 @@ class MadaraSource:
     pages_profile = "default"
     extra_headers: dict[str, str] = {}
     image_headers: dict[str, str] = {}
+    strip_external_image_referer = False
+    date_format = "MMMM dd, yyyy"
+    date_locale = "en"
+    details_profile = "default"
     api_version = SOURCE_API_VERSION
     content_warning = "unknown"
     requires_auth = False
@@ -199,6 +240,113 @@ class MadaraSource:
             )
         return self._series_from_root(root, ("page-item-detail", "manga__item"))
 
+    async def details(self, series: SourceSeries | str) -> SourceSeries:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        response = await self._request("GET", urljoin(f"{self.base_url}/", series_id))
+        response.raise_for_status()
+        root = _parse_html(response.text)
+        title_node = _first(
+            root,
+            lambda node: node.tag in {"h1", "h3"}
+            and (
+                self._has_class_ancestor(node, "post-title")
+                or self._has_id_ancestor(node, "manga-title")
+                or node.has_class("post-title")
+                or node.has_class("mb-2")
+            ),
+        )
+        title = title_node.text().strip() if title_node else (
+            series.title if isinstance(series, SourceSeries) else series_id.rstrip("/").rsplit("/", 1)[-1]
+        )
+        image = _first(root, lambda node: node.tag == "img" and self._has_class_ancestor(node, "summary_image"))
+        description_node = _first(
+            root,
+            lambda node: node.has_class("summary__content")
+            and self._has_class_ancestor(node, "description-summary")
+            or node.has_class("manga-excerpt")
+            or node.has_class("mv-synopsis")
+            or node.has_class("summary-container")
+            or node.has_class("modal-contenido") and self._has_class_ancestor(node, "c-page__content"),
+        )
+        paragraphs = description_node.descendants("p") if description_node else []
+        description = (
+            "\n\n".join(paragraph.text().strip() for paragraph in paragraphs if paragraph.text().strip())
+            if paragraphs else description_node.text().strip() if description_node else ""
+        )
+        authors = self._detail_links(root, ("author-content", "manga-authors"))
+        artists = self._detail_links(root, ("artist-content",))
+        status_text = ""
+        for item in root.descendants("div"):
+            if not item.has_class("post-content_item") or not self._has_class_ancestor(item, "summary_content"):
+                continue
+            heading = _first(
+                item,
+                lambda node: node.has_class("summary-heading")
+                and any(label in node.text().casefold() for label in ("status", "estado")),
+            )
+            value = _first(item, lambda node: node.has_class("summary-content"))
+            if heading and value:
+                status_text = value.text().strip()
+        genres = [
+            node.text().strip()
+            for node in root.descendants("a")
+            if self._has_class_ancestor(node, "genres-content") and node.text().strip()
+        ]
+        for item in root.descendants():
+            if not item.has_class("post-content_item"):
+                continue
+            own = " ".join(child.strip() for child in item.children if isinstance(child, str) and child.strip())
+            heading = _first(item, lambda node: node.has_class("summary-heading"))
+            label = f"{own} {heading.text() if heading else ''}"
+            value = _first(item, lambda node: node.has_class("summary-content"))
+            if not value or not value.text().strip():
+                continue
+            if "Type" in label and value.text().strip() != "-":
+                genres.append(value.text().strip())
+            elif "Alt" in label:
+                description = f"{description}\n\nAlternative name(s): {value.text().strip()}".strip()
+        genres = list(dict.fromkeys(genre for genre in genres if genre))
+        return SourceSeries(
+            source_id=series_id,
+            title=title,
+            source_name=self.name,
+            cover_url=_image_url(image, str(response.url)) if image else None,
+            description=description or None,
+            author=", ".join(authors) or None,
+            artist=", ".join(artists) or None,
+            status=self._madara_status(status_text),
+            content_tags=tuple(genres),
+            metadata=series.metadata if isinstance(series, SourceSeries) else {},
+            web_url=str(response.url),
+        )
+
+    @classmethod
+    def _detail_links(cls, root: _Node, containers: tuple[str, ...]) -> list[str]:
+        return [
+            node.text().strip()
+            for node in root.descendants("a")
+            if any(cls._has_class_ancestor(node, name) for name in containers)
+            and node.text().strip()
+            and "updating" not in node.text().casefold()
+            and "atualizando" not in node.text().casefold()
+        ]
+
+    @staticmethod
+    def _madara_status(value: str) -> str | None:
+        normalized = " ".join(re.findall(r"\w+", value.casefold()))
+        if normalized in {"completed", "completo", "completado", "finalizado", "concluido"}:
+            return "completed"
+        if normalized in {
+            "ongoing", "en curso", "curso", "en marcha", "publicandose", "en emision",
+            "emision", "emisión", "en emisión", "ativo", "updating",
+        }:
+            return "ongoing"
+        if normalized in {"on hold", "pausado", "en espera"}:
+            return "hiatus"
+        if normalized in {"canceled", "cancelado"}:
+            return "cancelled"
+        return None
+
     async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
         series_id = series.source_id if isinstance(series, SourceSeries) else series
         series_url = urljoin(f"{self.base_url}/", series_id)
@@ -211,15 +359,22 @@ class MadaraSource:
         holder = _first(root, lambda node: node.attrs.get("id", "").startswith("manga-chapters-holder"))
         if not items and holder is not None:
             if self.use_new_chapter_endpoint:
-                response = await self._request("POST", f"{series_url.rstrip('/')}/ajax/chapters")
+                response = await self._request(
+                    "POST", f"{series_url.rstrip('/')}/ajax/chapters",
+                    headers={"X-Requested-With": "XMLHttpRequest"},
+                )
             else:
                 response = await self._request(
                     "POST",
                     f"{self.base_url}/wp-admin/admin-ajax.php",
                     data={"action": "manga_get_chapters", "manga": holder.attrs.get("data-id", "")},
+                    headers={"X-Requested-With": "XMLHttpRequest"},
                 )
                 if getattr(response, "status_code", 200) == 400:
-                    response = await self._request("POST", f"{series_url.rstrip('/')}/ajax/chapters")
+                    response = await self._request(
+                        "POST", f"{series_url.rstrip('/')}/ajax/chapters",
+                        headers={"X-Requested-With": "XMLHttpRequest"},
+                    )
             response.raise_for_status()
             items = self._chapter_nodes(_parse_html(response.text))
             if not items:
@@ -231,6 +386,18 @@ class MadaraSource:
             if anchor is None:
                 continue
             title = anchor.text().strip()
+            relative_image = _first(item, lambda node: node.tag == "img" and not node.has_class("thumb"))
+            relative_link = _first(
+                item,
+                lambda node: node.tag == "a" and node.parent is not None
+                and node.parent.tag == "span" and bool(node.attrs.get("title")),
+            )
+            date = _first(item, lambda node: node.tag == "span" and node.has_class("chapter-release-date"))
+            date_text = (
+                relative_image.attrs.get("alt", "") if relative_image is not None
+                else relative_link.attrs.get("title", "") if relative_link is not None
+                else date.text() if date else ""
+            )
             chapter_url = urljoin(series_url, anchor.attrs["href"]).split("?style=paged", 1)[0]
             if self.chapter_url_suffix and not chapter_url.endswith(self.chapter_url_suffix):
                 chapter_url += self.chapter_url_suffix
@@ -242,9 +409,75 @@ class MadaraSource:
                     series_id=series_id,
                     source_name=self.name,
                     number=float(match.group(1)) if match else None,
+                    language=self.language,
+                    uploaded_at=self._madara_date(date_text),
                 )
             )
         return result
+
+    def _madara_date(self, value: str) -> str | None:
+        from calendar import monthrange
+        from datetime import datetime, timedelta
+
+        text = value.strip().casefold()
+        now = datetime.now().replace(microsecond=0)
+        if text.startswith(("today", "hoy")):
+            return now.replace(hour=0, minute=0, second=0).isoformat()
+        if text.startswith(("yesterday", "ayer")):
+            return (now - timedelta(days=1)).replace(hour=0, minute=0, second=0).isoformat()
+        relative = re.search(r"(\d+)", text)
+        if relative and (text.startswith("hace") or text.endswith(("ago", "atrás"))):
+            amount = int(relative.group())
+            if any(unit in text for unit in ("día", "dia", "day")):
+                return (now - timedelta(days=amount)).isoformat()
+            if any(unit in text for unit in ("hora", "hour")):
+                return (now - timedelta(hours=amount)).isoformat()
+            if any(unit in text for unit in ("minuto", "minute", " min")):
+                return (now - timedelta(minutes=amount)).isoformat()
+            if any(unit in text for unit in ("segundo", "second")):
+                return (now - timedelta(seconds=amount)).isoformat()
+            if any(unit in text for unit in ("semana", "week")):
+                return (now - timedelta(days=amount * 7)).isoformat()
+            if any(unit in text for unit in ("mes", "month")):
+                total = now.year * 12 + now.month - 1 - amount
+                year, month = divmod(total, 12)
+                return now.replace(
+                    year=year, month=month + 1,
+                    day=min(now.day, monthrange(year, month + 1)[1]),
+                ).isoformat()
+            if any(unit in text for unit in ("año", "year")):
+                year = now.year - amount
+                return now.replace(year=year, day=min(now.day, monthrange(year, now.month)[1])).isoformat()
+        numeric_format = {
+            "MM/dd/yyyy": "%m/%d/%Y", "dd/MM/yyyy": "%d/%m/%Y", "yyyy-MM-dd": "%Y-%m-%d",
+        }.get(self.date_format)
+        if numeric_format:
+            try:
+                return datetime.strptime(value.strip(), numeric_format).isoformat()
+            except ValueError:
+                return None
+        if self.date_format not in {"d MMMM, yyyy", "dd MMM yyyy", "dd MMM, yyyy", "dd MMMM, yyyy", "MMM dd, yyyy", "MMMM dd, yyyy"}:
+            return None
+        months = {
+            "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
+            "july": 7, "august": 8, "september": 9, "october": 10, "november": 11, "december": 12,
+            "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
+            "julio": 7, "agosto": 8, "septiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12,
+            "jan": 1, "feb": 2, "mar": 3, "apr": 4, "jun": 6, "jul": 7, "aug": 8,
+            "sep": 9, "sept": 9, "oct": 10, "nov": 11, "dec": 12,
+            "ene": 1, "abr": 4, "ago": 8, "dic": 12,
+        }
+        day_first = self.date_format.startswith(("d ", "dd "))
+        absolute = (
+            re.fullmatch(r"(\d{1,2})\s+([^\s,]+),?\s+(\d{4})", text)
+            if day_first
+            else re.fullmatch(r"([^\s]+)\s+(\d{1,2}),\s*(\d{4})", text)
+        )
+        month = absolute.group(2).rstrip(".") if absolute and day_first else absolute.group(1).rstrip(".") if absolute else ""
+        if absolute and month in months:
+            day = absolute.group(1) if day_first else absolute.group(2)
+            return datetime(int(absolute.group(3)), months[month], int(day)).isoformat()
+        return None
 
     async def pages(self, chapter: SourceChapter | str) -> list[SourcePage]:
         chapter_id = chapter.source_id if isinstance(chapter, SourceChapter) else chapter
@@ -298,7 +531,7 @@ class MadaraSource:
             if (image := _first(container, lambda node: node.tag == "img")) is not None
         ]
         reading = _first(root, lambda node: node.has_class("reading-content"))
-        if reading is not None:
+        if reading is not None and self.pages_profile != "page_break_only":
             images.extend(reading.descendants("img"))
         if not images:
             images = [
@@ -358,7 +591,10 @@ class MadaraSource:
             raise SourceNotFoundError("Página Madara sin URL")
         parsed = urlparse(url)
         headers = dict(self.image_headers)
-        if isinstance(page, SourcePage):
+        if isinstance(page, SourcePage) and not (
+            self.strip_external_image_referer
+            and parsed.hostname != urlparse(self.base_url).hostname
+        ):
             headers.setdefault("Referer", page.chapter_id)
         response = await self._request(
             "GET",
@@ -486,13 +722,12 @@ class MadaraSource:
             if source_id in seen or not title:
                 continue
             seen.add(source_id)
-            image = _first(item, lambda node: node.tag == "img")
             result.append(
                 SourceSeries(
                     source_id=source_id,
                     title=title,
                     source_name=self.name,
-                    cover_url=_image_url(image, self.base_url) if image else None,
+                    cover_url=_cover_url(item, self.base_url),
                     web_url=source_id,
                 )
             )
@@ -511,13 +746,12 @@ class MadaraSource:
             title = anchor.attrs.get("title", "").strip() or anchor.text().strip()
             if title and source_id not in seen:
                 seen.add(source_id)
-                image = _first(anchor, lambda node: node.tag == "img")
                 result.append(
                     SourceSeries(
                         source_id=source_id,
                         title=title,
                         source_name=self.name,
-                        cover_url=_image_url(image, self.base_url) if image else None,
+                        cover_url=_cover_url(anchor, self.base_url),
                         web_url=source_id,
                     )
                 )
@@ -550,6 +784,8 @@ class MadaraSource:
         parent = node.parent
         while parent is not None:
             marker = f"{parent.attrs.get('id', '')} {parent.attrs.get('class', '')}".lower()
+            if "related-reading" in marker:
+                return False
             if any(value in marker for value in ("reading-content", "read-content", "reader", "ch-images")):
                 return True
             parent = parent.parent
@@ -564,10 +800,20 @@ class MadaraSource:
             parent = parent.parent
         return False
 
+    @staticmethod
+    def _has_id_ancestor(node: _Node, identifier: str) -> bool:
+        parent = node.parent
+        while parent is not None:
+            if parent.attrs.get("id") == identifier:
+                return True
+            parent = parent.parent
+        return False
+
     async def _request(self, method: str, url: str, **kwargs: Any) -> Any:
         if self.fetcher is None:
             raise SourceNotFoundError(f"{self.display_name} no tiene fetcher inyectado")
         return await self.fetcher.request(method, url, **kwargs)
+
 
 class GeneratedMadaraSource(MadaraSource):
 

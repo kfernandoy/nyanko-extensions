@@ -1,0 +1,54 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "omniroute": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "OmniRoute",
+      "options": {
+        "baseURL": "http://localhost:20128/v1",
+        "apiKey": "sk-157f1e3ebc8c0f0f-1a640e-8ed9fce6"
+      },
+      "models": {
+        "antigravity/gemini-pro-agent": {
+          "name": "Gemini 3.1 Pro (Omniroute)"
+        },
+        "cc/claude-fable-5": {
+          "name": "Fable 5 (Omniroute)"
+        },
+        "cc/claude-opus-5": {
+          "name": "Opus 5 (Omniroute)"
+        },
+        "cc/claude-sonnet-5": {
+          "name": "Sonnet 5 (Omniroute)"
+        },
+        "cx/gpt-5.6-sol": {
+          "name": "GPT 5.6 Sol (Omniroute)"
+        },
+        "cx/gpt-5.6-sol-high": {
+          "name": "GPT 5.6 Sol High (Omniroute)"
+        },
+        "opencode-go/kimi-k3": {
+          "name": "Kimi K3 (Omniroute)"
+        },
+        "nvidia/z-ai/glm-5.2": {
+          "name": "GLM 5.2 NVIDIA (Omniroute)"
+        },
+        "nvidia/moonshotai/kimi-k2.6": {
+          "name": "Kimi K2.6 NVIDIA (Omniroute)"
+        },
+        "antigravity/claude-opus-4-6-thinking": {
+          "name": "Claude Opus 4.6 Thinking Antigravity (Omniroute)"
+        },
+        "antigravity/claude-sonnet-4-6": {
+          "name": "Claude Sonnet 4.6 (Omniroute)"
+        },
+        "opencode-go/kimi-k2.7-code": {
+          "name": "Kimi K2.7 Code (Omniroute)"
+        }
+      }
+    }
+  },
+  "plugin": [
+    "./.opencode/plugins/ponytail.mjs"
+  ]
+}

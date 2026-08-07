@@ -99,6 +99,23 @@ def _first(node: _Node, predicate: Any) -> _Node | None:
     return next((item for item in node.descendants() if predicate(item)), None)
 
 
+_BACKGROUND_IMAGE = re.compile(r"background(?:-image)?\s*:[^;]*?url\(\s*(['\"]?)(.*?)\1\s*\)", re.I | re.S)
+
+
+def _style_image_url(node: _Node, base_url: str) -> str:
+    """Portada servida como CSS en el propio nodo, no como <img>.
+
+    Los temas Madara re-skineados con Tailwind pintan la portada con
+    ``style="background-image:url(...)"`` sobre el ancla de la serie y no
+    emiten ni un solo ``<img>``.
+    """
+    found = _BACKGROUND_IMAGE.search(node.attrs.get("style", ""))
+    if found is None:
+        return ""
+    value = found.group(2).strip()
+    return urljoin(base_url, value) if value else ""
+
+
 def _image_url(node: _Node, base_url: str) -> str:
     for key in (
         "data-lm-orig-src",
@@ -117,7 +134,25 @@ def _image_url(node: _Node, base_url: str) -> str:
         for item in node.attrs.get("srcset", "").split(",")
         if item.strip()
     ]
-    return urljoin(base_url, candidates[-1]) if candidates else ""
+    if candidates:
+        return urljoin(base_url, candidates[-1])
+    return _style_image_url(node, base_url)
+
+
+def _cover_url(container: _Node, base_url: str) -> str | None:
+    """Portada del contenedor: primero el <img>, si no el background del CSS.
+
+    Es aditivo: el fallback de ``background-image`` solo entra cuando no hay
+    ningun ``<img>`` con URL utilizable, asi que no puede cambiar el resultado
+    de los sitios que hoy funcionan.
+    """
+    image = _first(container, lambda node: node.tag == "img")
+    if image is not None and (url := _image_url(image, base_url)):
+        return url
+    if url := _style_image_url(container, base_url):
+        return url
+    styled = _first(container, lambda node: bool(_style_image_url(node, base_url)))
+    return _style_image_url(styled, base_url) if styled is not None else None
 
 
 class MadaraSource:
@@ -687,13 +722,12 @@ class MadaraSource:
             if source_id in seen or not title:
                 continue
             seen.add(source_id)
-            image = _first(item, lambda node: node.tag == "img")
             result.append(
                 SourceSeries(
                     source_id=source_id,
                     title=title,
                     source_name=self.name,
-                    cover_url=_image_url(image, self.base_url) if image else None,
+                    cover_url=_cover_url(item, self.base_url),
                     web_url=source_id,
                 )
             )
@@ -712,13 +746,12 @@ class MadaraSource:
             title = anchor.attrs.get("title", "").strip() or anchor.text().strip()
             if title and source_id not in seen:
                 seen.add(source_id)
-                image = _first(anchor, lambda node: node.tag == "img")
                 result.append(
                     SourceSeries(
                         source_id=source_id,
                         title=title,
                         source_name=self.name,
-                        cover_url=_image_url(image, self.base_url) if image else None,
+                        cover_url=_cover_url(anchor, self.base_url),
                         web_url=source_id,
                     )
                 )
