@@ -504,6 +504,36 @@ class MadaraSource:
         if blocked is not None and self.pages_profile in {"login_guard", "captcha_guard"}:
             raise ValueError("El capítulo requiere iniciar sesión o resolver el captcha en WebView")
 
+        # Perfil `redirect_form` (portado de `pageListParse` en TempleScanEsp.kt): la pagina
+        # del capitulo NO trae las imagenes, solo el logo del sitio y un formulario POST.
+        # Las imagenes estan en la respuesta de ESE POST -verificado en vivo: 0 <img> de
+        # manga antes, 23 despues-. Sin esto `pages` devuelve 0 y la fuente parece rota
+        # aunque popular/latest/search/chapters funcionen.
+        #
+        # Si el formulario no esta se sigue con el flujo normal, igual que el Kotlin con su
+        # `?: return super.pageListParse(document)`.
+        if self.pages_profile == "redirect_form":
+            formulario = _first(
+                root,
+                lambda node: node.tag == "form"
+                and node.attrs.get("id") == "redirect-form"
+                and node.attrs.get("method", "").lower() == "post",
+            )
+            if formulario is not None and formulario.attrs.get("action"):
+                campos = {
+                    campo.attrs["name"]: campo.attrs.get("value", "")
+                    for campo in formulario.descendants("input")
+                    if campo.attrs.get("name")
+                }
+                response = await self._request(
+                    "POST",
+                    formulario.attrs["action"],
+                    data=campos,
+                    headers={"Referer": str(response.url)},
+                )
+                response.raise_for_status()
+                root = _parse_html(response.text)
+
         profile_urls = self._profile_page_urls(response.text, str(response.url))
         if self.pages_profile == "campaign":
             redirect = _first(
@@ -850,7 +880,7 @@ class GeneratedMadaraSource(MadaraSource):
     chapter_url_suffix = '?style=list'
     supports_latest = True
     requests_per_minute = 180
-    pages_profile = 'default'
+    pages_profile = 'redirect_form'
     extra_headers = {}
     image_headers = {}
 

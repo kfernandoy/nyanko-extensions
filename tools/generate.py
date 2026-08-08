@@ -318,6 +318,9 @@ def _supported_madara(
             "isekaiscantop": "arraydata",
             "kuroimanga": "login_guard",
             "laviniafansub": "login_guard",
+            # `pageListParse` hace POST a un form#redirect-form antes de parsear (ver
+            # TempleScanEsp.kt): el HTML del capitulo solo trae el logo del sitio.
+            "templescanesp": "redirect_form",
             "lectormangalat": "page_break_only",
             "leitordemangas": "preloaded",
             "littletyrant": "base64_pages",

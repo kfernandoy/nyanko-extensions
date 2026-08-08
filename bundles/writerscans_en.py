@@ -504,6 +504,36 @@ class MadaraSource:
         if blocked is not None and self.pages_profile in {"login_guard", "captcha_guard"}:
             raise ValueError("El capítulo requiere iniciar sesión o resolver el captcha en WebView")
 
+        # Perfil `redirect_form`: la pagina del capitulo NO trae las imagenes, trae un
+        # formulario POST cuyo destino si las sirve. Portado de `pageListParse` de
+        # TempleScanEsp.kt: sin esto el HTML inicial solo tiene el logo del sitio y el
+        # parseo devuelve 0 paginas aunque la fuente funcione perfectamente.
+        #
+        # Si el formulario no esta se sigue con el flujo normal -igual que hace el Kotlin
+        # con su `?: return super.pageListParse(document)`-: el sitio puede servir el
+        # capitulo directamente segun el capitulo o si deja de usar la pasarela.
+        if self.pages_profile == "redirect_form":
+            formulario = _first(
+                root,
+                lambda node: node.tag == "form"
+                and node.attrs.get("id") == "redirect-form"
+                and node.attrs.get("method", "").lower() == "post",
+            )
+            if formulario is not None and formulario.attrs.get("action"):
+                campos = {
+                    campo.attrs["name"]: campo.attrs.get("value", "")
+                    for campo in formulario.descendants("input")
+                    if campo.attrs.get("name")
+                }
+                response = await self._request(
+                    "POST",
+                    formulario.attrs["action"],
+                    data=campos,
+                    headers={"Referer": str(response.url)},
+                )
+                response.raise_for_status()
+                root = _parse_html(response.text)
+
         profile_urls = self._profile_page_urls(response.text, str(response.url))
         if self.pages_profile == "campaign":
             redirect = _first(
