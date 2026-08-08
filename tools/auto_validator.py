@@ -23,9 +23,17 @@ ESTADO_POR_CAUSA = {
 def clasificar_fallo(reasons: list[str]) -> str:
     """Distingue un fallo del PORT de un bloqueo externo.
 
-    Verificado en vivo (2026-08-08): begatranslation y bokugents devuelven 403 con
-    `cf-mitigated: challenge` incluso con User-Agent de navegador, asi que ningun cambio
-    en el bundle los arregla. bibliopanda falla en getaddrinfo: el dominio ya no resuelve.
+    Verificado en vivo (2026-08-08). Un 403 NO significa "imposible": significa que falta
+    implementar el handshake que el proveedor exige.
+
+      - DDoS-Guard: se resuelve pidiendo su cookie `__ddg2_`. Ya implementado en
+        `smoke.resolver_ddos_guard`, portado del DDosGuardInterceptor de Mihon. akuma_es
+        pasó de 403 a VERIFIED con eso.
+      - Cloudflare (`cf-mitigated: challenge`): el reto es JavaScript. Mihon lo resuelve
+        con el WebView de Android (core/.../WebView.kt), no con codigo del bundle, asi que
+        un harness en Python puro NO puede pasarlo. Eso es lo que marca `blocked`.
+
+    `offline` es el dominio que ya ni resuelve.
     """
     texto = " ".join(reasons)
     if "403" in texto or "Forbidden" in texto or "cf-mitigated" in texto:

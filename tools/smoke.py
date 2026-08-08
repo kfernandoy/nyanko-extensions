@@ -22,8 +22,45 @@ import httpx
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
+# User-Agent de navegador movil, igual que hace Mihon. httpx manda por defecto
+# `python-httpx/x.y`, que muchos sitios rechazan de plano.
+DEFAULT_UA = (
+    "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36"
+)
+
+DDG_WELL_KNOWN = "https://check.ddos-guard.net/check.js"
+
+
+async def resolver_ddos_guard(client: httpx.AsyncClient, url: str) -> bool:
+    """Obtiene la cookie `__ddg2_` que DDoS-Guard exige, como el DDosGuardInterceptor de Mihon.
+
+    NO es saltarse una proteccion: es el handshake que el propio DDoS-Guard publica para
+    clientes no-navegador. Mihon lo implementa igual (DDosGuardInterceptor.kt) y por eso
+    estas fuentes le cargan y a nosotros nos daban 403.
+
+    Devuelve True si obtuvo cookie nueva y merece la pena reintentar.
+    """
+    try:
+        js = (await client.get(DDG_WELL_KNOWN)).text
+        if "'" not in js:
+            return False
+        ruta = js.split("'")[1]
+        if not ruta:
+            return False
+        host = httpx.URL(url).host
+        respuesta = await client.get(f"https://{host}{ruta}")
+        # La cookie queda en el jar del cliente; basta con que el check respondiera bien.
+        return respuesta.status_code == 200 and "__ddg2_" in respuesta.headers.get(
+            "set-cookie", ""
+        )
+    except Exception:
+        return False
+
+
 class Fetcher:
     """Contrato SourceFetcher sobre httpx, respetando el rpm de la fuente."""
+
 
     def __init__(self, client: httpx.AsyncClient, headers: dict, rpm: int) -> None:
         self.client = client
@@ -32,6 +69,9 @@ class Fetcher:
         self.last = 0.0
         self.lock = asyncio.Lock()
         self.count = 0
+        # El reto de DDoS-Guard se resuelve una sola vez por sesion: la cookie queda en el
+        # jar del cliente. Sin esta guarda, un 403 persistente reintentaria en bucle.
+        self._ddg_intentado = False
 
     async def request(self, method: str, url: str, **kwargs):
         async with self.lock:
@@ -41,7 +81,22 @@ class Fetcher:
             self.last = time.monotonic()
         self.count += 1
         merged = {**self.headers, **dict(kwargs.pop("headers", None) or {})}
-        return await self.client.request(method, url, headers=merged, **kwargs)
+        respuesta = await self.client.request(method, url, headers=merged, **kwargs)
+
+        # Mismo criterio que Mihon: 403 + `Server: ddos-guard` -> resolver el reto UNA vez y
+        # reintentar. Se hace aqui y no en cada bundle porque el reto es del proveedor, no
+        # de la fuente: cualquier extension detras de DDoS-Guard lo necesita igual.
+        if (
+            respuesta.status_code == 403
+            and "ddos-guard" in respuesta.headers.get("server", "").lower()
+            and not self._ddg_intentado
+        ):
+            self._ddg_intentado = True
+            if await resolver_ddos_guard(self.client, url):
+                self.count += 1
+                respuesta = await self.client.request(method, url, headers=merged, **kwargs)
+
+        return respuesta
 
 def load(extension_id: str):
     path = ROOT / "bundles" / f"{extension_id}.py"
@@ -77,9 +132,13 @@ async def probe(extension_id: str, timeout: float, engine: str) -> dict:
         limits=limits,
         verify=False,
     ) as client:
+        # El UA de la extension MANDA sobre el default: algunas fuentes exigen uno concreto.
+        # El default solo cubre el hueco de las que no declaran ninguno, que con el
+        # `python-httpx/x.y` de fabrica eran rechazadas antes de parsear nada.
+        cabeceras = {"User-Agent": DEFAULT_UA, **dict(source.capabilities.headers)}
         fetcher = Fetcher(
             client,
-            dict(source.capabilities.headers),
+            cabeceras,
             source.capabilities.requests_per_minute,
         )
         source = factory(fetcher)
