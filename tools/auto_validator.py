@@ -171,6 +171,15 @@ async def run_validation(
             data["status"] = "VERIFIED"
             data["reviewer"] = "auto_validator_bot"
             data["reviewed_at"] = timestamp
+            # Una extension recuperada arrastraba el `failure_cause` de la ejecucion
+            # anterior, asi que quedaba VERIFIED y `failure_cause: port` a la vez.
+            # Cualquier informe que filtre por ese campo la sigue contando como rota.
+            data.pop("failure_cause", None)
+            if data.get("blockers"):
+                data["blockers"] = [
+                    b for b in data["blockers"]
+                    if not str(b).startswith("Auto-validation failed [")
+                ]
             success_count += 1
         else:
             causa = clasificar_fallo(reasons)
