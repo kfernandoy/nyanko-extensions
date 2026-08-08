@@ -11,6 +11,34 @@ from smoke import probe, brief, Fetcher
 
 RESULTS_DIR = Path("../Nyanko/.planning/extension-validation/results")
 
+# Estado que se asigna segun POR QUE fallo. Distinguirlo evita mandar a alguien a portar
+# codigo cuando el problema es que el sitio esta caido o exige resolver un captcha.
+ESTADO_POR_CAUSA = {
+    "blocked": "BLOCKED_NETWORK",      # 403/Cloudflare: haria falta WebView, no mas codigo
+    "offline": "BLOCKED_NETWORK",      # DNS/conexion: el sitio no responde
+    "port": "IMPLEMENTATION_REQUIRED",  # el sitio responde pero el parseo no saca datos
+}
+
+
+def clasificar_fallo(reasons: list[str]) -> str:
+    """Distingue un fallo del PORT de un bloqueo externo.
+
+    Verificado en vivo (2026-08-08): begatranslation y bokugents devuelven 403 con
+    `cf-mitigated: challenge` incluso con User-Agent de navegador, asi que ningun cambio
+    en el bundle los arregla. bibliopanda falla en getaddrinfo: el dominio ya no resuelve.
+    """
+    texto = " ".join(reasons)
+    if "403" in texto or "Forbidden" in texto or "cf-mitigated" in texto:
+        return "blocked"
+    if (
+        "ConnectError" in texto
+        or "getaddrinfo" in texto
+        or "ConnectTimeout" in texto
+        or "ReadTimeout" in texto
+    ):
+        return "offline"
+    return "port"
+
 async def run_validation(
     batch_size: int,
     force_engine: str = "",
@@ -37,7 +65,12 @@ async def run_validation(
             continue
 
         # We target READY_REVIEW or PENDING with 0 differences
-        if data.get("status") in ("VERIFIED", "RETIRED", "BLOCKED_MAPPING", "BLOCKED_CONTRACT"):
+        # BLOCKED_NETWORK tambien se salta en el muestreo del backlog: reintentar un sitio
+        # con Cloudflare gasta la tanda sin aportar informacion nueva. Se puede reprobar
+        # explicitamente con --ids cuando se quiera comprobar si el bloqueo sigue.
+        if data.get("status") in (
+            "VERIFIED", "RETIRED", "BLOCKED_MAPPING", "BLOCKED_CONTRACT", "BLOCKED_NETWORK",
+        ):
             continue
         if data.get("differences"):
             continue
@@ -132,11 +165,16 @@ async def run_validation(
             data["reviewed_at"] = timestamp
             success_count += 1
         else:
-            print(f" -> FAIL! Reasons: {reasons}")
-            data["status"] = "IMPLEMENTATION_REQUIRED"
+            causa = clasificar_fallo(reasons)
+            print(f" -> FAIL [{causa}]! Reasons: {reasons}")
+            # No todo fallo es culpa del port. Marcar como IMPLEMENTATION_REQUIRED un sitio
+            # caido o detras de Cloudflare manda a alguien a "arreglar" codigo que ya esta
+            # bien: el bloqueo es externo y ninguna linea de Python lo resuelve.
+            data["status"] = ESTADO_POR_CAUSA[causa]
+            data["failure_cause"] = causa
             if "blockers" not in data:
                 data["blockers"] = []
-            data["blockers"].append(f"Auto-validation failed: {reasons[0]}")
+            data["blockers"].append(f"Auto-validation failed [{causa}]: {reasons[0]}")
             
         json_file.write_text(json.dumps(data, indent=2), "utf-8")
         await asyncio.sleep(1.0)
