@@ -2194,7 +2194,7 @@ class DoujinsHellSource(MadaraSource):
 class GeneratedMadaraSource(MadaraSource):
     name = 'inmortalscan_es'
     display_name = 'Inmortal Scan'
-    base_url = 'https://scanimnortal.com'
+    base_url = 'https://scan-inmortal.com'
     language = 'es'
     manga_substring = 'mg'
     load_more = 'never'
