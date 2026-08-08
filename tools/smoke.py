@@ -54,6 +54,13 @@ def brief(error: BaseException) -> str:
     text = f"{type(error).__name__}: {error}".replace("\n", " ").strip()
     return text[:160]
 
+# Cuantas series/capitulos se prueban antes de declarar rota una fuente. Bajo a proposito:
+# cada intento es una peticion real al sitio, y el objetivo es descartar el falso negativo
+# de "la primera serie no tenia capitulos en este idioma", no recorrer el catalogo.
+MAX_SERIES_INTENTOS = 3
+MAX_CAPITULOS_INTENTOS = 3
+
+
 async def probe(extension_id: str, timeout: float, engine: str) -> dict:
     result = {"id": extension_id, "engine": engine, "steps": {}, "requests": 0}
     try:
@@ -123,18 +130,42 @@ async def probe(extension_id: str, timeout: float, engine: str) -> dict:
             return result
         result["sample"] = items[0].source_id
 
+        # Se prueban VARIAS series, no solo la primera.
+        #
+        # Una serie sin capitulos NO significa fuente rota: en las de MangaDex por idioma, el
+        # catalogo popular es global, asi que la serie mas seguida puede no tener ni una
+        # traduccion al idioma de la extension y el feed devuelve 0 legitimamente. Probando
+        # solo `items[0]` se marcaba como IMPLEMENTATION_REQUIRED una extension sana
+        # (mangadex_es: 0 capitulos en la primera serie, 343 en Berserk).
+        #
+        # Solo si NINGUNA de la muestra da capitulos se considera un fallo real de la fuente.
+        chapters = None
         series = items[0]
-        if hasattr(source, "details"):
-            detailed = await step("details", source.details(series))
-            series = detailed or series
+        for candidato in items[:MAX_SERIES_INTENTOS]:
+            series = candidato
+            if hasattr(source, "details"):
+                detailed = await step("details", source.details(candidato))
+                series = detailed or candidato
 
-        chapters = await step("chapters", source.chapters(series))
+            chapters = await step("chapters", source.chapters(series))
+            if chapters:
+                result["sample"] = candidato.source_id
+                break
+
         if not chapters:
             result["requests"] = fetcher.count
             return result
         result["chapters"] = len(chapters)
 
-        pages = await step("pages", source.pages(chapters[0]))
+        # Mismo razonamiento para las paginas: un capitulo concreto puede estar vacio (en
+        # MangaDex, los marcados `empty` son entradas de solo-enlace externo) sin que la
+        # fuente falle. Se prueban varios antes de declararlo roto.
+        pages = None
+        for capitulo in chapters[:MAX_CAPITULOS_INTENTOS]:
+            pages = await step("pages", source.pages(capitulo))
+            if pages:
+                break
+
         if not pages:
             result["requests"] = fetcher.count
             return result

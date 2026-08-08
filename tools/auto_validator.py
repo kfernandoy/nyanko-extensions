@@ -11,28 +11,53 @@ from smoke import probe, brief, Fetcher
 
 RESULTS_DIR = Path("../Nyanko/.planning/extension-validation/results")
 
-async def run_validation(batch_size: int, force_engine: str = ""):
+async def run_validation(
+    batch_size: int,
+    force_engine: str = "",
+    only_ids: set[str] | None = None,
+    lang_suffix: str = "",
+):
     candidates = []
-    
+
     for json_file in RESULTS_DIR.glob("*.json"):
         data = json.loads(json_file.read_text("utf-8"))
+        source_id = data.get("source_id", json_file.stem)
+
+        # Seleccion explicita (--ids / --lang): manda sobre los filtros de estado. Sirve para
+        # probar EXACTAMENTE lo que el usuario tiene instalado, incluso si ya esta VERIFIED o
+        # si tiene diferencias pendientes: aqui la pregunta no es "que falta portar" sino
+        # "cual de las mias trae datos ahora mismo".
+        if only_ids is not None:
+            if source_id in only_ids:
+                candidates.append(json_file)
+            continue
+        if lang_suffix:
+            if source_id.endswith(lang_suffix):
+                candidates.append(json_file)
+            continue
+
         # We target READY_REVIEW or PENDING with 0 differences
         if data.get("status") in ("VERIFIED", "RETIRED", "BLOCKED_MAPPING", "BLOCKED_CONTRACT"):
             continue
         if data.get("differences"):
             continue
-            
+
         if force_engine and data.get("engine") != force_engine:
             continue
-            
+
         candidates.append(json_file)
-        
+
     if not candidates:
         print("No candidates found with 0 differences and READY_REVIEW/PENDING status.")
         return
-        
-    random.shuffle(candidates)
-    selected = candidates[:batch_size]
+
+    # Con seleccion explicita se respeta el orden alfabetico y se prueban TODAS: barajar y
+    # recortar solo tiene sentido para el muestreo del backlog.
+    if only_ids is None and not lang_suffix:
+        random.shuffle(candidates)
+        selected = candidates[:batch_size]
+    else:
+        selected = sorted(candidates, key=lambda p: p.stem)[:batch_size]
     print(f"Selected {len(selected)} candidates for automated VERIFIED promotion...")
     
     success_count = 0
@@ -123,8 +148,22 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--batch", type=int, default=5, help="Number of extensions to validate")
     parser.add_argument("--engine", type=str, default="", help="Force specific engine")
+    parser.add_argument(
+        "--ids",
+        type=str,
+        default="",
+        help="Lista separada por comas de source_id concretos (p.ej. las instaladas)",
+    )
+    parser.add_argument(
+        "--lang",
+        type=str,
+        default="",
+        help="Sufijo de idioma a probar, p.ej. _es o _es_419",
+    )
     args = parser.parse_args()
-    
+
+    ids = {i.strip() for i in args.ids.split(",") if i.strip()} or None
+
     if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    asyncio.run(run_validation(args.batch, args.engine))
+    asyncio.run(run_validation(args.batch, args.engine, ids, args.lang))
