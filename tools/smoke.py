@@ -17,6 +17,7 @@ import sys
 import time
 import random
 from collections import defaultdict
+from urllib.parse import urlencode
 
 import httpx
 
@@ -81,6 +82,23 @@ class Fetcher:
             self.last = time.monotonic()
         self.count += 1
         merged = {**self.headers, **dict(kwargs.pop("headers", None) or {})}
+
+        # httpx trata `data=[("a","1"), ...]` como contenido CRUDO y genera un
+        # IteratorByteStream (sincrono), que AsyncClient rechaza con
+        # "Attempted to send an sync request with an AsyncClient instance".
+        # Varios bundles pasan listas de tuplas porque los formularios de WordPress repiten
+        # claves (`vars[meta_query][0][key]`), asi que se normaliza aqui: httpx solo produce
+        # el ByteStream asincrono correcto cuando `data` es un mapping.
+        datos = kwargs.get("data")
+        if isinstance(datos, (list, tuple)) and all(
+            isinstance(par, (list, tuple)) and len(par) == 2 for par in datos
+        ):
+            # `urlencode` conserva las claves repetidas, que es justo lo que la lista de
+            # tuplas venia a expresar; convertirla a dict las perderia.
+            kwargs["content"] = urlencode([(str(k), str(v)) for k, v in datos])
+            kwargs.pop("data")
+            merged.setdefault("Content-Type", "application/x-www-form-urlencoded")
+
         respuesta = await self.client.request(method, url, headers=merged, **kwargs)
 
         # Mismo criterio que Mihon: 403 + `Server: ddos-guard` -> resolver el reto UNA vez y
