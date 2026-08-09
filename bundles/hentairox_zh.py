@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import base64
+import hashlib
 import io
 import json
 import re
@@ -153,6 +154,140 @@ def _cover_url(container: _Node, base_url: str) -> str | None:
         return url
     styled = _first(container, lambda node: bool(_style_image_url(node, base_url)))
     return _style_image_url(styled, base_url) if styled is not None else None
+
+
+def _gf_mul(left: int, right: int) -> int:
+    result = 0
+    while right:
+        if right & 1:
+            result ^= left
+        left = ((left << 1) ^ (0x11B if left & 0x80 else 0)) & 0xFF
+        right >>= 1
+    return result
+
+
+def _aes_sbox(value: int) -> int:
+    inverse, base, exponent = 1, value, 254
+    while exponent:
+        if exponent & 1:
+            inverse = _gf_mul(inverse, base)
+        base = _gf_mul(base, base)
+        exponent >>= 1
+    if value == 0:
+        inverse = 0
+    return inverse ^ ((inverse << 1) | (inverse >> 7)) & 0xFF ^ ((inverse << 2) | (inverse >> 6)) & 0xFF ^ ((inverse << 3) | (inverse >> 5)) & 0xFF ^ ((inverse << 4) | (inverse >> 4)) & 0xFF ^ 0x63
+
+
+_AES_SBOX = tuple(_aes_sbox(value) for value in range(256))
+_AES_INV_SBOX = tuple(_AES_SBOX.index(value) for value in range(256))
+
+
+def _aes256_decrypt(ciphertext: bytes, key: bytes, iv: bytes) -> bytes:
+    words = [list(key[index:index + 4]) for index in range(0, 32, 4)]
+    rcon = 1
+    for index in range(8, 60):
+        temp = words[-1][:]
+        if index % 8 == 0:
+            temp = [_AES_SBOX[value] for value in temp[1:] + temp[:1]]
+            temp[0] ^= rcon
+            rcon = _gf_mul(rcon, 2)
+        elif index % 8 == 4:
+            temp = [_AES_SBOX[value] for value in temp]
+        words.append([left ^ right for left, right in zip(words[index - 8], temp)])
+    round_keys = [sum(words[index:index + 4], []) for index in range(0, 60, 4)]
+
+    def decrypt_block(block: bytes) -> bytes:
+        state = [value ^ key_value for value, key_value in zip(block, round_keys[14])]
+        for round_number in range(13, -1, -1):
+            state = [state[index] for index in (0, 13, 10, 7, 4, 1, 14, 11, 8, 5, 2, 15, 12, 9, 6, 3)]
+            state = [_AES_INV_SBOX[value] for value in state]
+            state = [value ^ key_value for value, key_value in zip(state, round_keys[round_number])]
+            if round_number:
+                mixed: list[int] = []
+                for column in range(4):
+                    a, b, c, d = state[column * 4:column * 4 + 4]
+                    mixed.extend((
+                        _gf_mul(a, 14) ^ _gf_mul(b, 11) ^ _gf_mul(c, 13) ^ _gf_mul(d, 9),
+                        _gf_mul(a, 9) ^ _gf_mul(b, 14) ^ _gf_mul(c, 11) ^ _gf_mul(d, 13),
+                        _gf_mul(a, 13) ^ _gf_mul(b, 9) ^ _gf_mul(c, 14) ^ _gf_mul(d, 11),
+                        _gf_mul(a, 11) ^ _gf_mul(b, 13) ^ _gf_mul(c, 9) ^ _gf_mul(d, 14),
+                    ))
+                state = mixed
+        return bytes(state)
+
+    result = b""
+    previous = iv
+    for offset in range(0, len(ciphertext), 16):
+        block = ciphertext[offset:offset + 16]
+        decrypted = decrypt_block(block)
+        result += bytes(left ^ right for left, right in zip(decrypted, previous))
+        previous = block
+    return result[:-result[-1]] if result else result
+
+
+def _evp_kdf_decrypt(ciphertext: str, salt: str, password: str, iv: str | None = None) -> str:
+    """Descifra el AES-256-CBC que produce `CryptoJS.AES.encrypt` con passphrase.
+
+    CryptoJS no usa la passphrase como clave: la pasa por EvpKDF (MD5 iterado sobre
+    password+salt) hasta sacar 48 bytes, de los que los 32 primeros son la clave y los
+    16 siguientes el IV. Cuando el payload trae `iv` propio se usa ese en su lugar.
+
+    Se reimplementa AES en Python puro, igual que `generic.py`, porque los bundles se
+    generan autocontenidos y no pueden arrastrar dependencias externas.
+    """
+    generado = b""
+    digest = b""
+    password_bytes = password.encode()
+    salt_bytes = bytes.fromhex(salt)
+    while len(generado) < 48:
+        digest = hashlib.md5(digest + password_bytes + salt_bytes).digest()
+        generado += digest
+    vector = bytes.fromhex(iv) if iv else generado[32:48]
+    return _aes256_decrypt(base64.b64decode(ciphertext), generado[:32], vector).decode()
+
+
+def _protected_page_urls(html: str, base_url: str) -> list[str]:
+    """Paginas del plugin `wp-manga-chapter-images-protection`.
+
+    Ese plugin sustituye los <img> del lector por divs `.page-break` vacios y publica la
+    lista real cifrada en `var chapter_data`. Sin esto la extension devuelve 0 paginas
+    aunque el capitulo exista (catharsisworld: 17 imagenes por capitulo).
+
+    La passphrase es uno de los nonces de 10 hex que WordPress ya imprime en la pagina;
+    no hay forma fiable de saber cual, asi que se prueban en orden y se acepta el primero
+    que produzca un JSON con lista de URLs.
+    """
+    payload = re.search(r"var\s+chapter_data\s*=\s*'([^']+)'", html)
+    if payload is None:
+        return []
+    try:
+        datos = json.loads(payload.group(1).replace("\\/", "/"))
+    except json.JSONDecodeError:
+        return []
+    if not datos.get("ct") or not datos.get("s"):
+        return []
+
+    candidatas: list[str] = []
+    for encontrado in re.finditer(r"""["']([0-9a-f]{10})["']""", html):
+        if encontrado.group(1) not in candidatas:
+            candidatas.append(encontrado.group(1))
+
+    for clave in candidatas[:12]:
+        try:
+            valor = json.loads(
+                _evp_kdf_decrypt(datos["ct"], datos["s"], clave, datos.get("iv"))
+            )
+            while isinstance(valor, str):
+                valor = json.loads(valor)
+        except (ValueError, UnicodeDecodeError, json.JSONDecodeError):
+            continue
+        if isinstance(valor, list) and valor:
+            return [
+                urljoin(base_url, str(item).strip().replace("\\/", "/"))
+                for item in valor
+                if str(item).strip()
+            ]
+    return []
 
 
 class MadaraSource:
@@ -613,6 +748,8 @@ class MadaraSource:
                     except (ValueError, SyntaxError):
                         values = []
                 urls = [urljoin(str(response.url), str(value)) for value in values]
+        if not urls:
+            urls = _protected_page_urls(response.text, str(response.url))
         if self.pages_profile == "https":
             urls = [url.replace("http://", "https://", 1) for url in urls]
         elif self.pages_profile == "skip_placeholder" and urls:
