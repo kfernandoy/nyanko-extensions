@@ -2659,7 +2659,10 @@ class GeneratedGenericSource (GenericSource ):
     display_name ='Akuma'
     base_url ='https://akuma.moe'
     language ='es'
-    requests_per_minute =120 
+    # El sitio corta las busquedas seguidas: "Please wait at least 2 seconds between
+    # searches" y devuelve una pagina de aviso con 0 resultados en vez de un error. Con
+    # 120 (una cada 0.5 s) la busqueda salia siempre vacia; 30 son los 2 s que pide.
+    requests_per_minute =30 
     supports_latest =False 
 
     _next_hash =None 
@@ -2761,6 +2764,11 @@ class GeneratedGenericSource (GenericSource ):
     async def _post (self ,params :dict ,data :dict ):
         token =self ._csrf_token or await self ._get_csrf_token ()
         headers ={"X-Requested-With":"XMLHttpRequest","X-CSRF-TOKEN":token }
+        # El sitio mide el hueco entre BUSQUEDAS, no entre peticiones: si van a menos de
+        # 2 s responde 200 con "Please wait at least 2 seconds between searches" y cero
+        # resultados, asi que la busqueda salia siempre vacia detras del catalogo. El rpm
+        # global no basta porque el GET del token se come parte del intervalo.
+        await self ._akuma_esperar_turno ()
         response =await self ._request (
         "POST",self .base_url ,params =params ,data =data ,headers =headers 
         )
@@ -2772,6 +2780,27 @@ class GeneratedGenericSource (GenericSource ):
             )
         response .raise_for_status ()
         return response 
+
+    _AKUMA_HUECO_BUSQUEDA =2.2 
+
+    async def _akuma_esperar_turno (self )->None :
+        """Deja pasar 2,2 s desde la busqueda anterior (el sitio exige 2).
+
+        Los import van dentro porque el bundle se arma con la cabecera del motor, que no
+        trae ni ``asyncio`` ni ``time``.
+        """
+        import asyncio 
+        import time 
+
+        lock =getattr (self ,"_akuma_lock",None )
+        if lock is None :
+            lock =self ._akuma_lock =asyncio .Lock ()
+        async with lock :
+            ultima =getattr (self ,"_akuma_ultima",0.0 )
+            espera =self ._AKUMA_HUECO_BUSQUEDA -(time .monotonic ()-ultima )
+            if espera >0 :
+                await asyncio .sleep (espera )
+            self ._akuma_ultima =time .monotonic ()
 
     def _parse_akuma_series (self ,response ,prefs :dict |None )->dict :
         prefs =prefs or {}

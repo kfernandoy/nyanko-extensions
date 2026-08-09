@@ -203,7 +203,7 @@
       "id": "akuma_es",
       "name": "Akuma (es)",
       "version": "0.10.0",
-      "sha256": "d3c97c3ed34a4ec4e1a17e014160634ea74d00d8504096ba9339ab615c367a0f",
+      "sha256": "8fe98f2085e2bcd4f9ef1ca0b6c0b9ce4b1874ae612ed083aa0344087079d3c0",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/akuma_es.png",
       "author": "Keiyoushi contributors",
