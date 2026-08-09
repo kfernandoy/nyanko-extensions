@@ -23,6 +23,14 @@ import httpx
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
+# Cargar interceptor Cloudflare de la app si esta en el PYTHONPATH
+try:
+    from nyanko_api.cloudflare import AlmacenDeClearances, es_reto_de_cloudflare
+    _ALMACEN_CF = AlmacenDeClearances(ROOT.parent / "Nyanko" / "apps" / "backend" / "data" / "cloudflare_clearances.json")
+except ImportError:
+    _ALMACEN_CF = None
+    def es_reto_de_cloudflare(response): return False
+
 # User-Agent de navegador movil, igual que hace Mihon. httpx manda por defecto
 # `python-httpx/x.y`, que muchos sitios rechazan de plano.
 DEFAULT_UA = (
@@ -99,7 +107,34 @@ class Fetcher:
             kwargs.pop("data")
             merged.setdefault("Content-Type", "application/x-www-form-urlencoded")
 
+        # Inyectar Cloudflare resolver si tenemos almacen y esta resuelto
+        if _ALMACEN_CF:
+            clearance = _ALMACEN_CF.obtener(url)
+            if clearance:
+                if clearance.caducada:
+                    _ALMACEN_CF.invalidar(url)
+                else:
+                    k_dict = clearance.aplicar(kwargs)
+                    for hdr_key, hdr_val in k_dict.get("headers", {}).items():
+                        merged[hdr_key] = hdr_val
+                    kwargs.pop("headers", None)
+                    if "cookies" in k_dict:
+                        kwargs["cookies"] = k_dict["cookies"]
+
         respuesta = await self.client.request(method, url, headers=merged, **kwargs)
+
+        # Resolver Cloudflare si nos encontramos con el reto
+        if _ALMACEN_CF and es_reto_de_cloudflare(respuesta):
+            clearance = await _ALMACEN_CF.resolver(url)
+            if clearance:
+                k_dict = clearance.aplicar(kwargs)
+                for hdr_key, hdr_val in k_dict.get("headers", {}).items():
+                    merged[hdr_key] = hdr_val
+                kwargs.pop("headers", None)
+                if "cookies" in k_dict:
+                    kwargs["cookies"] = k_dict["cookies"]
+                self.count += 1
+                respuesta = await self.client.request(method, url, headers=merged, **kwargs)
 
         # Mismo criterio que Mihon: 403 + `Server: ddos-guard` -> resolver el reto UNA vez y
         # reintentar. Se hace aqui y no en cada bundle porque el reto es del proveedor, no
@@ -237,18 +272,35 @@ async def probe(extension_id: str, timeout: float, engine: str) -> dict:
         # Mismo razonamiento para las paginas: un capitulo concreto puede estar vacio (en
         # MangaDex, los marcados `empty` son entradas de solo-enlace externo) sin que la
         # fuente falle. Se prueban varios antes de declararlo roto.
+        #
+        # `page_bytes` se prueba DENTRO de este bucle, no despues sobre el primer capitulo.
+        # Antes se descargaba siempre `chapters[0]`, y eso da un falso negativo sistematico
+        # en las fuentes que blindan solo el capitulo mas reciente: bloomscans sirve las
+        # imagenes de 135 de 136 capitulos, pero el ultimo pasa por su "Bloom Reader Guard"
+        # y devuelve 404, asi que la extension entera se marcaba IMPLEMENTATION_REQUIRED
+        # estando sana. Lo que se quiere medir es "esta fuente entrega imagenes", no
+        # "entrega EL capitulo mas nuevo".
         pages = None
+        content = None
+        capitulo_ok = None
         for capitulo in chapters[:MAX_CAPITULOS_INTENTOS]:
-            pages = await step("pages", source.pages(capitulo))
-            if pages:
+            candidatas = await step("pages", source.pages(capitulo))
+            if not candidatas:
+                continue
+            pages = pages or candidatas
+            content = await step("page_bytes", source.page_bytes(candidatas[0]))
+            if content is not None:
+                pages = candidatas
+                capitulo_ok = capitulo
                 break
 
         if not pages:
             result["requests"] = fetcher.count
             return result
         result["pages"] = len(pages)
+        if capitulo_ok is not None:
+            result["sample_chapter"] = capitulo_ok.source_id
 
-        content = await step("page_bytes", source.page_bytes(pages[0]))
         if content is not None:
             try:
                 size = sum(len(chunk) for chunk in (content.chunks or []))
