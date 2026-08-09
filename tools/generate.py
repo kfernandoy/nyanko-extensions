@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import io
 import json
@@ -25,8 +26,154 @@ def _extract_kotlin_metadata(module: Path) -> str:
     return "nsfw" if any("adult" in content.lower() for content in contents) else "unknown"
 
 
-def _manual_bundle(path: Path) -> bytes:
+def _refrescar_motor_en_manual(source: str, engine: str) -> str:
+    """Cambia la copia congelada del motor que lleva el manual por el motor actual.
+
+    Cada archivo de ``engines/manual`` es [copia del motor] + [logica propia]. Esa copia se
+    hizo una vez y no se vuelve a tocar, asi que los arreglos del motor NUNCA le llegaban:
+    851 manuales seguian con la version vieja de ``chapters()``, 912 sin el descifrado del
+    plugin de imagenes y 884 sin el filtro del spinner. Como ``generate.py`` usa el manual
+    tal cual en lugar de inlinear ``madara.py``, esos bundles se publicaban con codigo de
+    varios commits atras.
+
+    Se sustituye solo el prefijo comun. El corte se busca en dos sitios, por ese orden:
+
+      1. ``try: from .madara import ...`` -- lo traen 700 manuales.
+      2. la primera subclase de ``MadaraSource`` -- otros 151 empiezan asi su parte propia.
+
+    En el caso 2 no basta con cortar en la subclase: varios manuales definen ANTES helpers
+    propios a nivel de modulo (``_nartag_last_child``, ``_raven_kids``...) que la subclase
+    usa. Cortar en la clase los dejaba fuera y el bundle petaba con NameError en cuanto se
+    llamaba a browse. Por eso se retrocede hasta la primera definicion top-level que ya no
+    pertenece al motor.
+
+    Lo que va despues -que es lo unico que justifica el override- se conserva intacto. Si no
+    aparece ninguno de los dos se devuelve el archivo sin tocar; son los 61 de MangaDex, que
+    no derivan de este motor y no tienen nada que refrescar.
+    """
+    # Los 61 manuales de MangaDex no contienen MadaraSource y quedan fuera.
+    try:
+        manual_tree = ast.parse(source)
+        engine_tree = ast.parse(engine)
+    except SyntaxError:
+        # Algunas copias antiguas contienen regex de comillas simples que _manual_bundle
+        # sanea despues. Se usa el corte textual probado para ellas, pero se preserva toda
+        # declaracion propia anterior a la subclase.
+        return _refrescar_motor_en_manual_textual(source, engine)
+
+    madara = next(
+        (
+            node
+            for node in manual_tree.body
+            if isinstance(node, ast.ClassDef) and node.name == "MadaraSource"
+        ),
+        None,
+    )
+    if madara is None:
+        return source
+
+    lineas = source.splitlines(keepends=True)
+    nombres_motor = _nombres_top_level(engine_tree)
+    propios: list[str] = []
+    for node in manual_tree.body:
+        if node.lineno <= madara.end_lineno:
+            continue
+        if _es_import_madara_vacio(node):
+            continue
+        nombres = _nombres_de_nodo(node)
+        colisiones = nombres & nombres_motor
+        if colisiones:
+            raise ValueError(
+                "el manual redefine nombres del motor actual: "
+                + ", ".join(sorted(colisiones))
+            )
+        propios.append("".join(lineas[node.lineno - 1 : node.end_lineno]))
+
+    return engine.rstrip() + "\n\n\n" + "\n\n".join(propios).lstrip()
+
+
+def _nombres_de_nodo(node: ast.AST) -> set[str]:
+    if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+        return {node.name}
+    if isinstance(node, (ast.Assign, ast.AnnAssign)):
+        targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+        return {target.id for target in targets if isinstance(target, ast.Name)}
+    return set()
+
+
+def _nombres_top_level(tree: ast.Module) -> set[str]:
+    return {nombre for node in tree.body for nombre in _nombres_de_nodo(node)}
+
+
+def _es_import_madara_vacio(node: ast.AST) -> bool:
+    if not isinstance(node, ast.Try) or node.finalbody or node.orelse:
+        return False
+    if not node.body or not all(isinstance(child, ast.ImportFrom) for child in node.body):
+        return False
+    if not all(child.module == "madara" and child.level == 1 for child in node.body):
+        return False
+    return (
+        len(node.handlers) == 1
+        and isinstance(node.handlers[0].type, ast.Name)
+        and node.handlers[0].type.id == "ImportError"
+        and len(node.handlers[0].body) == 1
+        and isinstance(node.handlers[0].body[0], ast.Pass)
+    )
+
+
+def _refrescar_motor_en_manual_textual(source: str, engine: str) -> str:
+    """Fallback para los manuales historicos que aun no parsean antes del saneado."""
+    marca = re.search(r"^try:\s*\n\s*from \.madara import", source, re.M)
+    if marca is not None:
+        inicio_propio = marca.start()
+    else:
+        subclase = re.search(r"^class \w+\(MadaraSource\):", source, re.M)
+        if subclase is None:
+            return source
+        inicio_propio = subclase.start()
+
+    nombres_motor = {
+        nombre
+        for definicion in re.finditer(
+            r"^(?:(?:def|class)\s+(\w+)|([A-Za-z_]\w*)\s*(?::[^=\n]+)?=)",
+            engine,
+            re.M,
+        )
+        for nombre in definicion.groups()
+        if nombre is not None
+    }
+    imports_motor = {
+        linea.strip()
+        for linea in engine.splitlines()
+        if linea.startswith(("import ", "from "))
+    }
+    # Retroceder al primer helper, constante o import propio anterior al marcador. Esto
+    # conserva `math`, `time`, `datetime`, `unescape`, tablas `_MANTA_*`, etc.
+    candidatos: list[int] = []
+    for match in re.finditer(
+        r"^(?:(?:def|class)\s+(\w+)|([A-Za-z_]\w*)\s*(?::[^=\n]+)?=|(import\s+[^\n]+|from\s+[^\n]+\s+import\s+[^\n]+))",
+        source,
+        re.M,
+    ):
+        if match.start() >= inicio_propio:
+            break
+        if match.start() <= source.find("class MadaraSource:"):
+            continue
+        nombre = match.group(1) or match.group(2)
+        importacion = match.group(3)
+        if (nombre and nombre not in nombres_motor) or (
+            importacion and importacion.strip() not in imports_motor
+        ):
+            candidatos.append(match.start())
+    if candidatos:
+        inicio_propio = min(candidatos)
+    return engine.rstrip() + "\n\n\n" + source[inicio_propio:]
+
+
+def _manual_bundle(path: Path, engine: str = "") -> bytes:
     source = path.read_text(encoding="utf-8")
+    if engine:
+        source = _refrescar_motor_en_manual(source, engine)
     lines = source.splitlines(keepends=True)
     for index in range(len(lines) - 1):
         if lines[index].strip() == "try:" and lines[index + 1].lstrip().startswith("from .madara import"):
@@ -3381,7 +3528,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 bundle_bytes = _mangadex_bundle(mangadex_engine, extension)
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path)
+                    bundle_bytes = _manual_bundle(manual_path, madara_engine)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -3456,7 +3603,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 )
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists() and not (is_heavenmanga or is_hentaihall or is_ikigaimangas or is_ikuhentai or is_inmanga or is_insanosscan or is_koinoboriscan or is_leercapitulo or is_leermangaesp or is_lectorjpg or is_lmtoonline or build_path.parent.name == "mangamx"):
-                    bundle_bytes = _manual_bundle(manual_path)
+                    bundle_bytes = _manual_bundle(manual_path, madara_engine)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -3495,7 +3642,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                     bundle_bytes = _madara_bundle(madara_engine, extension)
                     manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                     if manual_path.exists():
-                        bundle_bytes = _manual_bundle(manual_path)
+                        bundle_bytes = _manual_bundle(manual_path, madara_engine)
                     bundle_bytes = finalize(bundle_bytes)
                     (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                     shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -3528,7 +3675,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 )
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path)
+                    bundle_bytes = _manual_bundle(manual_path, madara_engine)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -3558,7 +3705,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 bundle_bytes = _galleryadults_bundle(madara_engine, galleryadults_engine, extension)
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path)
+                    bundle_bytes = _manual_bundle(manual_path, madara_engine)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -3588,7 +3735,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 bundle_bytes = _hentaihand_bundle(madara_engine, hentaihand_engine, extension)
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path)
+                    bundle_bytes = _manual_bundle(manual_path, madara_engine)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -3621,7 +3768,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 )
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path)
+                    bundle_bytes = _manual_bundle(manual_path, madara_engine)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -4053,7 +4200,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             )
         manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
         if manual_path.exists() and build_path.parent.name not in {"lectormangalat", "mangacrab", "mangaesp", "mangatv"}:
-            bundle_bytes = _manual_bundle(manual_path)
+            bundle_bytes = _manual_bundle(manual_path, madara_engine)
         bundle_bytes = finalize(bundle_bytes)
         (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
 
