@@ -24,6 +24,59 @@ def source_class(**attrs):
     return type("Generated", (MadaraSource,), {"name": "test", "base_url": "https://aedexnox.akan01.com", **attrs})
 
 
+class CleartextTest(unittest.TestCase):
+    """El sitio se sirve por https pero emite las imagenes con http:// en claro.
+
+    Android bloquea el cleartext desde API 28, asi que esas paginas nunca llegaban al
+    lector aunque el servidor respondiese 200 (catharsisworld: 8/8 paginas y 16/16
+    portadas). Se promueven solo las del propio host.
+    """
+
+    BASE = "https://catharsisworld.dig-it.info"
+
+    def test_promotes_same_host_pages_to_https(self):
+        node = _parse_html(
+            '<img src="http://catharsisworld.dig-it.info/wp-content/p.webp">'
+        ).descendants("img")[0]
+
+        self.assertEqual(
+            _image_url(node, self.BASE),
+            "https://catharsisworld.dig-it.info/wp-content/p.webp",
+        )
+
+    def test_promotes_the_background_image_too(self):
+        node = _parse_html(
+            '<a style="background-image:url(http://catharsisworld.dig-it.info/c.webp)"></a>'
+        ).descendants("a")[0]
+
+        self.assertEqual(
+            _image_url(node, self.BASE),
+            "https://catharsisworld.dig-it.info/c.webp",
+        )
+
+    def test_leaves_third_party_hosts_untouched(self):
+        """Un CDN ajeno puede no tener certificado valido: no se toca."""
+        node = _parse_html('<img src="http://cdn.ajeno.test/p.webp">').descendants("img")[0]
+
+        self.assertEqual(_image_url(node, self.BASE), "http://cdn.ajeno.test/p.webp")
+
+    def test_leaves_http_sites_untouched(self):
+        """Si el propio sitio solo habla http, forzar https lo romperia."""
+        node = _parse_html('<img src="http://viejo.test/p.webp">').descendants("img")[0]
+
+        self.assertEqual(_image_url(node, "http://viejo.test"), "http://viejo.test/p.webp")
+
+    def test_https_urls_are_unchanged(self):
+        node = _parse_html(
+            '<img src="https://catharsisworld.dig-it.info/p.webp">'
+        ).descendants("img")[0]
+
+        self.assertEqual(
+            _image_url(node, self.BASE),
+            "https://catharsisworld.dig-it.info/p.webp",
+        )
+
+
 class ImageUrlTest(unittest.TestCase):
     def test_img_attributes_still_win_over_the_style(self):
         """El fallback es aditivo: donde ya habia <img>, el resultado no cambia."""

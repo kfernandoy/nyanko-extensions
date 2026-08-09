@@ -114,7 +114,27 @@ def _style_image_url (node :_Node ,base_url :str )->str :
     if found is None :
         return ""
     value =found .group (2 ).strip ()
-    return urljoin (base_url ,value )if value else ""
+    return _mismo_host_seguro (urljoin (base_url ,value ),base_url )if value else ""
+
+
+def _mismo_host_seguro (url :str ,base_url :str )->str :
+    """Sube a https las URLs http:// del propio sitio cuando este ya sirve por https.
+
+    Varios temas Madara emiten las portadas y las paginas del capitulo con el esquema
+    en claro aunque el sitio se sirva por https (catharsisworld: 8 de 8 paginas y 16 de
+    16 portadas). En Python da igual y por eso el arnes las descargaba sin quejarse,
+    pero Android bloquea el trafico cleartext desde API 28, asi que la imagen nunca
+    llegaba al lector y el capitulo se veia en blanco.
+
+    Solo se reescribe cuando el host es exactamente el de ``base_url`` y este es https;
+    los CDN de terceros se dejan intactos porque no hay garantia de que tengan
+    certificado valido.
+    """
+    if not url .startswith ("http://")or not base_url .startswith ("https://"):
+        return url 
+    if urlparse (url ).netloc .lower ()!=urlparse (base_url ).netloc .lower ():
+        return url 
+    return "https://"+url [len ("http://"):]
 
 
 def _image_url (node :_Node ,base_url :str )->str :
@@ -129,14 +149,14 @@ def _image_url (node :_Node ,base_url :str )->str :
     "src",
     ):
         if node .attrs .get (key ):
-            return urljoin (base_url ,node .attrs [key ].strip ())
+            return _mismo_host_seguro (urljoin (base_url ,node .attrs [key ].strip ()),base_url )
     candidates =[
     item .strip ().split ()[0 ]
     for item in node .attrs .get ("srcset","").split (",")
     if item .strip ()
     ]
     if candidates :
-        return urljoin (base_url ,candidates [-1 ])
+        return _mismo_host_seguro (urljoin (base_url ,candidates [-1 ]),base_url )
     return _style_image_url (node ,base_url )
 
 
@@ -787,6 +807,11 @@ class MadaraSource :
         elif self .pages_profile =="skip_placeholder"and urls :
             if urls [0 ].split ("?",1 )[0 ].endswith ("/1-000001.jpg"):
                 urls =urls [1 :]
+                # Igual que en las portadas: el capitulo puede venir con las paginas en http
+                # aunque el sitio hable https. Android descarta ese trafico y el lector se queda
+                # en blanco. `pages_profile = "https"` ya lo parcheaba fuente a fuente; esto lo
+                # cubre para todas, pero solo dentro del propio host.
+        urls =[_mismo_host_seguro (url ,self .base_url )for url in urls ]
         return [
         SourcePage (
         source_id =url ,
