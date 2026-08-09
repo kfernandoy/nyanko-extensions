@@ -357,8 +357,13 @@ class MadaraSource:
         if not items:
             items = self._fallback_chapter_nodes(root)
         holder = _first(root, lambda node: node.attrs.get("id", "").startswith("manga-chapters-holder"))
-        if not items and holder is not None:
-            if self.use_new_chapter_endpoint:
+        # El endpoint AJAX se intentaba solo si el HTML traia `manga-chapters-holder`.
+        # Los temas Madara recientes ya no emiten ese div, asi que la peticion no llegaba
+        # a hacerse y la serie quedaba con 0 capitulos aunque `ajax/chapters` respondiera
+        # (infrafandub: 692 capitulos). El holder solo hace falta para leer su `data-id`
+        # en la variante admin-ajax; para el resto basta con no tener capitulos en el HTML.
+        if not items:
+            if self.use_new_chapter_endpoint or holder is None:
                 response = await self._request(
                     "POST", f"{series_url.rstrip('/')}/ajax/chapters",
                     headers={"X-Requested-With": "XMLHttpRequest"},
@@ -375,10 +380,13 @@ class MadaraSource:
                         "POST", f"{series_url.rstrip('/')}/ajax/chapters",
                         headers={"X-Requested-With": "XMLHttpRequest"},
                     )
-            response.raise_for_status()
-            items = self._chapter_nodes(_parse_html(response.text))
-            if not items:
-                items = self._fallback_chapter_nodes(_parse_html(response.text))
+            # Ahora el AJAX se intenta aunque no haya holder, asi que puede responder 404
+            # en sitios que antes ni se consultaban. Eso no es un error de la fuente: se
+            # deja la lista vacia en lugar de convertirlo en excepcion.
+            if getattr(response, "status_code", 200) < 400:
+                items = self._chapter_nodes(_parse_html(response.text))
+                if not items:
+                    items = self._fallback_chapter_nodes(_parse_html(response.text))
 
         result: list[SourceChapter] = []
         seen_chapters: set[str] = set()
@@ -1352,6 +1360,16 @@ class InfraFandubSource(MadaraSource):
         series_url = urljoin(f"{self.base_url}/", series_id).rstrip("/")
         response = await self._request("POST", f"{series_url}/ajax/chapters/")
         response.raise_for_status()
+        # El sitio volvio al markup estandar de Madara: `ajax/chapters` sirve
+        # <li class="wp-manga-chapter"> y ya no emite ningun `a.chapter-item`, asi que
+        # este override devolvia 0 capitulos sobre una respuesta con 692. Se conserva el
+        # camino propio por si vuelve el markup antiguo, pero se delega en el motor
+        # cuando no aparece.
+        if not _first(
+            _parse_html(response.text),
+            lambda node: node.tag == "a" and node.has_class("chapter-item"),
+        ):
+            return await super().chapters(series)
         result: list[SourceChapter] = []
         for anchor in _parse_html(response.text).descendants("a"):
             if not anchor.has_class("chapter-item") or not anchor.attrs.get("href"):
