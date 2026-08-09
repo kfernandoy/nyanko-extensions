@@ -166,7 +166,11 @@ def brief(error: BaseException) -> str:
 # cada intento es una peticion real al sitio, y el objetivo es descartar el falso negativo
 # de "la primera serie no tenia capitulos en este idioma", no recorrer el catalogo.
 MAX_SERIES_INTENTOS = 3
-MAX_CAPITULOS_INTENTOS = 3
+# Se prueban mas capitulos que series porque los sitios con muro de pago suelen bloquear
+# los mas recientes en bloque: en asialotus los 3 primeros devuelven 0 paginas y solo a
+# partir del cuarto aparece el 402 que permite clasificarlo como `paywall` en vez de como
+# un port roto. Siguen siendo pocas peticiones porque el bucle corta en cuanto una funciona.
+MAX_CAPITULOS_INTENTOS = 6
 
 
 async def probe(extension_id: str, timeout: float, engine: str) -> dict:
@@ -283,6 +287,7 @@ async def probe(extension_id: str, timeout: float, engine: str) -> dict:
         pages = None
         content = None
         capitulo_ok = None
+        fallo_page_bytes = None
         for capitulo in chapters[:MAX_CAPITULOS_INTENTOS]:
             candidatas = await step("pages", source.pages(capitulo))
             if not candidatas:
@@ -293,6 +298,13 @@ async def probe(extension_id: str, timeout: float, engine: str) -> dict:
                 pages = candidatas
                 capitulo_ok = capitulo
                 break
+            # Guardar el motivo del ultimo intento fallido. Sin esto, el paso `pages` de
+            # una iteracion posterior pisa el error de `page_bytes` y el clasificador
+            # pierde el 402 que distingue un muro de pago de un parser roto.
+            fallo_page_bytes = result["steps"].get("page_bytes")
+
+        if content is None and fallo_page_bytes is not None:
+            result["steps"]["page_bytes"] = fallo_page_bytes
 
         if not pages:
             result["requests"] = fetcher.count

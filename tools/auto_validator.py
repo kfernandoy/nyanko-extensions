@@ -16,6 +16,7 @@ RESULTS_DIR = Path("../Nyanko/.planning/extension-validation/results")
 ESTADO_POR_CAUSA = {
     "blocked": "BLOCKED_NETWORK",      # 403/Cloudflare: haria falta WebView, no mas codigo
     "offline": "BLOCKED_NETWORK",      # DNS/conexion: el sitio no responde
+    "paywall": "BLOCKED_CONTRACT",     # 402: hay que pagar, ningun parser lo resuelve
     "port": "IMPLEMENTATION_REQUIRED",  # el sitio responde pero el parseo no saca datos
 }
 
@@ -34,8 +35,16 @@ def clasificar_fallo(reasons: list[str]) -> str:
         un harness en Python puro NO puede pasarlo. Eso es lo que marca `blocked`.
 
     `offline` es el dominio que ya ni resuelve.
+
+    `paywall` es el sitio que responde correctamente pero cobra por el contenido. Se
+    comprueba ANTES que el 403 porque es la senal mas especifica: asialotus devuelve
+    402 Payment Required y un JPEG de 209 bytes en el 100% de sus capitulos, con un
+    `mcc-lock-box` de compra de monedas en el HTML. Eso no es un port roto ni un reto
+    que se pueda resolver: hace falta una cuenta con saldo.
     """
     texto = " ".join(reasons)
+    if "402" in texto or "Payment Required" in texto:
+        return "paywall"
     if "403" in texto or "Forbidden" in texto or "cf-mitigated" in texto:
         return "blocked"
     if (
