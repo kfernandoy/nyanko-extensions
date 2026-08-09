@@ -2284,7 +2284,7 @@ class GeneratedMadaraSource(MadaraSource):
     base_url = 'https://archiviumbar.com'
     language = 'es'
     manga_substring = 'manga'
-    load_more = 'never'
+    load_more = 'always'
     use_new_chapter_endpoint = False
     chapter_url_suffix = '?style=list'
     supports_latest = True

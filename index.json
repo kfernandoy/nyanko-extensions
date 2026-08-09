@@ -1215,7 +1215,7 @@
       "id": "barmanga_es",
       "name": "BarManga",
       "version": "0.11.0",
-      "sha256": "cdecea156ab3459eac7199aafcc9cf33a7168470ace9b626b9b6d4d9503293c5",
+      "sha256": "ba11cc1e24aac7d2a67e0c63975a5211c0035ddaca1df64133103e8d071d6243",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/barmanga_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/barmanga_es.png",
       "author": "Keiyoushi contributors",

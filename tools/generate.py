@@ -285,6 +285,16 @@ def _supported_madara(
         return None
 
     strategy = _match(r"useLoadMoreRequest\s*=\s*LoadMoreStrategy\.(\w+)", kotlin, "AutoDetect")
+    # El Kotlin declara la estrategia que le sirve a Mihon, no siempre la que nos sirve a
+    # nosotros. barmanga declara Never y usa el selector propio `#loop-content .mp-card`,
+    # pero ese markup ya no viaja en el HTML estatico (67% del documento son <style> y solo
+    # hay 2 enlaces a /manga/). El catalogo real lo sirve `madara_load_more`, que sI devuelve
+    # 16 series con portada y casa con el selector page-item-detail que ya usamos.
+    # 'auto' no vale: la deteccion de nav.navigation-ajax ocurre DESPUES del GET, asi que la
+    # primera llamada a browse devolveria 0.
+    load_more_overrides = {
+        "barmanga": "always",
+    }
     capacity = int(_match(r"\.rateLimit\(\s*(\d+)", kotlin, "1"))
     seconds = int(_match(r"\.rateLimit\(\s*\d+\s*,\s*(\d+)\.seconds", kotlin, "1"))
     rpm = capacity * 60 // seconds
@@ -299,7 +309,10 @@ def _supported_madara(
             kotlin,
             "manga",
         ),
-        "load_more": {"Always": "always", "Never": "never"}.get(strategy, "auto"),
+        "load_more": load_more_overrides.get(
+            module.name,
+            {"Always": "always", "Never": "never"}.get(strategy, "auto"),
+        ),
         "new_chapters": bool(
             re.search(r"useNewChapterEndpoint[^=]*=\s*true", kotlin)
         ),
