@@ -621,14 +621,30 @@ class ManhwaWebSource(MadaraSource):
         ]
 
     async def browse(self, kind: str, page: int = 1):
-        # Ambos catalogos llegan completos en una sola respuesta: no hay pagina 2.
+        # El top de /manhwa/nuevos llega completo en una sola respuesta: son 17 series y
+        # no hay pagina 2, asi que la biblioteca se cortaba ahi. Se conserva como cabecera
+        # y a partir de la primera pagina se sigue por la busqueda, que si pagina.
         if kind == "popular":
-            payload = await self._api("/manhwa/nuevos")
-            block = payload.get("top") or {}
-            items = list(block.get("manhwas_esp") or []) + list(block.get("manhwas_raw") or [])
-            items = self._distinct(items, "link")
-            items.sort(key=lambda item: item.get("numero") or 0, reverse=True)
-            return {"items": [self._popular_series(item) for item in items], "has_more": False}
+            destacados = []
+            if page == 1:
+                payload = await self._api("/manhwa/nuevos")
+                block = payload.get("top") or {}
+                items = list(block.get("manhwas_esp") or []) + list(block.get("manhwas_raw") or [])
+                items = self._distinct(items, "link")
+                items.sort(key=lambda item: item.get("numero") or 0, reverse=True)
+                destacados = [self._popular_series(item) for item in items]
+
+            catalogo = await self.search("", page, {})
+            if isinstance(catalogo, dict):
+                series, hay_mas = catalogo.get("items", []), catalogo.get("has_more", False)
+            else:
+                series, hay_mas = getattr(catalogo, "items", []), getattr(catalogo, "has_more", False)
+
+            vistos = {serie.source_id for serie in destacados}
+            return {
+                "items": destacados + [s for s in series if s.source_id not in vistos],
+                "has_more": hay_mas,
+            }
         if kind == "latest":
             payload = await self._api("/latest/new-manhwa")
             block = payload.get("manhwas") or {}

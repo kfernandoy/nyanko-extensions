@@ -57,8 +57,15 @@ class ManhwaWebTest(unittest.IsolatedAsyncioTestCase):
             "manhwas_raw": [{"id_rel": "oso", "create": 300, "name_manhwa": "Oso", "img": "https://cdn/oso.jpg"}],
             "_manhwas": [{"id_rel": "gato", "create": 999, "name_manhwa": "Gato dup", "img": "https://cdn/g.jpg"}],
         }}
+        # Tras el top, popular continua por /manhwa/library, que si pagina. El slug
+        # repetido no se duplica y el nuevo se anade detras.
+        biblioteca = {"data": [
+            {"real_id": "gato", "the_real_name": "Gato", "_imagen": "https://cdn/gato.jpg"},
+            {"real_id": "zorro", "the_real_name": "Zorro", "_imagen": "https://cdn/zorro.jpg"},
+        ]}
         fetcher = Fetcher([
             Response(f"{API}/manhwa/nuevos", popular),
+            Response(f"{API}/manhwa/library", biblioteca),
             Response(f"{API}/latest/new-manhwa", latest),
         ])
         source = source_class()(fetcher)
@@ -70,9 +77,13 @@ class ManhwaWebTest(unittest.IsolatedAsyncioTestCase):
         # Ordenado por vistas desc; "manga/" se reescribe a "manhwa/".
         self.assertEqual(
             [(item.source_id, item.title) for item in top["items"]],
-            [("manhwa/lobo", "Lobo"), ("manhwa/oso", "Oso"), ("manhwa/gato", "Gato")],
+            [
+                ("manhwa/lobo", "Lobo"),
+                ("manhwa/oso", "Oso"),
+                ("manhwa/gato", "Gato"),
+                ("manhwa/zorro", "Zorro"),
+            ],
         )
-        self.assertFalse(top["has_more"])
         self.assertEqual(top["items"][0].web_url, "https://manhwaweb.com/manhwa/lobo")
         # Ordenado por fecha desc, sin repetir el slug que llega en dos bloques.
         self.assertEqual(

@@ -48,22 +48,38 @@ PORTADA = """
 """
 
 
+# Sin query, search() lee /comics?page=N y parsea la grilla, no el JSON embebido.
+CATALOGO = """
+<section class="flex"><div class="grid">
+  <figure><a href="/sr2/gato"><img src="/gato.jpg"></a><figcaption>Gato</figcaption></figure>
+  <figure><a href="/sr2/zorro"><img src="/zorro.jpg"></a><figcaption>Zorro</figcaption></figure>
+</div></section>
+"""
+
+
 class RavenMangaTest(unittest.IsolatedAsyncioTestCase):
     async def test_populares_deduplican_y_recientes_usan_la_grilla(self):
-        fetcher = Fetcher([Response(BASE, PORTADA), Response(BASE, PORTADA)])
+        # popular = rankings de la home + catalogo paginado; latest sigue leyendo la home.
+        fetcher = Fetcher(
+            [
+                Response(BASE, PORTADA),
+                Response(f"{BASE}/comics", CATALOGO),
+                Response(BASE, PORTADA),
+            ]
+        )
         source = source_class()(fetcher)
 
         popular = await source.browse("popular")
         latest = await source.browse("latest")
 
         self.assertEqual(fetcher.requests[0][1], BASE)
-        # Gato aparece en diario y semanal: distinctBy deja uno solo.
+        # Gato aparece en diario y semanal: distinctBy deja uno solo. Y aunque el catalogo
+        # lo repita, no se duplica al concatenarlo detras de los destacados.
         self.assertEqual(
             [(item.source_id, item.title) for item in popular["items"]],
-            [("sr2/gato", "Gato"), ("sr2/lobo", "Lobo")],
+            [("sr2/gato", "Gato"), ("sr2/lobo", "Lobo"), ("sr2/zorro", "Zorro")],
         )
         self.assertEqual(popular["items"][0].cover_url, f"{BASE}/gato.jpg")
-        self.assertFalse(popular["has_more"])
         self.assertEqual([item.source_id for item in latest["items"]], ["sr2/oso"])
 
     async def test_busqueda_local_filtra_el_json_embebido(self):

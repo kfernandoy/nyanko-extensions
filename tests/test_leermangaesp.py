@@ -61,8 +61,11 @@ class LeerMangaEspTest(unittest.IsolatedAsyncioTestCase):
         popular = f'<script id="ssr-trends-data">{json.dumps([manga("gato", "Gato")])}</script>'
         latest = [manga("viejo", "Viejo", "2026-01-01"), manga("nuevo", "Nuevo", "2026-08-05")]
         search = {"resultados": [manga("gato", "Gato")], "page": 1, "total_pages": 2}
+        # Tras las tendencias, popular continua por el catalogo paginado.
+        catalogo = {"resultados": [manga("zorro", "Zorro")], "page": 1, "total_pages": 3}
         fetcher = Fetcher([
             Response("https://mangalect.org", popular),
+            Response("https://mangalect.org/api/buscar_mangas", catalogo),
             Response("https://mangalect.org/api/latest_chapters_with_dates", latest),
             Response("https://mangalect.org/api/buscar_mangas", search),
             Response("https://mangalect.org/info/gato/", DETAILS),
@@ -75,8 +78,11 @@ class LeerMangaEspTest(unittest.IsolatedAsyncioTestCase):
         direct = await source.search("https://mangalect.org/manga/gato")
 
         self.assertEqual((top["items"][0].title, recent["items"][0].title), ("Gato", "Nuevo"))
+        # La tendencia va primero y detras el catalogo, que ademas deja seguir paginando.
+        self.assertEqual([item.title for item in top["items"]], ["Gato", "Zorro"])
+        self.assertTrue(top["has_more"])
         self.assertEqual((found["items"][0].title, found["has_more"], direct["items"][0].title), ("Gato", True, "Gato"))
-        self.assertEqual(fetcher.requests[2][2]["params"], {
+        self.assertEqual(fetcher.requests[3][2]["params"], {
             "page": "1", "page_size": "20", "query": "gato", "tipo": "Manga", "generos": "Acción",
         })
         self.assertEqual([item.id for item in source.get_filters()], ["type", "genres"])

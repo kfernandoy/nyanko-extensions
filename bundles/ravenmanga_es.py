@@ -2523,17 +2523,33 @@ class RavenMangaSource (MadaraSource ):
         root =_parse_html (response .text )
         base =str (response .url )or self .base_url 
         if kind =="popular":
+        # Los rankings diario/semanal/mensual de la home son 11 series fijas y sin
+        # paginar, asi que el catalogo se acababa ahi aunque el sitio tiene mas de
+        # 100. Se dejan como cabecera y se continua por la biblioteca, que si pagina.
             figures :list [_Node ]=[]
-            for identifier in ("div-diario","div-semanal","div-mensual"):
-                holder =_first (
-                root ,
-                lambda node ,identifier =identifier :node .tag =="div"
-                and node .attrs .get ("id")==identifier ,
-                )
-                if holder is not None :
-                    figures .extend (holder .descendants ("figure"))
-        else :
-            figures =self ._grid_figures (root )
+            if page ==1 :
+                for identifier in ("div-diario","div-semanal","div-mensual"):
+                    holder =_first (
+                    root ,
+                    lambda node ,identifier =identifier :node .tag =="div"
+                    and node .attrs .get ("id")==identifier ,
+                    )
+                    if holder is not None :
+                        figures .extend (holder .descendants ("figure"))
+            destacados =self ._figures (figures ,base )
+
+            catalogo =await self .search ("",page ,{})
+            if isinstance (catalogo ,dict ):
+                series ,hay_mas =catalogo .get ("items",[]),catalogo .get ("has_more",False )
+            else :
+                series ,hay_mas =getattr (catalogo ,"items",[]),getattr (catalogo ,"has_more",False )
+
+            vistos ={serie .source_id for serie in destacados }
+            return {
+            "items":destacados +[s for s in series if s .source_id not in vistos ],
+            "has_more":hay_mas ,
+            }
+        figures =self ._grid_figures (root )
         return {"items":self ._figures (figures ,base ),"has_more":False }
 
     async def search (self ,query :str ,page :int =1 ,filters :dict |None =None ):

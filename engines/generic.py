@@ -2443,12 +2443,30 @@ class LeerMangaEspSource(GenericSource):
 
     async def browse(self, kind: str, page: int = 1):
         if kind == "popular":
-            response = await self._request("GET", self.base_url)
-            response.raise_for_status()
-            root = _parse_html(response.text)
-            script = _first(root, lambda node: node.tag == "script" and node.attrs.get("id") == "ssr-trends-data")
-            payload = json.loads(script.text()) if script else []
-        elif kind == "latest":
+            # El bloque ssr-trends-data de la home son 16 tendencias sin paginar, asi que
+            # populares se quedaba ahi. Se conservan como cabecera y luego se continua por
+            # el catalogo, que si pagina.
+            destacados: list[SourceSeries] = []
+            if page == 1:
+                response = await self._request("GET", self.base_url)
+                response.raise_for_status()
+                root = _parse_html(response.text)
+                script = _first(root, lambda node: node.tag == "script" and node.attrs.get("id") == "ssr-trends-data")
+                tendencias = json.loads(script.text()) if script else []
+                destacados = [manga for item in tendencias if (manga := self._manga(item))]
+
+            catalogo = await self.search("", page, {})
+            if isinstance(catalogo, dict):
+                series, hay_mas = catalogo.get("items", []), catalogo.get("has_more", False)
+            else:
+                series, hay_mas = getattr(catalogo, "items", []), getattr(catalogo, "has_more", False)
+
+            vistos = {serie.source_id for serie in destacados}
+            return {
+                "items": destacados + [s for s in series if s.source_id not in vistos],
+                "has_more": hay_mas,
+            }
+        if kind == "latest":
             response = await self._request("GET", f"{self.base_url}/api/latest_chapters_with_dates")
             response.raise_for_status()
             payload = sorted(
@@ -2954,26 +2972,41 @@ class LmtosSource(MangoLibreriaSource):
             return await self.search("", page, {"order": "recents"})
         if kind != "popular":
             return {"items": [], "has_more": False}
-        response = await self._request("GET", f"{self.base_url}/destacados")
-        response.raise_for_status()
-        root = _parse_html(response.text)
-        result: list[SourceSeries] = []
-        for anchor in root.descendants("a"):
-            if not anchor.has_class("group") or anchor.parent is None or anchor.parent.tag != "section":
-                continue
-            heading = _first(anchor, lambda node: node.tag == "h3")
-            if heading is None:
-                continue
-            image = _first(anchor, lambda node: node.tag == "img")
-            slug = urlparse(anchor.attrs.get("href", "")).path.rstrip("/").rsplit("/", 1)[-1]
-            result.append(SourceSeries(
-                source_id=slug,
-                title=heading.text().strip(),
-                source_name=self.name,
-                cover_url=_image_url(image, str(response.url)) if image else None,
-                web_url=f"{self.base_url}/manga/{slug}",
-            ))
-        return {"items": result, "has_more": False}
+        # /destacados son 11 fijos y sin paginar: al llegar al final del scroll el
+        # catalogo se acababa ahi, aunque el sitio publica 704 series. Se mantienen como
+        # cabecera de la primera pagina -son la seleccion editorial- y a partir de ahi se
+        # sigue por el catalogo real, que si pagina.
+        destacados: list[SourceSeries] = []
+        if page == 1:
+            response = await self._request("GET", f"{self.base_url}/destacados")
+            response.raise_for_status()
+            root = _parse_html(response.text)
+            for anchor in root.descendants("a"):
+                if not anchor.has_class("group") or anchor.parent is None or anchor.parent.tag != "section":
+                    continue
+                heading = _first(anchor, lambda node: node.tag == "h3")
+                if heading is None:
+                    continue
+                image = _first(anchor, lambda node: node.tag == "img")
+                slug = urlparse(anchor.attrs.get("href", "")).path.rstrip("/").rsplit("/", 1)[-1]
+                destacados.append(SourceSeries(
+                    source_id=slug,
+                    title=heading.text().strip(),
+                    source_name=self.name,
+                    cover_url=_image_url(image, str(response.url)) if image else None,
+                    web_url=f"{self.base_url}/manga/{slug}",
+                ))
+
+        # search() puede volver como dict o ya envuelto por el adaptador v4 (Paginated).
+        catalogo = await self.search("", page, {"order": "popular"})
+        if isinstance(catalogo, dict):
+            series, hay_mas = catalogo.get("items", []), catalogo.get("has_more", False)
+        else:
+            series, hay_mas = getattr(catalogo, "items", []), getattr(catalogo, "has_more", False)
+
+        vistos = {serie.source_id for serie in destacados}
+        result = destacados + [serie for serie in series if serie.source_id not in vistos]
+        return {"items": result, "has_more": hay_mas}
 
     async def search(self, query: str, page: int = 1, filters: dict | None = None):
         values = filters or {}
