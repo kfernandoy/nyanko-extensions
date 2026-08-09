@@ -506,6 +506,12 @@ class MadaraSource:
             route_index = parts.index(route)
             if len(parts) > route_index + 2:
                 continue
+            # Tiene que quedar ALGO despues de la ruta. `/manga/` a secas es el indice del
+            # custom post type, no una serie, y colaba en el listado como una entrada
+            # fantasma sin portada titulada "MANGA" (manhuarm, tanto en browse como en
+            # search). La guarda de arriba solo limitaba el maximo de segmentos.
+            if len(parts) <= route_index + 1:
+                continue
             source_id = urljoin(f"{self.base_url}/", href)
             title = anchor.attrs.get("title", "").strip() or anchor.text().strip()
             if title and source_id not in seen:
