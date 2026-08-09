@@ -139,6 +139,30 @@ def _image_url (node :_Node ,base_url :str )->str :
     return _style_image_url (node ,base_url )
 
 
+def _es_imagen_de_carga (node :_Node )->bool :
+    """`True` si el <img> es el spinner del tema y no la portada.
+
+    Algunos temas Madara meten un placeholder ANTES de la portada real
+    (taurusfansub: `<div class="manga-loader"><img alt="Loading..."></div>` seguido de
+    `<div class="manga__thumb_item"><img ...la portada...>`). Coger el primer <img> del
+    contenedor devolvia el mismo spinner para las 12 series del listado.
+
+    Se detecta por el alt y por la clase del contenedor, no por la URL: el archivo
+    concreto cambia de un sitio a otro.
+    """
+    if "load"in node .attrs .get ("alt","").casefold ():
+        return True 
+    padre =node .parent 
+    saltos =0 
+    while padre is not None and saltos <3 :
+        clases =padre .attrs .get ("class","").casefold ()
+        if "loader"in clases or "loading"in clases :
+            return True 
+        padre =padre .parent 
+        saltos +=1 
+    return False 
+
+
 def _cover_url (container :_Node ,base_url :str )->str |None :
     """Portada del contenedor: primero el <img>, si no el background del CSS.
 
@@ -146,6 +170,14 @@ def _cover_url (container :_Node ,base_url :str )->str |None :
     ningun ``<img>`` con URL utilizable, asi que no puede cambiar el resultado
     de los sitios que hoy funcionan.
     """
+    image =_first (
+    container ,
+    lambda node :node .tag =="img"and not _es_imagen_de_carga (node ),
+    )
+    if image is not None and (url :=_image_url (image ,base_url )):
+        return url 
+        # Si solo habia loaders, se reintenta sin el filtro antes de pasar al CSS: es
+        # preferible un placeholder a quedarse sin portada.
     image =_first (container ,lambda node :node .tag =="img")
     if image is not None and (url :=_image_url (image ,base_url )):
         return url 
@@ -747,6 +779,12 @@ class MadaraSource :
                 continue 
             route_index =parts .index (route )
             if len (parts )>route_index +2 :
+                continue 
+                # Tiene que quedar ALGO despues de la ruta. `/manga/` a secas es el indice del
+                # custom post type, no una serie, y colaba en el listado como una entrada
+                # fantasma sin portada titulada "MANGA" (manhuarm, tanto en browse como en
+                # search). La guarda de arriba solo limitaba el maximo de segmentos.
+            if len (parts )<=route_index +1 :
                 continue 
             source_id =urljoin (f"{self .base_url }/",href )
             title =anchor .attrs .get ("title","").strip ()or anchor .text ().strip ()
