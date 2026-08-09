@@ -4097,7 +4097,13 @@ def main() -> None:
         type=Path,
         default=repo.parent / "extensions-source-main" / "src",
     )
-    parser.add_argument("--base-url", default="http://127.0.0.1:8877")
+    # El default es el repo publico, NO el servidor local. `index.json` se commitea, y con
+    # una URL local la app no descarga nada fuera de esta maquina. Ya paso dos veces por
+    # olvidar el flag al regenerar; para desarrollo se pasa --base-url explicitamente.
+    parser.add_argument(
+        "--base-url",
+        default="https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main",
+    )
     args = parser.parse_args()
     generated, skipped = generate(repo, args.source_root.resolve(), args.base_url.rstrip("/"))
     for engine in sorted(generated):
