@@ -15669,7 +15669,7 @@
       "id": "onfmangas_es",
       "name": "ONF MANGAS",
       "version": "0.6.0",
-      "sha256": "1705d15bf04365da2fdde1256b877984880cf28191724a672bfbc2ac3244077f",
+      "sha256": "a2933fa3e8843276091224cd7fa9635a8a9af8da2c4ad7125270f5ca9831e8fe",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onfmangas_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/onfmangas_es.png",
       "author": "Keiyoushi contributors",

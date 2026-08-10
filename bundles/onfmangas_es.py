@@ -2861,18 +2861,42 @@ class OnfMangasSource (MadaraSource ):
             )
         return result 
 
+        # Las paginas de este sitio son hotlinks a la red de MangaDex. Esos hosts miran el
+        # Referer: si llega `onfmangas.com` devuelven un 200 con una imagen-aviso de ~59 KB
+        # ("you can read this at mangadex.org") en lugar de la pagina real de ~700 KB. Por eso
+        # el capitulo se veia bien en el WebView (que no manda ese Referer al CDN) y salia el
+        # disclaimer en la app. Sin Referer sirven la imagen correcta.
+    _HOSTS_MANGADEX =("mangadex.org","mangadex.network")
+
     async def page_bytes (self ,page :SourcePage |str )->SourcePageContent :
         url =page .source_id if isinstance (page ,SourcePage )else str (page )
         source ,_ ,fragment =url .partition ("#fallback=")
         try :
-            return await super ().page_bytes (source if fragment else url )
+            return await self ._pagina (page ,source if fragment else url )
         except Exception :
             if not fragment :
                 raise 
                 # El origen principal falla a menudo; el sitio publica un respaldo.
-            return await super ().page_bytes (fragment )
+            return await self ._pagina (page ,fragment )
 
-            # -------------------------------------------------------------- internals
+    async def _pagina (self ,page :SourcePage |str ,url :str )->SourcePageContent :
+        host =urlparse (url ).netloc 
+        if not any (host .endswith (dominio )for dominio in self ._HOSTS_MANGADEX ):
+            return await super ().page_bytes (url )
+            # OJO: no basta con mandar `headers={}`. El fetcher fusiona lo que se le pasa con
+            # las cabeceras de `capabilities`, que ya llevan el Referer del sitio, asi que hay
+            # que SOBREESCRIBIRLO. Se pone el propio MangaDex, que es lo que ve el CDN cuando
+            # el capitulo se abre en el WebView y devuelve la imagen completa.
+        response =await self ._request (
+        "GET",url ,headers ={"Referer":"https://mangadex.org/"},
+        )
+        response .raise_for_status ()
+        return SourcePageContent (
+        media_type =response .headers .get ("content-type","image/jpeg"),
+        chunks =iter ([response .content ]),
+        )
+
+        # -------------------------------------------------------------- internals
     async def _grid (self ,params :list [tuple [str ,str ]])->dict :
         response =await self ._fetch ("GET",f"{self .base_url }/mangas.php",params =params )
         root =_parse_html (response .text )
