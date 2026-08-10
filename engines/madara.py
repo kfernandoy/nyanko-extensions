@@ -1521,6 +1521,30 @@ class MangaCrabSource(MadaraSource):
 
 
 class InfraFandubSource(MadaraSource):
+    async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:
+        # El buscador de WordPress esta CAIDO en este sitio: `?s=a&post_type=wp-manga`
+        # devuelve 404 y `?s=combat` un 500, asi que el `search` del motor rompia la
+        # extension entera nada mas abrirla. El ajax `madara_load_more` con la plantilla
+        # de busqueda si responde, y devuelve el mismo markup `c-tabs-item__content` que
+        # ya parsea el motor, portadas incluidas.
+        respuesta = await self._request(
+            "POST",
+            f"{self.base_url}/wp-admin/admin-ajax.php",
+            data={
+                "action": "madara_load_more",
+                "page": "0",
+                "template": "madara-core/content/content-search",
+                "vars[s]": query.strip(),
+                "vars[paged]": "1",
+                "vars[template]": "search",
+                "vars[post_type]": "wp-manga",
+                "vars[post_status]": "publish",
+            },
+            headers={"X-Requested-With": "XMLHttpRequest"},
+        )
+        respuesta.raise_for_status()
+        return self._series(respuesta.text, ("c-tabs-item__content", "manga__item"))[:limit]
+
     def _series_from_root(self, root: _Node, classes: tuple[str, ...]) -> list[SourceSeries]:
         result: list[SourceSeries] = []
         for item in root.descendants("div"):
@@ -1539,7 +1563,10 @@ class InfraFandubSource(MadaraSource):
                 cover_url=_image_url(image, self.base_url) if image else None,
                 web_url=url,
             ))
-        return result
+        # El tema propio (`manga-item`) solo sale en las paginas del sitio; el ajax de
+        # busqueda responde con el markup clasico de Madara, asi que se delega en el motor
+        # cuando esta rama no encuentra nada.
+        return result or super()._series_from_root(root, classes)
 
     async def details(self, series: SourceSeries | str) -> SourceSeries:
         series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
