@@ -2815,6 +2815,11 @@ class GeneratedGenericSource (GenericSource ):
 
 
 class ComicFurySource (GeneratedGenericSource ):
+# Codigo de idioma que espera `search.php`, que NO siempre coincide con el de la
+# extension: el sitio usa "pt" para portugues, "notext" para los comics sin texto y
+# cadena vacia para "All". Cada variante lo sobreescribe.
+    search_language ="es"
+
     def get_preferences (self )->list [SourcePreference ]:
         return [SourcePreference (
         "showAuthorsNotes","Mostrar notas del autor","checkbox",default =False ,
@@ -2890,7 +2895,7 @@ class ComicFurySource (GeneratedGenericSource ):
         params ={
         "query":query ,
         "page":str (page ),
-        "language":"es",
+        "language":self .search_language ,
         "tags":str (values .get ("tags","")).replace (", ",","),
         "sort":str (values .get ("sort","0")),
         "completed":"0"if values .get ("completed",False )else "1",

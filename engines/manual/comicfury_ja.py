@@ -777,4 +777,321 @@ class GeneratedGenericSource(GenericSource):
     requests_per_minute = 60
 
 
-SOURCE = GeneratedGenericSource
+class ComicFurySource(GeneratedGenericSource):
+    # Codigo de idioma que espera `search.php`, que NO siempre coincide con el de la
+    # extension: el sitio usa "pt" para portugues, "notext" para los comics sin texto y
+    # cadena vacia para "All". Cada variante lo sobreescribe.
+    search_language = "ja"
+
+    def get_preferences(self) -> list[SourcePreference]:
+        return [SourcePreference(
+            "showAuthorsNotes", "Mostrar notas del autor", "checkbox", default=False,
+        )]
+
+    def get_filters(self) -> list[SourceFilter]:
+        return [
+            SourceFilter("tags", "Etiquetas", "text", default=""),
+            SourceFilter("sort", "Ordenar por", "select", [
+                ("0", "Relevancia"), ("1", "Popularidad"), ("2", "Ultima actualizacion"),
+            ], "0"),
+            SourceFilter("lastupdate", "Ultima actualizacion", "select", [
+                ("0", "Todo el tiempo"), ("1", "Esta semana"), ("2", "Este mes"),
+                ("3", "Este ano"), ("4", "Solo completados"),
+            ], "0"),
+            SourceFilter("completed", "Comic completado", "checkbox", default=False),
+            SourceFilter("fv", "Violencia", "select", [
+                ("0", "Nula / minima"), ("1", "Contenido violento"), ("2", "Gore / grafico"),
+            ], "2"),
+            SourceFilter("fn", "Desnudez frontal", "select", [
+                ("0", "Ninguna"), ("1", "Ocasional"), ("2", "Frecuente"),
+            ], "2"),
+            SourceFilter("fl", "Lenguaje fuerte", "select", [
+                ("0", "Ninguno"), ("1", "Ocasional"), ("2", "Frecuente"),
+            ], "2"),
+            SourceFilter("fs", "Contenido sexual", "select", [
+                ("0", "Sin contenido sexual"), ("1", "Situaciones sexuales"),
+                ("2", "Temas sexuales fuertes"),
+            ], "2"),
+        ]
+
+    async def _request(self, method: str, url: str, **kwargs: Any) -> Any:
+        response = await super()._request(method, url, **kwargs)
+        if getattr(response, "status_code", 200) >= 400 or "Content Warning" not in response.text:
+            return response
+        root = _parse_html(response.text)
+        proceed = _first(root, lambda node: node.tag == "input" and node.attrs.get("name") == "proceed" and node.attrs.get("value") == "View Webcomic")
+        token = _first(root, lambda node: node.tag == "input" and node.attrs.get("name") == "token")
+        if proceed is None or token is None:
+            return response
+        return await super()._request(
+            "POST", url, **{**kwargs, "data": {"token": token.attrs.get("value", ""), "proceed": "View Webcomic"}},
+        )
+
+    def _listing(self, response) -> dict:
+        root = _parse_html(response.text)
+        items = []
+        for result in root.descendants("div"):
+            if not result.has_class("webcomic-result"):
+                continue
+            avatar = _first(result, lambda node: node.tag == "div" and node.has_class("webcomic-result-avatar"))
+            anchor = _first(avatar, lambda node: node.tag == "a" and bool(node.attrs.get("href"))) if avatar else None
+            title_node = _first(result, lambda node: node.tag == "div" and node.has_class("webcomic-result-title"))
+            if anchor is None or title_node is None:
+                continue
+            title = title_node.attrs.get("title", "").strip()
+            if not title:
+                continue
+            image = _first(anchor, lambda node: node.tag == "img")
+            source_id = urljoin(str(response.url), anchor.attrs["href"])
+            items.append(SourceSeries(
+                source_id=source_id, title=title, source_name=self.name,
+                cover_url=_image_url(image, str(response.url)) if image else None,
+                web_url=source_id,
+            ))
+        return {
+            "items": items,
+            "has_more": any(node.tag == "div" and node.has_class("search-next-page") for node in root.descendants()),
+        }
+
+    async def search(self, query: str, page: int = 1, filters: dict | None = None):
+        values = filters or {}
+        params = {
+            "query": query,
+            "page": str(page),
+            "language": self.search_language,
+            "tags": str(values.get("tags", "")).replace(", ", ","),
+            "sort": str(values.get("sort", "0")),
+            "completed": "0" if values.get("completed", False) else "1",
+            "lastupdate": str(values.get("lastupdate", "0")),
+            "fv": str(values.get("fv", "2")),
+            "fn": str(values.get("fn", "2")),
+            "fl": str(values.get("fl", "2")),
+            "fs": str(values.get("fs", "2")),
+        }
+        response = await self._request("GET", f"{self.base_url}/search.php", params=params)
+        response.raise_for_status()
+        return self._listing(response)
+
+    async def browse(self, kind: str, page: int = 1):
+        if kind not in {"popular", "latest"}:
+            return {"items": [], "has_more": False}
+        return await self.search("", page, {"sort": "1" if kind == "popular" else "2"})
+
+    async def details(self, series: SourceSeries | str) -> SourceSeries:
+        # ComicFury no es un tema Madara: la ficha no tiene ni `post-title` ni
+        # `summary_image` ni `post-content_item`, asi que el `details` heredado devolvia
+        # todos los campos a None. El perfil si expone clases propias estables.
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        response = await self._request("GET", urljoin(f"{self.base_url}/", series_id))
+        response.raise_for_status()
+        root = _parse_html(response.text)
+
+        # El titulo va en `.authorname`, seguido de un <br> y el subtitulo en <em>: se
+        # toma solo el texto propio del div para no arrastrar el subtitulo.
+        titulo = ""
+        nombre = _first(root, lambda node: node.tag == "div" and node.has_class("authorname"))
+        if nombre is not None:
+            titulo = " ".join(
+                trozo.strip() for trozo in nombre.children
+                if isinstance(trozo, str) and trozo.strip()
+            )
+
+        # La sinopsis es el `.pccontent` de la seccion "Webcomic description"; hay varios
+        # `.pccontent` en la pagina (autores, estadisticas), asi que se localiza por su
+        # encabezado en vez de coger el primero.
+        descripcion = ""
+        for categoria in root.descendants("div"):
+            if not categoria.has_class("profilecategory"):
+                continue
+            encabezado = _first(categoria, lambda node: node.has_class("pchead"))
+            if encabezado is None or "description" not in encabezado.text().casefold():
+                continue
+            contenido = _first(categoria, lambda node: node.has_class("pccontent"))
+            if contenido is not None:
+                descripcion = contenido.text().strip()
+            break
+
+        etiquetas = [
+            nodo.text().strip() for nodo in root.descendants("a")
+            if nodo.has_class("webcomic-profile-tag") and nodo.text().strip()
+        ]
+
+        # La portada es el avatar DEL PERFIL (`.profile-avatar`). Ojo con `.box-avatar`:
+        # es el de los webcomics recomendados de la barra lateral, asi que devolvia la
+        # portada de otra serie -o ninguna, en los perfiles que no traen recomendaciones-.
+        portada = None
+        avatar = _first(root, lambda node: node.tag == "div" and node.has_class("profile-avatar"))
+        if avatar is not None:
+            imagen = _first(avatar, lambda node: node.tag == "img")
+            if imagen is not None:
+                portada = _image_url(imagen, str(response.url))
+
+        return SourceSeries(
+            source_id=series_id,
+            title=titulo or (series.title if isinstance(series, SourceSeries) else series_id),
+            source_name=self.name,
+            cover_url=portada,
+            description=descripcion or None,
+            content_tags=tuple(dict.fromkeys(etiquetas)),
+            metadata=series.metadata if isinstance(series, SourceSeries) else {},
+            web_url=str(response.url),
+        )
+
+    @staticmethod
+    def _slug(series_id: str) -> str:
+        parsed = urlparse(series_id)
+        query_slug = parse_qs(parsed.query).get("url")
+        if query_slug:
+            return query_slug[0].strip("/")
+        parts = [part for part in parsed.path.split("/") if part]
+        return parts[parts.index("read") + 1] if "read" in parts and parts.index("read") + 1 < len(parts) else parts[-1]
+
+    @staticmethod
+    def _anchors(root, class_name: str):
+        return [
+            node for node in root.descendants("a")
+            if node.attrs.get("href") and _first(node, lambda child: child.tag == "div" and child.has_class(class_name))
+        ]
+
+    @staticmethod
+    def _date(value: str) -> str | None:
+        from datetime import datetime
+        cleaned = re.sub(r"(?<=\d)(?:st|nd|rd|th)|,", "", value).strip()
+        for pattern in ("%d %b %Y %I:%M %p", "%d %b %Y", "%b %d %Y", "%d.%m.%Y"):
+            try:
+                return datetime.strptime(cleaned, pattern).isoformat()
+            except ValueError:
+                continue
+        return None
+
+    @staticmethod
+    def _next_page(root):
+        current = _first(root, lambda node: node.tag == "span" and node.has_class("vfpagecurrent"))
+        if current is None or current.parent is None:
+            return None
+        siblings = current.parent.children
+        for sibling in siblings[siblings.index(current) + 1:]:
+            if isinstance(sibling, _Node) and sibling.tag == "a" and sibling.has_class("vfpage"):
+                return sibling.attrs.get("href")
+        return None
+
+    async def _collect(self, response, series_id: str, header: str = "") -> list[SourceChapter]:
+        result = []
+        while True:
+            root = _parse_html(response.text)
+            for anchor in self._anchors(root, "archive-comic"):
+                title_node = _first(anchor, lambda node: node.has_class("archive-comic-title"))
+                date_node = _first(anchor, lambda node: node.has_class("archive-comic-date"))
+                title = title_node.text().strip() if title_node else anchor.text().strip()
+                if header:
+                    title = f"{header} - {title}"
+                result.append(SourceChapter(
+                    source_id=urljoin(str(response.url), anchor.attrs["href"]), title=title,
+                    series_id=series_id, source_name=self.name, language=self.language,
+                    uploaded_at=self._date(date_node.text()) if date_node else None,
+                ))
+            next_page = self._next_page(root)
+            if not next_page:
+                return result
+            response = await self._request("GET", urljoin(str(response.url), next_page))
+            response.raise_for_status()
+
+    async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
+        series_id = series.source_id if isinstance(series, SourceSeries) else series
+        slug = self._slug(series_id)
+        response = await self._request("GET", f"{self.base_url}/read/{slug}/archive")
+        response.raise_for_status()
+        root = _parse_html(response.text)
+        chapters = []
+        archive = self._anchors(root, "archive-chapter")
+        if archive:
+            for anchor in archive:
+                heading = _first(anchor, lambda node: node.has_class("archive-chapter-title"))
+                section = await self._request("GET", urljoin(str(response.url), anchor.attrs["href"]))
+                section.raise_for_status()
+                chapters.extend(await self._collect(section, series_id, heading.text().strip() if heading else anchor.text().strip()))
+        else:
+            chapters.extend(await self._collect(response, series_id))
+        if not chapters and slug:
+            try:
+                custom = await self._request("GET", f"https://{slug}.webcomic.ws/archive/comics")
+                custom.raise_for_status()
+                custom_root = _parse_html(custom.text)
+                for element in custom_root.descendants("div"):
+                    if not (element.has_class("archivecomic") or element.has_class("nl-archivecomic")):
+                        continue
+                    anchor = _first(element, lambda node: node.tag == "a" and bool(node.attrs.get("href")))
+                    if anchor:
+                        date = _first(element, lambda node: node.has_class("comicposttime") or node.has_class("nl-archivecomicposttime"))
+                        heading = ""
+                        parent = element.parent
+                        if parent is not None and parent.parent is not None:
+                            siblings = parent.parent.children
+                            for sibling in reversed(siblings[:siblings.index(parent)]):
+                                if isinstance(sibling, _Node):
+                                    title_node = _first(sibling, lambda node: node.tag == "h3")
+                                    heading = title_node.text().strip() if title_node else ""
+                                    break
+                        title = anchor.text().strip()
+                        chapters.append(SourceChapter(
+                            source_id=urljoin(str(custom.url), anchor.attrs["href"]),
+                            title=f"{heading} - {title}" if heading else title,
+                            series_id=series_id, source_name=self.name, language=self.language,
+                            uploaded_at=self._date(date.text()) if date else None,
+                        ))
+            except Exception:
+                pass
+        numbered = [SourceChapter(
+            source_id=item.source_id, title=item.title, series_id=item.series_id,
+            source_name=item.source_name, number=float(index), language=item.language,
+            uploaded_at=item.uploaded_at,
+        ) for index, item in enumerate(chapters)]
+        return list(reversed(numbered))
+
+    async def pages(self, chapter: SourceChapter | str) -> list[SourcePage]:
+        chapter_id = chapter.source_id if isinstance(chapter, SourceChapter) else chapter
+        response = await self._request("GET", urljoin(f"{self.base_url}/", chapter_id))
+        response.raise_for_status()
+        root = _parse_html(response.text)
+        comic = _first(root, lambda node: node.tag == "div" and node.has_class("is--comic-page"))
+        images = []
+        if comic:
+            images = [
+                image for image in comic.descendants("img")
+                if self._has_class_ancestor(image, "is--image-segment")
+            ]
+        else:
+            images = [node for node in root.descendants("img") if node.attrs.get("id") == "comicimage"]
+        urls = [_image_url(image, str(response.url)) for image in images]
+        result = [SourcePage(
+            source_id=url, chapter_id=chapter_id, index=index,
+            filename=url.rsplit("/", 1)[-1].split("?", 1)[0] or f"{index}.jpg", source_name=self.name,
+        ) for index, url in enumerate(urls)]
+        if comic and bool(getattr(self, "preferences", {}).get("showAuthorsNotes", False)):
+            notes = [node for node in comic.descendants("div") if node.has_class("is--comment-box") and self._has_class_ancestor(node, "is--author-notes")]
+            for note in notes:
+                author = _first(note, lambda node: node.tag == "a" and node.has_class("is--comment-author"))
+                content = _first(note, lambda node: node.tag == "div" and node.has_class("is--comment-content"))
+                payload = json.dumps({
+                    "title": f"Notas del autor de {author.text().strip()}" if author else "Notas del autor",
+                    "text": content.text().strip() if content else note.text().strip(),
+                }, ensure_ascii=False).encode()
+                source_id = "comicfury-note:" + base64.urlsafe_b64encode(payload).decode()
+                result.append(SourcePage(source_id, chapter_id, len(result), f"nota-{len(result)}.svg", self.name))
+        return result
+
+    async def page_bytes(self, page: SourcePage | str) -> SourcePageContent:
+        source_id = page.source_id if isinstance(page, SourcePage) else page
+        if not source_id.startswith("comicfury-note:"):
+            return await super().page_bytes(page)
+        from html import escape
+        from textwrap import wrap
+        data = json.loads(base64.urlsafe_b64decode(source_id.split(":", 1)[1]).decode())
+        lines = [data["title"], ""] + wrap(data["text"], 72)
+        height = max(240, 60 + len(lines) * 28)
+        text = "".join(f'<text x="32" y="{48 + index * 28}" font-size="20">{escape(line)}</text>' for index, line in enumerate(lines))
+        svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="900" height="{height}" viewBox="0 0 900 {height}"><rect width="100%" height="100%" fill="white"/><g fill="black" font-family="sans-serif">{text}</g></svg>'.encode()
+        return SourcePageContent(media_type="image/svg+xml", chunks=iter([svg]))
+
+
+SOURCE = ComicFurySource
