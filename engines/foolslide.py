@@ -66,7 +66,16 @@ class FoolSlideSource(MadaraSource):
             if source_id in seen or not title:
                 continue
             seen.add(source_id)
-            image = _first(group, lambda node: node.tag == "img")
+            # En `/latest/` el unico <img> del grupo es el glifo de UI que FoolSlide pone
+            # junto a cada capitulo (`assets/glyphish/off/50.png`), no una portada: se
+            # colaba como cover_url y la app pintaba el mismo icono en todas las series.
+            # Las portadas reales viven bajo `content/comics/`.
+            image = _first(
+                group,
+                lambda node: node.tag == "img"
+                and "/assets/" not in node.attrs.get("src", "")
+                and "/themes/" not in node.attrs.get("src", ""),
+            )
             cover = urljoin(response_url, image.attrs.get("src", "")).replace("/thumb_", "/") if image else None
             result.append(SourceSeries(
                 source_id=source_id,

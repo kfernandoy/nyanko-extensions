@@ -349,8 +349,14 @@ async def main() -> None:
     ]
     
     if args.only:
+        # `--only` manda sobre `--lang`: se filtra sobre el indice COMPLETO. Antes se
+        # aplicaba sobre la lista ya recortada por idioma (que por defecto es "es"), asi
+        # que pedir una extension de otro idioma la descartaba en silencio y el informe
+        # salia con menos fuentes de las pedidas sin avisar de nada.
         wanted = {value.strip() for value in args.only.split(",") if value.strip()}
-        extensions = [item for item in extensions if item["id"] in wanted]
+        extensions = [item for item in payload["extensions"] if item["id"] in wanted]
+        if faltan := wanted - {item["id"] for item in extensions}:
+            print(f"Aviso: no estan en index.json: {', '.join(sorted(faltan))}")
 
     if args.samples_per_engine > 0 and not args.only:
         # Stratified sampling
