@@ -515,11 +515,28 @@ class MadaraSource :
             elif "Alt"in label :
                 description =f"{description }\n\nAlternative name(s): {value .text ().strip ()}".strip ()
         genres =list (dict .fromkeys (genre for genre in genres if genre ))
+        cover_url =_image_url (image ,str (response .url ))if image else None 
+
+        # Los temas Madara re-skineados con Tailwind (catharsisworld, templescanesp) no
+        # emiten NINGUNA de las clases anteriores: ni `post-title`, ni `summary_image`, ni
+        # `post-content_item`. La ficha quedaba entera a None aunque el HTML tuviera todo.
+        # Se rellena solo lo que falta, asi que un sitio que ya funciona no cambia.
+        if not (cover_url and description and genres and status_text ):
+            alterno =self ._tailwind_details (root ,str (response .url ))
+            title =title if title and title !=series_id .rstrip ("/").rsplit ("/",1 )[-1 ]else alterno .get ("title")or title 
+            cover_url =cover_url or alterno .get ("cover_url")
+            description =description or alterno .get ("description","")
+            status_text =status_text or alterno .get ("status","")
+            if not genres :
+                genres =alterno .get ("genres",[])
+            if not authors and alterno .get ("author"):
+                authors =[alterno ["author"]]
+
         return SourceSeries (
         source_id =series_id ,
         title =title ,
         source_name =self .name ,
-        cover_url =_image_url (image ,str (response .url ))if image else None ,
+        cover_url =cover_url ,
         description =description or None ,
         author =", ".join (authors )or None ,
         artist =", ".join (artists )or None ,
@@ -528,6 +545,76 @@ class MadaraSource :
         metadata =series .metadata if isinstance (series ,SourceSeries )else {},
         web_url =str (response .url ),
         )
+
+        # Estados que el tema Tailwind pinta como una badge mas, mezclada con los generos.
+    _ESTADOS_BADGE ={
+    "ongoing","oncoming","on going","completed","completo","completado",
+    "finalizado","concluido","en curso","curso","pausado","en espera",
+    "on hold","canceled","cancelado","hiatus","publicandose","en emision",
+    }
+
+    def _tailwind_details (self ,root :_Node ,page_url :str )->dict :
+        """Lee la ficha de los temas Madara re-skineados con Tailwind.
+
+        No hay clases semanticas donde agarrarse, asi que se usan las anclas estables que
+        si tiene el markup: el unico ``<h1>`` es el titulo, la sinopsis vive en
+        ``#expand_content``, la portada es el primer ``background-image`` con proporcion de
+        poster y las badges de texto corto son estado + generos.
+        """
+        datos :dict ={}
+
+        titulo =_first (root ,lambda node :node .tag =="h1")
+        if titulo and titulo .text ().strip ():
+            datos ["title"]=titulo .text ().strip ()
+
+        sinopsis =_first (root ,lambda node :node .attrs .get ("id")=="expand_content")
+        if sinopsis and sinopsis .text ().strip ():
+            datos ["description"]=sinopsis .text ().strip ()
+
+            # La portada de estos temas es un div con `aspect-[0.75/1]` (proporcion de poster);
+            # el resto de background-image de la pagina son el fondo difuminado y los banners.
+        for node in root .descendants ("div"):
+            if not any ("0.75/1"in clase for clase in node .attrs .get ("class","").split ()):
+                continue 
+            if url :=_style_image_url (node ,page_url ):
+                datos ["cover_url"]=url 
+                break 
+
+                # Las badges de la serie (estado + generos) van entre el <h1> y la sinopsis. Se
+                # recorre en orden de documento y se corta al llegar a `#expand_content`: mas abajo
+                # la pagina repite badges de series relacionadas y del scanlator, que antes se
+                # colaban como generos ("Bloodkami Scan").
+        generos :list [str ]=[]
+        vistos :set [str ]=set ()
+        for node in root .descendants ():
+            if node .attrs .get ("id")=="expand_content":
+                break 
+            texto =node .text ().strip ()
+            # Las badges son etiquetas cortas; el filtro de longitud evita tragarse
+            # parrafos de la pagina que tambien usan <span>.
+            if node .tag !="span"or not node .has_class ("capitalize")or not texto or len (texto )>40 :
+                continue 
+            clave =texto .casefold ()
+            if clave in self ._ESTADOS_BADGE :
+                datos .setdefault ("status",texto )
+            elif clave not in vistos :
+            # Dedupe insensible a mayusculas: el tema repite "Shoujo" y "shoujo".
+                vistos .add (clave )
+                generos .append (texto )
+        if generos :
+            datos ["genres"]=generos 
+
+            # El ld+json es la unica fuente fiable del autor en este tema.
+        ld =_first (
+        root ,
+        lambda node :node .tag =="script"
+        and node .attrs .get ("type")=="application/ld+json",
+        )
+        if ld is not None :
+            autor =re .search (r'"author"\s*:\s*\{[^}]*?"name"\s*:\s*"([^"]+)"',ld .text ())
+            if autor :
+                datos ["author"]=autor .group (1 ).strip ()
+        return datos 
 
     @classmethod 
     def _detail_links (cls ,root :_Node ,containers :tuple [str ,...])->list [str ]:

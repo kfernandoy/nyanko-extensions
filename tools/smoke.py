@@ -229,9 +229,11 @@ async def probe(extension_id: str, timeout: float, engine: str) -> dict:
         popular = await step("popular", source.browse("popular", 1))
         latest = await step("latest", source.browse("latest", 1))
         
-        # safely handle search which may fail
+        # La query de sondeo lleva 2+ caracteres a proposito: varias fuentes validan una
+        # longitud minima y con "a" lanzaban ValueError, lo que marcaba como roto un carril
+        # de busqueda que en realidad funciona (lectorasteria, ravenmanga).
         try:
-            await step("search", source.search("a", 1, None))
+            await step("search", source.search("ma", 1, None))
         except Exception:
             pass
 
