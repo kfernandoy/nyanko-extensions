@@ -2909,6 +2909,66 @@ class ComicFurySource (GeneratedGenericSource ):
             return {"items":[],"has_more":False }
         return await self .search ("",page ,{"sort":"1"if kind =="popular"else "2"})
 
+    async def details (self ,series :SourceSeries |str )->SourceSeries :
+    # ComicFury no es un tema Madara: la ficha no tiene ni `post-title` ni
+    # `summary_image` ni `post-content_item`, asi que el `details` heredado devolvia
+    # todos los campos a None. El perfil si expone clases propias estables.
+        series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
+        response =await self ._request ("GET",urljoin (f"{self .base_url }/",series_id ))
+        response .raise_for_status ()
+        root =_parse_html (response .text )
+
+        # El titulo va en `.authorname`, seguido de un <br> y el subtitulo en <em>: se
+        # toma solo el texto propio del div para no arrastrar el subtitulo.
+        titulo =""
+        nombre =_first (root ,lambda node :node .tag =="div"and node .has_class ("authorname"))
+        if nombre is not None :
+            titulo =" ".join (
+            trozo .strip ()for trozo in nombre .children 
+            if isinstance (trozo ,str )and trozo .strip ()
+            )
+
+            # La sinopsis es el `.pccontent` de la seccion "Webcomic description"; hay varios
+            # `.pccontent` en la pagina (autores, estadisticas), asi que se localiza por su
+            # encabezado en vez de coger el primero.
+        descripcion =""
+        for categoria in root .descendants ("div"):
+            if not categoria .has_class ("profilecategory"):
+                continue 
+            encabezado =_first (categoria ,lambda node :node .has_class ("pchead"))
+            if encabezado is None or "description"not in encabezado .text ().casefold ():
+                continue 
+            contenido =_first (categoria ,lambda node :node .has_class ("pccontent"))
+            if contenido is not None :
+                descripcion =contenido .text ().strip ()
+            break 
+
+        etiquetas =[
+        nodo .text ().strip ()for nodo in root .descendants ("a")
+        if nodo .has_class ("webcomic-profile-tag")and nodo .text ().strip ()
+        ]
+
+        # La portada es el avatar DEL PERFIL (`.profile-avatar`). Ojo con `.box-avatar`:
+        # es el de los webcomics recomendados de la barra lateral, asi que devolvia la
+        # portada de otra serie -o ninguna, en los perfiles que no traen recomendaciones-.
+        portada =None 
+        avatar =_first (root ,lambda node :node .tag =="div"and node .has_class ("profile-avatar"))
+        if avatar is not None :
+            imagen =_first (avatar ,lambda node :node .tag =="img")
+            if imagen is not None :
+                portada =_image_url (imagen ,str (response .url ))
+
+        return SourceSeries (
+        source_id =series_id ,
+        title =titulo or (series .title if isinstance (series ,SourceSeries )else series_id ),
+        source_name =self .name ,
+        cover_url =portada ,
+        description =descripcion or None ,
+        content_tags =tuple (dict .fromkeys (etiquetas )),
+        metadata =series .metadata if isinstance (series ,SourceSeries )else {},
+        web_url =str (response .url ),
+        )
+
     @staticmethod 
     def _slug (series_id :str )->str :
         parsed =urlparse (series_id )

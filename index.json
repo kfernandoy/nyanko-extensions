@@ -1963,7 +1963,7 @@
       "id": "comicfury_es",
       "name": "Comic Fury (es)",
       "version": "0.8.0",
-      "sha256": "7b9efafcc7ac57ea31d6786b6f18ade759c331b607b333aac7a2e336956f6239",
+      "sha256": "2aaa68de41e17ace089a65cac850a926664ca254a3e57f8d125b164f519b4594",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicfury_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/comicfury_es.png",
       "author": "Keiyoushi contributors",
