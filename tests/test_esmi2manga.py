@@ -59,9 +59,13 @@ class EsMi2MangaTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([item.title for item in first["items"]], ["Uno"])
         self.assertTrue(first["has_more"])
         self.assertEqual(fetcher.requests[1][0:2], ("POST", "https://es.mi2manga.com/wp-admin/admin-ajax.php"))
+        # El cuerpo sale como dict: httpx 0.28 solo trata como formulario los Mapping, y
+        # una lista de pares la toma por un stream sincrono (RuntimeError sobre el cliente
+        # async de la app).
         data = fetcher.requests[1][2]["data"]
-        self.assertIn(("page", "1"), data)
-        self.assertIn(("vars[meta_query][0][value]", "manga"), data)
+        self.assertIsInstance(data, dict)
+        self.assertEqual(data["page"], "1")
+        self.assertEqual(data["vars[meta_query][0][value]"], "manga")
         self.assertEqual([item.title for item in second["items"]], ["Dos"])
 
     async def test_search_filters_exact_selector_and_spanish_chapter_date(self):

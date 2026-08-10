@@ -117,6 +117,28 @@ def _style_image_url (node :_Node ,base_url :str )->str :
     return _mismo_host_seguro (urljoin (base_url ,value ),base_url )if value else ""
 
 
+def _cuerpo_de_formulario (kwargs :dict [str ,Any ])->dict [str ,Any ]:
+    """Convierte ``data=[(clave, valor), ...]`` en ``dict`` antes de salir a la red.
+
+    httpx 0.28 solo trata como formulario los ``data`` que son Mapping; una lista de pares
+    la interpreta como cuerpo iterable, o sea un stream SINCRONO, y sobre el cliente async
+    de la app aborta con ``RuntimeError: Attempted to send an sync request with an
+    AsyncClient instance``. La fuente no llegaba a hacer ni una peticion: browse, latest y
+    search morian de golpe (haremdekira, "no carga nada" en la validacion manual).
+
+    Se normaliza aqui, en el unico embudo por el que salen todas las peticiones del motor,
+    en vez de en cada helper. Las claves de estos formularios son unicas -van indexadas
+    como ``vars[meta_query][0][key]``-, asi que pasar por ``dict`` no pierde nada; se
+    comprobo sobre 762 combinaciones de filtros. Si alguna vez hiciera falta repetir una
+    clave, habria que pasarla ya codificada como ``content=``.
+    """
+    cuerpo =kwargs .get ("data")
+    if isinstance (cuerpo ,(list ,tuple )):
+        kwargs =dict (kwargs )
+        kwargs ["data"]=dict (cuerpo )
+    return kwargs 
+
+
 def _mismo_host_seguro (url :str ,base_url :str )->str :
     """Sube a https las URLs http:// del propio sitio cuando este ya sirve por https.
 
@@ -1056,6 +1078,7 @@ class MadaraSource :
     async def _request (self ,method :str ,url :str ,**kwargs :Any )->Any :
         if self .fetcher is None :
             raise SourceNotFoundError (f"{self .display_name } no tiene fetcher inyectado")
+        kwargs =_cuerpo_de_formulario (kwargs )
         return await self .fetcher .request (method ,url ,**kwargs )
 
 

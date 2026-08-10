@@ -6,7 +6,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
-from engines.madara import MadaraSource, _cover_url, _image_url, _parse_html
+from engines.madara import (
+    EsMi2MangaSource,
+    MadaraSource,
+    _cover_url,
+    _cuerpo_de_formulario,
+    _image_url,
+    _parse_html,
+)
 
 
 class Response:
@@ -22,6 +29,60 @@ class Fetcher:
 
 def source_class(**attrs):
     return type("Generated", (MadaraSource,), {"name": "test", "base_url": "https://aedexnox.akan01.com", **attrs})
+
+
+class FormBodyTest(unittest.TestCase):
+    """httpx 0.28 aborta si `data` es una lista de pares sobre un cliente async.
+
+    Se queda en `RuntimeError: Attempted to send an sync request with an AsyncClient
+    instance` y la fuente no llega a hacer NI UNA peticion: browse, latest y search fallan
+    de golpe (haremdekira, "no carga nada" en la validacion manual).
+    """
+
+    def test_converts_a_list_of_pairs_into_a_dict(self):
+        kwargs = _cuerpo_de_formulario({"data": [("action", "load"), ("page", "0")]})
+
+        self.assertEqual(kwargs["data"], {"action": "load", "page": "0"})
+
+    def test_leaves_a_dict_untouched(self):
+        original = {"data": {"action": "load"}}
+
+        self.assertEqual(_cuerpo_de_formulario(original)["data"], {"action": "load"})
+
+    def test_does_not_touch_requests_without_body(self):
+        kwargs = {"params": {"page": "2"}}
+
+        self.assertEqual(_cuerpo_de_formulario(kwargs), {"params": {"page": "2"}})
+
+    def test_does_not_mutate_the_caller_kwargs(self):
+        original = {"data": [("action", "load")]}
+
+        _cuerpo_de_formulario(original)
+
+        self.assertEqual(original["data"], [("action", "load")])
+
+    def test_the_real_madara_bodies_do_not_lose_keys(self):
+        """Las claves van indexadas (`vars[meta_query][0][key]`), nunca se repiten."""
+        cuerpos = [
+            EsMi2MangaSource._esmi_load_more(1, True),
+            EsMi2MangaSource._esmi_load_more(3, False),
+            EsMi2MangaSource._esmi_search_load_more(
+                2,
+                "gato",
+                {
+                    "order": "views",
+                    "adult": "1",
+                    "genres": ["accion", "drama"],
+                    "status": ["end", "on-going"],
+                    "author": "alguien",
+                    "genre_condition": "1",
+                },
+            ),
+        ]
+
+        for cuerpo in cuerpos:
+            with self.subTest(campos=len(cuerpo)):
+                self.assertEqual(len(dict(cuerpo)), len(cuerpo))
 
 
 class CleartextTest(unittest.TestCase):
