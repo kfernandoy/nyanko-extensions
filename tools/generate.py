@@ -48,8 +48,7 @@ def _refrescar_motor_en_manual(source: str, engine: str) -> str:
     pertenece al motor.
 
     Lo que va despues -que es lo unico que justifica el override- se conserva intacto. Si no
-    aparece ninguno de los dos se devuelve el archivo sin tocar; son los 61 de MangaDex, que
-    no derivan de este motor y no tienen nada que refrescar.
+    aparece la clase raiz del motor se devuelve el archivo sin tocar.
     """
     # Los 61 manuales de MangaDex no contienen MadaraSource y quedan fuera.
     try:
@@ -61,22 +60,30 @@ def _refrescar_motor_en_manual(source: str, engine: str) -> str:
         # declaracion propia anterior a la subclase.
         return _refrescar_motor_en_manual_textual(source, engine)
 
-    madara = next(
+    root_class = next(
         (
-            node
-            for node in manual_tree.body
-            if isinstance(node, ast.ClassDef) and node.name == "MadaraSource"
+            node.name
+            for node in engine_tree.body
+            if isinstance(node, ast.ClassDef) and node.name.endswith("Source")
         ),
         None,
     )
-    if madara is None:
+    frozen_engine = next(
+        (
+            node
+            for node in manual_tree.body
+            if isinstance(node, ast.ClassDef) and node.name == root_class
+        ),
+        None,
+    )
+    if frozen_engine is None:
         return source
 
     lineas = source.splitlines(keepends=True)
     nombres_motor = _nombres_top_level(engine_tree)
     propios: list[str] = []
     for node in manual_tree.body:
-        if node.lineno <= madara.end_lineno:
+        if node.lineno <= frozen_engine.end_lineno:
             continue
         if _es_import_madara_vacio(node):
             continue
@@ -3528,7 +3535,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 bundle_bytes = _mangadex_bundle(mangadex_engine, extension)
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path, madara_engine)
+                    bundle_bytes = _manual_bundle(manual_path, mangadex_engine)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")

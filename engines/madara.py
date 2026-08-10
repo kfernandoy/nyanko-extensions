@@ -1619,6 +1619,12 @@ class DragonTranslationOrgSource(MadaraSource):
         self._genres: list[tuple[str, str]] | None = None
         self._genre_attempts = 0
 
+    async def details(self, series: SourceSeries | str) -> SourceSeries:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        response = await self._request("GET", urljoin(f"{self.base_url}/", series_id))
+        response.raise_for_status()
+        return self._dragon_details(response)
+
     async def get_filters(self) -> list[SourceFilter]:
         if self._genres is None and self._genre_attempts < 3:
             self._genre_attempts += 1

@@ -9,8 +9,6 @@ SourceChapter ,
 SourceFetcher ,
 SourcePage ,
 SourcePageContent ,
-SourceFilter ,
-SourcePreference ,
 SourceSeries ,
 )
 from nyanko_api .sources .errors import SourceNotFoundError 
@@ -74,6 +72,21 @@ class MangaDexSource :
             return await self ._series_by_ids (ids )
         return []
 
+    async def details (self ,series :SourceSeries |str )->SourceSeries :
+        series_id =series .source_id if isinstance (series ,SourceSeries )else series 
+        payload =await self ._get_json (
+        f"/manga/{series_id }",
+        [
+        ("includes[]","cover_art"),
+        ("includes[]","author"),
+        ("includes[]","artist"),
+        ],
+        )
+        item =payload .get ("data")
+        if not isinstance (item ,dict ):
+            raise SourceNotFoundError (f"MangaDex no devolvió la serie: {series_id }")
+        return self ._series (item )
+
     async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
         series_id =series .source_id if isinstance (series ,SourceSeries )else series 
         common :list [tuple [str ,str |int ]]=[
@@ -134,6 +147,7 @@ class MangaDexSource :
 
     def _series (self ,item :dict [str ,Any ])->SourceSeries :
         manga_id =item ["id"]
+        attributes =item .get ("attributes",{})
         filename =next (
         (
         relation .get ("attributes",{}).get ("fileName")
@@ -144,13 +158,19 @@ class MangaDexSource :
         )
         return SourceSeries (
         source_id =manga_id ,
-        title =self ._title (item .get ("attributes",{})),
+        title =self ._title (attributes ),
         source_name =self .name ,
         cover_url =(
         f"https://uploads.mangadex.org/covers/{manga_id }/{filename }.256.jpg"
         if filename 
         else None 
         ),
+        description =self ._localized (attributes .get ("description"))or None ,
+        author =self ._relationship_names (item ,"author")or None ,
+        artist =self ._relationship_names (item ,"artist")or None ,
+        status =self ._status (attributes .get ("status")),
+        content_tags =self ._tags (attributes ),
+        metadata =self ._metadata (attributes ),
         web_url =f"https://mangadex.org/title/{manga_id }",
         )
 
@@ -194,6 +214,67 @@ class MangaDexSource :
                     return alternative [language ]
         return next (iter (titles .values ()),"Sin título")
 
+    def _localized (self ,values :Any )->str :
+        if not isinstance (values ,dict ):
+            return ""
+        for language in (*self .languages ,"en"):
+            value =values .get (language )
+            if isinstance (value ,str )and value .strip ():
+                return value .strip ()
+        return next (
+        (value .strip ()for value in values .values ()if isinstance (value ,str )and value .strip ()),
+        "",
+        )
+
+    @staticmethod 
+    def _relationship_names (item :dict [str ,Any ],kind :str )->str :
+        names =dict .fromkeys (
+        str (relation .get ("attributes",{}).get ("name")or "").strip ()
+        for relation in item .get ("relationships",[])
+        if relation .get ("type")==kind 
+        )
+        return ", ".join (name for name in names if name )
+
+    def _tags (self ,attributes :dict [str ,Any ])->tuple [str ,...]:
+        names =dict .fromkeys (
+        self ._localized (tag .get ("attributes",{}).get ("name"))
+        for tag in attributes .get ("tags",[])
+        if isinstance (tag ,dict )
+        )
+        return tuple (name for name in names if name )
+
+    @staticmethod 
+    def _status (value :Any )->str |None :
+        status =str (value or "").strip ().lower ()
+        return status if status in {"ongoing","completed","hiatus","cancelled"}else None 
+
+    def _metadata (self ,attributes :dict [str ,Any ])->dict [str ,str ]:
+        metadata :dict [str ,str ]={}
+        fields =(
+        ("Año",attributes .get ("year")),
+        ("Idioma original",attributes .get ("originalLanguage")),
+        ("Demografía",attributes .get ("publicationDemographic")),
+        ("Clasificación",attributes .get ("contentRating")),
+        ("Último volumen",attributes .get ("lastVolume")),
+        ("Último capítulo",attributes .get ("lastChapter")),
+        )
+        for label ,value in fields :
+            if value not in (None ,""):
+                metadata [label ]=str (value )
+
+        title =self ._title (attributes )
+        alternatives =dict .fromkeys (
+        self ._localized (alternative )
+        for alternative in attributes .get ("altTitles",[])
+        if isinstance (alternative ,dict )
+        )
+        other_titles =[
+        alternative for alternative in alternatives if alternative and alternative !=title 
+        ][:3 ]
+        if other_titles :
+            metadata ["Títulos alternativos"]=", ".join (other_titles )
+        return metadata 
+
     async def _get_json (self ,path :str ,params :list [tuple [str ,str |int ]]|None =None )->dict [str ,Any ]:
         response =await self ._request ("GET",f"{API_URL }{path }",params =params )
         response .raise_for_status ()
@@ -203,6 +284,7 @@ class MangaDexSource :
         if self .fetcher is None :
             raise SourceNotFoundError ("MangaDex no tiene fetcher inyectado")
         return await self .fetcher .request (method ,url ,**kwargs )
+
 
 class GeneratedMangaDexSource (MangaDexSource ):
 
@@ -227,6 +309,7 @@ class GeneratedMangaDexSource (MangaDexSource ):
     display_name ='MangaDex (hr)'
     language ='hr'
     languages =('hr',)
+
 
 SOURCE =GeneratedMangaDexSource
 
