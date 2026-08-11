@@ -28,6 +28,20 @@ SourceSeries ,
 from nyanko_api .sources .errors import SourceNotFoundError 
 
 
+def _es_no_encontrado (error :BaseException )->bool :
+    """`True` si la excepcion representa un 404 de la fuente.
+
+    No se hace `except httpx.HTTPStatusError` porque el error puede llegar de dos
+    formas segun quien envuelva al fetcher: `httpx.HTTPStatusError` crudo, o el
+    `SourceNotFoundError` en que lo traduce la app. Se cubren ambas sin importar
+    httpx aqui, que este motor no lo trae.
+    """
+    if isinstance (error ,SourceNotFoundError ):
+        return True 
+    respuesta =getattr (error ,"response",None )
+    return getattr (respuesta ,"status_code",None )==404 
+
+
 class _Node :
     def __init__ (
     self ,
@@ -435,20 +449,30 @@ class MadaraSource :
             )
         else :
             suffix =""if page ==1 else f"page/{page }/"
-            response =await self ._request (
-            "GET",
-            f"{self .base_url }/{self .manga_substring .strip ('/')}/{suffix }",
-            params ={"m_orderby":"views"if kind =="popular"else "latest"},
-            )
             # En WordPress, pedir `page/N/` mas alla de la ultima devuelve 404: ese ES
             # el marcador de fin de catalogo, no un fallo. Propagarlo hacia arriba
             # reventaba la fuente al hacer scroll (infrafandub tiene 18 series en una
             # sola pagina y crasheaba a los ~2 s con "no se encontro el recurso").
-            # Se devuelve vacio, y el adaptador v4 convierte eso en has_more=False.
+            # Se devuelve vacio, y el adaptador v4 lo convierte en has_more=False.
+            #
+            # Se captura la EXCEPCION en vez de mirar `response.status_code`: el fetcher
+            # real de la app (`RateLimitedClient`) ya llama a `raise_for_status()` dentro
+            # de `request`, asi que el 404 nunca vuelve como respuesta y la comprobacion
+            # por codigo no llegaba a ejecutarse nunca en produccion.
             #
             # Solo aplica a partir de la pagina 2: un 404 en la primera si es un fallo
             # real de la fuente y debe seguir viajando.
-            if page >1 and response .status_code ==404 :
+            try :
+                response =await self ._request (
+                "GET",
+                f"{self .base_url }/{self .manga_substring .strip ('/')}/{suffix }",
+                params ={"m_orderby":"views"if kind =="popular"else "latest"},
+                )
+            except Exception as error :
+                if page >1 and _es_no_encontrado (error ):
+                    return []
+                raise 
+            if page >1 and getattr (response ,"status_code",None )==404 :
                 return []
         response .raise_for_status ()
         root =_parse_html (response .text )
@@ -2632,7 +2656,12 @@ class DoujinsHellSource (MadaraSource ):
         )for index ,url in enumerate (urls )]
 
 
-"""Implementación de Gato Librería (mangolibreria.com).
+"""Implementación de Gato Librería (gatolibreria.com).
+
+El sitio se mudó de ``mangolibreria.com`` a ``gatolibreria.com``. El dominio viejo ya
+ni siquiera presenta un certificado válido, asi que la extension no llegaba a hacer la
+peticion: fallaba en el handshake TLS y la app mostraba "No se pudo conectar con la
+fuente". La API y el payload de SvelteKit son identicos en el dominio nuevo.
 
 El sitio se rehizo con SvelteKit y no deja el catalogo en el HTML: las tarjetas traen
 ``<img>`` sin ``src`` porque la portada se pone al hidratar. Hay dos vias de datos y se usa
@@ -2704,6 +2733,19 @@ class GatoLibreriaSource (MadaraSource ):
                         return resuelto 
         return {}
 
+    @staticmethod 
+    def _genero (valor )->str :
+        """Nombre legible de un genero.
+
+        La API no devuelve cadenas sino objetos completos:
+        ``{"id": 13, "name": "Drama", "slug": "drama", "createdAt": ...}``. Al pasarlos
+        por ``str()`` la ficha mostraba el diccionario entero como etiqueta.
+        Se acepta la cadena suelta por si alguna respuesta viene ya aplanada.
+        """
+        if isinstance (valor ,dict ):
+            return str (valor .get ("name")or valor .get ("slug")or "").strip ()
+        return str (valor or "").strip ()
+
     def _serie (self ,fila :dict )->SourceSeries :
         generos =fila .get ("genres")
         return SourceSeries (
@@ -2716,7 +2758,7 @@ class GatoLibreriaSource (MadaraSource ):
         artist =str (fila .get ("artist")or "").strip ()or None ,
         status =str (fila .get ("status")or "").strip ()or None ,
         content_tags =tuple (
-        str (genero ).strip ()for genero in generos if str (genero ).strip ()
+        nombre for genero in generos if (nombre :=self ._genero (genero ))
         )if isinstance (generos ,list )else (),
         web_url =f"{self .base_url }/comics/{fila .get ('slug','')}",
         )

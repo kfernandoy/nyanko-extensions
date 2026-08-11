@@ -76,6 +76,19 @@ class GatoLibreriaSource(MadaraSource):
                         return resuelto
         return {}
 
+    @staticmethod
+    def _genero(valor) -> str:
+        """Nombre legible de un genero.
+
+        La API no devuelve cadenas sino objetos completos:
+        ``{"id": 13, "name": "Drama", "slug": "drama", "createdAt": ...}``. Al pasarlos
+        por ``str()`` la ficha mostraba el diccionario entero como etiqueta.
+        Se acepta la cadena suelta por si alguna respuesta viene ya aplanada.
+        """
+        if isinstance(valor, dict):
+            return str(valor.get("name") or valor.get("slug") or "").strip()
+        return str(valor or "").strip()
+
     def _serie(self, fila: dict) -> SourceSeries:
         generos = fila.get("genres")
         return SourceSeries(
@@ -88,7 +101,7 @@ class GatoLibreriaSource(MadaraSource):
             artist=str(fila.get("artist") or "").strip() or None,
             status=str(fila.get("status") or "").strip() or None,
             content_tags=tuple(
-                str(genero).strip() for genero in generos if str(genero).strip()
+                nombre for genero in generos if (nombre := self._genero(genero))
             ) if isinstance(generos, list) else (),
             web_url=f"{self.base_url}/comics/{fila.get('slug', '')}",
         )

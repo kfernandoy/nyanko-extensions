@@ -4,6 +4,8 @@ import sys
 import unittest
 from pathlib import Path
 
+import httpx
+
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from engines.madara import (
@@ -299,6 +301,29 @@ class RespuestaConEstado:
             raise AssertionError(f"raise_for_status no deberia dispararse: {self.status_code}")
 
 
+class FetcherQueLanza:
+    """Fetcher que lanza el 404 desde `request`, como hace la app de verdad.
+
+    `RateLimitedClient.request` llama a `raise_for_status()` ANTES de devolver, asi
+    que el bundle nunca ve una respuesta 404: ve una excepcion. El doble `Fetcher`
+    de este archivo no lo hace, y por eso una guarda escrita como
+    `if response.status_code == 404` pasaba los tests y seguia reventando en
+    produccion. Este doble existe para que esa diferencia no se vuelva a colar.
+    """
+
+    def __init__(self, status_code=404):
+        self.status_code = status_code
+        self.requests = []
+
+    async def request(self, method, url, **kwargs):
+        self.requests.append((method, url, kwargs))
+        raise httpx.HTTPStatusError(
+            f"Client error '{self.status_code}' for url '{url}'",
+            request=httpx.Request(method, url),
+            response=httpx.Response(self.status_code, request=httpx.Request(method, url)),
+        )
+
+
 class PaginacionAgotadaTest(unittest.IsolatedAsyncioTestCase):
     """Pedir `page/N/` mas alla de la ultima pagina devuelve 404 en WordPress.
 
@@ -315,7 +340,26 @@ class PaginacionAgotadaTest(unittest.IsolatedAsyncioTestCase):
     </div>
     """
 
-    async def test_el_404_de_una_pagina_posterior_agota_el_catalogo(self):
+    async def test_el_404_lanzado_por_el_fetcher_agota_el_catalogo(self):
+        """El caso REAL: el fetcher de la app lanza en vez de devolver la respuesta."""
+        source = source_class()(FetcherQueLanza())
+
+        self.assertEqual(await source.browse("popular", 2), [])
+
+    async def test_el_404_lanzado_en_la_primera_pagina_sigue_viajando(self):
+        source = source_class()(FetcherQueLanza())
+
+        with self.assertRaises(httpx.HTTPStatusError):
+            await source.browse("popular", 1)
+
+    async def test_un_500_lanzado_sigue_viajando_aunque_sea_pagina_posterior(self):
+        """Solo el 404 significa "no hay mas"; el resto son fallos de verdad."""
+        source = source_class()(FetcherQueLanza(status_code=500))
+
+        with self.assertRaises(httpx.HTTPStatusError):
+            await source.browse("popular", 2)
+
+    async def test_el_404_devuelto_como_respuesta_tambien_agota(self):
         fetcher = Fetcher([
             RespuestaConEstado("https://aedexnox.akan01.com/manga/page/2/", "", 404),
         ])

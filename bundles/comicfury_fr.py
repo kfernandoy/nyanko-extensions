@@ -28,6 +28,20 @@ SourceSeries ,
 from nyanko_api .sources .errors import SourceNotFoundError 
 
 
+def _es_no_encontrado (error :BaseException )->bool :
+    """`True` si la excepcion representa un 404 de la fuente.
+
+    No se hace `except httpx.HTTPStatusError` porque el error puede llegar de dos
+    formas segun quien envuelva al fetcher: `httpx.HTTPStatusError` crudo, o el
+    `SourceNotFoundError` en que lo traduce la app. Se cubren ambas sin importar
+    httpx aqui, que este motor no lo trae.
+    """
+    if isinstance (error ,SourceNotFoundError ):
+        return True 
+    respuesta =getattr (error ,"response",None )
+    return getattr (respuesta ,"status_code",None )==404 
+
+
 class _Node :
     def __init__ (
     self ,
@@ -435,20 +449,30 @@ class MadaraSource :
             )
         else :
             suffix =""if page ==1 else f"page/{page }/"
-            response =await self ._request (
-            "GET",
-            f"{self .base_url }/{self .manga_substring .strip ('/')}/{suffix }",
-            params ={"m_orderby":"views"if kind =="popular"else "latest"},
-            )
             # En WordPress, pedir `page/N/` mas alla de la ultima devuelve 404: ese ES
             # el marcador de fin de catalogo, no un fallo. Propagarlo hacia arriba
             # reventaba la fuente al hacer scroll (infrafandub tiene 18 series en una
             # sola pagina y crasheaba a los ~2 s con "no se encontro el recurso").
-            # Se devuelve vacio, y el adaptador v4 convierte eso en has_more=False.
+            # Se devuelve vacio, y el adaptador v4 lo convierte en has_more=False.
+            #
+            # Se captura la EXCEPCION en vez de mirar `response.status_code`: el fetcher
+            # real de la app (`RateLimitedClient`) ya llama a `raise_for_status()` dentro
+            # de `request`, asi que el 404 nunca vuelve como respuesta y la comprobacion
+            # por codigo no llegaba a ejecutarse nunca en produccion.
             #
             # Solo aplica a partir de la pagina 2: un 404 en la primera si es un fallo
             # real de la fuente y debe seguir viajando.
-            if page >1 and response .status_code ==404 :
+            try :
+                response =await self ._request (
+                "GET",
+                f"{self .base_url }/{self .manga_substring .strip ('/')}/{suffix }",
+                params ={"m_orderby":"views"if kind =="popular"else "latest"},
+                )
+            except Exception as error :
+                if page >1 and _es_no_encontrado (error ):
+                    return []
+                raise 
+            if page >1 and getattr (response ,"status_code",None )==404 :
                 return []
         response .raise_for_status ()
         root =_parse_html (response .text )
