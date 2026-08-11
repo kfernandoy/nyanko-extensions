@@ -19321,7 +19321,7 @@
       "id": "traduccionesmoonlight_es",
       "name": "Traducciones Moonlight",
       "version": "0.46.0",
-      "sha256": "d17075717eaa39da3f104e5733428ecb051f2398c66643fad33f71f142677309",
+      "sha256": "fb4f4d6bb34c094238f1d038a4e604bd132a8e98493c0b19ad0e7d097409c2a6",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/traduccionesmoonlight_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/traduccionesmoonlight_es.png",
       "author": "Keiyoushi contributors",
