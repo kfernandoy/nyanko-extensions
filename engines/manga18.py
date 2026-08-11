@@ -5,8 +5,8 @@ import re
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -17,7 +17,7 @@ except ImportError:
     pass
 
 
-class Manga18Source(MadaraSource):
+class Manga18Source(FuenteBaseSource):
     async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:
         response = await self._request(
             "GET",

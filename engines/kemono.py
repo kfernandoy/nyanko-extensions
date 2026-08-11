@@ -3,7 +3,7 @@
 from datetime import datetime
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
@@ -17,7 +17,7 @@ def _updated(value) -> float:
         return 0
 
 
-class KemonoSource(MadaraSource):
+class KemonoSource(FuenteBaseSource):
     requests_per_minute = 60
 
     async def _creators(self) -> list[dict]:

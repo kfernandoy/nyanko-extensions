@@ -3,12 +3,12 @@
 from urllib.parse import urljoin
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 
-class GreenShitSource(MadaraSource):
+class GreenShitSource(FuenteBaseSource):
     api_url = ""
     cdn_url = ""
     scan_id = "1"

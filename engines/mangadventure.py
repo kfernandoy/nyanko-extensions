@@ -1,12 +1,12 @@
 """Implementación común de MangAdventure v2."""
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 
-class MangAdventureSource(MadaraSource):
+class MangAdventureSource(FuenteBaseSource):
     @property
     def api_url(self) -> str:
         return f"{self.base_url}/api/v2"

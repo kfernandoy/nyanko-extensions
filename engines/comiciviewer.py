@@ -8,8 +8,8 @@ from urllib.parse import urljoin, urlparse, urlunparse
 from PIL import Image
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourcePageContent,
@@ -21,7 +21,7 @@ except ImportError:
     pass
 
 
-class ComiciViewerSource(MadaraSource):
+class ComiciViewerSource(FuenteBaseSource):
     api_url = ""
     latest_path = ""
     supports_latest = True

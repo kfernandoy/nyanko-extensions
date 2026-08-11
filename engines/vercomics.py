@@ -3,8 +3,8 @@
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -16,7 +16,7 @@ except ImportError:
     pass
 
 
-class VerComicsSource(MadaraSource):
+class VerComicsSource(FuenteBaseSource):
     url_suffix = ""
     use_suffix_on_search = True
     supports_latest = False

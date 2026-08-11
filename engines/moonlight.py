@@ -16,14 +16,14 @@ deserializarlo aparte o se interpreta como una cadena suelta.
 import json
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 _POR_PAGINA = 24
 
 
-class MoonlightSource(MadaraSource):
+class MoonlightSource(FuenteBaseSource):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._catalogo: list[dict] | None = None

@@ -4,8 +4,8 @@ import re
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -16,7 +16,7 @@ except ImportError:
     pass
 
 
-class MultiChanSource(MadaraSource):
+class MultiChanSource(FuenteBaseSource):
     profile = "regular"
     requests_per_minute = 120
 

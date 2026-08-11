@@ -15,14 +15,14 @@ Dos detalles del contrato que no son evidentes:
 from urllib.parse import urlparse
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 _API = "https://api.hdoujin.org"
 
 
-class HDoujinSource(MadaraSource):
+class HDoujinSource(FuenteBaseSource):
     # Mascara del idioma que sirve esta variante; 0 = sin filtro (todos).
     language_mask = 0
 

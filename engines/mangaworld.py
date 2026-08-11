@@ -4,8 +4,8 @@ import re
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -17,7 +17,7 @@ except ImportError:
     pass
 
 
-class MangaWorldSource(MadaraSource):
+class MangaWorldSource(FuenteBaseSource):
     async def _get(self, url: str, **kwargs):
         response = await self._request("GET", url, **kwargs)
         cookie = re.search(r'document\.cookie="(MWCookie[^"]+)', response.text)

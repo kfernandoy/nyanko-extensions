@@ -3,8 +3,8 @@
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -16,7 +16,7 @@ except ImportError:
     pass
 
 
-class MangaCatalogSource(MadaraSource):
+class MangaCatalogSource(FuenteBaseSource):
     source_list: tuple[tuple[str, str], ...] = ()
     supports_latest = False
 

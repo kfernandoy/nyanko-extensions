@@ -4,8 +4,8 @@ import re
 from urllib.parse import urljoin, urlsplit, urlunsplit
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourcePageContent,
@@ -18,7 +18,7 @@ except ImportError:
     pass
 
 
-class MadThemeSource(MadaraSource):
+class MadThemeSource(FuenteBaseSource):
     use_legacy_api = False
     use_slug_search = False
     requests_per_minute = 5

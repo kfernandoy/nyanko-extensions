@@ -4,12 +4,12 @@ import re
 from urllib.parse import urljoin
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries, _first, _image_url, _parse_html
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries, _first, _image_url, _parse_html
 except ImportError:
     pass
 
 
-class WPComicsSource(MadaraSource):
+class WPComicsSource(FuenteBaseSource):
     popular_path = "hot"
     latest_path = ""
     search_path = "tim-truyen"

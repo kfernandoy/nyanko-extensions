@@ -34,7 +34,7 @@ def source_class():
     config = _supported_iken(module, build)
     assert config is not None
     bundle = _iken_bundle(
-        (root / "engines" / "madara.py").read_text(encoding="utf-8"),
+        (root / "engines" / "base.py").read_text(encoding="utf-8"),
         (root / "engines" / "iken.py").read_text(encoding="utf-8"),
         config,
     )

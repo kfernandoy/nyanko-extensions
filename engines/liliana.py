@@ -5,8 +5,8 @@ import re
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -19,7 +19,7 @@ except ImportError:
     pass
 
 
-class LilianaSource(MadaraSource):
+class LilianaSource(FuenteBaseSource):
     profile = "default"
 
     async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:

@@ -4,12 +4,12 @@ import json
 import re
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 
-class MangaHubSource(MadaraSource):
+class MangaHubSource(FuenteBaseSource):
     manga_source = ""
     api_url = "https://api.mghcdn.com/graphql"
     image_url = "https://imgx.mghcdn.com"

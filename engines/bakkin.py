@@ -3,12 +3,12 @@
 from urllib.parse import urljoin
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 
-class BakkinSource(MadaraSource):
+class BakkinSource(FuenteBaseSource):
     supports_latest = False
 
     def __init__(self, fetcher=None) -> None:

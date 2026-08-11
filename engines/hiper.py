@@ -3,12 +3,12 @@
 from urllib.parse import urlparse
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 
-class HiperSource(MadaraSource):
+class HiperSource(FuenteBaseSource):
     requests_per_minute = 180
     extra_headers: dict[str, str] = {}
 

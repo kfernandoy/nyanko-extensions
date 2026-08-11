@@ -32,6 +32,12 @@ def _extract_kotlin_metadata(module: Path) -> str:
     return "nsfw" if any("adult" in content.lower() for content in contents) else "unknown"
 
 
+# Motores que siguen necesitando `madara.py` entero porque usan metodos del motor
+# Madara (no solo la infraestructura de `base.py`): `generic` usa `details`,
+# `_series` y `_chapter_nodes`; los otros tres, `details` o `chapters`.
+_MOTORES_SOBRE_MADARA = frozenset({"custom", "madara", "goda", "natsuid", "uzaymanga"})
+
+
 def _refrescar_motor_de_tema(source: str, tema: str) -> str:
     """Sustituye la copia congelada del motor de TEMA que lleva el manual.
 
@@ -46,11 +52,17 @@ def _refrescar_motor_de_tema(source: str, tema: str) -> str:
     reinyecta el motor actual. Si no se reconoce la forma esperada se devuelve el archivo
     intacto, para no romper manuales con estructura distinta.
     """
-    raiz = re.search(r"^class (\w+)\(MadaraSource\):", tema, re.M)
+    # La clase base del motor de tema puede ser `MadaraSource` (motores aun sin migrar)
+    # o `FuenteBaseSource` (ya migrados). En el MANUAL, en cambio, la copia congelada
+    # dice siempre `MadaraSource`, porque se escribio antes del refactor: por eso se
+    # busca por el NOMBRE de la clase raiz y se aceptan las dos bases.
+    raiz = re.search(r"^class (\w+)\((?:MadaraSource|FuenteBaseSource)\):", tema, re.M)
     if raiz is None:
         return source
     nombre_raiz = raiz.group(1)
-    inicio = re.search(rf"^class {nombre_raiz}\(MadaraSource\):", source, re.M)
+    inicio = re.search(
+        rf"^class {nombre_raiz}\((?:MadaraSource|FuenteBaseSource)\):", source, re.M
+    )
     fin = re.search(rf"^class \w+\({nombre_raiz}\):", source, re.M)
     if inicio is None or fin is None or fin.start() <= inicio.start():
         return source
@@ -221,6 +233,12 @@ def _manual_bundle(path: Path, engine: str = "", tema: str = "") -> bytes:
         source = _refrescar_motor_de_tema(source, tema)
     if engine:
         source = _refrescar_motor_en_manual(source, engine)
+    # Los 854 manuales que heredan de `MadaraSource` guardan esa copia congelada del
+    # dia que se escribieron. Si el motor que se acaba de inyectar es `base.py`, esa
+    # clase ya no existe en el bundle y el modulo peta con NameError al importarse.
+    # Se reengancha la herencia a la clase que SI esta presente.
+    if engine and "class FuenteBaseSource" in engine:
+        source = re.sub(r"\bMadaraSource\b", "FuenteBaseSource", source)
     lines = source.splitlines(keepends=True)
     for index in range(len(lines) - 1):
         if lines[index].strip() == "try:" and lines[index + 1].lstrip().startswith("from .madara import"):
@@ -3696,10 +3714,12 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                     extension["id"] = extension_id
                 extension["content_warning"] = _extract_kotlin_metadata(build_path.parent)
                 bundle_bytes = (
-                    _heavenmanga_bundle(madara_engine, heavenmanga_engine, extension)
+                    _heavenmanga_bundle(base_engine, heavenmanga_engine, extension)
                     if is_heavenmanga
-                    else _hentaihall_bundle(madara_engine, hentaihall_engine, extension)
+                    else _hentaihall_bundle(base_engine, hentaihall_engine, extension)
                     if is_hentaihall
+                    # `generic` sigue sobre madara.py: usa `details`, `_series` y
+                    # `_chapter_nodes` del motor Madara, no solo la infraestructura.
                     else _generic_bundle(madara_engine, generic_engine, extension)
                 )
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
@@ -3770,13 +3790,13 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                     continue
                 extension_id = str(extension["id"])
                 bundle_bytes = _mangathemesia_bundle(
-                    madara_engine,
+                    base_engine,
                     mangathemesia_engine,
                     extension,
                 )
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path, madara_engine)
+                    bundle_bytes = _manual_bundle(manual_path, base_engine)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -3803,11 +3823,11 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             for extension in extensions:
                 extension_id = str(extension["id"])
                 extension["content_warning"] = _extract_kotlin_metadata(build_path.parent)
-                bundle_bytes = _galleryadults_bundle(madara_engine, galleryadults_engine, extension)
+                bundle_bytes = _galleryadults_bundle(base_engine, galleryadults_engine, extension)
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
                     bundle_bytes = _manual_bundle(
-                        manual_path, madara_engine, galleryadults_engine,
+                        manual_path, base_engine, galleryadults_engine,
                     )
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
@@ -3835,10 +3855,10 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             for extension in extensions:
                 extension_id = str(extension["id"])
                 extension["content_warning"] = _extract_kotlin_metadata(build_path.parent)
-                bundle_bytes = _hentaihand_bundle(madara_engine, hentaihand_engine, extension)
+                bundle_bytes = _hentaihand_bundle(base_engine, hentaihand_engine, extension)
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path, madara_engine)
+                    bundle_bytes = _manual_bundle(manual_path, base_engine)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -3865,13 +3885,13 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             for extension in extensions:
                 extension_id = str(extension["id"])
                 bundle_bytes = _vercomics_bundle(
-                    madara_engine,
+                    base_engine,
                     vercomics_engine,
                     extension,
                 )
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path, madara_engine)
+                    bundle_bytes = _manual_bundle(manual_path, base_engine)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -4003,61 +4023,61 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             bundle_bytes = _madara_bundle(madara_engine, extension)
         elif engine_name == "mangathemesia":
             bundle_bytes = _mangathemesia_bundle(
-                madara_engine,
+                base_engine,
                 mangathemesia_engine,
                 extension,
             )
         elif engine_name == "pizzareader":
             bundle_bytes = _pizzareader_bundle(
-                madara_engine,
+                base_engine,
                 pizzareader_engine,
                 extension,
             )
         elif engine_name == "mangacatalog":
             bundle_bytes = _mangacatalog_bundle(
-                madara_engine,
+                base_engine,
                 mangacatalog_engine,
                 extension,
             )
         elif engine_name == "masonry":
             bundle_bytes = _masonry_bundle(
-                madara_engine,
+                base_engine,
                 masonry_engine,
                 extension,
             )
         elif engine_name == "iken":
             bundle_bytes = _iken_bundle(
-                madara_engine,
+                base_engine,
                 iken_engine,
                 extension,
             )
         elif engine_name == "keyoapp":
             bundle_bytes = _keyoapp_bundle(
-                madara_engine,
+                base_engine,
                 keyoapp_engine,
                 extension,
             )
         elif engine_name == "foolslide":
             bundle_bytes = _foolslide_bundle(
-                madara_engine,
+                base_engine,
                 foolslide_engine,
                 extension,
             )
         elif engine_name == "comiciviewer":
             bundle_bytes = _comiciviewer_bundle(
-                madara_engine,
+                base_engine,
                 comiciviewer_engine,
                 extension,
             )
         elif engine_name == "wpcomics":
             bundle_bytes = _wpcomics_bundle(
-                madara_engine,
+                base_engine,
                 wpcomics_engine,
                 extension,
             )
         elif engine_name == "gigaviewer":
             bundle_bytes = _gigaviewer_bundle(
-                madara_engine,
+                base_engine,
                 gigaviewer_engine,
                 extension,
             )
@@ -4072,31 +4092,31 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             )
         elif engine_name == "guya":
             bundle_bytes = _guya_bundle(
-                madara_engine,
+                base_engine,
                 guya_engine,
                 extension,
             )
         elif engine_name == "grouple":
             bundle_bytes = _grouple_bundle(
-                madara_engine,
+                base_engine,
                 grouple_engine,
                 extension,
             )
         elif engine_name == "manga18":
             bundle_bytes = _manga18_bundle(
-                madara_engine,
+                base_engine,
                 manga18_engine,
                 extension,
             )
         elif engine_name == "manhwaz":
             bundle_bytes = _manhwaz_bundle(
-                madara_engine,
+                base_engine,
                 manhwaz_engine,
                 extension,
             )
         elif engine_name == "madtheme":
             bundle_bytes = _madtheme_bundle(
-                madara_engine,
+                base_engine,
                 madtheme_engine,
                 extension,
             )
@@ -4108,13 +4128,13 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             )
         elif engine_name == "liliana":
             bundle_bytes = _liliana_bundle(
-                madara_engine,
+                base_engine,
                 liliana_engine,
                 extension,
             )
         elif engine_name == "mangareader":
             bundle_bytes = _mangareader_bundle(
-                madara_engine,
+                base_engine,
                 mangareader_engine,
                 extension,
             )
@@ -4126,37 +4146,37 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             )
         elif engine_name == "colorlibanime":
             bundle_bytes = _colorlibanime_bundle(
-                madara_engine,
+                base_engine,
                 colorlibanime_engine,
                 extension,
             )
         elif engine_name == "bakkin":
             bundle_bytes = _bakkin_bundle(
-                madara_engine,
+                base_engine,
                 bakkin_engine,
                 extension,
             )
         elif engine_name == "mangaworld":
             bundle_bytes = _mangaworld_bundle(
-                madara_engine,
+                base_engine,
                 mangaworld_engine,
                 extension,
             )
         elif engine_name == "oceanwp":
             bundle_bytes = _oceanwp_bundle(
-                madara_engine,
+                base_engine,
                 oceanwp_engine,
                 extension,
             )
         elif engine_name == "monochrome":
             bundle_bytes = _monochrome_bundle(
-                madara_engine,
+                base_engine,
                 monochrome_engine,
                 extension,
             )
         elif engine_name == "multichan":
             bundle_bytes = _multichan_bundle(
-                madara_engine,
+                base_engine,
                 multichan_engine,
                 extension,
             )
@@ -4168,139 +4188,139 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             )
         elif engine_name == "gattsu":
             bundle_bytes = _gattsu_bundle(
-                madara_engine,
+                base_engine,
                 gattsu_engine,
                 extension,
             )
         elif engine_name == "moonlighttl":
             bundle_bytes = _moonlighttl_bundle(
-                madara_engine,
+                base_engine,
                 moonlighttl_engine,
                 extension,
             )
         elif engine_name == "scanreader":
             bundle_bytes = _scanreader_bundle(
-                madara_engine,
+                base_engine,
                 scanreader_engine,
                 extension,
             )
         elif engine_name == "heancms":
             bundle_bytes = _heancms_bundle(
-                madara_engine,
+                base_engine,
                 heancms_engine,
                 extension,
             )
         elif engine_name == "fuzzydoodle":
             bundle_bytes = _fuzzydoodle_bundle(
-                madara_engine,
+                base_engine,
                 fuzzydoodle_engine,
                 extension,
             )
         elif engine_name == "spicytheme":
             bundle_bytes = _spicytheme_bundle(
-                madara_engine,
+                base_engine,
                 spicytheme_engine,
                 extension,
             )
         elif engine_name == "mangadventure":
             bundle_bytes = _mangadventure_bundle(
-                madara_engine,
+                base_engine,
                 mangadventure_engine,
                 extension,
             )
         elif engine_name == "mangawork":
             bundle_bytes = _mangawork_bundle(
-                madara_engine,
+                base_engine,
                 mangawork_engine,
                 extension,
             )
         elif engine_name == "ezmanhwa":
             bundle_bytes = _ezmanhwa_bundle(
-                madara_engine,
+                base_engine,
                 ezmanhwa_engine,
                 extension,
             )
         elif engine_name == "fansubscat":
             bundle_bytes = _fansubscat_bundle(
-                madara_engine,
+                base_engine,
                 fansubscat_engine,
                 extension,
             )
         elif engine_name == "kemono":
             bundle_bytes = _kemono_bundle(
-                madara_engine,
+                base_engine,
                 kemono_engine,
                 extension,
             )
         elif engine_name == "mangataro":
             bundle_bytes = _mangataro_bundle(
-                madara_engine,
+                base_engine,
                 mangataro_engine,
                 extension,
             )
         elif engine_name == "mangabox":
             bundle_bytes = _mangabox_bundle(
-                madara_engine,
+                base_engine,
                 mangabox_engine,
                 extension,
             )
         elif engine_name == "fmreader":
             bundle_bytes = _fmreader_bundle(
-                madara_engine,
+                base_engine,
                 fmreader_engine,
                 extension,
             )
         elif engine_name == "stalkercms":
             bundle_bytes = _stalkercms_bundle(
-                madara_engine,
+                base_engine,
                 stalkercms_engine,
                 extension,
             )
         elif engine_name == "senkuro":
             bundle_bytes = _senkuro_bundle(
-                madara_engine,
+                base_engine,
                 senkuro_engine,
                 extension,
             )
         elif engine_name == "hiper":
             bundle_bytes = _hiper_bundle(
-                madara_engine,
+                base_engine,
                 hiper_engine,
                 extension,
             )
         elif engine_name == "greenshit":
             bundle_bytes = _greenshit_bundle(
-                madara_engine,
+                base_engine,
                 greenshit_engine,
                 extension,
             )
         elif engine_name == "libgroup":
             bundle_bytes = _libgroup_bundle(
-                madara_engine,
+                base_engine,
                 libgroup_engine,
                 extension,
             )
         elif engine_name == "mccms":
             bundle_bytes = _mccms_bundle(
-                madara_engine,
+                base_engine,
                 mccms_engine,
                 extension,
             )
         elif engine_name == "zmanga":
             bundle_bytes = _zmanga_bundle(
-                madara_engine,
+                base_engine,
                 zmanga_engine,
                 extension,
             )
         elif engine_name == "eromuse":
             bundle_bytes = _eromuse_bundle(
-                madara_engine,
+                base_engine,
                 eromuse_engine,
                 extension,
             )
         else:
             bundle_bytes = _mangahub_bundle(
-                madara_engine,
+                base_engine,
                 mangahub_engine,
                 extension,
             )
@@ -4309,7 +4329,13 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
         # Kotlin sino el port al sitio actual (Astro), asi que ahora debe ganarle al
         # bundle generado. Los otros tres siguen fuera porque su manual esta obsoleto.
         if manual_path.exists() and build_path.parent.name not in {"mangacrab", "mangaesp", "mangatv"}:
-            bundle_bytes = _manual_bundle(manual_path, madara_engine)
+            # El motor que se refresca en el manual tiene que ser el MISMO del que
+            # hereda su motor de tema. Pasar madara.py a un manual cuyo tema ya vive
+            # sobre base.py dejaria dentro las dos jerarquias.
+            bundle_bytes = _manual_bundle(
+                manual_path,
+                madara_engine if engine_name in _MOTORES_SOBRE_MADARA else base_engine,
+            )
         bundle_bytes = finalize(bundle_bytes)
         (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
 

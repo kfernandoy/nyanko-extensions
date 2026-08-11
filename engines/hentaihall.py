@@ -4,8 +4,8 @@ from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourceFilter,
         SourcePage,
@@ -15,7 +15,7 @@ except ImportError:
     pass
 
 
-class HentaiHallSource(MadaraSource):
+class HentaiHallSource(FuenteBaseSource):
     api_url = "https://hentaihallbackend-production.up.railway.app"
     genres: tuple[str, ...] = ()
 

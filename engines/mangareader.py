@@ -5,8 +5,8 @@ import re
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -18,7 +18,7 @@ except ImportError:
     pass
 
 
-class MangaReaderSource(MadaraSource):
+class MangaReaderSource(FuenteBaseSource):
     search_at_root = False
     search_keyword = "keyword"
     page_parameter = "page"

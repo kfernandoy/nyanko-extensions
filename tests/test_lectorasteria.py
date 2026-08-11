@@ -35,7 +35,7 @@ def source_class():
     config = _supported_moonlighttl(module, build)
     assert config is not None
     bundle = _moonlighttl_bundle(
-        (root / "engines" / "madara.py").read_text(encoding="utf-8"),
+        (root / "engines" / "base.py").read_text(encoding="utf-8"),
         (root / "engines" / "moonlighttl.py").read_text(encoding="utf-8"),
         config,
     )

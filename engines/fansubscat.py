@@ -1,12 +1,12 @@
 """Implementación común de Fansubs.cat."""
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 
-class FansubsCatSource(MadaraSource):
+class FansubsCatSource(FuenteBaseSource):
     @property
     def api_url(self) -> str:
         return self.base_url.replace("https://manga.", "https://api.", 1)

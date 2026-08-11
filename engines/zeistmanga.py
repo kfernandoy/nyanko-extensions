@@ -6,7 +6,7 @@ from urllib.parse import quote, unquote, urljoin
 
 try:
     from .base import (
-        FuenteBase,
+        FuenteBaseSource,
         SourceChapter,
         SourceFilter,
         SourcePage,
@@ -19,7 +19,7 @@ except ImportError:
     pass
 
 
-class ZeistMangaSource(FuenteBase):
+class ZeistMangaSource(FuenteBaseSource):
     manga_category = "Series"
     chapter_category = "Chapter"
     use_new_chapter_feed = False

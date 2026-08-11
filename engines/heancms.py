@@ -1,12 +1,12 @@
 """Implementación común de HeanCms para capítulos públicos."""
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 
-class HeanCmsSource(MadaraSource):
+class HeanCmsSource(FuenteBaseSource):
     new_query = False
     latest_order = "desc"
     requests_per_minute = 60

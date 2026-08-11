@@ -1,12 +1,12 @@
 """Implementación común de Monochrome CMS para Nyanko Source v4."""
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 
-class MonochromeSource(MadaraSource):
+class MonochromeSource(FuenteBaseSource):
     api_url = ""
     supports_latest = False
 

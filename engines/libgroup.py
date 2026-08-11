@@ -3,12 +3,12 @@
 from urllib.parse import urljoin
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 
-class LibGroupSource(MadaraSource):
+class LibGroupSource(FuenteBaseSource):
     api_url = "https://api.cdnlibs.org"
     site_id = 1
     requests_per_minute = 60

@@ -5,8 +5,8 @@ import unicodedata
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -24,7 +24,7 @@ def _search_slug(query: str) -> str:
     return re.sub(r"_+", "_", re.sub(r"[^a-z0-9]", "_", value)).strip("_")
 
 
-class MangaBoxSource(MadaraSource):
+class MangaBoxSource(FuenteBaseSource):
     chapter_profile = "regular"
 
     async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:

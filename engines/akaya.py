@@ -18,7 +18,7 @@ import re
 from html import unescape
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
@@ -39,7 +39,7 @@ _DESC = re.compile(r'<meta name="description" content="([^"]*)"')
 _ETIQUETA = re.compile(r"<[^>]+>")
 
 
-class AkayaSource(MadaraSource):
+class AkayaSource(FuenteBaseSource):
     async def _html(self, path: str) -> str:
         response = await self._request("GET", f"{self.base_url}{path}")
         response.raise_for_status()

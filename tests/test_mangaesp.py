@@ -30,7 +30,7 @@ def source_class():
     config = _supported_mangathemesia(module, build)
     assert config is not None
     bundle = _mangathemesia_bundle(
-        (root / "engines" / "madara.py").read_text(encoding="utf-8"),
+        (root / "engines" / "base.py").read_text(encoding="utf-8"),
         (root / "engines" / "mangathemesia.py").read_text(encoding="utf-8"),
         config,
     )

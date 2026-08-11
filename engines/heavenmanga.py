@@ -5,8 +5,8 @@ import re
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourceFilter,
         SourcePage,
@@ -20,7 +20,7 @@ except ImportError:
     pass
 
 
-class HeavenMangaSource(MadaraSource):
+class HeavenMangaSource(FuenteBaseSource):
     genre_options: tuple[tuple[str, str], ...] = ()
     alphabet_options: tuple[tuple[str, str], ...] = ()
     list_options: tuple[tuple[str, str], ...] = ()

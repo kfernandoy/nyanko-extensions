@@ -5,12 +5,12 @@ import re
 from urllib.parse import urljoin, urlparse
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries, _first, _image_url, _parse_html
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries, _first, _image_url, _parse_html
 except ImportError:
     pass
 
 
-class GalleryAdultsSource(MadaraSource):
+class GalleryAdultsSource(FuenteBaseSource):
     manga_language = ""
     profile = ""
 

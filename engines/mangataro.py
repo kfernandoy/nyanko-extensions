@@ -6,12 +6,12 @@ from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 
-class MangaTaroSource(MadaraSource):
+class MangaTaroSource(FuenteBaseSource):
     def _series(self, rows: list[dict]) -> list[SourceSeries]:
         result: list[SourceSeries] = []
         for row in rows:

@@ -1,12 +1,12 @@
 """Implementación común de EZManhwa para capítulos públicos."""
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 
-class EZManhwaSource(MadaraSource):
+class EZManhwaSource(FuenteBaseSource):
     api_url = ""
     requests_per_minute = 120
 

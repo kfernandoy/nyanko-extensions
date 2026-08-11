@@ -4,12 +4,12 @@ from html import unescape
 from urllib.parse import urljoin
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries, _parse_html
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries, _parse_html
 except ImportError:
     pass
 
 
-class MCCMSSource(MadaraSource):
+class MCCMSSource(FuenteBaseSource):
     requests_per_minute = 120
 
     async def _json(self, endpoint: str, params: dict) -> list[dict]:

@@ -30,7 +30,7 @@ def source_class():
     config = _supported_foolslide(module, build)
     assert config is not None
     bundle = _foolslide_bundle(
-        (root / "engines" / "madara.py").read_text(encoding="utf-8"),
+        (root / "engines" / "base.py").read_text(encoding="utf-8"),
         (root / "engines" / "foolslide.py").read_text(encoding="utf-8"),
         config,
     )

@@ -5,8 +5,8 @@ import re
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -18,7 +18,7 @@ except ImportError:
     pass
 
 
-class KeyoappSource(MadaraSource):
+class KeyoappSource(FuenteBaseSource):
     search_profile = "default"
     popular_profile = "default"
     pages_profile = "default"

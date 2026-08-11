@@ -18,8 +18,8 @@ import re
 from html import unescape
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourcePageContent,
@@ -42,7 +42,7 @@ _ETIQUETA = re.compile(r"<[^>]+>")
 _NUMERO = re.compile(r"(\d+(?:\.\d+)?)")
 
 
-class FalcoScanSource(MadaraSource):
+class FalcoScanSource(FuenteBaseSource):
     async def _html(self, path: str) -> str:
         response = await self._request("GET", f"{self.base_url}{path}")
         response.raise_for_status()

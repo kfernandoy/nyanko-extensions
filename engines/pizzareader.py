@@ -3,8 +3,8 @@
 from urllib.parse import quote, urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -13,7 +13,7 @@ except ImportError:
     pass
 
 
-class PizzaReaderSource(MadaraSource):
+class PizzaReaderSource(FuenteBaseSource):
     api_path = "/api"
 
     @property

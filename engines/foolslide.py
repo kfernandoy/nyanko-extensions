@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourcePreference,
@@ -19,7 +19,7 @@ except ImportError:
     pass
 
 
-class FoolSlideSource(MadaraSource):
+class FoolSlideSource(FuenteBaseSource):
     url_modifier = ""
     profile = "default"
 

@@ -4,8 +4,8 @@ import re
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -17,7 +17,7 @@ except ImportError:
     pass
 
 
-class ManhwaZSource(MadaraSource):
+class ManhwaZSource(FuenteBaseSource):
     search_path = "search"
     popular_catalog_path = ""
 

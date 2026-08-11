@@ -1,12 +1,12 @@
 """Implementación JSON común de HentaiHand."""
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 
-class HentaiHandSource(MadaraSource):
+class HentaiHandSource(FuenteBaseSource):
     language_ids: list[int] = []
 
     def _language_params(self) -> dict[str, int]:

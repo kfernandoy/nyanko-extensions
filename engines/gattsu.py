@@ -4,8 +4,8 @@ import re
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -25,7 +25,7 @@ def _inside(node, class_name: str) -> bool:
     return False
 
 
-class GattsuSource(MadaraSource):
+class GattsuSource(FuenteBaseSource):
     profile = "regular"
     requests_per_minute = 30
 

@@ -3,8 +3,8 @@
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -15,7 +15,7 @@ except ImportError:
     pass
 
 
-class StalkerCmsSource(MadaraSource):
+class StalkerCmsSource(FuenteBaseSource):
     requests_per_minute = 120
 
     async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:

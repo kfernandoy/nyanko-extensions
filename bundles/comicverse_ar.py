@@ -36,6 +36,7 @@ from nyanko_api.sources.contract import (
     SourceFilter,
     SourcePage,
     SourcePageContent,
+    SourcePreference,
     SourceSeries,
 )
 from nyanko_api.sources.errors import SourceNotFoundError
@@ -43,10 +44,11 @@ from nyanko_api.sources.errors import SourceNotFoundError
 # Re-exportados para los motores de tema que se concatenan detras en el bundle:
 # los usan en sus firmas y antes los tomaban del namespace de madara.py.
 __all__ = [
-    "FuenteBase",
+    "FuenteBaseSource",
     "SourceChapter",
     "SourceFilter",
     "SourcePage",
+    "SourcePreference",
     "SourceSeries",
 ]
 
@@ -403,7 +405,7 @@ def _protected_page_urls(html: str, base_url: str) -> list[str]:
     return []
 
 
-class FuenteBase:
+class FuenteBaseSource:
     """Base minima de toda fuente: identidad, capacidades y peticion HTTP.
 
     Deliberadamente NO trae `browse`, `search`, `details`, `chapters` ni `pages`:
@@ -472,6 +474,7 @@ class FuenteBase:
             requires_auth=self.requires_auth,
         )
 
+    @staticmethod
     def _madara_status(value: str) -> str | None:
         normalized = " ".join(re.findall(r"\w+", value.casefold()))
         if normalized in {"completed", "completo", "completado", "finalizado", "concluido"}:
@@ -585,6 +588,7 @@ class FuenteBase:
             chunks=iter([content]),
         )
 
+    @staticmethod
     def _has_class_ancestor(node: _Node, class_name: str) -> bool:
         parent = node.parent
         while parent is not None:
@@ -593,6 +597,7 @@ class FuenteBase:
             parent = parent.parent
         return False
 
+    @staticmethod
     def _has_id_ancestor(node: _Node, identifier: str) -> bool:
         parent = node.parent
         while parent is not None:
@@ -615,7 +620,7 @@ from urllib.parse import quote, unquote, urljoin
 
 try:
     from .base import (
-        FuenteBase,
+        FuenteBaseSource,
         SourceChapter,
         SourceFilter,
         SourcePage,
@@ -628,7 +633,7 @@ except ImportError:
     pass
 
 
-class ZeistMangaSource(FuenteBase):
+class ZeistMangaSource(FuenteBaseSource):
     manga_category = "Series"
     chapter_category = "Chapter"
     use_new_chapter_feed = False

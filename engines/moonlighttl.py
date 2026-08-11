@@ -3,8 +3,8 @@
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourceFilter,
         SourcePage,
@@ -17,7 +17,7 @@ except ImportError:
     pass
 
 
-class MoonlightTLSource(MadaraSource):
+class MoonlightTLSource(FuenteBaseSource):
     profile = "regular"
     requests_per_minute = 120
 

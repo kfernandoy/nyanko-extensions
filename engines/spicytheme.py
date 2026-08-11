@@ -3,12 +3,12 @@
 import json
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
 
-class SpicyThemeSource(MadaraSource):
+class SpicyThemeSource(FuenteBaseSource):
     api_base_url = ""
     requests_per_minute = 120
 

@@ -1,8 +1,8 @@
 """Implementación común de la API Guya/Cubari para Nyanko Source v4."""
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -11,7 +11,7 @@ except ImportError:
     pass
 
 
-class GuyaSource(MadaraSource):
+class GuyaSource(FuenteBaseSource):
     async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:
         response = await self._request("GET", f"{self.base_url}/api/get_all_series/")
         response.raise_for_status()

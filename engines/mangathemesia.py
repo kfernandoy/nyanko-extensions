@@ -10,8 +10,8 @@ from urllib.parse import unquote, urljoin, urlparse, urlunparse
 from PIL import Image
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourceFilter,
         SourcePage,
@@ -27,7 +27,7 @@ except ImportError:
     pass
 
 
-class MangaThemesiaSource(MadaraSource):
+class MangaThemesiaSource(FuenteBaseSource):
     manga_directory = "/manga"
     reader_id = "readerarea"
     supports_latest = True

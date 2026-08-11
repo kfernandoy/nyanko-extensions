@@ -22,7 +22,7 @@ valor es el INDICE de otro elemento del mismo array, no el valor en si. Por eso 
 import re
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
@@ -30,7 +30,7 @@ _CAPITULO_HTML = re.compile(r"/chapters/(\d+)")
 _POR_PAGINA = 20
 
 
-class GatoLibreriaSource(MadaraSource):
+class GatoLibreriaSource(FuenteBaseSource):
     async def _json(self, path: str, params: dict | None = None) -> dict:
         response = await self._request(
             "GET", f"{self.base_url}{path}", params=params or {},

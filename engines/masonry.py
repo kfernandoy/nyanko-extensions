@@ -3,8 +3,8 @@
 from urllib.parse import quote, urljoin, urlsplit
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -15,7 +15,7 @@ except ImportError:
     pass
 
 
-class MasonrySource(MadaraSource):
+class MasonrySource(FuenteBaseSource):
     async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:
         response = await self._request(
             "GET",

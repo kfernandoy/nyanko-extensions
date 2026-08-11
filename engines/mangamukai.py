@@ -17,7 +17,7 @@ tener monedas, pero el lector recibira el aviso del sitio si no las tiene.
 from nyanko_api.sources.errors import SourceUnsupportedError
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
@@ -27,7 +27,7 @@ _API = "/wp-json/mangamukai/v1"
 _POR_PAGINA = 24
 
 
-class MangaMukaiSource(MadaraSource):
+class MangaMukaiSource(FuenteBaseSource):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._catalogo: list[dict] | None = None

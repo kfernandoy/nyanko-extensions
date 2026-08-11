@@ -9,12 +9,12 @@ from urllib.parse import urljoin, urlparse, urlunparse
 from PIL import Image
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourcePageContent, SourceSeries, _first, _parse_html
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourcePageContent, SourceSeries, _first, _parse_html
 except ImportError:
     pass
 
 
-class GigaViewerSource(MadaraSource):
+class GigaViewerSource(FuenteBaseSource):
     supports_latest = True
 
     async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:

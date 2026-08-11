@@ -39,7 +39,7 @@ def source_class():
     assert config is not None
     config["content_warning"] = _extract_kotlin_metadata(module)
     bundle = _hentaihall_bundle(
-        (root / "engines" / "madara.py").read_text(encoding="utf-8"),
+        (root / "engines" / "base.py").read_text(encoding="utf-8"),
         (root / "engines" / "hentaihall.py").read_text(encoding="utf-8"),
         config,
     )

@@ -3,8 +3,8 @@
 import re
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourceFilter,
         SourcePage,
@@ -16,7 +16,7 @@ except ImportError:
     pass
 
 
-class IkenSource(MadaraSource):
+class IkenSource(FuenteBaseSource):
     per_page = 18
     sort_pages_by_filename = False
     use_chapters_api = False

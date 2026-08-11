@@ -1,7 +1,7 @@
 """Implementación GraphQL común de Senkuro."""
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
@@ -25,7 +25,7 @@ query fetchTachiyomiChapterPages($mangaId:ID!,$chapterId:ID!){
 }"""
 
 
-class SenkuroSource(MadaraSource):
+class SenkuroSource(FuenteBaseSource):
     requests_per_minute = 180
 
     @property

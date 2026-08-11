@@ -3,8 +3,8 @@
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBaseSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -16,7 +16,7 @@ except ImportError:
     pass
 
 
-class FuzzyDoodleSource(MadaraSource):
+class FuzzyDoodleSource(FuenteBaseSource):
     latest_profile = "regular"
 
     async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:
