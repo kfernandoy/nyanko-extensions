@@ -2622,7 +2622,20 @@ class DoujinsHellSource (MadaraSource ):
         )for index ,url in enumerate (urls )]
 
 
-"""Fuente HTTP adaptable para extensiones sin un motor compartido."""
+"""Implementación de Akaya.io (Laravel + Livewire).
+
+El port anterior era una heuristica generica que pedia rutas inventadas (``/genres``,
+``/biblioteca``) y recibia 404, asi que la extension no listaba nada.
+
+El sitio real usa Livewire y hay dos detalles que condicionan el port:
+
+* La rejilla del explorador se pagina por el canal Livewire, no por querystring:
+  ``?page=2`` devuelve siempre la primera pagina. Hay que llamar a ``gotoPage``.
+* La ruta de ese canal lleva un hash (``/livewire-c4e82cae/update``) que puede rotar, de
+  modo que se lee del HTML en cada sesion en vez de codificarla.
+
+Las paginas del lector si vienen en el HTML del capitulo (``img.chapter-img``).
+"""
 
 
 import json 
@@ -2631,418 +2644,197 @@ import json
 import re 
 
 
-from urllib .parse import urljoin 
+from html import unescape 
 
 
-class GenericSource (MadaraSource ):
-    search_paths :tuple [str ,...]=("search","")
-    popular_paths :tuple [str ,...]=("series","manga","comics","popular","")
-    latest_paths :tuple [str ,...]=("latest","updates","series","manga","")
+_SNAPSHOT =re .compile (r'wire:snapshot="(.*?)" wire:effects=',re .S )
 
-    async def search (self ,query :str ,limit :int =20 )->list [SourceSeries ]:
-        for path in self .search_paths :
-            for key in ("q","query","s","keyword"):
-                try :
-                    response =await self ._request (
-                    "GET",
-                    urljoin (f"{self .base_url }/",path ),
-                    params ={key :query .strip (),"page":"1"},
-                    )
-                    if getattr (response ,"status_code",200 )>=400 :
-                        continue 
-                    values =self ._adaptive_series (response )
-                    if values :
-                        return values [:limit ]
-                except Exception :
-                    continue 
-        return []
 
-    async def browse (self ,kind :str ,page :int =1 )->list [SourceSeries ]:
-        if kind not in {"popular","latest"}:
-            return []
-        paths =self .popular_paths if kind =="popular"else self .latest_paths 
-        for path in paths :
-            try :
-                response =await self ._request (
-                "GET",
-                urljoin (f"{self .base_url }/",path ),
-                params ={"page":str (page )},
-                )
-                if getattr (response ,"status_code",200 )>=400 :
-                    continue 
-                values =self ._adaptive_series (response )
-                if values :
-                    return values 
-            except Exception :
-                continue 
-        return []
+_RUTA_WIRE =re .compile (r'"(https?://[^"]+/livewire-[a-z0-9]+)/update"')
 
-    async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
-        series_id =series .source_id if isinstance (series ,SourceSeries )else series 
-        response =await self ._request ("GET",urljoin (f"{self .base_url }/",series_id ))
+
+_CSRF =re .compile (r'csrf-token"\s+content="([^"]*)"')
+
+
+_TARJETA =re .compile (r'href="[^"]*?/serie/(\d+)"',re .S )
+
+
+_IMG =re .compile (r'<img[^>]+src="([^"]+)"',re .S )
+
+
+_IMG_ALT =re .compile (r'<img\s[^>]*?src="([^"]+)"[^>]*?alt="([^"]*)"',re .S )
+
+
+_H1 =re .compile (r"<h1[^>]*>(.*?)</h1>",re .S )
+
+
+_CAPITULO =re .compile (r'href="[^"]*?/chapter/(\d+)"')
+
+
+_PAGINA =re .compile (r'<img[^>]+class="chapter-img[^"]*"[^>]+src="([^"]+)"')
+
+
+_TITULO_OG =re .compile (r'<meta property="og:title" content="([^"]*)"')
+
+
+_IMAGEN_OG =re .compile (r'<meta property="og:image" content="([^"]*)"')
+
+
+_DESC =re .compile (r'<meta name="description" content="([^"]*)"')
+
+
+_ETIQUETA =re .compile (r"<[^>]+>")
+
+
+class AkayaSource (MadaraSource ):
+    async def _html (self ,path :str )->str :
+        response =await self ._request ("GET",f"{self .base_url }{path }")
         response .raise_for_status ()
-        root =_parse_html (response .text )
-        result :list [SourceChapter ]=[]
-        for anchor in root .descendants ("a"):
-            href =anchor .attrs .get ("href","")
-            title =anchor .text ().strip ()or anchor .attrs .get ("title","").strip ()
-            marker =f"{href } {title }".lower ()
-            if not href or not any (value in marker for value in ("chapter","chap","capitulo","capítulo","episode","bolum","read/")):
-                continue 
-            found =re .search (r"\d+(?:\.\d+)?",title )
-            result .append (
-            SourceChapter (
-            source_id =urljoin (str (response .url ),href ),
-            title =title or "Capítulo",
-            series_id =series_id ,
-            source_name =self .name ,
-            number =float (found .group ())if found else None ,
-            )
-            )
-        if not result :
-            try :
-                payload =response .json ()
-            except (ValueError ,AttributeError ):
-                payload =None 
-            for item in self ._walk_dicts (payload ):
-                title =str (item .get ("title")or item .get ("name")or "")
-                item_id =item .get ("url")or item .get ("slug")or item .get ("id")
-                if not title or item_id is None or "chap"not in json .dumps (item ).lower ():
-                    continue 
-                found =re .search (r"\d+(?:\.\d+)?",title )
-                result .append (
-                SourceChapter (
-                source_id =urljoin (str (response .url ),str (item_id )),
-                title =title ,
-                series_id =series_id ,
-                source_name =self .name ,
-                number =float (found .group ())if found else None ,
-                )
-                )
-        return list ({item .source_id :item for item in result }.values ())
-
-    def _adaptive_series (self ,response )->list [SourceSeries ]:
-        root =_parse_html (response .text )
-        result :list [SourceSeries ]=[]
-        seen :set [str ]=set ()
-        for anchor in root .descendants ("a"):
-            href =anchor .attrs .get ("href","")
-            title =anchor .attrs .get ("title","").strip ()or anchor .text ().strip ()
-            parent =anchor .parent 
-            marker =""
-            while parent is not None :
-                marker +=f" {parent .attrs .get ('id','')} {parent .attrs .get ('class','')}"
-                parent =parent .parent 
-            if not href or not title or not any (value in marker .lower ()for value in ("manga","comic","series","novel","item","book")):
-                continue 
-            source_id =urljoin (str (response .url ),href )
-            if source_id not in seen :
-                seen .add (source_id )
-                image =_first (anchor ,lambda node :node .tag =="img")
-                if image is None and anchor .parent is not None :
-                    image =_first (anchor .parent ,lambda node :node .tag =="img")
-                result .append (
-                SourceSeries (
-                source_id =source_id ,
-                title =title ,
-                source_name =self .name ,
-                cover_url =(
-                _image_url (image ,str (response .url ))if image else None 
-                ),
-                web_url =source_id ,
-                )
-                )
-        if result :
-            return result 
-        try :
-            payload =response .json ()
-        except (ValueError ,AttributeError ):
-            return []
-        for item in self ._walk_dicts (payload ):
-            title =item .get ("title")or item .get ("name")
-            item_id =item .get ("url")or item .get ("href")or item .get ("slug")or item .get ("id")
-            if title and item_id is not None :
-                source_id =urljoin (str (response .url ),str (item_id ))
-                if source_id not in seen :
-                    seen .add (source_id )
-                    cover =(
-                    item .get ("cover_url")
-                    or item .get ("cover")
-                    or item .get ("thumbnail")
-                    or item .get ("image")
-                    )
-                    result .append (
-                    SourceSeries (
-                    source_id =source_id ,
-                    title =str (title ),
-                    source_name =self .name ,
-                    cover_url =(
-                    urljoin (str (response .url ),cover )
-                    if isinstance (cover ,str )
-                    else None 
-                    ),
-                    web_url =source_id ,
-                    )
-                    )
-        return result 
+        return response .text 
 
     @staticmethod 
-    def _walk_dicts (value ):
-        if isinstance (value ,dict ):
-            yield value 
-            for child in value .values ():
-                yield from GenericSource ._walk_dicts (child )
-        elif isinstance (value ,list ):
-            for child in value :
-                yield from GenericSource ._walk_dicts (child )
+    def _componente (html :str ,nombre :str )->str |None :
+        """Devuelve el snapshot crudo del componente Livewire pedido."""
+        for crudo in _SNAPSHOT .findall (html ):
+            texto =unescape (crudo )
+            try :
+                if (json .loads (texto ).get ("memo")or {}).get ("name")==nombre :
+                    return texto 
+            except ValueError :
+                continue 
+        return None 
+
+    def _series_del_html (self ,html :str )->list [SourceSeries ]:
+        vistas :dict [str ,SourceSeries ]={}
+        for enlace in _TARJETA .finditer (html ):
+            series_id =enlace .group (1 )
+            if series_id in vistas :
+                continue 
+                # Se retrocede hasta la portada mas cercana; su `alt` ya trae el titulo, y
+                # sirve de respaldo el ultimo <h1> del bloque.
+            previo =html [max (0 ,enlace .start ()-20000 ):enlace .start ()]
+            portadas =_IMG_ALT .findall (previo )
+            titulos =_H1 .findall (previo )
+            portada =alt =""
+            if portadas :
+                portada ,alt =portadas [-1 ]
+            titulo =unescape (alt ).strip ()
+            if not titulo and titulos :
+                titulo =unescape (_ETIQUETA .sub ("",titulos [-1 ])).strip ()
+            if not titulo or not portada :
+                continue 
+            vistas [series_id ]=SourceSeries (
+            source_id =series_id ,
+            title =re .sub (r"\s+"," ",titulo )[:120 ],
+            source_name =self .name ,
+            cover_url =portada ,
+            web_url =f"{self .base_url }/serie/{series_id }",
+            )
+        return list (vistas .values ())
+
+    async def _pagina_explorador (self ,page :int )->list [SourceSeries ]:
+        html =await self ._html ("/explorer/all")
+        if page <=1 :
+            return self ._series_del_html (html )
+        snapshot =self ._componente (html ,"explorer.all")
+        ruta =_RUTA_WIRE .search (html )
+        token =_CSRF .search (html )
+        if not (snapshot and ruta ):
+            return []
+        cuerpo ={
+        "_token":token .group (1 )if token else "",
+        "components":[{
+        "snapshot":snapshot ,
+        "updates":{},
+        "calls":[{"path":"","method":"gotoPage","params":[page ,"page"]}],
+        }],
+        }
+        response =await self ._request (
+        "POST",f"{ruta .group (1 )}/update",json =cuerpo ,
+        headers ={"X-Livewire":"","Referer":f"{self .base_url }/explorer/all"},
+        )
+        response .raise_for_status ()
+        try :
+            datos =response .json ()
+        except ValueError :
+            return []
+        componentes =datos .get ("components")or []
+        efectos =(componentes [0 ].get ("effects")or {})if componentes else {}
+        return self ._series_del_html (str (efectos .get ("html")or ""))
+
+    async def browse (self ,kind :str ,page :int =1 ):
+        if kind not in {"popular","latest"}:
+            return {"items":[],"has_more":False }
+        items =await self ._pagina_explorador (max (page ,1 ))
+        return {"items":items ,"has_more":bool (items )}
+
+    async def search (self ,query :str ,page :int =1 ,filters :dict |None =None ):
+        consulta =query .strip ().casefold ()
+        items =await self ._pagina_explorador (max (page ,1 ))
+        if consulta :
+        # El buscador del sitio es un componente Livewire con debounce; filtrar la
+        # pagina del explorador da un resultado equivalente sin depender de el.
+            items =[serie for serie in items if consulta in serie .title .casefold ()]
+        return {"items":items ,"has_more":False }
+
+    async def details (self ,series :SourceSeries |str )->SourceSeries :
+        series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
+        html =await self ._html (f"/serie/{series_id }")
+        titulo =_TITULO_OG .search (html )
+        portada =_IMAGEN_OG .search (html )
+        descripcion =_DESC .search (html )
+        limpio =unescape (titulo .group (1 ))if titulo else series_id 
+        return SourceSeries (
+        source_id =series_id ,
+        title =limpio .removesuffix (" | Akaya.io").strip ()or series_id ,
+        source_name =self .name ,
+        cover_url =portada .group (1 )if portada else None ,
+        description =unescape (descripcion .group (1 )).strip ()if descripcion else None ,
+        web_url =f"{self .base_url }/serie/{series_id }",
+        )
+
+    async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
+        series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
+        html =await self ._html (f"/serie/{series_id }")
+        ids =list (dict .fromkeys (_CAPITULO .findall (html )))
+        total =len (ids )
+        return [
+        SourceChapter (
+        source_id =capitulo_id ,
+        title =f"Capítulo {total -indice }",
+        series_id =series_id ,
+        source_name =self .name ,
+        number =float (total -indice ),
+        language =self .language ,
+        )
+        for indice ,capitulo_id in enumerate (ids )
+        ]
+
+    async def pages (self ,chapter :SourceChapter |str )->list [SourcePage ]:
+        chapter_id =chapter .source_id if isinstance (chapter ,SourceChapter )else str (chapter )
+        html =await self ._html (f"/chapter/{chapter_id }")
+        urls =list (dict .fromkeys (_PAGINA .findall (html )))
+        return [
+        SourcePage (
+        source_id =url ,
+        chapter_id =chapter_id ,
+        index =indice ,
+        filename =url .rsplit ("/",1 )[-1 ]or f"{indice }.webp",
+        source_name =self .name ,
+        )
+        for indice ,url in enumerate (urls )
+        ]
 
 
-class GeneratedGenericSource (GenericSource ):
+class GeneratedAkayaSource (AkayaSource ):
     name ='akaya_es'
     display_name ='AKAYA'
     base_url ='https://akaya.io'
     language ='es'
     requests_per_minute =60 
-    _csrf_token =""
-
-    def get_filters (self )->list [SourceFilter ]:
-        return [
-        SourceFilter (
-        type ="select",
-        id ="order",
-        name ="Ordenar por",
-        options =[
-        {"value":"genres","name":"Populares"},
-        {"value":"genres-bydate","name":"Recientes"},
-        {"value":"genres-byname","name":"Nombre"},
-        ],
-        default ="genres"
-        ),
-        SourceFilter (
-        type ="group",
-        id ="genres",
-        name ="Géneros",
-        options =[
-        {"value":"9","name":"Acción"},
-        {"value":"34","name":"Arte"},
-        {"value":"18","name":"Boylove (yaoi)"},
-        {"value":"21","name":"Comedia"},
-        {"value":"25","name":"Crimen"},
-        {"value":"15","name":"Distópico"},
-        {"value":"35","name":"Drama"},
-        {"value":"8","name":"Fantasía"},
-        {"value":"27","name":"Girllove (yuri)"},
-        {"value":"19","name":"Isekai"},
-        {"value":"16","name":"LGBT"},
-        {"value":"10","name":"Monstruos"},
-        {"value":"17","name":"NSFW"},
-        {"value":"26","name":"Psicológico"},
-        {"value":"24","name":"Romance"},
-        {"value":"23","name":"Sci Fi"},
-        {"value":"13","name":"Slice of life"},
-        {"value":"20","name":"Steampunk"},
-        {"value":"11","name":"Superhéroe"},
-        {"value":"22","name":"Supernatural"},
-        {"value":"14","name":"Suspenso"},
-        {"value":"12","name":"Thriller"},
-        ],
-        default =""
-        )
-        ]
-
-    async def _get_csrf_token (self ):
-        response =await self ._request ("GET",self .base_url )
-        html =response .text if hasattr (response ,'text')else str (response )
-        match =re .search (r"""<meta[^>]+name=["']csrf-token["'][^>]+content=["']([^"']+)["']""",html ,re .I )
-        self ._csrf_token =match .group (1 )if match else ""
-
-    @staticmethod 
-    def _has_ancestor (node ,predicate ):
-        parent =node .parent 
-        while parent is not None :
-            if predicate (parent ):
-                return True 
-            parent =parent .parent 
-        return False 
-
-    def _akaya_series (self ,response )->dict :
-        root =_parse_html (response .text )
-        containers =[
-        node for node in root .descendants ("div")
-        if node .has_class ("library-grid-item")or node .has_class ("list-search")
-        ]
-        items =[]
-        seen =set ()
-        for container in containers :
-            anchor =_first (container ,lambda node :node .tag =="a"and bool (node .attrs .get ("href")))
-            if anchor is None :
-                continue 
-            source_id =urljoin (str (response .url ),anchor .attrs ["href"])
-            if source_id in seen :
-                continue 
-            seen .add (source_id )
-            title_node =_first (
-            container ,
-            lambda node :node .tag =="strong"or node .has_class ("name-serie-search"),
-            )
-            image_node =_first (
-            container ,
-            lambda node :node .has_class ("inner-img")or node .has_class ("inner-img-search"),
-            )
-            cover =""
-            if image_node is not None :
-                style =image_node .attrs .get ("style","")
-                match =re .search (r"url\((['\"]?)(.*?)\1\)",style )
-                cover =urljoin (str (response .url ),match .group (2 ))if match else ""
-            if not cover :
-                image =_first (container ,lambda node :node .tag =="img")
-                cover =_image_url (image ,str (response .url ))if image else ""
-            items .append (
-            SourceSeries (
-            source_id =source_id ,
-            title =title_node .text ().strip ()if title_node else anchor .text ().strip (),
-            source_name =self .name ,
-            cover_url =cover or None ,
-            web_url =source_id ,
-            )
-            )
-        has_more =any (
-        node .tag =="a"and "next"in node .attrs .get ("rel","").split ()
-        for node in root .descendants ("a")
-        )
-        return {"items":items ,"has_more":has_more }
-
-    async def browse (self ,kind :str ,page :int =1 ):
-        collections ={
-        "popular":"bd90cb43-9bf2-4759-b8cc-c9e66a526bc6",
-        "latest":"0031a504-706c-4666-9782-a4ae30cad973",
-        }
-        if kind not in collections :
-            return {"items":[],"has_more":False }
-        response =await self ._request (
-        "GET",
-        f"{self .base_url }/collection/{collections [kind ]}",
-        params ={"page":str (page )},
-        )
-        response .raise_for_status ()
-        return self ._akaya_series (response )
-
-    async def search (self ,query :str ,filters :dict |None =None ,page :int =1 ):
-        filters =filters or {}
-
-        if query .strip ():
-            if not self ._csrf_token :
-                await self ._get_csrf_token ()
-
-            data ={
-            "_token":self ._csrf_token ,
-            "search":query .strip ()
-            }
-            # Try POST
-            response =await self ._request ("POST",f"{self .base_url }/search",data =data )
-
-            # Handle 419 Page Expired (CSRF mismatch)
-            status_code =getattr (response ,"status_code",200 )
-            if status_code ==419 :
-                await self ._get_csrf_token ()
-                data ["_token"]=self ._csrf_token 
-                response =await self ._request ("POST",f"{self .base_url }/search",data =data )
-
-            response .raise_for_status ()
-            return self ._akaya_series (response )
-
-        else :
-            order =filters .get ("order")or "genres"
-            genres =filters .get ("genres")or []
-
-            url =f"{self .base_url }/{order }"
-            if genres :
-                genres_str =",".join (genres )
-                url =f"{url }/[{genres_str }]"
-
-            response =await self ._request ("GET",url ,params ={"page":str (page )})
-            response .raise_for_status ()
-            return self ._akaya_series (response )
-
-    async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
-        series_id =series .source_id if isinstance (series ,SourceSeries )else series 
-        response =await self ._request (
-        "GET",
-        urljoin (f"{self .base_url }/",series_id ).split ("?",1 )[0 ],
-        params ={"order_direction":"desc"},
-        )
-        response .raise_for_status ()
-        root =_parse_html (response .text )
-        result =[]
-        for item in root .descendants ("div"):
-            if not item .has_class ("chapter-item"):
-                continue 
-            anchor =_first (item ,lambda node :node .tag =="a"and bool (node .attrs .get ("href")))
-            if anchor is None :
-                continue 
-            title =anchor .text ().strip ()
-            chapter_id =urljoin (str (response .url ),anchor .attrs ["href"])
-            if _first (item ,lambda node :node .tag =="i"and node .has_class ("ak-lock")):
-                title =f"🔒 {title }"
-                chapter_id +="#lock"
-            number =re .search (r"\d+(?:\.\d+)?",title )
-            result .append (
-            SourceChapter (
-            source_id =chapter_id ,
-            title =title ,
-            series_id =series_id ,
-            source_name =self .name ,
-            number =float (number .group ())if number else None ,
-            language =self .language ,
-            )
-            )
-        return result 
-
-    async def pages (self ,chapter :SourceChapter |str )->list [SourcePage ]:
-        chapter_id =chapter .source_id if isinstance (chapter ,SourceChapter )else chapter 
-        if urlparse (chapter_id ).fragment =="lock":
-            raise ValueError ("Capítulo bloqueado")
-        response =await self ._request ("GET",chapter_id .split ("#",1 )[0 ])
-        response .raise_for_status ()
-        urls =[]
-        script =re .search (r"var\s+chapterData\s*=\s*(\{.*?\})\s*;",response .text ,re .S )
-        if script :
-            try :
-                images =json .loads (script .group (1 )).get ("images")or []
-                urls =[
-                f"https://api.akayamedia.com/chapters/{item ['image']}"
-                for item in sorted (images ,key =lambda item :item .get ("order_sort",0 ))
-                if item .get ("image")
-                ]
-            except (json .JSONDecodeError ,TypeError ):
-                pass 
-        if not urls :
-            root =_parse_html (response .text )
-            urls =[
-            _image_url (image ,str (response .url ))
-            for image in root .descendants ("img")
-            if image .has_class ("chapter-img")
-            or (
-            image .has_class ("img-fluid")
-            and self ._has_ancestor (
-            image ,
-            lambda node :node .tag =="main"and node .has_class ("separatorReading"),
-            )
-            )
-            ]
-        return [
-        SourcePage (
-        source_id =url ,
-        chapter_id =chapter_id ,
-        index =index ,
-        filename =url .rsplit ("/",1 )[-1 ].split ("?",1 )[0 ]or f"{index }.jpg",
-        source_name =self .name ,
-        )
-        for index ,url in enumerate (urls )
-        ]
 
 
-SOURCE =GeneratedGenericSource
+SOURCE =GeneratedAkayaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

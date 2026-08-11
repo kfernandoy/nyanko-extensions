@@ -82,7 +82,7 @@
       "id": "akaya_es",
       "name": "AKAYA",
       "version": "0.3.0",
-      "sha256": "083952f28e77d9ec4056d59b029bd6a13188c74061e98a0c2f5bb3be7ef43854",
+      "sha256": "321d23e29e3352fdec0d2ac780236aab9508461166c0c4fd56274333e9752b44",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akaya_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/akaya_es.png",
       "author": "Keiyoushi contributors",
