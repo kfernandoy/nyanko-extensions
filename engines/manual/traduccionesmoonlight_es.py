@@ -1190,8 +1190,8 @@ _POR_PAGINA = 24
 
 
 class MoonlightSource(MadaraSource):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, fetcher=None) -> None:
+        super().__init__(fetcher)
         self._catalogo: list[dict] | None = None
 
     async def _json(self, path: str) -> dict:

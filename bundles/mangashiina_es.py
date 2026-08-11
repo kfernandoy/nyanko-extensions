@@ -2649,8 +2649,8 @@ _POR_PAGINA =24
 
 
 class MangaMukaiSource (MadaraSource ):
-    def __init__ (self ,*args ,**kwargs )->None :
-        super ().__init__ (*args ,**kwargs )
+    def __init__ (self ,fetcher =None )->None :
+        super ().__init__ (fetcher )
         self ._catalogo :list [dict ]|None =None 
 
     async def _pedir (self ,path :str ,params :dict |None =None )->dict :
