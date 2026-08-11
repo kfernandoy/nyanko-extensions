@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import base64
+import hashlib
 import io
 import json
 import re
@@ -113,7 +114,49 @@ def _style_image_url(node: _Node, base_url: str) -> str:
     if found is None:
         return ""
     value = found.group(2).strip()
-    return urljoin(base_url, value) if value else ""
+    return _mismo_host_seguro(urljoin(base_url, value), base_url) if value else ""
+
+
+def _cuerpo_de_formulario(kwargs: dict[str, Any]) -> dict[str, Any]:
+    """Convierte ``data=[(clave, valor), ...]`` en ``dict`` antes de salir a la red.
+
+    httpx 0.28 solo trata como formulario los ``data`` que son Mapping; una lista de pares
+    la interpreta como cuerpo iterable, o sea un stream SINCRONO, y sobre el cliente async
+    de la app aborta con ``RuntimeError: Attempted to send an sync request with an
+    AsyncClient instance``. La fuente no llegaba a hacer ni una peticion: browse, latest y
+    search morian de golpe (haremdekira, "no carga nada" en la validacion manual).
+
+    Se normaliza aqui, en el unico embudo por el que salen todas las peticiones del motor,
+    en vez de en cada helper. Las claves de estos formularios son unicas -van indexadas
+    como ``vars[meta_query][0][key]``-, asi que pasar por ``dict`` no pierde nada; se
+    comprobo sobre 762 combinaciones de filtros. Si alguna vez hiciera falta repetir una
+    clave, habria que pasarla ya codificada como ``content=``.
+    """
+    cuerpo = kwargs.get("data")
+    if isinstance(cuerpo, (list, tuple)):
+        kwargs = dict(kwargs)
+        kwargs["data"] = dict(cuerpo)
+    return kwargs
+
+
+def _mismo_host_seguro(url: str, base_url: str) -> str:
+    """Sube a https las URLs http:// del propio sitio cuando este ya sirve por https.
+
+    Varios temas Madara emiten las portadas y las paginas del capitulo con el esquema
+    en claro aunque el sitio se sirva por https (catharsisworld: 8 de 8 paginas y 16 de
+    16 portadas). En Python da igual y por eso el arnes las descargaba sin quejarse,
+    pero Android bloquea el trafico cleartext desde API 28, asi que la imagen nunca
+    llegaba al lector y el capitulo se veia en blanco.
+
+    Solo se reescribe cuando el host es exactamente el de ``base_url`` y este es https;
+    los CDN de terceros se dejan intactos porque no hay garantia de que tengan
+    certificado valido.
+    """
+    if not url.startswith("http://") or not base_url.startswith("https://"):
+        return url
+    if urlparse(url).netloc.lower() != urlparse(base_url).netloc.lower():
+        return url
+    return "https://" + url[len("http://"):]
 
 
 def _image_url(node: _Node, base_url: str) -> str:
@@ -128,14 +171,14 @@ def _image_url(node: _Node, base_url: str) -> str:
         "src",
     ):
         if node.attrs.get(key):
-            return urljoin(base_url, node.attrs[key].strip())
+            return _mismo_host_seguro(urljoin(base_url, node.attrs[key].strip()), base_url)
     candidates = [
         item.strip().split()[0]
         for item in node.attrs.get("srcset", "").split(",")
         if item.strip()
     ]
     if candidates:
-        return urljoin(base_url, candidates[-1])
+        return _mismo_host_seguro(urljoin(base_url, candidates[-1]), base_url)
     return _style_image_url(node, base_url)
 
 
@@ -185,6 +228,140 @@ def _cover_url(container: _Node, base_url: str) -> str | None:
         return url
     styled = _first(container, lambda node: bool(_style_image_url(node, base_url)))
     return _style_image_url(styled, base_url) if styled is not None else None
+
+
+def _gf_mul(left: int, right: int) -> int:
+    result = 0
+    while right:
+        if right & 1:
+            result ^= left
+        left = ((left << 1) ^ (0x11B if left & 0x80 else 0)) & 0xFF
+        right >>= 1
+    return result
+
+
+def _aes_sbox(value: int) -> int:
+    inverse, base, exponent = 1, value, 254
+    while exponent:
+        if exponent & 1:
+            inverse = _gf_mul(inverse, base)
+        base = _gf_mul(base, base)
+        exponent >>= 1
+    if value == 0:
+        inverse = 0
+    return inverse ^ ((inverse << 1) | (inverse >> 7)) & 0xFF ^ ((inverse << 2) | (inverse >> 6)) & 0xFF ^ ((inverse << 3) | (inverse >> 5)) & 0xFF ^ ((inverse << 4) | (inverse >> 4)) & 0xFF ^ 0x63
+
+
+_AES_SBOX = tuple(_aes_sbox(value) for value in range(256))
+_AES_INV_SBOX = tuple(_AES_SBOX.index(value) for value in range(256))
+
+
+def _aes256_decrypt(ciphertext: bytes, key: bytes, iv: bytes) -> bytes:
+    words = [list(key[index:index + 4]) for index in range(0, 32, 4)]
+    rcon = 1
+    for index in range(8, 60):
+        temp = words[-1][:]
+        if index % 8 == 0:
+            temp = [_AES_SBOX[value] for value in temp[1:] + temp[:1]]
+            temp[0] ^= rcon
+            rcon = _gf_mul(rcon, 2)
+        elif index % 8 == 4:
+            temp = [_AES_SBOX[value] for value in temp]
+        words.append([left ^ right for left, right in zip(words[index - 8], temp)])
+    round_keys = [sum(words[index:index + 4], []) for index in range(0, 60, 4)]
+
+    def decrypt_block(block: bytes) -> bytes:
+        state = [value ^ key_value for value, key_value in zip(block, round_keys[14])]
+        for round_number in range(13, -1, -1):
+            state = [state[index] for index in (0, 13, 10, 7, 4, 1, 14, 11, 8, 5, 2, 15, 12, 9, 6, 3)]
+            state = [_AES_INV_SBOX[value] for value in state]
+            state = [value ^ key_value for value, key_value in zip(state, round_keys[round_number])]
+            if round_number:
+                mixed: list[int] = []
+                for column in range(4):
+                    a, b, c, d = state[column * 4:column * 4 + 4]
+                    mixed.extend((
+                        _gf_mul(a, 14) ^ _gf_mul(b, 11) ^ _gf_mul(c, 13) ^ _gf_mul(d, 9),
+                        _gf_mul(a, 9) ^ _gf_mul(b, 14) ^ _gf_mul(c, 11) ^ _gf_mul(d, 13),
+                        _gf_mul(a, 13) ^ _gf_mul(b, 9) ^ _gf_mul(c, 14) ^ _gf_mul(d, 11),
+                        _gf_mul(a, 11) ^ _gf_mul(b, 13) ^ _gf_mul(c, 9) ^ _gf_mul(d, 14),
+                    ))
+                state = mixed
+        return bytes(state)
+
+    result = b""
+    previous = iv
+    for offset in range(0, len(ciphertext), 16):
+        block = ciphertext[offset:offset + 16]
+        decrypted = decrypt_block(block)
+        result += bytes(left ^ right for left, right in zip(decrypted, previous))
+        previous = block
+    return result[:-result[-1]] if result else result
+
+
+def _evp_kdf_decrypt(ciphertext: str, salt: str, password: str, iv: str | None = None) -> str:
+    """Descifra el AES-256-CBC que produce `CryptoJS.AES.encrypt` con passphrase.
+
+    CryptoJS no usa la passphrase como clave: la pasa por EvpKDF (MD5 iterado sobre
+    password+salt) hasta sacar 48 bytes, de los que los 32 primeros son la clave y los
+    16 siguientes el IV. Cuando el payload trae `iv` propio se usa ese en su lugar.
+
+    Se reimplementa AES en Python puro, igual que `generic.py`, porque los bundles se
+    generan autocontenidos y no pueden arrastrar dependencias externas.
+    """
+    generado = b""
+    digest = b""
+    password_bytes = password.encode()
+    salt_bytes = bytes.fromhex(salt)
+    while len(generado) < 48:
+        digest = hashlib.md5(digest + password_bytes + salt_bytes).digest()
+        generado += digest
+    vector = bytes.fromhex(iv) if iv else generado[32:48]
+    return _aes256_decrypt(base64.b64decode(ciphertext), generado[:32], vector).decode()
+
+
+def _protected_page_urls(html: str, base_url: str) -> list[str]:
+    """Paginas del plugin `wp-manga-chapter-images-protection`.
+
+    Ese plugin sustituye los <img> del lector por divs `.page-break` vacios y publica la
+    lista real cifrada en `var chapter_data`. Sin esto la extension devuelve 0 paginas
+    aunque el capitulo exista (catharsisworld: 17 imagenes por capitulo).
+
+    La passphrase es uno de los nonces de 10 hex que WordPress ya imprime en la pagina;
+    no hay forma fiable de saber cual, asi que se prueban en orden y se acepta el primero
+    que produzca un JSON con lista de URLs.
+    """
+    payload = re.search(r"var\s+chapter_data\s*=\s*'([^']+)'", html)
+    if payload is None:
+        return []
+    try:
+        datos = json.loads(payload.group(1).replace("\\/", "/"))
+    except json.JSONDecodeError:
+        return []
+    if not datos.get("ct") or not datos.get("s"):
+        return []
+
+    candidatas: list[str] = []
+    for encontrado in re.finditer(r"""["']([0-9a-f]{10})["']""", html):
+        if encontrado.group(1) not in candidatas:
+            candidatas.append(encontrado.group(1))
+
+    for clave in candidatas[:12]:
+        try:
+            valor = json.loads(
+                _evp_kdf_decrypt(datos["ct"], datos["s"], clave, datos.get("iv"))
+            )
+            while isinstance(valor, str):
+                valor = json.loads(valor)
+        except (ValueError, UnicodeDecodeError, json.JSONDecodeError):
+            continue
+        if isinstance(valor, list) and valor:
+            return [
+                urljoin(base_url, str(item).strip().replace("\\/", "/"))
+                for item in valor
+                if str(item).strip()
+            ]
+    return []
 
 
 class MadaraSource:
@@ -338,11 +515,28 @@ class MadaraSource:
             elif "Alt" in label:
                 description = f"{description}\n\nAlternative name(s): {value.text().strip()}".strip()
         genres = list(dict.fromkeys(genre for genre in genres if genre))
+        cover_url = _image_url(image, str(response.url)) if image else None
+
+        # Los temas Madara re-skineados con Tailwind (catharsisworld, templescanesp) no
+        # emiten NINGUNA de las clases anteriores: ni `post-title`, ni `summary_image`, ni
+        # `post-content_item`. La ficha quedaba entera a None aunque el HTML tuviera todo.
+        # Se rellena solo lo que falta, asi que un sitio que ya funciona no cambia.
+        if not (cover_url and description and genres and status_text):
+            alterno = self._tailwind_details(root, str(response.url))
+            title = title if title and title != series_id.rstrip("/").rsplit("/", 1)[-1] else alterno.get("title") or title
+            cover_url = cover_url or alterno.get("cover_url")
+            description = description or alterno.get("description", "")
+            status_text = status_text or alterno.get("status", "")
+            if not genres:
+                genres = alterno.get("genres", [])
+            if not authors and alterno.get("author"):
+                authors = [alterno["author"]]
+
         return SourceSeries(
             source_id=series_id,
             title=title,
             source_name=self.name,
-            cover_url=_image_url(image, str(response.url)) if image else None,
+            cover_url=cover_url,
             description=description or None,
             author=", ".join(authors) or None,
             artist=", ".join(artists) or None,
@@ -351,6 +545,76 @@ class MadaraSource:
             metadata=series.metadata if isinstance(series, SourceSeries) else {},
             web_url=str(response.url),
         )
+
+    # Estados que el tema Tailwind pinta como una badge mas, mezclada con los generos.
+    _ESTADOS_BADGE = {
+        "ongoing", "oncoming", "on going", "completed", "completo", "completado",
+        "finalizado", "concluido", "en curso", "curso", "pausado", "en espera",
+        "on hold", "canceled", "cancelado", "hiatus", "publicandose", "en emision",
+    }
+
+    def _tailwind_details(self, root: _Node, page_url: str) -> dict:
+        """Lee la ficha de los temas Madara re-skineados con Tailwind.
+
+        No hay clases semanticas donde agarrarse, asi que se usan las anclas estables que
+        si tiene el markup: el unico ``<h1>`` es el titulo, la sinopsis vive en
+        ``#expand_content``, la portada es el primer ``background-image`` con proporcion de
+        poster y las badges de texto corto son estado + generos.
+        """
+        datos: dict = {}
+
+        titulo = _first(root, lambda node: node.tag == "h1")
+        if titulo and titulo.text().strip():
+            datos["title"] = titulo.text().strip()
+
+        sinopsis = _first(root, lambda node: node.attrs.get("id") == "expand_content")
+        if sinopsis and sinopsis.text().strip():
+            datos["description"] = sinopsis.text().strip()
+
+        # La portada de estos temas es un div con `aspect-[0.75/1]` (proporcion de poster);
+        # el resto de background-image de la pagina son el fondo difuminado y los banners.
+        for node in root.descendants("div"):
+            if not any("0.75/1" in clase for clase in node.attrs.get("class", "").split()):
+                continue
+            if url := _style_image_url(node, page_url):
+                datos["cover_url"] = url
+                break
+
+        # Las badges de la serie (estado + generos) van entre el <h1> y la sinopsis. Se
+        # recorre en orden de documento y se corta al llegar a `#expand_content`: mas abajo
+        # la pagina repite badges de series relacionadas y del scanlator, que antes se
+        # colaban como generos ("Bloodkami Scan").
+        generos: list[str] = []
+        vistos: set[str] = set()
+        for node in root.descendants():
+            if node.attrs.get("id") == "expand_content":
+                break
+            texto = node.text().strip()
+            # Las badges son etiquetas cortas; el filtro de longitud evita tragarse
+            # parrafos de la pagina que tambien usan <span>.
+            if node.tag != "span" or not node.has_class("capitalize") or not texto or len(texto) > 40:
+                continue
+            clave = texto.casefold()
+            if clave in self._ESTADOS_BADGE:
+                datos.setdefault("status", texto)
+            elif clave not in vistos:
+                # Dedupe insensible a mayusculas: el tema repite "Shoujo" y "shoujo".
+                vistos.add(clave)
+                generos.append(texto)
+        if generos:
+            datos["genres"] = generos
+
+        # El ld+json es la unica fuente fiable del autor en este tema.
+        ld = _first(
+            root,
+            lambda node: node.tag == "script"
+            and node.attrs.get("type") == "application/ld+json",
+        )
+        if ld is not None:
+            autor = re.search(r'"author"\s*:\s*\{[^}]*?"name"\s*:\s*"([^"]+)"', ld.text())
+            if autor:
+                datos["author"] = autor.group(1).strip()
+        return datos
 
     @classmethod
     def _detail_links(cls, root: _Node, containers: tuple[str, ...]) -> list[str]:
@@ -389,8 +653,13 @@ class MadaraSource:
         if not items:
             items = self._fallback_chapter_nodes(root)
         holder = _first(root, lambda node: node.attrs.get("id", "").startswith("manga-chapters-holder"))
-        if not items and holder is not None:
-            if self.use_new_chapter_endpoint:
+        # El endpoint AJAX se intentaba solo si el HTML traia `manga-chapters-holder`.
+        # Los temas Madara recientes ya no emiten ese div, asi que la peticion no llegaba
+        # a hacerse y la serie quedaba con 0 capitulos aunque `ajax/chapters` respondiera
+        # (infrafandub: 692 capitulos). El holder solo hace falta para leer su `data-id`
+        # en la variante admin-ajax; para el resto basta con no tener capitulos en el HTML.
+        if not items:
+            if self.use_new_chapter_endpoint or holder is None:
                 response = await self._request(
                     "POST", f"{series_url.rstrip('/')}/ajax/chapters",
                     headers={"X-Requested-With": "XMLHttpRequest"},
@@ -407,10 +676,13 @@ class MadaraSource:
                         "POST", f"{series_url.rstrip('/')}/ajax/chapters",
                         headers={"X-Requested-With": "XMLHttpRequest"},
                     )
-            response.raise_for_status()
-            items = self._chapter_nodes(_parse_html(response.text))
-            if not items:
-                items = self._fallback_chapter_nodes(_parse_html(response.text))
+            # Ahora el AJAX se intenta aunque no haya holder, asi que puede responder 404
+            # en sitios que antes ni se consultaban. Eso no es un error de la fuente: se
+            # deja la lista vacia en lugar de convertirlo en excepcion.
+            if getattr(response, "status_code", 200) < 400:
+                items = self._chapter_nodes(_parse_html(response.text))
+                if not items:
+                    items = self._fallback_chapter_nodes(_parse_html(response.text))
 
         result: list[SourceChapter] = []
         seen_chapters: set[str] = set()
@@ -536,6 +808,36 @@ class MadaraSource:
         if blocked is not None and self.pages_profile in {"login_guard", "captcha_guard"}:
             raise ValueError("El capítulo requiere iniciar sesión o resolver el captcha en WebView")
 
+        # Perfil `redirect_form`: la pagina del capitulo NO trae las imagenes, trae un
+        # formulario POST cuyo destino si las sirve. Portado de `pageListParse` de
+        # TempleScanEsp.kt: sin esto el HTML inicial solo tiene el logo del sitio y el
+        # parseo devuelve 0 paginas aunque la fuente funcione perfectamente.
+        #
+        # Si el formulario no esta se sigue con el flujo normal -igual que hace el Kotlin
+        # con su `?: return super.pageListParse(document)`-: el sitio puede servir el
+        # capitulo directamente segun el capitulo o si deja de usar la pasarela.
+        if self.pages_profile == "redirect_form":
+            formulario = _first(
+                root,
+                lambda node: node.tag == "form"
+                and node.attrs.get("id") == "redirect-form"
+                and node.attrs.get("method", "").lower() == "post",
+            )
+            if formulario is not None and formulario.attrs.get("action"):
+                campos = {
+                    campo.attrs["name"]: campo.attrs.get("value", "")
+                    for campo in formulario.descendants("input")
+                    if campo.attrs.get("name")
+                }
+                response = await self._request(
+                    "POST",
+                    formulario.attrs["action"],
+                    data=campos,
+                    headers={"Referer": str(response.url)},
+                )
+                response.raise_for_status()
+                root = _parse_html(response.text)
+
         profile_urls = self._profile_page_urls(response.text, str(response.url))
         if self.pages_profile == "campaign":
             redirect = _first(
@@ -607,11 +909,18 @@ class MadaraSource:
                     except (ValueError, SyntaxError):
                         values = []
                 urls = [urljoin(str(response.url), str(value)) for value in values]
+        if not urls:
+            urls = _protected_page_urls(response.text, str(response.url))
         if self.pages_profile == "https":
             urls = [url.replace("http://", "https://", 1) for url in urls]
         elif self.pages_profile == "skip_placeholder" and urls:
             if urls[0].split("?", 1)[0].endswith("/1-000001.jpg"):
                 urls = urls[1:]
+        # Igual que en las portadas: el capitulo puede venir con las paginas en http
+        # aunque el sitio hable https. Android descarta ese trafico y el lector se queda
+        # en blanco. `pages_profile = "https"` ya lo parcheaba fuente a fuente; esto lo
+        # cubre para todas, pero solo dentro del propio host.
+        urls = [_mismo_host_seguro(url, self.base_url) for url in urls]
         return [
             SourcePage(
                 source_id=url,
@@ -856,41 +1165,133 @@ class MadaraSource:
     async def _request(self, method: str, url: str, **kwargs: Any) -> Any:
         if self.fetcher is None:
             raise SourceNotFoundError(f"{self.display_name} no tiene fetcher inyectado")
+        kwargs = _cuerpo_de_formulario(kwargs)
         return await self.fetcher.request(method, url, **kwargs)
 
 
-class GeneratedMadaraSource(MadaraSource):
+"""Implementación de Lectormanga (lectormangass.net).
 
-    def get_preferences(self) -> list[SourcePreference]:
-        # Autogenerated via heuristic port
-        data = [
-                {
-                                "type": "checkbox",
-                                "id": "pref_adult",
-                                "name": "Show Adult Content",
-                                "default": false
-                }
-]
-        return [SourcePreference(**item) for item in data]
+El port anterior apuntaba a un dominio que ya no resuelve. El sitio actual esta hecho con
+Astro y sirve todo renderizado en el servidor, asi que basta con parsear HTML.
 
-    def get_filters(self) -> list[SourceFilter]:
-        # Autogenerated via heuristic port
-        data = []
-        return [SourceFilter(**item) for item in data]
+El unico detalle es que ``/comics`` mezcla tres cosas: los carruseles de rankings, unas
+tarjetas destacadas y la rejilla real. Solo esta ultima lleva ``card-cover-link``, que es
+por donde se filtra; si no, se cuelan las mismas series repetidas desde los carruseles.
+"""
 
+import re
+from html import unescape
+
+# Solo las tarjetas de la rejilla llevan `card-cover-link`; los carruseles usan otras clases.
+_TARJETA = re.compile(
+    r'<a\s+href="/comics/([a-z0-9\-]+)"\s+class="card-cover-link"\s+title="([^"]*)"[^>]*>'
+    r'\s*<img[^>]+src="([^"]+)"',
+    re.S,
+)
+_CAPITULO = re.compile(r'href="/comics/[a-z0-9\-]+/([a-z0-9\-]*\d[a-z0-9\-.]*)"')
+_PAGINA = re.compile(r'<img[^>]+src="(https://media\.[^"]+/capitulos/[^"]+)"')
+_H1 = re.compile(r"<h1[^>]*>(.*?)</h1>", re.S)
+_DESC = re.compile(r'<meta name="description" content="([^"]*)"')
+_PORTADA_OG = re.compile(r'<meta property="og:image" content="([^"]*)"')
+_ETIQUETA = re.compile(r"<[^>]+>")
+_NUMERO = re.compile(r"(\d+(?:\.\d+)?)")
+
+
+class LectorMangaSource(MadaraSource):
+    async def _html(self, path: str) -> str:
+        response = await self._request("GET", f"{self.base_url}{path}")
+        response.raise_for_status()
+        return response.text
+
+    def _series_del_html(self, html: str) -> list[SourceSeries]:
+        vistas: dict[str, SourceSeries] = {}
+        for slug, titulo, portada in _TARJETA.findall(html):
+            if slug in vistas:
+                continue
+            vistas[slug] = SourceSeries(
+                source_id=slug,
+                title=unescape(titulo).strip() or slug,
+                source_name=self.name,
+                cover_url=portada,
+                web_url=f"{self.base_url}/comics/{slug}",
+            )
+        return list(vistas.values())
+
+    async def browse(self, kind: str, page: int = 1):
+        if kind not in {"popular", "latest"}:
+            return {"items": [], "has_more": False}
+        orden = "likes_count" if kind == "popular" else ""
+        ruta = f"/comics?page={max(page, 1)}"
+        if orden:
+            ruta += f"&order_item={orden}"
+        items = self._series_del_html(await self._html(ruta))
+        return {"items": items, "has_more": bool(items)}
+
+    async def search(self, query: str, page: int = 1, filters: dict | None = None):
+        consulta = query.strip()
+        ruta = f"/comics?page={max(page, 1)}"
+        if consulta:
+            # El parametro es `search`. Con `title`, `q` o `name` el sitio responde 200
+            # pero ignora el filtro y devuelve el listado completo.
+            ruta += f"&search={consulta.replace(' ', '+')}"
+        items = self._series_del_html(await self._html(ruta))
+        return {"items": items, "has_more": bool(items)}
+
+    async def details(self, series: SourceSeries | str) -> SourceSeries:
+        slug = series.source_id if isinstance(series, SourceSeries) else str(series)
+        html = await self._html(f"/comics/{slug}")
+        titulo = _H1.search(html)
+        descripcion = _DESC.search(html)
+        portada = _PORTADA_OG.search(html)
+        return SourceSeries(
+            source_id=slug,
+            title=unescape(_ETIQUETA.sub("", titulo.group(1))).strip() if titulo else slug,
+            source_name=self.name,
+            cover_url=portada.group(1) if portada else None,
+            description=unescape(descripcion.group(1)).strip() if descripcion else None,
+            web_url=f"{self.base_url}/comics/{slug}",
+        )
+
+    async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
+        slug = series.source_id if isinstance(series, SourceSeries) else str(series)
+        html = await self._html(f"/comics/{slug}")
+        capitulos: list[SourceChapter] = []
+        for indice, nombre in enumerate(dict.fromkeys(_CAPITULO.findall(html))):
+            numero = _NUMERO.search(nombre)
+            capitulos.append(
+                SourceChapter(
+                    source_id=f"{slug}/{nombre}",
+                    title=nombre.replace("-", " ").capitalize(),
+                    series_id=slug,
+                    source_name=self.name,
+                    number=float(numero.group(1)) if numero else float(indice + 1),
+                    language=self.language,
+                )
+            )
+        capitulos.sort(key=lambda capitulo: capitulo.number, reverse=True)
+        return capitulos
+
+    async def pages(self, chapter: SourceChapter | str) -> list[SourcePage]:
+        chapter_id = chapter.source_id if isinstance(chapter, SourceChapter) else str(chapter)
+        html = await self._html(f"/comics/{chapter_id}")
+        urls = list(dict.fromkeys(_PAGINA.findall(html)))
+        return [
+            SourcePage(
+                source_id=url,
+                chapter_id=chapter_id,
+                index=indice,
+                filename=url.rsplit("/", 1)[-1] or f"{indice + 1:03d}.webp",
+                source_name=self.name,
+            )
+            for indice, url in enumerate(urls)
+        ]
+
+class GeneratedLectorMangaSource(LectorMangaSource):
     name = 'lectormangalat_es'
-    display_name = 'LectorManga.lat'
+    display_name = 'Lectormanga'
     base_url = 'https://lectormangass.net'
     language = 'es'
-    manga_substring = 'biblioteca'
-    load_more = 'auto'
-    use_new_chapter_endpoint = True
-    chapter_url_suffix = '?style=list'
-    supports_latest = True
-    requests_per_minute = 120
-    pages_profile = 'default'
-    extra_headers = {}
-    image_headers = {}
+    requests_per_minute = 60
 
 
-SOURCE = GeneratedMadaraSource
+SOURCE = GeneratedLectorMangaSource

@@ -8508,7 +8508,7 @@
       "id": "lectormangalat_es",
       "name": "LectorManga.lat",
       "version": "0.4.0",
-      "sha256": "898d4854e5ddd214c789cb270b2b3e60683d6b9360fe1d24bd1dd7584f3769c1",
+      "sha256": "cfdeba01fc83ec8f66b00acf94e01459660bef6becd863b4cc4055bcf9ce0f77",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/lectormangalat_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/lectormangalat_es.png",
       "author": "Keiyoushi contributors",

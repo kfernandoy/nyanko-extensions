@@ -4257,7 +4257,10 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 extension,
             )
         manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
-        if manual_path.exists() and build_path.parent.name not in {"lectormangalat", "mangacrab", "mangaesp", "mangatv"}:
+        # lectormangalat salio de esta lista: su manual ya no es la copia heredada del
+        # Kotlin sino el port al sitio actual (Astro), asi que ahora debe ganarle al
+        # bundle generado. Los otros tres siguen fuera porque su manual esta obsoleto.
+        if manual_path.exists() and build_path.parent.name not in {"mangacrab", "mangaesp", "mangatv"}:
             bundle_bytes = _manual_bundle(manual_path, madara_engine)
         bundle_bytes = finalize(bundle_bytes)
         (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
