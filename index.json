@@ -8519,7 +8519,7 @@
       "id": "lectormonline_es",
       "name": "MangoLibreria",
       "version": "0.2.0",
-      "sha256": "a5ce5f98c0c9ab9bf00a0f24a5325a8a7de8dc965fa7ff895eaa85740e3b50ef",
+      "sha256": "52380e72afde9d7e2cc0da386e67e681867e12f3fd3aa73b42695927685c3db9",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/lectormonline_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/lectormonline_es.png",
       "author": "Keiyoushi contributors",

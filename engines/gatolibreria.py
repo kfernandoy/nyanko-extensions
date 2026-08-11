@@ -1,4 +1,9 @@
-"""Implementación de Gato Librería (mangolibreria.com).
+"""Implementación de Gato Librería (gatolibreria.com).
+
+El sitio se mudó de ``mangolibreria.com`` a ``gatolibreria.com``. El dominio viejo ya
+ni siquiera presenta un certificado válido, asi que la extension no llegaba a hacer la
+peticion: fallaba en el handshake TLS y la app mostraba "No se pudo conectar con la
+fuente". La API y el payload de SvelteKit son identicos en el dominio nuevo.
 
 El sitio se rehizo con SvelteKit y no deja el catalogo en el HTML: las tarjetas traen
 ``<img>`` sin ``src`` porque la portada se pone al hidratar. Hay dos vias de datos y se usa

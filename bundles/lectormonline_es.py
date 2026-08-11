@@ -2801,7 +2801,7 @@ class GatoLibreriaSource (MadaraSource ):
 class GeneratedGatoLibreriaSource (GatoLibreriaSource ):
     name ='lectormonline_es'
     display_name ='Gato Librería'
-    base_url ='https://mangolibreria.com'
+    base_url ='https://gatolibreria.com'
     language ='es'
     requests_per_minute =60 
 
