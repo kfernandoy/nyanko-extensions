@@ -7,10 +7,16 @@ import ast
 import hashlib
 import io
 import json
+import os
 import re
 import shutil
 import tokenize
 from pathlib import Path
+
+try:
+    from .sign_index import SIGNING_KEY_ENV, resolve_private_key, sign_index
+except ImportError:  # Ejecucion directa: python tools/generate.py
+    from sign_index import SIGNING_KEY_ENV, resolve_private_key, sign_index
 
 
 def _extract_kotlin_metadata(module: Path) -> str:
@@ -4312,12 +4318,25 @@ def main() -> None:
         "--base-url",
         default="https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main",
     )
+    parser.add_argument(
+        "--signing-key",
+        type=Path,
+        help=f"clave privada Ed25519 PEM PKCS8 (o variable {SIGNING_KEY_ENV})",
+    )
     args = parser.parse_args()
     generated, skipped = generate(repo, args.source_root.resolve(), args.base_url.rstrip("/"))
     for engine in sorted(generated):
         print(
             f"{engine}: generadas {generated[engine]}; "
             f"pendientes por overrides {skipped[engine]}"
+        )
+    if args.signing_key is not None or os.environ.get(SIGNING_KEY_ENV):
+        sign_index(repo / "index.json", resolve_private_key(args.signing_key))
+        print("index.json firmado")
+    elif (repo / "index.json.pub").exists() or (repo / "index.json.sig").exists():
+        parser.error(
+            "index.json cambió pero no se volvió a firmar; usa --signing-key o "
+            f"define {SIGNING_KEY_ENV}"
         )
 
 

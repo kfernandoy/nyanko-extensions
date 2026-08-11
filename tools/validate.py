@@ -12,6 +12,11 @@ from urllib.parse import urlsplit
 
 from nyanko_api.sources.contract import SOURCE_API_VERSION, Source
 
+try:
+    from .sign_index import verify_index
+except ImportError:  # Ejecucion directa: python tools/validate.py
+    from sign_index import verify_index
+
 
 def _assert_v4(source: object, extension_id: str) -> None:
     for method_name, parameters in {
@@ -69,7 +74,7 @@ def _load_source(path: Path, extension_id: str) -> object:
 
 
 def validate(repo: Path) -> int:
-    payload = json.loads((repo / "index.json").read_text(encoding="utf-8"))
+    payload = json.loads(verify_index(repo / "index.json"))
     seen: set[str] = set()
     for extension in payload["extensions"]:
         extension_id = extension["id"]
