@@ -2622,308 +2622,170 @@ class DoujinsHellSource (MadaraSource ):
         )for index ,url in enumerate (urls )]
 
 
-"""Adaptador de Falco Scan: navegacion por onclick y un solo filtro a la vez."""
+"""Implementación de Falco Scan (antes TenkaiScan).
+
+El port anterior apuntaba a ``tenkaiscan.net``, que hoy solo devuelve un bucle de
+redirecciones. El proyecto sigue vivo en ``falcoscan.net`` con otra plantilla.
+
+El unico punto delicado son las paginas del lector. No hay ``<img>``: cada pagina es un
+``<canvas data-src=... data-token=...>`` que el JS rellena por fetch. Ese endpoint
+(``/img-serve/<ruta en base64>``) responde 403 salvo que se pidan las imagenes con:
+
+  * ``X-CSRF-TOKEN`` con el valor de ``data-token`` del propio capitulo, y
+  * la cookie de sesion que entrego el HTML de ese capitulo.
+
+Por eso ``pages()`` guarda el token y ``page_bytes()`` lo reutiliza; pedir la imagen sin
+ese par da 403 aunque se mande el Referer.
+"""
 
 
-_FALCO_ONCLICK =re .compile (r"window\.location\.href\s*=\s*'([^']+)'")
+import re 
 
 
-_FALCO_DATE =re .compile (r"(\d{1,2})/(\d{1,2})/(\d{4})")
+from html import unescape 
 
 
-_FALCO_NUMBER =re .compile (r"\d+(?:\.\d+)?")
-
-
-_FALCO_GENRES =(
-"Adaptación de Novela","Aventuras","Bondage","Comedia","Drama","Ecchi",
-"Escolar","Fantasía","Hardcore","Harem","Isekai","MILF","Netorare",
-"Novela","Recuentos de la vida","Romance","Seinen","Sistemas","Venganza",
+_TARJETA =re .compile (
+r'<a\s+href="([^"]*?/comics/([^"/]+))"[^>]*class="[^"]*falco-card[^"]*"(.*?)</a>',
+re .S ,
 )
 
 
-def _falco_own_text (node :_Node )->str :
-    return " ".join (part .strip ()for part in node .children if isinstance (part ,str )and part .strip ())
+_PORTADA =re .compile (r'<img[^>]+src="([^"]+)"')
 
 
-def _falco_kids (node :_Node ,tag :str ,class_name :str |None =None )->list [_Node ]:
-    return [
-    child 
-    for child in node .children 
-    if isinstance (child ,_Node )
-    and child .tag ==tag 
-    and (class_name is None or child .has_class (class_name ))
-    ]
+_NOMBRE =re .compile (r"<h4[^>]*>(.*?)</h4>",re .S )
 
 
-def _falco_image (node :_Node ,base :str )->str :
-    return urljoin (base ,node .attrs .get ("data-src")or node .attrs .get ("src")or "")
+_CAPITULO =re .compile (r'href="[^"]*?/comics/[^"/]+/([^"/]+)"')
+
+
+_LIENZO =re .compile (r'<canvas[^>]+data-src="([^"]+)"[^>]*data-token="([^"]*)"')
+
+
+_H1 =re .compile (r"<h1[^>]*>(.*?)</h1>",re .S )
+
+
+_DESC =re .compile (r'<meta name="description" content="([^"]*)"')
+
+
+_ETIQUETA =re .compile (r"<[^>]+>")
+
+
+_NUMERO =re .compile (r"(\d+(?:\.\d+)?)")
 
 
 class FalcoScanSource (MadaraSource ):
-    """Ni el ranking ni la busqueda paginan: el sitio los sirve completos."""
+    async def _html (self ,path :str )->str :
+        response =await self ._request ("GET",f"{self .base_url }{path }")
+        response .raise_for_status ()
+        return response .text 
 
-    def get_filters (self )->list [SourceFilter ]:
-        return [
-        SourceFilter ("filter","Ordenar por","select",[("","<Seleccionar>")]+[
-        (letter ,letter .upper ())for letter in "abcdefghijklmnopqrstuvwxyz"
-        ],""),
-        SourceFilter ("gen","Género","select",[("","<Seleccionar>")]+[
-        (value ,value )for value in _FALCO_GENRES 
-        ],""),
-        # El Kotlin nunca envia la primera opcion de este filtro; se respeta.
-        SourceFilter ("status","Status","select",[
-        ("Completed","Completed"),("En Libertad","En Libertad"),("Canceled","Canceled"),
-        ],"Completed"),
-        ]
+    def _series_del_html (self ,html :str )->list [SourceSeries ]:
+        vistas :dict [str ,SourceSeries ]={}
+        for enlace ,slug ,resto in _TARJETA .findall (html ):
+            if slug in vistas :
+                continue 
+            portada =_PORTADA .search (resto )
+            nombre =_NOMBRE .search (resto )
+            titulo =unescape (_ETIQUETA .sub ("",nombre .group (1 ))).strip ()if nombre else slug 
+            vistas [slug ]=SourceSeries (
+            source_id =slug ,
+            title =re .sub (r"\s+"," ",titulo )or slug ,
+            source_name =self .name ,
+            cover_url =self ._absoluta (portada .group (1 ))if portada else None ,
+            web_url =enlace if enlace .startswith ("http")else f"{self .base_url }{enlace }",
+            )
+        return list (vistas .values ())
+
+    def _absoluta (self ,url :str )->str :
+        if url .startswith ("http"):
+            return url 
+        return f"{self .base_url }/{url .lstrip ('/')}"
 
     async def browse (self ,kind :str ,page :int =1 ):
-        if kind =="popular":
-            response =await self ._request ("GET",f"{self .base_url }/ranking")
-            response .raise_for_status ()
-            root =_parse_html (response .text )
-            base =str (response .url )or self .base_url 
-            items =[
-            entry 
-            for card in self ._trending (root ,"div","card")
-            if (entry :=self ._card (card ,base ))is not None 
-            ]
-            return {"items":items ,"has_more":False }
-        if kind =="latest":
-            response =await self ._request ("GET",self .base_url )
-            response .raise_for_status ()
-            root =_parse_html (response .text )
-            base =str (response .url )or self .base_url 
-            items =[
-            entry 
-            for anchor in self ._trending (root ,"a")
-            if (entry :=self ._anchor (anchor ,base ))is not None 
-            ]
-            return {"items":items ,"has_more":False }
-        return {"items":[],"has_more":False }
+        if kind not in {"popular","latest"}or page >1 :
+        # /comics es un listado unico sin paginacion.
+            return {"items":[],"has_more":False }
+        return {"items":self ._series_del_html (await self ._html ("/comics")),"has_more":False }
 
     async def search (self ,query :str ,page :int =1 ,filters :dict |None =None ):
-        params :list [tuple [str ,str ]]=[]
-        if query .strip ():
-            params .append (("search",query .strip ()))
-        else :
-            values =filters or {}
-            for key ,first in (("filter",""),("gen",""),("status","Completed")):
-                value =str (values .get (key )or first )
-                if value !=first :
-                    params .append ((key ,value ))
-        response =await self ._request ("GET",f"{self .base_url }/comics",params =params )
-        response .raise_for_status ()
-        root =_parse_html (response .text )
-        base =str (response .url )or self .base_url 
-        items :list [SourceSeries ]=[]
-        for section in root .descendants ("section"):
-            if not section .has_class ("trending"):
-                continue 
-            for row in section .descendants ("div"):
-                if not row .has_class ("row"):
-                    continue 
-                for column in _falco_kids (row ,"div","col-xxl-9"):
-                    for inner in _falco_kids (column ,"div","row"):
-                        for holder in _falco_kids (inner ,"div"):
-                            for anchor in _falco_kids (holder ,"a"):
-                                entry =self ._anchor (anchor ,base )
-                                if entry is not None :
-                                    items .append (entry )
-        return {"items":list ({item .source_id :item for item in items }.values ()),"has_more":False }
+        if page >1 :
+            return {"items":[],"has_more":False }
+        consulta =query .strip ().casefold ()
+        items =self ._series_del_html (await self ._html ("/comics"))
+        if consulta :
+            items =[serie for serie in items if consulta in serie .title .casefold ()]
+        return {"items":items ,"has_more":False }
 
     async def details (self ,series :SourceSeries |str )->SourceSeries :
-        series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
-        response =await self ._request ("GET",urljoin (f"{self .base_url }/",series_id ))
-        response .raise_for_status ()
-        root =_parse_html (response .text )
-        base =str (response .url )or self .base_url 
-        holder =next (
-        (
-        node 
-        for content in root .descendants ("div")
-        if content .has_class ("page-content")
-        for node in content .descendants ("div")
-        if node .has_class ("text-details")
-        ),
-        None ,
-        )
-        if holder is None :
-            raise SourceNotFoundError (f"{self .display_name }: ficha sin detalles")
-        soft =_first (holder ,lambda node :node .tag =="div"and node .has_class ("soft-details"))
-        title =_first (holder ,lambda node :node .tag =="div"and node .has_class ("name-rating"))
-        image =_first (holder ,lambda node :node .tag =="img"and node .has_class ("img-details"))
-        genres =self ._labelled (soft ,"generos")if soft is not None else None 
+        slug =series .source_id if isinstance (series ,SourceSeries )else str (series )
+        html =await self ._html (f"/comics/{slug }")
+        titulo =_H1 .search (html )
+        descripcion =_DESC .search (html )
         return SourceSeries (
-        source_id =series_id ,
-        title =title .text ().strip ()if title is not None else "",
+        source_id =slug ,
+        title =unescape (_ETIQUETA .sub ("",titulo .group (1 ))).strip ()if titulo else slug ,
         source_name =self .name ,
-        cover_url =_falco_image (image ,base )if image is not None else None ,
-        description =self ._description (holder ,soft )or None ,
-        author =self ._labelled (soft ,"autor")if soft is not None else None ,
-        artist =self ._labelled (soft ,"artista")if soft is not None else None ,
-        status =self ._status (self ._labelled (soft ,"status")if soft is not None else None ),
-        content_tags =tuple (
-        value for part in (genres or "").split (",")if (value :=part .strip ())
-        ),
-        web_url =urljoin (f"{self .base_url }/",series_id ),
+        cover_url =f"{self .base_url }/projects/{slug }/{slug }.jpg",
+        description =unescape (descripcion .group (1 )).strip ()if descripcion else None ,
+        web_url =f"{self .base_url }/comics/{slug }",
         )
 
     async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
-        series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
-        response =await self ._request ("GET",urljoin (f"{self .base_url }/",series_id ))
-        response .raise_for_status ()
-        root =_parse_html (response .text )
-        base =str (response .url )or self .base_url 
-        result :list [SourceChapter ]=[]
-        for content in root .descendants ("div"):
-            if not content .has_class ("page-content"):
-                continue 
-            for card in content .descendants ("div"):
-                if not card .has_class ("card-caps"):
-                    continue 
-                target =self ._onclick (card .attrs .get ("onclick",""),base )
-                if not target :
-                    continue 
-                label =moment =None 
-                for text in card .descendants ("div"):
-                    if not text .has_class ("text-cap"):
-                        continue 
-                    label =label or _first (
-                    text ,lambda node :node .tag =="span"and node .has_class ("color-white"),
-                    )
-                    moment =moment or _first (
-                    text ,lambda node :node .tag =="span"and node .has_class ("color-medium-gray"),
-                    )
-                title =label .text ().strip ()if label is not None else ""
-                found =_FALCO_NUMBER .search (title )
-                result .append (
-                SourceChapter (
-                source_id =target ,
-                title =title ,
-                series_id =series_id ,
-                source_name =self .name ,
-                number =float (found .group ())if found else None ,
-                language =self .language ,
-                uploaded_at =self ._date (moment .text ()if moment is not None else ""),
-                )
-                )
-        return list ({chapter .source_id :chapter for chapter in result }.values ())
+        slug =series .source_id if isinstance (series ,SourceSeries )else str (series )
+        html =await self ._html (f"/comics/{slug }")
+        capitulos :list [SourceChapter ]=[]
+        for indice ,nombre in enumerate (dict .fromkeys (_CAPITULO .findall (html ))):
+            numero =_NUMERO .search (nombre )
+            capitulos .append (
+            SourceChapter (
+            source_id =f"{slug }/{nombre }",
+            title =nombre .replace ("-"," ").capitalize (),
+            series_id =slug ,
+            source_name =self .name ,
+            number =float (numero .group (1 ))if numero else float (indice +1 ),
+            language =self .language ,
+            )
+            )
+        capitulos .sort (key =lambda capitulo :capitulo .number ,reverse =True )
+        return capitulos 
 
     async def pages (self ,chapter :SourceChapter |str )->list [SourcePage ]:
         chapter_id =chapter .source_id if isinstance (chapter ,SourceChapter )else str (chapter )
-        response =await self ._request ("GET",urljoin (f"{self .base_url }/",chapter_id ))
+        html =await self ._html (f"/comics/{chapter_id }")
+        paginas :list [SourcePage ]=[]
+        for indice ,(url ,token )in enumerate (_LIENZO .findall (html )):
+            paginas .append (
+            SourcePage (
+            # El token viaja en el id para que page_content pueda reenviarlo.
+            source_id =f"{url }|{token }",
+            chapter_id =chapter_id ,
+            index =indice ,
+            filename =f"{indice +1 :03d}.jpg",
+            source_name =self .name ,
+            )
+            )
+        return paginas 
+
+    async def page_bytes (self ,page :SourcePage |str )->SourcePageContent :
+        crudo =page .source_id if isinstance (page ,SourcePage )else str (page )
+        url ,_ ,token =crudo .partition ("|")
+        capitulo =page .chapter_id if isinstance (page ,SourcePage )else ""
+        response =await self ._request (
+        "GET",
+        url ,
+        headers ={
+        "X-Requested-With":"XMLHttpRequest",
+        "X-CSRF-TOKEN":token ,
+        "Referer":f"{self .base_url }/comics/{capitulo }",
+        },
+        )
         response .raise_for_status ()
-        root =_parse_html (response .text )
-        base =str (response .url )or self .base_url 
-        urls =[
-        _falco_image (node ,base )
-        for content in root .descendants ("div")
-        if content .has_class ("page-content")
-        for blade in content .descendants ("div")
-        if blade .has_class ("img-blade")
-        for node in blade .descendants ("img")
-        ]
-        return [
-        SourcePage (
-        source_id =value ,
-        chapter_id =chapter_id ,
-        index =index ,
-        filename =urlparse (value ).path .rsplit ("/",1 )[-1 ]or f"{index }.jpg",
-        source_name =self .name ,
+        return SourcePageContent (
+        media_type =response .headers .get ("Content-Type","image/jpeg"),
+        chunks =iter ([response .content ]),
         )
-        for index ,value in enumerate (value for value in urls if value )
-        ]
-
-    @staticmethod 
-    def _trending (root :_Node ,tag :str ,class_name :str |None =None )->list [_Node ]:
-        return [
-        node 
-        for section in root .descendants ("section")
-        if section .has_class ("trending")
-        for row in section .descendants ("div")
-        if row .has_class ("row")
-        for node in row .descendants (tag )
-        if class_name is None or node .has_class (class_name )
-        ]
-
-    def _card (self ,card :_Node ,base :str )->SourceSeries |None :
-        target =self ._onclick (card .attrs .get ("onclick",""),base )
-        heading =self ._heading (card ,"name")
-        if not target or heading is None :
-            return None 
-        image =_first (card ,lambda node :node .tag =="img")
-        return SourceSeries (
-        source_id =target ,
-        title =heading .text ().strip (),
-        source_name =self .name ,
-        cover_url =_falco_image (image ,base )if image is not None else None ,
-        web_url =urljoin (f"{self .base_url }/",target ),
-        )
-
-    def _anchor (self ,anchor :_Node ,base :str )->SourceSeries |None :
-        heading =self ._heading (anchor ,"content")
-        href =anchor .attrs .get ("href","")
-        if heading is None or not href :
-            return None 
-        slug =urlparse (urljoin (base ,href )).path .lstrip ("/")
-        image =_first (anchor ,lambda node :node .tag =="img")
-        return SourceSeries (
-        source_id =slug ,
-        title =heading .text ().strip (),
-        source_name =self .name ,
-        cover_url =_falco_image (image ,base )if image is not None else None ,
-        web_url =urljoin (f"{self .base_url }/",slug ),
-        )
-
-    @staticmethod 
-    def _heading (node :_Node ,holder_class :str )->_Node |None :
-        for holder in node .descendants ("div"):
-            if not holder .has_class (holder_class ):
-                continue 
-            for heading in _falco_kids (holder ,"h4","color-white"):
-                return heading 
-        return None 
-
-    @staticmethod 
-    def _description (holder :_Node ,soft :_Node |None )->str :
-        excluded ={id (node )for node in soft .descendants ("p")}if soft is not None else set ()
-        return " ".join (
-        text 
-        for node in holder .descendants ("p")
-        if node .has_class ("sec")and id (node )not in excluded and (text :=node .text ().strip ())
-        )
-
-    @staticmethod 
-    def _labelled (soft :_Node ,label :str )->str |None :
-        for node in soft .descendants ("p"):
-            for span in _falco_kids (node ,"span"):
-                if label in span .text ().strip ().casefold ():
-                    return _falco_own_text (node )or None 
-        return None 
-
-    @staticmethod 
-    def _status (value :str |None )->str |None :
-        return {
-        "en emisión":"ongoing","finalizado":"completed",
-        "cancelado":"cancelled","en espera":"hiatus",
-        }.get ((value or "").strip ().casefold ())
-
-    @staticmethod 
-    def _onclick (value :str ,base :str )->str :
-        found =_FALCO_ONCLICK .search (value )
-        return urlparse (urljoin (base ,found .group (1 ))).path .lstrip ("/")if found else ""
-
-    @staticmethod 
-    def _date (value :str )->str |None :
-        from datetime import datetime 
-
-        found =_FALCO_DATE .search (value )
-        if not found :
-            return None 
-        try :
-            return datetime (int (found .group (3 )),int (found .group (2 )),int (found .group (1 ))).isoformat ()
-        except ValueError :
-            return None 
 
 
 class GeneratedFalcoScanSource (FalcoScanSource ):
@@ -2931,9 +2793,7 @@ class GeneratedFalcoScanSource (FalcoScanSource ):
     display_name ='Falco Scan'
     base_url ='https://falcoscan.net'
     language ='es'
-    requests_per_minute =180 
-    content_warning ='nsfw'
-    image_headers ={'Referer':'https://falcoscan.net/'}
+    requests_per_minute =60 
 
 
 SOURCE =GeneratedFalcoScanSource

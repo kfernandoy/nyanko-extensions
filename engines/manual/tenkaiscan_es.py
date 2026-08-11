@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import base64
+import hashlib
 import io
 import json
 import re
@@ -18,9 +19,9 @@ from nyanko_api.sources.contract import (
     SourceCapabilities,
     SourceChapter,
     SourceFetcher,
+    SourceFilter,
     SourcePage,
     SourcePageContent,
-    SourceFilter,
     SourcePreference,
     SourceSeries,
 )
@@ -99,23 +100,268 @@ def _first(node: _Node, predicate: Any) -> _Node | None:
     return next((item for item in node.descendants() if predicate(item)), None)
 
 
+_BACKGROUND_IMAGE = re.compile(r"background(?:-image)?\s*:[^;]*?url\(\s*(['\"]?)(.*?)\1\s*\)", re.I | re.S)
+
+
+def _style_image_url(node: _Node, base_url: str) -> str:
+    """Portada servida como CSS en el propio nodo, no como <img>.
+
+    Los temas Madara re-skineados con Tailwind pintan la portada con
+    ``style="background-image:url(...)"`` sobre el ancla de la serie y no
+    emiten ni un solo ``<img>``.
+    """
+    found = _BACKGROUND_IMAGE.search(node.attrs.get("style", ""))
+    if found is None:
+        return ""
+    value = found.group(2).strip()
+    return _mismo_host_seguro(urljoin(base_url, value), base_url) if value else ""
+
+
+def _cuerpo_de_formulario(kwargs: dict[str, Any]) -> dict[str, Any]:
+    """Convierte ``data=[(clave, valor), ...]`` en ``dict`` antes de salir a la red.
+
+    httpx 0.28 solo trata como formulario los ``data`` que son Mapping; una lista de pares
+    la interpreta como cuerpo iterable, o sea un stream SINCRONO, y sobre el cliente async
+    de la app aborta con ``RuntimeError: Attempted to send an sync request with an
+    AsyncClient instance``. La fuente no llegaba a hacer ni una peticion: browse, latest y
+    search morian de golpe (haremdekira, "no carga nada" en la validacion manual).
+
+    Se normaliza aqui, en el unico embudo por el que salen todas las peticiones del motor,
+    en vez de en cada helper. Las claves de estos formularios son unicas -van indexadas
+    como ``vars[meta_query][0][key]``-, asi que pasar por ``dict`` no pierde nada; se
+    comprobo sobre 762 combinaciones de filtros. Si alguna vez hiciera falta repetir una
+    clave, habria que pasarla ya codificada como ``content=``.
+    """
+    cuerpo = kwargs.get("data")
+    if isinstance(cuerpo, (list, tuple)):
+        kwargs = dict(kwargs)
+        kwargs["data"] = dict(cuerpo)
+    return kwargs
+
+
+def _mismo_host_seguro(url: str, base_url: str) -> str:
+    """Sube a https las URLs http:// del propio sitio cuando este ya sirve por https.
+
+    Varios temas Madara emiten las portadas y las paginas del capitulo con el esquema
+    en claro aunque el sitio se sirva por https (catharsisworld: 8 de 8 paginas y 16 de
+    16 portadas). En Python da igual y por eso el arnes las descargaba sin quejarse,
+    pero Android bloquea el trafico cleartext desde API 28, asi que la imagen nunca
+    llegaba al lector y el capitulo se veia en blanco.
+
+    Solo se reescribe cuando el host es exactamente el de ``base_url`` y este es https;
+    los CDN de terceros se dejan intactos porque no hay garantia de que tengan
+    certificado valido.
+    """
+    if not url.startswith("http://") or not base_url.startswith("https://"):
+        return url
+    if urlparse(url).netloc.lower() != urlparse(base_url).netloc.lower():
+        return url
+    return "https://" + url[len("http://"):]
+
+
 def _image_url(node: _Node, base_url: str) -> str:
     for key in (
         "data-lm-orig-src",
+        "data-sec-src",
         "data-src",
         "data-lazy-src",
         "data-cfsrc",
         "data-manga-src",
+        "data-src-base64",
         "src",
     ):
         if node.attrs.get(key):
-            return urljoin(base_url, node.attrs[key].strip())
+            return _mismo_host_seguro(urljoin(base_url, node.attrs[key].strip()), base_url)
     candidates = [
         item.strip().split()[0]
         for item in node.attrs.get("srcset", "").split(",")
         if item.strip()
     ]
-    return urljoin(base_url, candidates[-1]) if candidates else ""
+    if candidates:
+        return _mismo_host_seguro(urljoin(base_url, candidates[-1]), base_url)
+    return _style_image_url(node, base_url)
+
+
+def _es_imagen_de_carga(node: _Node) -> bool:
+    """`True` si el <img> es el spinner del tema y no la portada.
+
+    Algunos temas Madara meten un placeholder ANTES de la portada real
+    (taurusfansub: `<div class="manga-loader"><img alt="Loading..."></div>` seguido de
+    `<div class="manga__thumb_item"><img ...la portada...>`). Coger el primer <img> del
+    contenedor devolvia el mismo spinner para las 12 series del listado.
+
+    Se detecta por el alt y por la clase del contenedor, no por la URL: el archivo
+    concreto cambia de un sitio a otro.
+    """
+    if "load" in node.attrs.get("alt", "").casefold():
+        return True
+    padre = node.parent
+    saltos = 0
+    while padre is not None and saltos < 3:
+        clases = padre.attrs.get("class", "").casefold()
+        if "loader" in clases or "loading" in clases:
+            return True
+        padre = padre.parent
+        saltos += 1
+    return False
+
+
+def _cover_url(container: _Node, base_url: str) -> str | None:
+    """Portada del contenedor: primero el <img>, si no el background del CSS.
+
+    Es aditivo: el fallback de ``background-image`` solo entra cuando no hay
+    ningun ``<img>`` con URL utilizable, asi que no puede cambiar el resultado
+    de los sitios que hoy funcionan.
+    """
+    image = _first(
+        container,
+        lambda node: node.tag == "img" and not _es_imagen_de_carga(node),
+    )
+    if image is not None and (url := _image_url(image, base_url)):
+        return url
+    # Si solo habia loaders, se reintenta sin el filtro antes de pasar al CSS: es
+    # preferible un placeholder a quedarse sin portada.
+    image = _first(container, lambda node: node.tag == "img")
+    if image is not None and (url := _image_url(image, base_url)):
+        return url
+    if url := _style_image_url(container, base_url):
+        return url
+    styled = _first(container, lambda node: bool(_style_image_url(node, base_url)))
+    return _style_image_url(styled, base_url) if styled is not None else None
+
+
+def _gf_mul(left: int, right: int) -> int:
+    result = 0
+    while right:
+        if right & 1:
+            result ^= left
+        left = ((left << 1) ^ (0x11B if left & 0x80 else 0)) & 0xFF
+        right >>= 1
+    return result
+
+
+def _aes_sbox(value: int) -> int:
+    inverse, base, exponent = 1, value, 254
+    while exponent:
+        if exponent & 1:
+            inverse = _gf_mul(inverse, base)
+        base = _gf_mul(base, base)
+        exponent >>= 1
+    if value == 0:
+        inverse = 0
+    return inverse ^ ((inverse << 1) | (inverse >> 7)) & 0xFF ^ ((inverse << 2) | (inverse >> 6)) & 0xFF ^ ((inverse << 3) | (inverse >> 5)) & 0xFF ^ ((inverse << 4) | (inverse >> 4)) & 0xFF ^ 0x63
+
+
+_AES_SBOX = tuple(_aes_sbox(value) for value in range(256))
+_AES_INV_SBOX = tuple(_AES_SBOX.index(value) for value in range(256))
+
+
+def _aes256_decrypt(ciphertext: bytes, key: bytes, iv: bytes) -> bytes:
+    words = [list(key[index:index + 4]) for index in range(0, 32, 4)]
+    rcon = 1
+    for index in range(8, 60):
+        temp = words[-1][:]
+        if index % 8 == 0:
+            temp = [_AES_SBOX[value] for value in temp[1:] + temp[:1]]
+            temp[0] ^= rcon
+            rcon = _gf_mul(rcon, 2)
+        elif index % 8 == 4:
+            temp = [_AES_SBOX[value] for value in temp]
+        words.append([left ^ right for left, right in zip(words[index - 8], temp)])
+    round_keys = [sum(words[index:index + 4], []) for index in range(0, 60, 4)]
+
+    def decrypt_block(block: bytes) -> bytes:
+        state = [value ^ key_value for value, key_value in zip(block, round_keys[14])]
+        for round_number in range(13, -1, -1):
+            state = [state[index] for index in (0, 13, 10, 7, 4, 1, 14, 11, 8, 5, 2, 15, 12, 9, 6, 3)]
+            state = [_AES_INV_SBOX[value] for value in state]
+            state = [value ^ key_value for value, key_value in zip(state, round_keys[round_number])]
+            if round_number:
+                mixed: list[int] = []
+                for column in range(4):
+                    a, b, c, d = state[column * 4:column * 4 + 4]
+                    mixed.extend((
+                        _gf_mul(a, 14) ^ _gf_mul(b, 11) ^ _gf_mul(c, 13) ^ _gf_mul(d, 9),
+                        _gf_mul(a, 9) ^ _gf_mul(b, 14) ^ _gf_mul(c, 11) ^ _gf_mul(d, 13),
+                        _gf_mul(a, 13) ^ _gf_mul(b, 9) ^ _gf_mul(c, 14) ^ _gf_mul(d, 11),
+                        _gf_mul(a, 11) ^ _gf_mul(b, 13) ^ _gf_mul(c, 9) ^ _gf_mul(d, 14),
+                    ))
+                state = mixed
+        return bytes(state)
+
+    result = b""
+    previous = iv
+    for offset in range(0, len(ciphertext), 16):
+        block = ciphertext[offset:offset + 16]
+        decrypted = decrypt_block(block)
+        result += bytes(left ^ right for left, right in zip(decrypted, previous))
+        previous = block
+    return result[:-result[-1]] if result else result
+
+
+def _evp_kdf_decrypt(ciphertext: str, salt: str, password: str, iv: str | None = None) -> str:
+    """Descifra el AES-256-CBC que produce `CryptoJS.AES.encrypt` con passphrase.
+
+    CryptoJS no usa la passphrase como clave: la pasa por EvpKDF (MD5 iterado sobre
+    password+salt) hasta sacar 48 bytes, de los que los 32 primeros son la clave y los
+    16 siguientes el IV. Cuando el payload trae `iv` propio se usa ese en su lugar.
+
+    Se reimplementa AES en Python puro, igual que `generic.py`, porque los bundles se
+    generan autocontenidos y no pueden arrastrar dependencias externas.
+    """
+    generado = b""
+    digest = b""
+    password_bytes = password.encode()
+    salt_bytes = bytes.fromhex(salt)
+    while len(generado) < 48:
+        digest = hashlib.md5(digest + password_bytes + salt_bytes).digest()
+        generado += digest
+    vector = bytes.fromhex(iv) if iv else generado[32:48]
+    return _aes256_decrypt(base64.b64decode(ciphertext), generado[:32], vector).decode()
+
+
+def _protected_page_urls(html: str, base_url: str) -> list[str]:
+    """Paginas del plugin `wp-manga-chapter-images-protection`.
+
+    Ese plugin sustituye los <img> del lector por divs `.page-break` vacios y publica la
+    lista real cifrada en `var chapter_data`. Sin esto la extension devuelve 0 paginas
+    aunque el capitulo exista (catharsisworld: 17 imagenes por capitulo).
+
+    La passphrase es uno de los nonces de 10 hex que WordPress ya imprime en la pagina;
+    no hay forma fiable de saber cual, asi que se prueban en orden y se acepta el primero
+    que produzca un JSON con lista de URLs.
+    """
+    payload = re.search(r"var\s+chapter_data\s*=\s*'([^']+)'", html)
+    if payload is None:
+        return []
+    try:
+        datos = json.loads(payload.group(1).replace("\\/", "/"))
+    except json.JSONDecodeError:
+        return []
+    if not datos.get("ct") or not datos.get("s"):
+        return []
+
+    candidatas: list[str] = []
+    for encontrado in re.finditer(r"""["']([0-9a-f]{10})["']""", html):
+        if encontrado.group(1) not in candidatas:
+            candidatas.append(encontrado.group(1))
+
+    for clave in candidatas[:12]:
+        try:
+            valor = json.loads(
+                _evp_kdf_decrypt(datos["ct"], datos["s"], clave, datos.get("iv"))
+            )
+            while isinstance(valor, str):
+                valor = json.loads(valor)
+        except (ValueError, UnicodeDecodeError, json.JSONDecodeError):
+            continue
+        if isinstance(valor, list) and valor:
+            return [
+                urljoin(base_url, str(item).strip().replace("\\/", "/"))
+                for item in valor
+                if str(item).strip()
+            ]
+    return []
 
 
 class MadaraSource:
@@ -132,6 +378,10 @@ class MadaraSource:
     pages_profile = "default"
     extra_headers: dict[str, str] = {}
     image_headers: dict[str, str] = {}
+    strip_external_image_referer = False
+    date_format = "MMMM dd, yyyy"
+    date_locale = "en"
+    details_profile = "default"
     api_version = SOURCE_API_VERSION
     content_warning = "unknown"
     requires_auth = False
@@ -199,6 +449,200 @@ class MadaraSource:
             )
         return self._series_from_root(root, ("page-item-detail", "manga__item"))
 
+    async def details(self, series: SourceSeries | str) -> SourceSeries:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        response = await self._request("GET", urljoin(f"{self.base_url}/", series_id))
+        response.raise_for_status()
+        root = _parse_html(response.text)
+        title_node = _first(
+            root,
+            lambda node: node.tag in {"h1", "h3"}
+            and (
+                self._has_class_ancestor(node, "post-title")
+                or self._has_id_ancestor(node, "manga-title")
+                or node.has_class("post-title")
+                or node.has_class("mb-2")
+            ),
+        )
+        title = title_node.text().strip() if title_node else (
+            series.title if isinstance(series, SourceSeries) else series_id.rstrip("/").rsplit("/", 1)[-1]
+        )
+        image = _first(root, lambda node: node.tag == "img" and self._has_class_ancestor(node, "summary_image"))
+        description_node = _first(
+            root,
+            lambda node: node.has_class("summary__content")
+            and self._has_class_ancestor(node, "description-summary")
+            or node.has_class("manga-excerpt")
+            or node.has_class("mv-synopsis")
+            or node.has_class("summary-container")
+            or node.has_class("modal-contenido") and self._has_class_ancestor(node, "c-page__content"),
+        )
+        paragraphs = description_node.descendants("p") if description_node else []
+        description = (
+            "\n\n".join(paragraph.text().strip() for paragraph in paragraphs if paragraph.text().strip())
+            if paragraphs else description_node.text().strip() if description_node else ""
+        )
+        authors = self._detail_links(root, ("author-content", "manga-authors"))
+        artists = self._detail_links(root, ("artist-content",))
+        status_text = ""
+        for item in root.descendants("div"):
+            if not item.has_class("post-content_item") or not self._has_class_ancestor(item, "summary_content"):
+                continue
+            heading = _first(
+                item,
+                lambda node: node.has_class("summary-heading")
+                and any(label in node.text().casefold() for label in ("status", "estado")),
+            )
+            value = _first(item, lambda node: node.has_class("summary-content"))
+            if heading and value:
+                status_text = value.text().strip()
+        genres = [
+            node.text().strip()
+            for node in root.descendants("a")
+            if self._has_class_ancestor(node, "genres-content") and node.text().strip()
+        ]
+        for item in root.descendants():
+            if not item.has_class("post-content_item"):
+                continue
+            own = " ".join(child.strip() for child in item.children if isinstance(child, str) and child.strip())
+            heading = _first(item, lambda node: node.has_class("summary-heading"))
+            label = f"{own} {heading.text() if heading else ''}"
+            value = _first(item, lambda node: node.has_class("summary-content"))
+            if not value or not value.text().strip():
+                continue
+            if "Type" in label and value.text().strip() != "-":
+                genres.append(value.text().strip())
+            elif "Alt" in label:
+                description = f"{description}\n\nAlternative name(s): {value.text().strip()}".strip()
+        genres = list(dict.fromkeys(genre for genre in genres if genre))
+        cover_url = _image_url(image, str(response.url)) if image else None
+
+        # Los temas Madara re-skineados con Tailwind (catharsisworld, templescanesp) no
+        # emiten NINGUNA de las clases anteriores: ni `post-title`, ni `summary_image`, ni
+        # `post-content_item`. La ficha quedaba entera a None aunque el HTML tuviera todo.
+        # Se rellena solo lo que falta, asi que un sitio que ya funciona no cambia.
+        if not (cover_url and description and genres and status_text):
+            alterno = self._tailwind_details(root, str(response.url))
+            title = title if title and title != series_id.rstrip("/").rsplit("/", 1)[-1] else alterno.get("title") or title
+            cover_url = cover_url or alterno.get("cover_url")
+            description = description or alterno.get("description", "")
+            status_text = status_text or alterno.get("status", "")
+            if not genres:
+                genres = alterno.get("genres", [])
+            if not authors and alterno.get("author"):
+                authors = [alterno["author"]]
+
+        return SourceSeries(
+            source_id=series_id,
+            title=title,
+            source_name=self.name,
+            cover_url=cover_url,
+            description=description or None,
+            author=", ".join(authors) or None,
+            artist=", ".join(artists) or None,
+            status=self._madara_status(status_text),
+            content_tags=tuple(genres),
+            metadata=series.metadata if isinstance(series, SourceSeries) else {},
+            web_url=str(response.url),
+        )
+
+    # Estados que el tema Tailwind pinta como una badge mas, mezclada con los generos.
+    _ESTADOS_BADGE = {
+        "ongoing", "oncoming", "on going", "completed", "completo", "completado",
+        "finalizado", "concluido", "en curso", "curso", "pausado", "en espera",
+        "on hold", "canceled", "cancelado", "hiatus", "publicandose", "en emision",
+    }
+
+    def _tailwind_details(self, root: _Node, page_url: str) -> dict:
+        """Lee la ficha de los temas Madara re-skineados con Tailwind.
+
+        No hay clases semanticas donde agarrarse, asi que se usan las anclas estables que
+        si tiene el markup: el unico ``<h1>`` es el titulo, la sinopsis vive en
+        ``#expand_content``, la portada es el primer ``background-image`` con proporcion de
+        poster y las badges de texto corto son estado + generos.
+        """
+        datos: dict = {}
+
+        titulo = _first(root, lambda node: node.tag == "h1")
+        if titulo and titulo.text().strip():
+            datos["title"] = titulo.text().strip()
+
+        sinopsis = _first(root, lambda node: node.attrs.get("id") == "expand_content")
+        if sinopsis and sinopsis.text().strip():
+            datos["description"] = sinopsis.text().strip()
+
+        # La portada de estos temas es un div con `aspect-[0.75/1]` (proporcion de poster);
+        # el resto de background-image de la pagina son el fondo difuminado y los banners.
+        for node in root.descendants("div"):
+            if not any("0.75/1" in clase for clase in node.attrs.get("class", "").split()):
+                continue
+            if url := _style_image_url(node, page_url):
+                datos["cover_url"] = url
+                break
+
+        # Las badges de la serie (estado + generos) van entre el <h1> y la sinopsis. Se
+        # recorre en orden de documento y se corta al llegar a `#expand_content`: mas abajo
+        # la pagina repite badges de series relacionadas y del scanlator, que antes se
+        # colaban como generos ("Bloodkami Scan").
+        generos: list[str] = []
+        vistos: set[str] = set()
+        for node in root.descendants():
+            if node.attrs.get("id") == "expand_content":
+                break
+            texto = node.text().strip()
+            # Las badges son etiquetas cortas; el filtro de longitud evita tragarse
+            # parrafos de la pagina que tambien usan <span>.
+            if node.tag != "span" or not node.has_class("capitalize") or not texto or len(texto) > 40:
+                continue
+            clave = texto.casefold()
+            if clave in self._ESTADOS_BADGE:
+                datos.setdefault("status", texto)
+            elif clave not in vistos:
+                # Dedupe insensible a mayusculas: el tema repite "Shoujo" y "shoujo".
+                vistos.add(clave)
+                generos.append(texto)
+        if generos:
+            datos["genres"] = generos
+
+        # El ld+json es la unica fuente fiable del autor en este tema.
+        ld = _first(
+            root,
+            lambda node: node.tag == "script"
+            and node.attrs.get("type") == "application/ld+json",
+        )
+        if ld is not None:
+            autor = re.search(r'"author"\s*:\s*\{[^}]*?"name"\s*:\s*"([^"]+)"', ld.text())
+            if autor:
+                datos["author"] = autor.group(1).strip()
+        return datos
+
+    @classmethod
+    def _detail_links(cls, root: _Node, containers: tuple[str, ...]) -> list[str]:
+        return [
+            node.text().strip()
+            for node in root.descendants("a")
+            if any(cls._has_class_ancestor(node, name) for name in containers)
+            and node.text().strip()
+            and "updating" not in node.text().casefold()
+            and "atualizando" not in node.text().casefold()
+        ]
+
+    @staticmethod
+    def _madara_status(value: str) -> str | None:
+        normalized = " ".join(re.findall(r"\w+", value.casefold()))
+        if normalized in {"completed", "completo", "completado", "finalizado", "concluido"}:
+            return "completed"
+        if normalized in {
+            "ongoing", "en curso", "curso", "en marcha", "publicandose", "en emision",
+            "emision", "emisión", "en emisión", "ativo", "updating",
+        }:
+            return "ongoing"
+        if normalized in {"on hold", "pausado", "en espera"}:
+            return "hiatus"
+        if normalized in {"canceled", "cancelado"}:
+            return "cancelled"
+        return None
+
     async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
         series_id = series.source_id if isinstance(series, SourceSeries) else series
         series_url = urljoin(f"{self.base_url}/", series_id)
@@ -209,31 +653,64 @@ class MadaraSource:
         if not items:
             items = self._fallback_chapter_nodes(root)
         holder = _first(root, lambda node: node.attrs.get("id", "").startswith("manga-chapters-holder"))
-        if not items and holder is not None:
-            if self.use_new_chapter_endpoint:
-                response = await self._request("POST", f"{series_url.rstrip('/')}/ajax/chapters")
+        # El endpoint AJAX se intentaba solo si el HTML traia `manga-chapters-holder`.
+        # Los temas Madara recientes ya no emiten ese div, asi que la peticion no llegaba
+        # a hacerse y la serie quedaba con 0 capitulos aunque `ajax/chapters` respondiera
+        # (infrafandub: 692 capitulos). El holder solo hace falta para leer su `data-id`
+        # en la variante admin-ajax; para el resto basta con no tener capitulos en el HTML.
+        if not items:
+            if self.use_new_chapter_endpoint or holder is None:
+                response = await self._request(
+                    "POST", f"{series_url.rstrip('/')}/ajax/chapters",
+                    headers={"X-Requested-With": "XMLHttpRequest"},
+                )
             else:
                 response = await self._request(
                     "POST",
                     f"{self.base_url}/wp-admin/admin-ajax.php",
                     data={"action": "manga_get_chapters", "manga": holder.attrs.get("data-id", "")},
+                    headers={"X-Requested-With": "XMLHttpRequest"},
                 )
                 if getattr(response, "status_code", 200) == 400:
-                    response = await self._request("POST", f"{series_url.rstrip('/')}/ajax/chapters")
-            response.raise_for_status()
-            items = self._chapter_nodes(_parse_html(response.text))
-            if not items:
-                items = self._fallback_chapter_nodes(_parse_html(response.text))
+                    response = await self._request(
+                        "POST", f"{series_url.rstrip('/')}/ajax/chapters",
+                        headers={"X-Requested-With": "XMLHttpRequest"},
+                    )
+            # Ahora el AJAX se intenta aunque no haya holder, asi que puede responder 404
+            # en sitios que antes ni se consultaban. Eso no es un error de la fuente: se
+            # deja la lista vacia en lugar de convertirlo en excepcion.
+            if getattr(response, "status_code", 200) < 400:
+                items = self._chapter_nodes(_parse_html(response.text))
+                if not items:
+                    items = self._fallback_chapter_nodes(_parse_html(response.text))
 
         result: list[SourceChapter] = []
+        seen_chapters: set[str] = set()
         for item in items:
             anchor = _first(item, lambda node: node.tag == "a" and bool(node.attrs.get("href")))
             if anchor is None:
                 continue
             title = anchor.text().strip()
+            relative_image = _first(item, lambda node: node.tag == "img" and not node.has_class("thumb"))
+            relative_link = _first(
+                item,
+                lambda node: node.tag == "a" and node.parent is not None
+                and node.parent.tag == "span" and bool(node.attrs.get("title")),
+            )
+            date = _first(item, lambda node: node.tag == "span" and node.has_class("chapter-release-date"))
+            date_text = (
+                relative_image.attrs.get("alt", "") if relative_image is not None
+                else relative_link.attrs.get("title", "") if relative_link is not None
+                else date.text() if date else ""
+            )
             chapter_url = urljoin(series_url, anchor.attrs["href"]).split("?style=paged", 1)[0]
             if self.chapter_url_suffix and not chapter_url.endswith(self.chapter_url_suffix):
                 chapter_url += self.chapter_url_suffix
+            # El fallback recorre li, div y tr por separado: en un markup anidado
+            # el mismo ancla cae dentro de varios contenedores y entra una vez por cada uno.
+            if chapter_url in seen_chapters:
+                continue
+            seen_chapters.add(chapter_url)
             match = re.search(r"(?:chapter|cap(?:í|i)tulo|ch)[^\d]*(\d+(?:\.\d+)?)", title, re.I)
             result.append(
                 SourceChapter(
@@ -242,9 +719,75 @@ class MadaraSource:
                     series_id=series_id,
                     source_name=self.name,
                     number=float(match.group(1)) if match else None,
+                    language=self.language,
+                    uploaded_at=self._madara_date(date_text),
                 )
             )
         return result
+
+    def _madara_date(self, value: str) -> str | None:
+        from calendar import monthrange
+        from datetime import datetime, timedelta
+
+        text = value.strip().casefold()
+        now = datetime.now().replace(microsecond=0)
+        if text.startswith(("today", "hoy")):
+            return now.replace(hour=0, minute=0, second=0).isoformat()
+        if text.startswith(("yesterday", "ayer")):
+            return (now - timedelta(days=1)).replace(hour=0, minute=0, second=0).isoformat()
+        relative = re.search(r"(\d+)", text)
+        if relative and (text.startswith("hace") or text.endswith(("ago", "atrás"))):
+            amount = int(relative.group())
+            if any(unit in text for unit in ("día", "dia", "day")):
+                return (now - timedelta(days=amount)).isoformat()
+            if any(unit in text for unit in ("hora", "hour")):
+                return (now - timedelta(hours=amount)).isoformat()
+            if any(unit in text for unit in ("minuto", "minute", " min")):
+                return (now - timedelta(minutes=amount)).isoformat()
+            if any(unit in text for unit in ("segundo", "second")):
+                return (now - timedelta(seconds=amount)).isoformat()
+            if any(unit in text for unit in ("semana", "week")):
+                return (now - timedelta(days=amount * 7)).isoformat()
+            if any(unit in text for unit in ("mes", "month")):
+                total = now.year * 12 + now.month - 1 - amount
+                year, month = divmod(total, 12)
+                return now.replace(
+                    year=year, month=month + 1,
+                    day=min(now.day, monthrange(year, month + 1)[1]),
+                ).isoformat()
+            if any(unit in text for unit in ("año", "year")):
+                year = now.year - amount
+                return now.replace(year=year, day=min(now.day, monthrange(year, now.month)[1])).isoformat()
+        numeric_format = {
+            "MM/dd/yyyy": "%m/%d/%Y", "dd/MM/yyyy": "%d/%m/%Y", "yyyy-MM-dd": "%Y-%m-%d",
+        }.get(self.date_format)
+        if numeric_format:
+            try:
+                return datetime.strptime(value.strip(), numeric_format).isoformat()
+            except ValueError:
+                return None
+        if self.date_format not in {"d MMMM, yyyy", "dd MMM yyyy", "dd MMM, yyyy", "dd MMMM, yyyy", "MMM dd, yyyy", "MMMM dd, yyyy"}:
+            return None
+        months = {
+            "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
+            "july": 7, "august": 8, "september": 9, "october": 10, "november": 11, "december": 12,
+            "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
+            "julio": 7, "agosto": 8, "septiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12,
+            "jan": 1, "feb": 2, "mar": 3, "apr": 4, "jun": 6, "jul": 7, "aug": 8,
+            "sep": 9, "sept": 9, "oct": 10, "nov": 11, "dec": 12,
+            "ene": 1, "abr": 4, "ago": 8, "dic": 12,
+        }
+        day_first = self.date_format.startswith(("d ", "dd "))
+        absolute = (
+            re.fullmatch(r"(\d{1,2})\s+([^\s,]+),?\s+(\d{4})", text)
+            if day_first
+            else re.fullmatch(r"([^\s]+)\s+(\d{1,2}),\s*(\d{4})", text)
+        )
+        month = absolute.group(2).rstrip(".") if absolute and day_first else absolute.group(1).rstrip(".") if absolute else ""
+        if absolute and month in months:
+            day = absolute.group(1) if day_first else absolute.group(2)
+            return datetime(int(absolute.group(3)), months[month], int(day)).isoformat()
+        return None
 
     async def pages(self, chapter: SourceChapter | str) -> list[SourcePage]:
         chapter_id = chapter.source_id if isinstance(chapter, SourceChapter) else chapter
@@ -264,6 +807,36 @@ class MadaraSource:
         )
         if blocked is not None and self.pages_profile in {"login_guard", "captcha_guard"}:
             raise ValueError("El capítulo requiere iniciar sesión o resolver el captcha en WebView")
+
+        # Perfil `redirect_form`: la pagina del capitulo NO trae las imagenes, trae un
+        # formulario POST cuyo destino si las sirve. Portado de `pageListParse` de
+        # TempleScanEsp.kt: sin esto el HTML inicial solo tiene el logo del sitio y el
+        # parseo devuelve 0 paginas aunque la fuente funcione perfectamente.
+        #
+        # Si el formulario no esta se sigue con el flujo normal -igual que hace el Kotlin
+        # con su `?: return super.pageListParse(document)`-: el sitio puede servir el
+        # capitulo directamente segun el capitulo o si deja de usar la pasarela.
+        if self.pages_profile == "redirect_form":
+            formulario = _first(
+                root,
+                lambda node: node.tag == "form"
+                and node.attrs.get("id") == "redirect-form"
+                and node.attrs.get("method", "").lower() == "post",
+            )
+            if formulario is not None and formulario.attrs.get("action"):
+                campos = {
+                    campo.attrs["name"]: campo.attrs.get("value", "")
+                    for campo in formulario.descendants("input")
+                    if campo.attrs.get("name")
+                }
+                response = await self._request(
+                    "POST",
+                    formulario.attrs["action"],
+                    data=campos,
+                    headers={"Referer": str(response.url)},
+                )
+                response.raise_for_status()
+                root = _parse_html(response.text)
 
         profile_urls = self._profile_page_urls(response.text, str(response.url))
         if self.pages_profile == "campaign":
@@ -298,7 +871,7 @@ class MadaraSource:
             if (image := _first(container, lambda node: node.tag == "img")) is not None
         ]
         reading = _first(root, lambda node: node.has_class("reading-content"))
-        if reading is not None:
+        if reading is not None and self.pages_profile != "page_break_only":
             images.extend(reading.descendants("img"))
         if not images:
             images = [
@@ -336,11 +909,18 @@ class MadaraSource:
                     except (ValueError, SyntaxError):
                         values = []
                 urls = [urljoin(str(response.url), str(value)) for value in values]
+        if not urls:
+            urls = _protected_page_urls(response.text, str(response.url))
         if self.pages_profile == "https":
             urls = [url.replace("http://", "https://", 1) for url in urls]
         elif self.pages_profile == "skip_placeholder" and urls:
             if urls[0].split("?", 1)[0].endswith("/1-000001.jpg"):
                 urls = urls[1:]
+        # Igual que en las portadas: el capitulo puede venir con las paginas en http
+        # aunque el sitio hable https. Android descarta ese trafico y el lector se queda
+        # en blanco. `pages_profile = "https"` ya lo parcheaba fuente a fuente; esto lo
+        # cubre para todas, pero solo dentro del propio host.
+        urls = [_mismo_host_seguro(url, self.base_url) for url in urls]
         return [
             SourcePage(
                 source_id=url,
@@ -358,7 +938,10 @@ class MadaraSource:
             raise SourceNotFoundError("Página Madara sin URL")
         parsed = urlparse(url)
         headers = dict(self.image_headers)
-        if isinstance(page, SourcePage):
+        if isinstance(page, SourcePage) and not (
+            self.strip_external_image_referer
+            and parsed.hostname != urlparse(self.base_url).hostname
+        ):
             headers.setdefault("Referer", page.chapter_id)
         response = await self._request(
             "GET",
@@ -486,13 +1069,12 @@ class MadaraSource:
             if source_id in seen or not title:
                 continue
             seen.add(source_id)
-            image = _first(item, lambda node: node.tag == "img")
             result.append(
                 SourceSeries(
                     source_id=source_id,
                     title=title,
                     source_name=self.name,
-                    cover_url=_image_url(image, self.base_url) if image else None,
+                    cover_url=_cover_url(item, self.base_url),
                     web_url=source_id,
                 )
             )
@@ -517,13 +1099,12 @@ class MadaraSource:
             title = anchor.attrs.get("title", "").strip() or anchor.text().strip()
             if title and source_id not in seen:
                 seen.add(source_id)
-                image = _first(anchor, lambda node: node.tag == "img")
                 result.append(
                     SourceSeries(
                         source_id=source_id,
                         title=title,
                         source_name=self.name,
-                        cover_url=_image_url(image, self.base_url) if image else None,
+                        cover_url=_cover_url(anchor, self.base_url),
                         web_url=source_id,
                     )
                 )
@@ -556,6 +1137,8 @@ class MadaraSource:
         parent = node.parent
         while parent is not None:
             marker = f"{parent.attrs.get('id', '')} {parent.attrs.get('class', '')}".lower()
+            if "related-reading" in marker:
+                return False
             if any(value in marker for value in ("reading-content", "read-content", "reader", "ch-images")):
                 return True
             parent = parent.parent
@@ -570,317 +1153,173 @@ class MadaraSource:
             parent = parent.parent
         return False
 
+    @staticmethod
+    def _has_id_ancestor(node: _Node, identifier: str) -> bool:
+        parent = node.parent
+        while parent is not None:
+            if parent.attrs.get("id") == identifier:
+                return True
+            parent = parent.parent
+        return False
+
     async def _request(self, method: str, url: str, **kwargs: Any) -> Any:
         if self.fetcher is None:
             raise SourceNotFoundError(f"{self.display_name} no tiene fetcher inyectado")
+        kwargs = _cuerpo_de_formulario(kwargs)
         return await self.fetcher.request(method, url, **kwargs)
 
 
-"""Adaptador de Falco Scan: navegacion por onclick y un solo filtro a la vez."""
+"""Implementación de Falco Scan (antes TenkaiScan).
 
-_FALCO_ONCLICK = re.compile(r"window\.location\.href\s*=\s*'([^']+)'")
-_FALCO_DATE = re.compile(r"(\d{1,2})/(\d{1,2})/(\d{4})")
-_FALCO_NUMBER = re.compile(r"\d+(?:\.\d+)?")
-_FALCO_GENRES = (
-    "Adaptación de Novela", "Aventuras", "Bondage", "Comedia", "Drama", "Ecchi",
-    "Escolar", "Fantasía", "Hardcore", "Harem", "Isekai", "MILF", "Netorare",
-    "Novela", "Recuentos de la vida", "Romance", "Seinen", "Sistemas", "Venganza",
+El port anterior apuntaba a ``tenkaiscan.net``, que hoy solo devuelve un bucle de
+redirecciones. El proyecto sigue vivo en ``falcoscan.net`` con otra plantilla.
+
+El unico punto delicado son las paginas del lector. No hay ``<img>``: cada pagina es un
+``<canvas data-src=... data-token=...>`` que el JS rellena por fetch. Ese endpoint
+(``/img-serve/<ruta en base64>``) responde 403 salvo que se pidan las imagenes con:
+
+  * ``X-CSRF-TOKEN`` con el valor de ``data-token`` del propio capitulo, y
+  * la cookie de sesion que entrego el HTML de ese capitulo.
+
+Por eso ``pages()`` guarda el token y ``page_bytes()`` lo reutiliza; pedir la imagen sin
+ese par da 403 aunque se mande el Referer.
+"""
+
+import re
+from html import unescape
+
+_TARJETA = re.compile(
+    r'<a\s+href="([^"]*?/comics/([^"/]+))"[^>]*class="[^"]*falco-card[^"]*"(.*?)</a>',
+    re.S,
 )
-
-
-def _falco_own_text(node: _Node) -> str:
-    return " ".join(part.strip() for part in node.children if isinstance(part, str) and part.strip())
-
-
-def _falco_kids(node: _Node, tag: str, class_name: str | None = None) -> list[_Node]:
-    return [
-        child
-        for child in node.children
-        if isinstance(child, _Node)
-        and child.tag == tag
-        and (class_name is None or child.has_class(class_name))
-    ]
-
-
-def _falco_image(node: _Node, base: str) -> str:
-    return urljoin(base, node.attrs.get("data-src") or node.attrs.get("src") or "")
+_PORTADA = re.compile(r'<img[^>]+src="([^"]+)"')
+_NOMBRE = re.compile(r"<h4[^>]*>(.*?)</h4>", re.S)
+_CAPITULO = re.compile(r'href="[^"]*?/comics/[^"/]+/([^"/]+)"')
+_LIENZO = re.compile(r'<canvas[^>]+data-src="([^"]+)"[^>]*data-token="([^"]*)"')
+_H1 = re.compile(r"<h1[^>]*>(.*?)</h1>", re.S)
+_DESC = re.compile(r'<meta name="description" content="([^"]*)"')
+_ETIQUETA = re.compile(r"<[^>]+>")
+_NUMERO = re.compile(r"(\d+(?:\.\d+)?)")
 
 
 class FalcoScanSource(MadaraSource):
-    """Ni el ranking ni la busqueda paginan: el sitio los sirve completos."""
+    async def _html(self, path: str) -> str:
+        response = await self._request("GET", f"{self.base_url}{path}")
+        response.raise_for_status()
+        return response.text
 
-    def get_filters(self) -> list[SourceFilter]:
-        return [
-            SourceFilter("filter", "Ordenar por", "select", [("", "<Seleccionar>")] + [
-                (letter, letter.upper()) for letter in "abcdefghijklmnopqrstuvwxyz"
-            ], ""),
-            SourceFilter("gen", "Género", "select", [("", "<Seleccionar>")] + [
-                (value, value) for value in _FALCO_GENRES
-            ], ""),
-            # El Kotlin nunca envia la primera opcion de este filtro; se respeta.
-            SourceFilter("status", "Status", "select", [
-                ("Completed", "Completed"), ("En Libertad", "En Libertad"), ("Canceled", "Canceled"),
-            ], "Completed"),
-        ]
+    def _series_del_html(self, html: str) -> list[SourceSeries]:
+        vistas: dict[str, SourceSeries] = {}
+        for enlace, slug, resto in _TARJETA.findall(html):
+            if slug in vistas:
+                continue
+            portada = _PORTADA.search(resto)
+            nombre = _NOMBRE.search(resto)
+            titulo = unescape(_ETIQUETA.sub("", nombre.group(1))).strip() if nombre else slug
+            vistas[slug] = SourceSeries(
+                source_id=slug,
+                title=re.sub(r"\s+", " ", titulo) or slug,
+                source_name=self.name,
+                cover_url=self._absoluta(portada.group(1)) if portada else None,
+                web_url=enlace if enlace.startswith("http") else f"{self.base_url}{enlace}",
+            )
+        return list(vistas.values())
+
+    def _absoluta(self, url: str) -> str:
+        if url.startswith("http"):
+            return url
+        return f"{self.base_url}/{url.lstrip('/')}"
 
     async def browse(self, kind: str, page: int = 1):
-        if kind == "popular":
-            response = await self._request("GET", f"{self.base_url}/ranking")
-            response.raise_for_status()
-            root = _parse_html(response.text)
-            base = str(response.url) or self.base_url
-            items = [
-                entry
-                for card in self._trending(root, "div", "card")
-                if (entry := self._card(card, base)) is not None
-            ]
-            return {"items": items, "has_more": False}
-        if kind == "latest":
-            response = await self._request("GET", self.base_url)
-            response.raise_for_status()
-            root = _parse_html(response.text)
-            base = str(response.url) or self.base_url
-            items = [
-                entry
-                for anchor in self._trending(root, "a")
-                if (entry := self._anchor(anchor, base)) is not None
-            ]
-            return {"items": items, "has_more": False}
-        return {"items": [], "has_more": False}
+        if kind not in {"popular", "latest"} or page > 1:
+            # /comics es un listado unico sin paginacion.
+            return {"items": [], "has_more": False}
+        return {"items": self._series_del_html(await self._html("/comics")), "has_more": False}
 
     async def search(self, query: str, page: int = 1, filters: dict | None = None):
-        params: list[tuple[str, str]] = []
-        if query.strip():
-            params.append(("search", query.strip()))
-        else:
-            values = filters or {}
-            for key, first in (("filter", ""), ("gen", ""), ("status", "Completed")):
-                value = str(values.get(key) or first)
-                if value != first:
-                    params.append((key, value))
-        response = await self._request("GET", f"{self.base_url}/comics", params=params)
-        response.raise_for_status()
-        root = _parse_html(response.text)
-        base = str(response.url) or self.base_url
-        items: list[SourceSeries] = []
-        for section in root.descendants("section"):
-            if not section.has_class("trending"):
-                continue
-            for row in section.descendants("div"):
-                if not row.has_class("row"):
-                    continue
-                for column in _falco_kids(row, "div", "col-xxl-9"):
-                    for inner in _falco_kids(column, "div", "row"):
-                        for holder in _falco_kids(inner, "div"):
-                            for anchor in _falco_kids(holder, "a"):
-                                entry = self._anchor(anchor, base)
-                                if entry is not None:
-                                    items.append(entry)
-        return {"items": list({item.source_id: item for item in items}.values()), "has_more": False}
+        if page > 1:
+            return {"items": [], "has_more": False}
+        consulta = query.strip().casefold()
+        items = self._series_del_html(await self._html("/comics"))
+        if consulta:
+            items = [serie for serie in items if consulta in serie.title.casefold()]
+        return {"items": items, "has_more": False}
 
     async def details(self, series: SourceSeries | str) -> SourceSeries:
-        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
-        response = await self._request("GET", urljoin(f"{self.base_url}/", series_id))
-        response.raise_for_status()
-        root = _parse_html(response.text)
-        base = str(response.url) or self.base_url
-        holder = next(
-            (
-                node
-                for content in root.descendants("div")
-                if content.has_class("page-content")
-                for node in content.descendants("div")
-                if node.has_class("text-details")
-            ),
-            None,
-        )
-        if holder is None:
-            raise SourceNotFoundError(f"{self.display_name}: ficha sin detalles")
-        soft = _first(holder, lambda node: node.tag == "div" and node.has_class("soft-details"))
-        title = _first(holder, lambda node: node.tag == "div" and node.has_class("name-rating"))
-        image = _first(holder, lambda node: node.tag == "img" and node.has_class("img-details"))
-        genres = self._labelled(soft, "generos") if soft is not None else None
+        slug = series.source_id if isinstance(series, SourceSeries) else str(series)
+        html = await self._html(f"/comics/{slug}")
+        titulo = _H1.search(html)
+        descripcion = _DESC.search(html)
         return SourceSeries(
-            source_id=series_id,
-            title=title.text().strip() if title is not None else "",
+            source_id=slug,
+            title=unescape(_ETIQUETA.sub("", titulo.group(1))).strip() if titulo else slug,
             source_name=self.name,
-            cover_url=_falco_image(image, base) if image is not None else None,
-            description=self._description(holder, soft) or None,
-            author=self._labelled(soft, "autor") if soft is not None else None,
-            artist=self._labelled(soft, "artista") if soft is not None else None,
-            status=self._status(self._labelled(soft, "status") if soft is not None else None),
-            content_tags=tuple(
-                value for part in (genres or "").split(",") if (value := part.strip())
-            ),
-            web_url=urljoin(f"{self.base_url}/", series_id),
+            cover_url=f"{self.base_url}/projects/{slug}/{slug}.jpg",
+            description=unescape(descripcion.group(1)).strip() if descripcion else None,
+            web_url=f"{self.base_url}/comics/{slug}",
         )
 
     async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
-        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
-        response = await self._request("GET", urljoin(f"{self.base_url}/", series_id))
-        response.raise_for_status()
-        root = _parse_html(response.text)
-        base = str(response.url) or self.base_url
-        result: list[SourceChapter] = []
-        for content in root.descendants("div"):
-            if not content.has_class("page-content"):
-                continue
-            for card in content.descendants("div"):
-                if not card.has_class("card-caps"):
-                    continue
-                target = self._onclick(card.attrs.get("onclick", ""), base)
-                if not target:
-                    continue
-                label = moment = None
-                for text in card.descendants("div"):
-                    if not text.has_class("text-cap"):
-                        continue
-                    label = label or _first(
-                        text, lambda node: node.tag == "span" and node.has_class("color-white"),
-                    )
-                    moment = moment or _first(
-                        text, lambda node: node.tag == "span" and node.has_class("color-medium-gray"),
-                    )
-                title = label.text().strip() if label is not None else ""
-                found = _FALCO_NUMBER.search(title)
-                result.append(
-                    SourceChapter(
-                        source_id=target,
-                        title=title,
-                        series_id=series_id,
-                        source_name=self.name,
-                        number=float(found.group()) if found else None,
-                        language=self.language,
-                        uploaded_at=self._date(moment.text() if moment is not None else ""),
-                    )
+        slug = series.source_id if isinstance(series, SourceSeries) else str(series)
+        html = await self._html(f"/comics/{slug}")
+        capitulos: list[SourceChapter] = []
+        for indice, nombre in enumerate(dict.fromkeys(_CAPITULO.findall(html))):
+            numero = _NUMERO.search(nombre)
+            capitulos.append(
+                SourceChapter(
+                    source_id=f"{slug}/{nombre}",
+                    title=nombre.replace("-", " ").capitalize(),
+                    series_id=slug,
+                    source_name=self.name,
+                    number=float(numero.group(1)) if numero else float(indice + 1),
+                    language=self.language,
                 )
-        return list({chapter.source_id: chapter for chapter in result}.values())
+            )
+        capitulos.sort(key=lambda capitulo: capitulo.number, reverse=True)
+        return capitulos
 
     async def pages(self, chapter: SourceChapter | str) -> list[SourcePage]:
         chapter_id = chapter.source_id if isinstance(chapter, SourceChapter) else str(chapter)
-        response = await self._request("GET", urljoin(f"{self.base_url}/", chapter_id))
-        response.raise_for_status()
-        root = _parse_html(response.text)
-        base = str(response.url) or self.base_url
-        urls = [
-            _falco_image(node, base)
-            for content in root.descendants("div")
-            if content.has_class("page-content")
-            for blade in content.descendants("div")
-            if blade.has_class("img-blade")
-            for node in blade.descendants("img")
-        ]
-        return [
-            SourcePage(
-                source_id=value,
-                chapter_id=chapter_id,
-                index=index,
-                filename=urlparse(value).path.rsplit("/", 1)[-1] or f"{index}.jpg",
-                source_name=self.name,
+        html = await self._html(f"/comics/{chapter_id}")
+        paginas: list[SourcePage] = []
+        for indice, (url, token) in enumerate(_LIENZO.findall(html)):
+            paginas.append(
+                SourcePage(
+                    # El token viaja en el id para que page_content pueda reenviarlo.
+                    source_id=f"{url}|{token}",
+                    chapter_id=chapter_id,
+                    index=indice,
+                    filename=f"{indice + 1:03d}.jpg",
+                    source_name=self.name,
+                )
             )
-            for index, value in enumerate(value for value in urls if value)
-        ]
+        return paginas
 
-    @staticmethod
-    def _trending(root: _Node, tag: str, class_name: str | None = None) -> list[_Node]:
-        return [
-            node
-            for section in root.descendants("section")
-            if section.has_class("trending")
-            for row in section.descendants("div")
-            if row.has_class("row")
-            for node in row.descendants(tag)
-            if class_name is None or node.has_class(class_name)
-        ]
-
-    def _card(self, card: _Node, base: str) -> SourceSeries | None:
-        target = self._onclick(card.attrs.get("onclick", ""), base)
-        heading = self._heading(card, "name")
-        if not target or heading is None:
-            return None
-        image = _first(card, lambda node: node.tag == "img")
-        return SourceSeries(
-            source_id=target,
-            title=heading.text().strip(),
-            source_name=self.name,
-            cover_url=_falco_image(image, base) if image is not None else None,
-            web_url=urljoin(f"{self.base_url}/", target),
+    async def page_bytes(self, page: SourcePage | str) -> SourcePageContent:
+        crudo = page.source_id if isinstance(page, SourcePage) else str(page)
+        url, _, token = crudo.partition("|")
+        capitulo = page.chapter_id if isinstance(page, SourcePage) else ""
+        response = await self._request(
+            "GET",
+            url,
+            headers={
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRF-TOKEN": token,
+                "Referer": f"{self.base_url}/comics/{capitulo}",
+            },
         )
-
-    def _anchor(self, anchor: _Node, base: str) -> SourceSeries | None:
-        heading = self._heading(anchor, "content")
-        href = anchor.attrs.get("href", "")
-        if heading is None or not href:
-            return None
-        slug = urlparse(urljoin(base, href)).path.lstrip("/")
-        image = _first(anchor, lambda node: node.tag == "img")
-        return SourceSeries(
-            source_id=slug,
-            title=heading.text().strip(),
-            source_name=self.name,
-            cover_url=_falco_image(image, base) if image is not None else None,
-            web_url=urljoin(f"{self.base_url}/", slug),
+        response.raise_for_status()
+        return SourcePageContent(
+            media_type=response.headers.get("Content-Type", "image/jpeg"),
+            chunks=iter([response.content]),
         )
-
-    @staticmethod
-    def _heading(node: _Node, holder_class: str) -> _Node | None:
-        for holder in node.descendants("div"):
-            if not holder.has_class(holder_class):
-                continue
-            for heading in _falco_kids(holder, "h4", "color-white"):
-                return heading
-        return None
-
-    @staticmethod
-    def _description(holder: _Node, soft: _Node | None) -> str:
-        excluded = {id(node) for node in soft.descendants("p")} if soft is not None else set()
-        return " ".join(
-            text
-            for node in holder.descendants("p")
-            if node.has_class("sec") and id(node) not in excluded and (text := node.text().strip())
-        )
-
-    @staticmethod
-    def _labelled(soft: _Node, label: str) -> str | None:
-        for node in soft.descendants("p"):
-            for span in _falco_kids(node, "span"):
-                if label in span.text().strip().casefold():
-                    return _falco_own_text(node) or None
-        return None
-
-    @staticmethod
-    def _status(value: str | None) -> str | None:
-        return {
-            "en emisión": "ongoing", "finalizado": "completed",
-            "cancelado": "cancelled", "en espera": "hiatus",
-        }.get((value or "").strip().casefold())
-
-    @staticmethod
-    def _onclick(value: str, base: str) -> str:
-        found = _FALCO_ONCLICK.search(value)
-        return urlparse(urljoin(base, found.group(1))).path.lstrip("/") if found else ""
-
-    @staticmethod
-    def _date(value: str) -> str | None:
-        from datetime import datetime
-
-        found = _FALCO_DATE.search(value)
-        if not found:
-            return None
-        try:
-            return datetime(int(found.group(3)), int(found.group(2)), int(found.group(1))).isoformat()
-        except ValueError:
-            return None
-
 
 class GeneratedFalcoScanSource(FalcoScanSource):
     name = 'tenkaiscan_es'
     display_name = 'Falco Scan'
     base_url = 'https://falcoscan.net'
     language = 'es'
-    requests_per_minute = 180
-    content_warning = 'nsfw'
-    image_headers = {'Referer': 'https://falcoscan.net/'}
+    requests_per_minute = 60
 
 
 SOURCE = GeneratedFalcoScanSource

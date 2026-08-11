@@ -18837,7 +18837,7 @@
       "id": "tenkaiscan_es",
       "name": "Falco Scan",
       "version": "0.39.0",
-      "sha256": "ebf973a14ca4c24e47ad184bf29d3c3d44fcc65c5881c981798c6e056d29a113",
+      "sha256": "4d6c0a7927af005cc8792e29d27d1b42df2c2a351a05992e9359a83972b70876",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/tenkaiscan_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/tenkaiscan_es.png",
       "author": "Keiyoushi contributors",

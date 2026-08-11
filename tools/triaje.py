@@ -58,7 +58,16 @@ APARCADO = (
     "afternic",
     "expired-banner",
     "domain for sale",
+    # mangaesp.com: el dominio se revendio a un redirector que hace fingerprinting del
+    # visitante y salta a otro sitio. Responde 200 con ~1 KB, sin rastro de catalogo.
+    "fingerprintjs.load",
+    "tr_uuid=",
 )
+
+# tenkaiscan.net responde 200 pero el cuerpo es solo un <title>Redirecting...</title> que
+# apunta a una ruta ofuscada que a su vez vuelve a redirigir, en bucle. Nunca llega a
+# servir contenido, asi que no es un fallo de parseo.
+REDIRECTOR = "redirecting..."
 
 
 def base_url(extension_id: str) -> str:
@@ -123,6 +132,8 @@ async def triar(extension_id: str, timeout: float) -> dict:
         aparcado = next((senal for senal in APARCADO if senal in cuerpo), "")
         if aparcado:
             return {**fila, "veredicto": "MUERTA", "detalle": f"dominio aparcado ({aparcado})"}
+        if REDIRECTOR in cuerpo and fila["bytes"] < MINIMO_HTML * 3:
+            return {**fila, "veredicto": "MUERTA", "detalle": "bucle de redirecciones"}
 
         # 2. ¿Devuelve series el port?
         try:
