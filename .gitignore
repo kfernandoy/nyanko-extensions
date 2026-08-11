@@ -1,6 +1,8 @@
 __pycache__/
 *.pyc
-smoke.json
+smoke*.json
+barrido*.json
+triaje*.json
 validacion_humana.txt
 .gitignore
 .claude
