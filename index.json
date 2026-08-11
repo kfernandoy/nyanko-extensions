@@ -13260,7 +13260,7 @@
       "id": "mantrazscan_es",
       "name": "Manhwa Scan",
       "version": "0.56.0",
-      "sha256": "29f47bd2a0b4554202391e7931fe684942e0d25eb4aa2a79e3fdb2cf643d526d",
+      "sha256": "f113d6ed1be39ed21cce1b9145918197d5b08cfc6ebfa175ff58e1b1ba7bb256",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mantrazscan_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/mantrazscan_es.png",
       "author": "Keiyoushi contributors",

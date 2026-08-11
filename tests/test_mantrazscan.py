@@ -1,139 +1,286 @@
+"""Regresiones de Mantraz Scan.
+
+El sitio se rehizo con Next.js y la API vieja (`/api/series`) desaparecio. Estas
+pruebas fijan el contrato nuevo y, sobre todo, las dos trampas que costaron caras:
+
+1. Las rutas se piden con barra final / en forma canonica. Sin ella el sitio
+   responde 308 y el fetcher de la app pierde la cookie de clearance en el salto,
+   porque la manda por peticion y no en el jar -> Cloudflare devuelve 403.
+2. `badge-pill` la comparten el estado y la demografia, asi que coger la primera
+   da "SHOUJO" en vez de "En emision".
+"""
+
 from __future__ import annotations
 
-import json
-import unittest
-from pathlib import Path
+import importlib.util
+import pathlib
 
-from tools.generate import _manual_bundle
+import pytest
 
-BASE = "https://manhwascanx.lat"
-API = f"{BASE}/api"
+RAIZ = pathlib.Path(__file__).resolve().parents[1]
 
 
-class Response:
-    def __init__(self, url: str, payload) -> None:
-        self.url = url
-        self.text = json.dumps(payload)
+def _cargar():
+    ruta = RAIZ / "engines" / "manual" / "mantrazscan_es.py"
+    spec = importlib.util.spec_from_file_location("mantrazscan_manual", ruta)
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    return modulo
+
+
+MODULO = _cargar()
+
+
+class _Respuesta:
+    def __init__(self, texto: str = "", payload: dict | None = None) -> None:
+        self.text = texto
+        self._payload = payload or {}
         self.status_code = 200
 
     def raise_for_status(self) -> None:
-        pass
+        return None
 
-    def json(self):
-        return json.loads(self.text)
+    def json(self) -> dict:
+        return self._payload
 
 
-class Fetcher:
-    def __init__(self, responses: list[Response]) -> None:
-        self.responses = responses
-        self.requests: list[tuple[str, str, dict]] = []
+class _FetcherFalso:
+    """Registra las URLs pedidas y devuelve respuestas preparadas."""
+
+    def __init__(self, respuestas: dict[str, _Respuesta]) -> None:
+        self.respuestas = respuestas
+        self.urls: list[str] = []
 
     async def request(self, method: str, url: str, **kwargs):
-        self.requests.append((method, url, kwargs))
-        return self.responses.pop(0)
+        params = kwargs.get("params") or []
+        consulta = "&".join(f"{clave}={valor}" for clave, valor in params)
+        completa = f"{url}?{consulta}" if consulta else url
+        self.urls.append(completa)
+        for patron, respuesta in self.respuestas.items():
+            if patron in completa:
+                return respuesta
+        return _Respuesta("")
 
 
-def source_class():
-    path = Path(__file__).parents[1] / "engines" / "manual" / "mantrazscan_es.py"
-    namespace = {"__name__": "test_mantrazscan_bundle"}
-    exec(compile(_manual_bundle(path), str(path), "exec"), namespace)
-    return namespace["SOURCE"]
+def _fuente(respuestas: dict[str, _Respuesta]) -> tuple:
+    fuente = MODULO.SOURCE()
+    fetcher = _FetcherFalso(respuestas)
+    fuente.fetcher = fetcher
+    return fuente, fetcher
 
 
-LISTADO = {"data": {
-    "series": [{"id": 7, "title": "El Gato", "slug": "el-gato", "cover_url": "/covers/7.jpg"}],
-    "page": 2, "total_pages": 5,
-}}
+LISTADO = """
+<div class="s-card">
+  <a class="s-card-imglink" href="/manga/serie-uno/">
+    <div class="s-card-img"><img src="https://img.mantrazscan.co/img/uno.jpg"/></div>
+  </a>
+  <div class="s-card-body">
+    <a class="s-card-title" href="/manga/serie-uno/">Serie Uno</a>
+    <div class="s-card-chs"><a class="ch-chip" href="/manga/serie-uno/capitulo-3/">Cap 3</a></div>
+  </div>
+</div>
+<div class="s-card">
+  <a class="s-card-imglink" href="/manga/serie-dos/">
+    <div class="s-card-img"><img src="https://img.mantrazscan.co/img/dos.jpg"/></div>
+  </a>
+  <div class="s-card-body">
+    <a class="s-card-title" href="/manga/serie-dos/">Serie Dos</a>
+  </div>
+</div>
+"""
+
+FICHA = """
+<div class="series-info">
+  <div class="series-badges">
+    <span class="badge-pill">\U0001f338 SHOUJO</span>
+    <span class="badge-pill badge-ongoing">En emisi\u00f3n</span>
+  </div>
+  <h1 class="series-title">Serie Uno</h1>
+  <div class="series-genres">
+    <a class="genre-tag" href="/genero/accion/">Acci\u00f3n</a>
+    <a class="genre-tag" href="/genero/drama/">Drama</a>
+  </div>
+  <div class="series-desc">Una sinopsis cualquiera.</div>
+  <a href="/manga/serie-uno/capitulo-2/">Cap 2</a>
+  <a href="/manga/serie-uno/capitulo-1/">Cap 1</a>
+  <a href="/manga/serie-uno/resena/">Rese\u00f1a</a>
+  <a href="/manga/serie-uno/wiki/">Wiki</a>
+</div>
+"""
+
+LECTOR = (
+    'algo:[\\"$\\",\\"div\\",null,{\\"num\\":1,\\"images\\":'
+    '[\\"https://img.mantrazscan.co/img/data/capitulo-1/1.jpg\\",'
+    '\\"https://img.mantrazscan.co/img/data/capitulo-1/2.jpg\\"]}]'
+)
 
 
-class ManhwaScanTest(unittest.IsolatedAsyncioTestCase):
-    async def test_catalogos_ordenan_por_vistas_y_actualizacion(self):
-        fetcher = Fetcher([Response(f"{API}/series", LISTADO), Response(f"{API}/series", LISTADO)])
-        source = source_class()(fetcher)
+@pytest.mark.asyncio
+async def test_browse_usa_la_ruta_canonica_sin_redirect():
+    """`?page=N` provoca un 308 que tira la cookie de clearance: se pide /page/N/."""
+    fuente, fetcher = _fuente({"/explorar/": _Respuesta(LISTADO)})
 
-        popular = await source.browse("popular", 2)
-        await source.browse("latest", 1)
+    await fuente.browse("popular", 1)
+    await fuente.browse("popular", 3)
 
-        self.assertEqual(fetcher.requests[0][2]["params"], [
-            ("page", "2"), ("limit", "48"), ("sort", "views"), ("q", ""),
-        ])
-        self.assertEqual(fetcher.requests[1][2]["params"][2], ("sort", "updated"))
-        # El id junta identificador y slug; la portada relativa se absolutiza.
-        self.assertEqual(
-            [(item.source_id, item.title, item.cover_url) for item in popular["items"]],
-            [("7#el-gato", "El Gato", f"{BASE}/covers/7.jpg")],
-        )
-        self.assertTrue(popular["has_more"])
-
-    async def test_busqueda_omite_los_filtros_vacios(self):
-        fetcher = Fetcher([Response(f"{API}/series", LISTADO)])
-        source = source_class()(fetcher)
-
-        await source.search(" gato ", 3, {"genre": "romance", "status": "", "type": "bl"})
-
-        self.assertEqual(fetcher.requests[0][2]["params"], [
-            ("page", "3"), ("limit", "48"), ("q", "gato"), ("sort", "updated"),
-            ("genre", "romance"), ("type", "bl"),
-        ])
-
-    async def test_ficha_y_capitulos_usan_el_identificador(self):
-        ficha = {"data": {"series": {
-            "id": 7, "title": "El Gato", "slug": "el-gato", "description": "Una historia.",
-            "cover_url": "/covers/7.jpg", "status": "ongoing", "author": "Kim", "artist": " ",
-            "genres": ["Acción", "Romance"],
-        }}}
-        capitulos = {"data": {"chapters": [
-            {"id": 11, "chapter_num": "2.0", "title": "El principio", "slug": "cap-2",
-             "created_at": "2026-08-05 12:00:00"},
-            {"id": 10, "chapter_num": "1.5", "title": None, "slug": "cap-1-5", "created_at": None},
-        ]}}
-        fetcher = Fetcher([
-            Response(f"{API}/series/7", ficha),
-            Response(f"{API}/series/7/chapters", capitulos),
-        ])
-        source = source_class()(fetcher)
-
-        manga = await source.details("7#el-gato")
-        chapters = await source.chapters("7#el-gato")
-
-        self.assertEqual(fetcher.requests[0][1], f"{API}/series/7")
-        self.assertEqual((manga.author, manga.artist), ("Kim", None))
-        self.assertEqual((manga.status, manga.content_tags), ("ongoing", ("Acción", "Romance")))
-        # El sufijo ".0" se recorta y el titulo se anexa solo si existe.
-        self.assertEqual(
-            [(c.source_id, c.title, c.number) for c in chapters],
-            [("11#cap-2", "Capítulo 2 - El principio", 2.0), ("10#cap-1-5", "Capítulo 1.5", 1.5)],
-        )
-        self.assertEqual(chapters[0].uploaded_at, "2026-08-05T12:00:00")
-
-    async def test_los_ids_viejos_se_migran_por_titulo(self):
-        ficha = {"data": {"series": {"id": 7, "title": "El Gato", "slug": "el-gato"}}}
-        fetcher = Fetcher([
-            Response(f"{API}/series", LISTADO),
-            Response(f"{API}/series/7", ficha),
-        ])
-        source = source_class()(fetcher)
-
-        manga = await source.details("El Gato")
-
-        self.assertEqual(fetcher.requests[0][2]["params"], [("q", "El Gato")])
-        self.assertEqual(fetcher.requests[1][1], f"{API}/series/7")
-        self.assertEqual(manga.source_id, "7#el-gato")
-
-    async def test_lector_exige_el_formato_nuevo(self):
-        paginas = {"data": {"chapter": {"pages": [
-            {"image_url": "/p/1.jpg"}, {"image_url": "https://cdn/2.jpg"},
-        ]}}}
-        fetcher = Fetcher([Response(f"{API}/chapters/11", paginas)])
-        source = source_class()(fetcher)
-
-        pages = await source.pages("11#cap-2")
-
-        self.assertEqual(fetcher.requests[0][1], f"{API}/chapters/11")
-        self.assertEqual([page.source_id for page in pages], [f"{BASE}/p/1.jpg", "https://cdn/2.jpg"])
-        with self.assertRaises(ValueError):
-            await source.pages("11")
+    assert fetcher.urls[0] == "https://mantrazscan.co/explorar/"
+    assert fetcher.urls[1] == "https://mantrazscan.co/explorar/page/3/"
+    assert not any("?page=" in url for url in fetcher.urls)
 
 
-if __name__ == "__main__":
-    unittest.main()
+@pytest.mark.asyncio
+async def test_browse_devuelve_series_con_portada():
+    fuente, _ = _fuente({"/explorar/": _Respuesta(LISTADO)})
+
+    resultado = await fuente.browse("latest", 1)
+
+    assert [serie.source_id for serie in resultado["items"]] == ["serie-uno", "serie-dos"]
+    assert resultado["items"][0].title == "Serie Uno"
+    assert resultado["items"][0].cover_url == "https://img.mantrazscan.co/img/uno.jpg"
+    assert resultado["has_more"] is True
+
+
+@pytest.mark.asyncio
+async def test_browse_sin_resultados_corta_la_paginacion():
+    """El sitio no declara total de paginas: una vacia es el final."""
+    fuente, _ = _fuente({"/explorar/": _Respuesta("<div></div>")})
+
+    resultado = await fuente.browse("popular", 40)
+
+    assert resultado["items"] == []
+    assert resultado["has_more"] is False
+
+
+@pytest.mark.asyncio
+async def test_search_pide_api_con_barra_final():
+    fuente, fetcher = _fuente({
+        "/api/search/": _Respuesta(payload={
+            "results": [
+                {"postId": 1, "title": "Serie Uno", "slug": "serie-uno", "cover": "u.jpg"},
+            ]
+        }),
+    })
+
+    resultado = await fuente.search("uno")
+
+    assert fetcher.urls == ["https://mantrazscan.co/api/search/?q=uno"]
+    assert resultado["items"][0].source_id == "serie-uno"
+    # El endpoint es de autocompletado: no pagina.
+    assert resultado["has_more"] is False
+
+
+GENERO = """
+<div class="series-grid">
+  <a class="s-card" href="/manga/serie-uno/">
+    <div class="s-card-img"><img src="https://img.mantrazscan.co/img/uno.jpg" alt="Serie Uno"/></div>
+    <div class="s-card-body"><div class="s-card-title">Serie Uno</div></div>
+  </a>
+  <a class="s-card" href="/manga/serie-dos/">
+    <div class="s-card-img"><img src="https://img.mantrazscan.co/img/dos.jpg" alt="Serie Dos"/></div>
+    <div class="s-card-body"><div class="s-card-title">Serie Dos</div></div>
+  </a>
+</div>
+"""
+
+
+@pytest.mark.asyncio
+async def test_las_tarjetas_de_genero_tienen_otro_markup():
+    """En `/genero/` la tarjeta ES el <a> y el titulo un <div>, no un <a>."""
+    fuente, _ = _fuente({"/genero/action/": _Respuesta(GENERO)})
+
+    resultado = await fuente.search("", filters={"genre": "action"})
+
+    assert [serie.source_id for serie in resultado["items"]] == ["serie-uno", "serie-dos"]
+    assert resultado["items"][0].title == "Serie Uno"
+    assert resultado["items"][0].cover_url == "https://img.mantrazscan.co/img/uno.jpg"
+
+
+@pytest.mark.asyncio
+async def test_filtro_de_genero_usa_su_propia_ruta():
+    """El filtro por genero se sirve de `/genero/<slug>/`, no de la busqueda."""
+    fuente, fetcher = _fuente({"/genero/action/": _Respuesta(GENERO)})
+
+    resultado = await fuente.search("", filters={"genre": "action"})
+
+    assert fetcher.urls == ["https://mantrazscan.co/genero/action/"]
+    assert [serie.source_id for serie in resultado["items"]] == ["serie-uno", "serie-dos"]
+    # `/genero/<slug>/page/2/` responde 404: ese listado no pagina.
+    assert resultado["has_more"] is False
+
+
+@pytest.mark.asyncio
+async def test_el_genero_no_pagina():
+    fuente, fetcher = _fuente({"/genero/action/": _Respuesta(LISTADO)})
+
+    resultado = await fuente.search("", page=2, filters={"genre": "action"})
+
+    assert resultado["items"] == []
+    assert fetcher.urls == []
+
+
+def test_los_generos_del_filtro_son_slugs_en_ingles():
+    """La web se ve en español pero `/genero/` usa slugs en ingles."""
+    fuente = MODULO.SOURCE()
+
+    opciones = dict(fuente.get_filters()[0].options)
+
+    assert opciones["action"] == "Acción"
+    assert opciones["martial-arts"] == "Artes Marciales"
+    assert "accion" not in opciones
+
+
+@pytest.mark.asyncio
+async def test_details_ignora_la_badge_de_demografia():
+    """Coger la primera `badge-pill` daba "SHOUJO" y dejaba el estado en None."""
+    fuente, _ = _fuente({"/manga/serie-uno/": _Respuesta(FICHA)})
+
+    ficha = await fuente.details("serie-uno")
+
+    assert ficha.status == "ongoing"
+    assert ficha.title == "Serie Uno"
+    assert list(ficha.content_tags) == ["Acción", "Drama"]
+    assert ficha.description == "Una sinopsis cualquiera."
+
+
+@pytest.mark.asyncio
+async def test_chapters_descarta_resena_y_wiki():
+    fuente, _ = _fuente({"/manga/serie-uno/": _Respuesta(FICHA)})
+
+    capitulos = await fuente.chapters("serie-uno")
+
+    assert [capitulo.source_id for capitulo in capitulos] == [
+        "serie-uno/capitulo-2",
+        "serie-uno/capitulo-1",
+    ]
+    assert capitulos[0].number == 2.0
+
+
+@pytest.mark.asyncio
+async def test_pages_lee_las_imagenes_del_payload_de_next():
+    """Las paginas no estan en <img>: van en el payload flight de Next."""
+    fuente, _ = _fuente({"/manga/serie-uno/capitulo-1/": _Respuesta(LECTOR)})
+
+    paginas = await fuente.pages("serie-uno/capitulo-1")
+
+    assert [pagina.source_id for pagina in paginas] == [
+        "https://img.mantrazscan.co/img/data/capitulo-1/1.jpg",
+        "https://img.mantrazscan.co/img/data/capitulo-1/2.jpg",
+    ]
+    assert [pagina.index for pagina in paginas] == [1, 2]
+    assert paginas[0].filename == "1.jpg"
+
+
+@pytest.mark.asyncio
+async def test_ids_viejos_avisan_en_vez_de_romper():
+    """Antes los ids eran `<id>#<slug>`; hay que pedir refrescar, no fallar opaco."""
+    fuente, _ = _fuente({})
+
+    with pytest.raises(MODULO.SourceNotFoundError):
+        await fuente.pages("4571#serie-uno")
+
+
+def test_slug_acepta_el_formato_viejo_de_series():
+    """La biblioteca del usuario guarda ids `<id>#<slug>`: deben seguir resolviendo."""
+    assert MODULO.SOURCE._slug("4571#serie-uno") == "serie-uno"
+    assert MODULO.SOURCE._slug("serie-uno") == "serie-uno"
+    assert MODULO.SOURCE._slug("/manga/serie-uno/") == "serie-uno"
