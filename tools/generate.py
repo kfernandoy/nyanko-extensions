@@ -2168,6 +2168,52 @@ def _supported_zmanga(module: Path, build: str) -> dict[str, object] | None:
     }
 
 
+# Idioma de la extension -> slug(s) con los que la API de HentaiHand lo publica. Los que
+# el sitio ya no ofrece (es, fr, de, it, ru...) se quedan sin ids a proposito: la lista
+# vacia significa "sin filtro" y devuelve catalogo, que es preferible a no devolver nada.
+_HENTAIHAND_SLUGS: dict[str, tuple[str, ...]] = {
+    "ar": ("arabic",), "bg": ("bulgarian",), "ceb": ("cebuano",), "cs": ("czech",),
+    "el": ("greek",), "en": ("english",), "eo": ("esperanto",), "fi": ("finnish",),
+    "ja": ("japanese",), "jv": ("javanese",), "ko": ("korean",), "la": ("latin",),
+    "mn": ("mongolian",), "ro": ("romanian",), "sk": ("slovak",), "sr": ("serbian",),
+    "tl": ("tagalog",), "tr": ("turkish",), "uk": ("ukrainian",), "zh": ("chinese",),
+    "other": ("text-cleaned", "translated"),
+}
+
+
+def _hentaihand_ids_vigentes(previos: dict[str, list[int]]) -> dict[str, list[int]]:
+    """Sustituye los ids del Kotlin por los que la API publica hoy, casando por slug.
+
+    Si la API no responde se conserva el mapa original: es mejor generar con los ids
+    viejos que romper la generacion entera por un fallo de red.
+    """
+    try:
+        import urllib.request
+
+        vivos: dict[str, int] = {}
+        pagina = 1
+        while pagina <= 10:
+            peticion = urllib.request.Request(
+                f"https://hentaihand.com/api/languages?page={pagina}",
+                headers={"User-Agent": "Mozilla/5.0"},
+            )
+            with urllib.request.urlopen(peticion, timeout=30) as respuesta:
+                cuerpo = json.loads(respuesta.read().decode("utf-8"))
+            for fila in cuerpo.get("data", []):
+                vivos[fila["slug"]] = fila["id"]
+            if pagina >= int(cuerpo.get("last_page", 1)):
+                break
+            pagina += 1
+        if not vivos:
+            return previos
+    except Exception:
+        return previos
+    return {
+        idioma: [vivos[slug] for slug in _HENTAIHAND_SLUGS.get(idioma, ()) if slug in vivos]
+        for idioma in previos
+    }
+
+
 def _supported_hentaihand(module: Path, build: str) -> list[dict[str, object]]:
     if not re.search(r'theme\s*=\s*"hentaihand"', build):
         return []
@@ -2189,6 +2235,11 @@ def _supported_hentaihand(module: Path, build: str) -> list[dict[str, object]]:
             kotlin,
         )
     }
+    # Los ids del Kotlin son de un esquema viejo: apuntan a idiomas que la API ya no tiene
+    # (el _es pedia 33 y 37 cuando hoy solo existen del 1 al 22). Pedir un id inexistente
+    # no da error, devuelve 200 con `data: []`, asi que la extension salia vacia sin
+    # ninguna senal de fallo. Se corrigen con el mapa vivo, casando por slug.
+    id_map = _hentaihand_ids_vigentes(id_map)
     if not all((languages, base_url, display_name)):
         return []
     return [
