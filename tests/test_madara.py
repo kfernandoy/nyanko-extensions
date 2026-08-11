@@ -288,5 +288,60 @@ class ChapterDeduplicationTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([item.number for item in chapters], [2.0, 1.0])
 
 
+class RespuestaConEstado:
+    """Doble que si distingue el codigo: el 404 de `page/N/` es informacion."""
+
+    def __init__(self, url, text, status_code=200):
+        self.url, self.text, self.status_code = url, text, status_code
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise AssertionError(f"raise_for_status no deberia dispararse: {self.status_code}")
+
+
+class PaginacionAgotadaTest(unittest.IsolatedAsyncioTestCase):
+    """Pedir `page/N/` mas alla de la ultima pagina devuelve 404 en WordPress.
+
+    Ese 404 es el marcador de fin de catalogo, no un fallo. Al propagarlo, la app
+    reventaba en cuanto el usuario hacia scroll: infrafandub tiene 18 series en una
+    sola pagina y crasheaba a los ~2 segundos con "La fuente no encontro el recurso"
+    (validacion humana de infrafandub_es e inventariooculto_es).
+    """
+
+    TARJETA = """
+    <div class="page-item-detail">
+      <div class="post-title"><h3><a href="/manga/gato/">Gato</a></h3></div>
+      <img data-src="/gato.jpg">
+    </div>
+    """
+
+    async def test_el_404_de_una_pagina_posterior_agota_el_catalogo(self):
+        fetcher = Fetcher([
+            RespuestaConEstado("https://aedexnox.akan01.com/manga/page/2/", "", 404),
+        ])
+        source = source_class()(fetcher)
+
+        self.assertEqual(await source.browse("popular", 2), [])
+
+    async def test_el_404_de_la_primera_pagina_sigue_siendo_un_fallo(self):
+        fetcher = Fetcher([
+            RespuestaConEstado("https://aedexnox.akan01.com/manga/", "", 404),
+        ])
+        source = source_class()(fetcher)
+
+        with self.assertRaises(AssertionError):
+            await source.browse("popular", 1)
+
+    async def test_una_pagina_posterior_con_series_se_devuelve_igual(self):
+        fetcher = Fetcher([
+            RespuestaConEstado("https://aedexnox.akan01.com/manga/page/2/", self.TARJETA),
+        ])
+        source = source_class()(fetcher)
+
+        series = await source.browse("popular", 2)
+
+        self.assertEqual([item.title for item in series], ["Gato"])
+
+
 if __name__ == "__main__":
     unittest.main()

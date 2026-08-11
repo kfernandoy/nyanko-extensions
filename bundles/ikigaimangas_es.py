@@ -440,6 +440,16 @@ class MadaraSource:
                 f"{self.base_url}/{self.manga_substring.strip('/')}/{suffix}",
                 params={"m_orderby": "views" if kind == "popular" else "latest"},
             )
+            # En WordPress, pedir `page/N/` mas alla de la ultima devuelve 404: ese ES
+            # el marcador de fin de catalogo, no un fallo. Propagarlo hacia arriba
+            # reventaba la fuente al hacer scroll (infrafandub tiene 18 series en una
+            # sola pagina y crasheaba a los ~2 s con "no se encontro el recurso").
+            # Se devuelve vacio, y el adaptador v4 convierte eso en has_more=False.
+            #
+            # Solo aplica a partir de la pagina 2: un 404 en la primera si es un fallo
+            # real de la fuente y debe seguir viajando.
+            if page > 1 and response.status_code == 404:
+                return []
         response.raise_for_status()
         root = _parse_html(response.text)
         if self.load_more == "auto":
