@@ -2722,7 +2722,9 @@ class PandaChaikaSource (MadaraSource ):
         if kind not in {"popular","latest"}:
             return {"items":[],"has_more":False }
         payload =await self ._search ([
-        ("tags",self .search_language ),
+        # El tag de idioma necesita su prefijo: "spanish" a secas no filtra y la API
+        # responde 0 resultados; con "language:spanish" si devuelve el catalogo.
+        ("tags",f"language:{self .search_language }"if self .search_language else ""),
         ("sort","rating"if kind =="popular"else "public_date"),
         ("apply",""),("json",""),("page",str (page )),
         ])
@@ -2757,7 +2759,8 @@ class PandaChaikaSource (MadaraSource ):
                     raise SourceNotFoundError (f"{self .display_name }: no encontrado")
                 return {"items":[self ._archive (archives [0 ])],"has_more":False }
         values =filters or {}
-        tags =[self .search_language ]
+        # Mismo prefijo que en browse: sin el, el filtro de idioma no casa con nada.
+        tags =[f"language:{self .search_language }"]if self .search_language else []
         reason =""
         for identifier ,_ ,kind in _PANDA_TEXT :
             for part in str (values .get (identifier )or "").split (","):
