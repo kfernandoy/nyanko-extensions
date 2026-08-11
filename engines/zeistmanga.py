@@ -5,8 +5,8 @@ import re
 from urllib.parse import quote, unquote, urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .base import (
+        FuenteBase,
         SourceChapter,
         SourceFilter,
         SourcePage,
@@ -19,7 +19,7 @@ except ImportError:
     pass
 
 
-class ZeistMangaSource(MadaraSource):
+class ZeistMangaSource(FuenteBase):
     manga_category = "Series"
     chapter_category = "Chapter"
     use_new_chapter_feed = False

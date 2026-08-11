@@ -3480,6 +3480,9 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
         return bundle.rstrip() + b"\n\n" + v4_engine.rstrip() + b"\n\nSOURCE = adapt_source(SOURCE)\n"
 
     madara_engine = (repo / "engines" / "madara.py").read_text(encoding="utf-8")
+    # Infraestructura comun (parser HTML, helpers, clase base). Los motores de tema
+    # que no necesitan el motor Madara se apoyan aqui y su bundle pesa 106 KB menos.
+    base_engine = (repo / "engines" / "base.py").read_text(encoding="utf-8")
     mangathemesia_engine = (repo / "engines" / "mangathemesia.py").read_text(encoding="utf-8")
     pizzareader_engine = (repo / "engines" / "pizzareader.py").read_text(encoding="utf-8")
     mangacatalog_engine = (repo / "engines" / "mangacatalog.py").read_text(encoding="utf-8")
@@ -4059,8 +4062,11 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 extension,
             )
         elif engine_name == "zeistmanga":
+            # Este motor va sobre `base.py`, no sobre `madara.py`: solo necesitaba
+            # de Madara el parser y `_request`, y arrastrar el motor entero metia
+            # 106 KB de codigo ajeno en cada bundle (ver el docstring de base.py).
             bundle_bytes = _zeistmanga_bundle(
-                madara_engine,
+                base_engine,
                 zeistmanga_engine,
                 extension,
             )

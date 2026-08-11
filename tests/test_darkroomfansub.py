@@ -35,7 +35,9 @@ def source_class():
     config = _supported_zeistmanga(module, build)
     assert config is not None
     bundle = _zeistmanga_bundle(
-        (root / "engines" / "madara.py").read_text(encoding="utf-8"),
+        # base.py, no madara.py: zeistmanga solo necesitaba de Madara el parser y
+        # `_request`, no el motor entero (ver el docstring de engines/base.py).
+        (root / "engines" / "base.py").read_text(encoding="utf-8"),
         (root / "engines" / "zeistmanga.py").read_text(encoding="utf-8"),
         config,
     )
