@@ -32,6 +32,36 @@ def _extract_kotlin_metadata(module: Path) -> str:
     return "nsfw" if any("adult" in content.lower() for content in contents) else "unknown"
 
 
+def _refrescar_motor_de_tema(source: str, tema: str) -> str:
+    """Sustituye la copia congelada del motor de TEMA que lleva el manual.
+
+    ``_refrescar_motor_en_manual`` solo renueva el prefijo de ``madara.py``. Los manuales
+    de un motor de tema (galleryadults, mangahub...) llevan ADEMAS una copia congelada de
+    ese motor entre Madara y su propia subclase, y esa copia no la tocaba nadie: el fix de
+    las portadas (que la tarjeta abre con la banderita de idioma, no con la portada) llego
+    a las 24 extensiones generadas y se quedo fuera de las 25 con manual, que seguian
+    publicando `esp.png` como portada.
+
+    Se recorta desde el docstring del motor de tema hasta la subclase `Generated...` y se
+    reinyecta el motor actual. Si no se reconoce la forma esperada se devuelve el archivo
+    intacto, para no romper manuales con estructura distinta.
+    """
+    raiz = re.search(r"^class (\w+)\(MadaraSource\):", tema, re.M)
+    if raiz is None:
+        return source
+    nombre_raiz = raiz.group(1)
+    inicio = re.search(rf"^class {nombre_raiz}\(MadaraSource\):", source, re.M)
+    fin = re.search(rf"^class \w+\({nombre_raiz}\):", source, re.M)
+    if inicio is None or fin is None or fin.start() <= inicio.start():
+        return source
+    # El docstring y los imports del motor de tema van justo antes de la clase; se
+    # retrocede hasta ellos para no dejar duplicados sueltos.
+    cabecera = source.rfind('"""', 0, inicio.start())
+    apertura = source.rfind('"""', 0, cabecera) if cabecera > 0 else -1
+    corte = apertura if apertura > 0 else inicio.start()
+    return source[:corte] + tema.strip() + "\n\n\n" + source[fin.start() :]
+
+
 def _refrescar_motor_en_manual(source: str, engine: str) -> str:
     """Cambia la copia congelada del motor que lleva el manual por el motor actual.
 
@@ -183,8 +213,12 @@ def _refrescar_motor_en_manual_textual(source: str, engine: str) -> str:
     return engine.rstrip() + "\n\n\n" + source[inicio_propio:]
 
 
-def _manual_bundle(path: Path, engine: str = "") -> bytes:
+def _manual_bundle(path: Path, engine: str = "", tema: str = "") -> bytes:
     source = path.read_text(encoding="utf-8")
+    if tema:
+        # El tema PRIMERO: se localiza por la subclase de MadaraSource, que sigue en su
+        # sitio mientras no se haya tocado el prefijo de Madara.
+        source = _refrescar_motor_de_tema(source, tema)
     if engine:
         source = _refrescar_motor_en_manual(source, engine)
     lines = source.splitlines(keepends=True)
@@ -3769,7 +3803,9 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 bundle_bytes = _galleryadults_bundle(madara_engine, galleryadults_engine, extension)
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path, madara_engine)
+                    bundle_bytes = _manual_bundle(
+                        manual_path, madara_engine, galleryadults_engine,
+                    )
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
