@@ -23,13 +23,25 @@ class GalleryAdultsSource(MadaraSource):
             for node in root.descendants()
             if classes.intersection(node.attrs.get("class", "").split())
         ):
-            link = _first(item, lambda node: node.tag == "a" and node.attrs.get("href"))
+            # El PRIMER <a> de la tarjeta es el de la categoria (`/category/doujinshi/`),
+            # no el de la galeria: quedarse con el hacia que las 25 tarjetas de la pagina
+            # compartieran titulo ("Doujinshi", "Western") y el dedupe final las colapsara
+            # a 4 o 5. Se prefiere el enlace que apunta a una galeria.
+            enlaces = [
+                node for node in item.descendants("a") if node.attrs.get("href")
+            ]
+            link = next(
+                (node for node in enlaces if "/gallery/" in node.attrs["href"]),
+                enlaces[0] if enlaces else None,
+            )
             image = _first(item, lambda node: node.tag == "img")
             caption = _first(
                 item,
                 lambda node: any(
                     name in node.attrs.get("class", "").split()
-                    for name in ("caption", "title", "tag_name")
+                    # `gallery_title` es el titulo real de la obra; `gallery_cat` es la
+                    # categoria y se descarta a proposito.
+                    for name in ("gallery_title", "caption", "title", "tag_name")
                 )
                 and node.text(),
             )
@@ -53,6 +65,11 @@ class GalleryAdultsSource(MadaraSource):
             path += f"/language/{self.manga_language}"
         if popular:
             path += "/popular"
+        # La barra final NO es opcional: `/language/spanish/popular` devuelve 404 y solo
+        # `/language/spanish/popular/` responde el listado. El engine la omitia, asi que
+        # el catalogo entero salia vacio en las 8 variantes.
+        if not path.endswith("/"):
+            path += "/"
         response = await self._request("GET", path, params={"page": max(page, 1)})
         response.raise_for_status()
         return self._series(response.text, path)

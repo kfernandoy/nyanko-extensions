@@ -44,6 +44,22 @@ RETOS = (
 # Por debajo de esto no hay catalogo que parsear: es una landing o un error.
 MINIMO_HTML = 2000
 
+# El dominio caduco y ahora responde la pagina del registrador, o el hosting lo suspendio.
+# Devuelve 200 con HTML normal, asi que sin estas señales se clasificaba como PARSER_ROTO
+# y se perdia tiempo buscando un fallo de parseo en un sitio que ya no existe.
+APARCADO = (
+    "parkingpage",
+    "parked domain",
+    "lander.parity.domains",
+    "account suspended",
+    "buy this domain",
+    "domain is for sale",
+    "sedoparking",
+    "afternic",
+    "expired-banner",
+    "domain for sale",
+)
+
 
 def base_url(extension_id: str) -> str:
     texto = (ROOT / "bundles" / f"{extension_id}.py").read_text(
@@ -104,6 +120,9 @@ async def triar(extension_id: str, timeout: float) -> dict:
             return {**fila, "veredicto": "PROTEGIDA", "detalle": f"reto anti-bot ({servidor or '?'})"}
         if respuesta.status_code >= 400:
             return {**fila, "veredicto": "MUERTA", "detalle": f"HTTP {respuesta.status_code}"}
+        aparcado = next((senal for senal in APARCADO if senal in cuerpo), "")
+        if aparcado:
+            return {**fila, "veredicto": "MUERTA", "detalle": f"dominio aparcado ({aparcado})"}
 
         # 2. ¿Devuelve series el port?
         try:

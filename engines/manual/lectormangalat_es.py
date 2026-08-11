@@ -880,7 +880,7 @@ class GeneratedMadaraSource(MadaraSource):
 
     name = 'lectormangalat_es'
     display_name = 'LectorManga.lat'
-    base_url = 'https://lectormangass.com'
+    base_url = 'https://lectormangass.net'
     language = 'es'
     manga_substring = 'biblioteca'
     load_more = 'auto'

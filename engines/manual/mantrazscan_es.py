@@ -761,12 +761,12 @@ class ManhwaScanSource(MadaraSource):
 class GeneratedManhwaScanSource(ManhwaScanSource):
     name = 'mantrazscan_es'
     display_name = 'Manhwa Scan'
-    base_url = 'https://manhwascanx.lat'
+    base_url = 'https://mantrazscan.co'
     language = 'es'
     requests_per_minute = 60
     content_warning = 'nsfw'
     extra_headers = {'Accept': '*/*'}
-    image_headers = {'Referer': 'https://manhwascanx.lat/'}
+    image_headers = {'Referer': 'https://mantrazscan.co/'}
 
 
 SOURCE = GeneratedManhwaScanSource
