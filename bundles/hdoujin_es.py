@@ -2622,228 +2622,166 @@ class DoujinsHellSource (MadaraSource ):
         )for index ,url in enumerate (urls )]
 
 
-from urllib .parse import urljoin 
+"""Implementación JSON de HDoujin (api.hdoujin.org).
+
+El sitio dejó de servir HTML: hoy es una SPA que habla con `api.hdoujin.org`, asi que el
+port heuristico anterior -que raspaba el DOM- devolvia siempre catalogo vacio.
+
+Dos detalles del contrato que no son evidentes:
+
+* La API exige la cabecera ``Origin``. Con solo ``Referer`` responde 400 y cuerpo vacio,
+  que era facil de confundir con un bloqueo.
+* ``lang`` es una MASCARA DE BITS, no un id: el JS del sitio calcula ``1 << idioma`` sobre
+  el enum ``{1: English, 2: Japanese, 3: Chinese, 4: Korean}``. De ahi que ingles sea 2 y
+  no 1. El sitio solo publica esos cuatro idiomas.
+"""
 
 
+from urllib .parse import urlparse 
 
-class GenericSource (MadaraSource ):
-    search_paths :tuple [str ,...]=("search","")
-    popular_paths :tuple [str ,...]=("series","manga","comics","popular","")
-    latest_paths :tuple [str ,...]=("latest","updates","series","manga","")
 
-    async def search (self ,query :str ,limit :int =20 )->list [SourceSeries ]:
-        for path in self .search_paths :
-            for key in ("q","query","s","keyword"):
-                try :
-                    response =await self ._request (
-                    "GET",
-                    urljoin (f"{self .base_url }/",path ),
-                    params ={key :query .strip (),"page":"1"},
-                    )
-                    if getattr (response ,"status_code",200 )>=400 :
-                        continue 
-                    values =self ._adaptive_series (response )
-                    if values :
-                        return values [:limit ]
-                except Exception :
-                    continue 
-        return []
+_API ="https://api.hdoujin.org"
 
-    async def browse (self ,kind :str ,page :int =1 )->list [SourceSeries ]:
-        if kind not in {"popular","latest"}:
-            return []
-        paths =self .popular_paths if kind =="popular"else self .latest_paths 
-        for path in paths :
-            try :
-                response =await self ._request (
-                "GET",
-                urljoin (f"{self .base_url }/",path ),
-                params ={"page":str (page )},
-                )
-                if getattr (response ,"status_code",200 )>=400 :
-                    continue 
-                values =self ._adaptive_series (response )
-                if values :
-                    return values 
-            except Exception :
-                continue 
-        return []
 
-    async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
-        series_id =series .source_id if isinstance (series ,SourceSeries )else series 
-        response =await self ._request ("GET",urljoin (f"{self .base_url }/",series_id ))
+class HDoujinSource (MadaraSource ):
+# Mascara del idioma que sirve esta variante; 0 = sin filtro (todos).
+    language_mask =0 
+
+    def _cabeceras (self )->dict [str ,str ]:
+        return {"Referer":f"{self .base_url }/","Origin":self .base_url }
+
+    async def _pedir (self ,path :str ,params :dict |None =None )->dict :
+        response =await self ._request (
+        "GET",f"{_API }{path }",params =params or {},headers =self ._cabeceras (),
+        )
         response .raise_for_status ()
-        root =_parse_html (response .text )
-        result :list [SourceChapter ]=[]
-        for anchor in root .descendants ("a"):
-            href =anchor .attrs .get ("href","")
-            title =anchor .text ().strip ()or anchor .attrs .get ("title","").strip ()
-            marker =f"{href } {title }".lower ()
-            if not href or not any (value in marker for value in ("chapter","chap","capitulo","capítulo","episode","bolum","read/")):
-                continue 
-            found =re .search (r"\d+(?:\.\d+)?",title )
-            result .append (
-            SourceChapter (
-            source_id =urljoin (str (response .url ),href ),
-            title =title or "Capítulo",
-            series_id =series_id ,
-            source_name =self .name ,
-            number =float (found .group ())if found else None ,
-            )
-            )
-        if not result :
-            try :
-                payload =response .json ()
-            except (ValueError ,AttributeError ):
-                payload =None 
-            for item in self ._walk_dicts (payload ):
-                title =str (item .get ("title")or item .get ("name")or "")
-                item_id =item .get ("url")or item .get ("slug")or item .get ("id")
-                if not title or item_id is None or "chap"not in json .dumps (item ).lower ():
-                    continue 
-                found =re .search (r"\d+(?:\.\d+)?",title )
-                result .append (
-                SourceChapter (
-                source_id =urljoin (str (response .url ),str (item_id )),
-                title =title ,
-                series_id =series_id ,
-                source_name =self .name ,
-                number =float (found .group ())if found else None ,
-                )
-                )
-        return list ({item .source_id :item for item in result }.values ())
-
-    def _adaptive_series (self ,response )->list [SourceSeries ]:
-        root =_parse_html (response .text )
-        result :list [SourceSeries ]=[]
-        seen :set [str ]=set ()
-        for anchor in root .descendants ("a"):
-            href =anchor .attrs .get ("href","")
-            title =anchor .attrs .get ("title","").strip ()or anchor .text ().strip ()
-            parent =anchor .parent 
-            marker =""
-            while parent is not None :
-                marker +=f" {parent .attrs .get ('id','')} {parent .attrs .get ('class','')}"
-                parent =parent .parent 
-            if not href or not title or not any (value in marker .lower ()for value in ("manga","comic","series","novel","item","book")):
-                continue 
-            source_id =urljoin (str (response .url ),href )
-            if source_id not in seen :
-                seen .add (source_id )
-                image =_first (anchor ,lambda node :node .tag =="img")
-                if image is None and anchor .parent is not None :
-                    image =_first (anchor .parent ,lambda node :node .tag =="img")
-                result .append (
-                SourceSeries (
-                source_id =source_id ,
-                title =title ,
-                source_name =self .name ,
-                cover_url =(
-                _image_url (image ,str (response .url ))if image else None 
-                ),
-                web_url =source_id ,
-                )
-                )
-        if result :
-            return result 
         try :
-            payload =response .json ()
-        except (ValueError ,AttributeError ):
-            return []
-        for item in self ._walk_dicts (payload ):
-            title =item .get ("title")or item .get ("name")
-            item_id =item .get ("url")or item .get ("href")or item .get ("slug")or item .get ("id")
-            if title and item_id is not None :
-                source_id =urljoin (str (response .url ),str (item_id ))
-                if source_id not in seen :
-                    seen .add (source_id )
-                    cover =(
-                    item .get ("cover_url")
-                    or item .get ("cover")
-                    or item .get ("thumbnail")
-                    or item .get ("image")
-                    )
-                    result .append (
-                    SourceSeries (
-                    source_id =source_id ,
-                    title =str (title ),
-                    source_name =self .name ,
-                    cover_url =(
-                    urljoin (str (response .url ),cover )
-                    if isinstance (cover ,str )
-                    else None 
-                    ),
-                    web_url =source_id ,
-                    )
-                    )
-        return result 
+            return response .json ()or {}
+        except ValueError :
+            return {}
+
+    def _serie (self ,fila :dict )->SourceSeries |None :
+        if not (fila .get ("id")and fila .get ("key")):
+            return None 
+        miniatura =fila .get ("thumbnail")or {}
+        portada =miniatura .get ("path")if isinstance (miniatura ,dict )else None 
+        return SourceSeries (
+        source_id =f"{fila ['id']}/{fila ['key']}",
+        title =str (fila .get ("title")or "").strip ()or str (fila .get ("id")),
+        source_name =self .name ,
+        cover_url =portada ,
+        web_url =f"{self .base_url }/g/{fila ['id']}/{fila ['key']}",
+        )
+
+    def _listado (self ,payload :dict )->dict :
+        filas =payload .get ("entries")or []
+        items =[serie for fila in filas if (serie :=self ._serie (fila ))]
+        # `total` es el global; se pagina mientras la pagina venga llena.
+        limite =int (payload .get ("limit")or 0 )
+        return {"items":items ,"has_more":bool (limite )and len (filas )>=limite }
+
+    def _parametros (self ,page :int )->dict :
+        params :dict [str ,object ]={"page":max (page ,1 )}
+        if self .language_mask :
+            params ["lang"]=self .language_mask 
+        return params 
+
+    async def browse (self ,kind :str ,page :int =1 ):
+        if kind not in {"popular","latest"}:
+            return {"items":[],"has_more":False }
+        ruta ="/books/popular"if kind =="popular"else "/books"
+        return self ._listado (await self ._pedir (ruta ,self ._parametros (page )))
+
+    async def search (self ,query :str ,page :int =1 ,filters :dict |None =None ):
+        params =self ._parametros (page )
+        if query .strip ():
+            params ["s"]=query .strip ()
+        return self ._listado (await self ._pedir ("/books",params ))
 
     @staticmethod 
-    def _walk_dicts (value ):
-        if isinstance (value ,dict ):
-            yield value 
-            for child in value .values ():
-                yield from GenericSource ._walk_dicts (child )
-        elif isinstance (value ,list ):
-            for child in value :
-                yield from GenericSource ._walk_dicts (child )
-
-class GeneratedGenericSource (GenericSource ):
-
-    def get_preferences (self )->list [SourcePreference ]:
-    # Autogenerated via heuristic port
-        data =[
-        {
-        "type":"checkbox",
-        "id":"pref_adult",
-        "name":"Show Adult Content",
-        "default":False 
-        }
+    def _nombres (tags :object ,espacio :str )->list [str ]:
+        return [
+        str (tag .get ("name")or "").strip ()
+        for tag in (tags if isinstance (tags ,list )else [])
+        if isinstance (tag ,dict )
+        and str (tag .get ("namespace")or "")==espacio 
+        and str (tag .get ("name")or "").strip ()
         ]
-        return [SourcePreference (**item )for item in data ]
 
-    def get_filters (self )->list [SourceFilter ]:
-    # Autogenerated via heuristic port
-        data =[
-        {
-        "type":"select",
-        "id":"generic_filter",
-        "name":"Filtro",
-        "options":[
-        {
-        "name":"Title",
-        "value":"2"
-        },
-        {
-        "name":"Pages",
-        "value":"3"
-        },
-        {
-        "name":"Views",
-        "value":"8"
-        },
-        {
-        "name":"Favourites",
-        "value":"9"
-        },
-        {
-        "name":"Popular This Week",
-        "value":"popular"
-        }
-        ],
-        "default":"2"
-        }
+    async def details (self ,series :SourceSeries |str )->SourceSeries :
+        series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
+        data =await self ._pedir (f"/books/detail/{series_id }")
+        miniaturas =data .get ("thumbnails")or {}
+        base =str (miniaturas .get ("base")or "")
+        principal =miniaturas .get ("main")or {}
+        etiquetas =data .get ("tags")
+        todas =[
+        str (tag .get ("name")or "").strip ()
+        for tag in (etiquetas if isinstance (etiquetas ,list )else [])
+        if isinstance (tag ,dict )and str (tag .get ("name")or "").strip ()
         ]
-        return [SourceFilter (**item )for item in data ]
+        return SourceSeries (
+        source_id =series_id ,
+        title =str (data .get ("title")or "").strip ()or series_id ,
+        source_name =self .name ,
+        cover_url =f"{base }{principal .get ('path','')}"if base and principal else None ,
+        description =str (data .get ("subtitle")or "").strip ()or None ,
+        author =", ".join (self ._nombres (etiquetas ,"artist"))or None ,
+        artist =", ".join (self ._nombres (etiquetas ,"artist"))or None ,
+        content_tags =tuple (dict .fromkeys (todas )),
+        web_url =f"{self .base_url }/g/{series_id }",
+        )
 
+    async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
+        series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
+        data =await self ._pedir (f"/books/detail/{series_id }")
+        # Cada libro es una galeria de un solo capitulo.
+        return [
+        SourceChapter (
+        source_id =series_id ,
+        title =str (data .get ("title_short")or data .get ("title")or "Galería"),
+        series_id =series_id ,
+        source_name =self .name ,
+        number =1.0 ,
+        language =self .language ,
+        )
+        ]
+
+    async def pages (self ,chapter :SourceChapter |str )->list [SourcePage ]:
+        chapter_id =chapter .source_id if isinstance (chapter ,SourceChapter )else str (chapter )
+        data =await self ._pedir (f"/books/detail/{chapter_id }")
+        miniaturas =data .get ("thumbnails")or {}
+        base =str (miniaturas .get ("base")or "")
+        entradas =miniaturas .get ("entries")or []
+        paginas :list [SourcePage ]=[]
+        for indice ,entrada in enumerate (entradas ):
+            ruta =str (entrada .get ("path")or "")if isinstance (entrada ,dict )else ""
+            if not ruta :
+                continue 
+            url =f"{base }{ruta }"
+            paginas .append (
+            SourcePage (
+            source_id =url ,
+            chapter_id =chapter_id ,
+            index =indice ,
+            filename =urlparse (url ).path .rsplit ("/",1 )[-1 ]or f"{indice }.webp",
+            source_name =self .name ,
+            )
+            )
+        return paginas 
+
+
+class GeneratedHDoujinSource (HDoujinSource ):
     name ='hdoujin_es'
     display_name ='HDoujin'
     base_url ='https://hdoujin.org'
     language ='es'
-    requests_per_minute =180 
+    language_mask =0 
+    requests_per_minute =60 
+    content_warning ='nsfw'
 
 
-SOURCE =GeneratedGenericSource
+SOURCE =GeneratedHDoujinSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 
