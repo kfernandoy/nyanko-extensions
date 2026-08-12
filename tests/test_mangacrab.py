@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-from tools.generate import _madara_bundle, _supported_madara
+from tools.generate import _manual_bundle
 
 
 class Response:
@@ -29,11 +29,10 @@ class Fetcher:
 
 def source_class():
     root = Path(__file__).parents[1]
-    module = root.parent / "extensions-source-main" / "src" / "es" / "mangacrab"
-    build = (module / "build.gradle.kts").read_text(encoding="utf-8")
-    config = _supported_madara(module, build)
-    assert config is not None
-    bundle = _madara_bundle((root / "engines" / "madara.py").read_text(encoding="utf-8"), config)
+    bundle = _manual_bundle(
+        root / "engines" / "manual" / "mangacrab_es.py",
+        (root / "engines" / "madara.py").read_text(encoding="utf-8"),
+    )
     namespace = {"__name__": "test_mangacrab_bundle"}
     exec(compile(bundle, "mangacrab_es.py", "exec"), namespace)
     return namespace["SOURCE"]

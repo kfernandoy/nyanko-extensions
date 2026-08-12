@@ -8,14 +8,24 @@ import httpx
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
+from engines import madara as madara_engine
 from engines.madara import (
-    EsMi2MangaSource,
     MadaraSource,
     _cover_url,
     _cuerpo_de_formulario,
     _image_url,
     _parse_html,
 )
+
+
+def _esmi_source_class():
+    namespace = dict(vars(madara_engine))
+    manual = Path(__file__).parents[1] / "engines" / "manual" / "esmi2manga_es.py"
+    exec(compile(manual.read_text(encoding="utf-8"), str(manual), "exec"), namespace)
+    return namespace["EsMi2MangaSource"]
+
+
+EsMi2MangaSource = _esmi_source_class()
 
 
 class Response:

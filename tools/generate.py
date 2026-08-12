@@ -4327,8 +4327,8 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
         manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
         # lectormangalat salio de esta lista: su manual ya no es la copia heredada del
         # Kotlin sino el port al sitio actual (Astro), asi que ahora debe ganarle al
-        # bundle generado. Los otros tres siguen fuera porque su manual esta obsoleto.
-        if manual_path.exists() and build_path.parent.name not in {"mangacrab", "mangaesp", "mangatv"}:
+        # bundle generado. Los otros dos siguen fuera porque su manual esta obsoleto.
+        if manual_path.exists() and build_path.parent.name not in {"mangaesp", "mangatv"}:
             # El motor que se refresca en el manual tiene que ser el MISMO del que
             # hereda su motor de tema. Pasar madara.py a un manual cuyo tema ya vive
             # sobre base.py dejaria dentro las dos jerarquias.
