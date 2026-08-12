@@ -6,8 +6,8 @@ import re
 from urllib.parse import urljoin
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .madara_details import (
+        MadaraDetailsSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -54,7 +54,7 @@ def _decode_chapter_images(value: str) -> list[dict]:
     return payload if isinstance(payload, list) else []
 
 
-class GodaSource(MadaraSource):
+class GodaSource(MadaraDetailsSource):
     profile = "regular"
 
     async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:

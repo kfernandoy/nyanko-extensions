@@ -3,7 +3,7 @@
 from urllib.parse import urljoin
 
 try:
-    from .madara import MadaraSource, SourceChapter, SourcePage, SourceSeries
+    from .madara_details import MadaraDetailsSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
@@ -44,7 +44,7 @@ class _SvelteData:
         return self.values[index] if 0 <= index < len(self.values) else None
 
 
-class UzayMangaSource(MadaraSource):
+class UzayMangaSource(MadaraDetailsSource):
     cdn_url = ""
     requests_per_minute = 180
 

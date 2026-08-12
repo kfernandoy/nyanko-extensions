@@ -378,7 +378,7 @@ def _protected_page_urls(html: str, base_url: str) -> list[str]:
     return []
 
 
-class MadaraSource:
+class MadaraSource(MadaraDetailsSource):
     name = "madara"
     display_name = "Madara"
     base_url = ""

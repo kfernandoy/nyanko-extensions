@@ -4,8 +4,8 @@ import re
 from urllib.parse import parse_qs, urljoin, urlsplit
 
 try:
-    from .madara import (
-        MadaraSource,
+    from .madara_details import (
+        MadaraDetailsSource,
         SourceChapter,
         SourcePage,
         SourceSeries,
@@ -17,7 +17,7 @@ except ImportError:
     pass
 
 
-class NatsuIdSource(MadaraSource):
+class NatsuIdSource(MadaraDetailsSource):
     chapter_page = "999"
 
     def __init__(self, fetcher=None) -> None:

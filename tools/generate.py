@@ -33,9 +33,9 @@ def _extract_kotlin_metadata(module: Path) -> str:
 
 
 # Motores que siguen necesitando `madara.py` entero porque usan metodos del motor
-# Madara (no solo la infraestructura de `base.py`): `generic` usa `details`,
-# `_series` y `_chapter_nodes`; los otros tres, `details` o `chapters`.
-_MOTORES_SOBRE_MADARA = frozenset({"custom", "madara", "goda", "natsuid", "uzaymanga"})
+# Madara (no solo la infraestructura de `base.py`): `generic` usa `_series`,
+# `_chapter_nodes` y varias implementaciones de catalogo concretas.
+_MOTORES_SOBRE_MADARA = frozenset({"custom", "madara"})
 
 
 def _refrescar_motor_de_tema(source: str, tema: str) -> str:
@@ -56,12 +56,18 @@ def _refrescar_motor_de_tema(source: str, tema: str) -> str:
     # o `FuenteBaseSource` (ya migrados). En el MANUAL, en cambio, la copia congelada
     # dice siempre `MadaraSource`, porque se escribio antes del refactor: por eso se
     # busca por el NOMBRE de la clase raiz y se aceptan las dos bases.
-    raiz = re.search(r"^class (\w+)\((?:MadaraSource|FuenteBaseSource)\):", tema, re.M)
+    raiz = re.search(
+        r"^class (\w+)\((?:MadaraSource|MadaraDetailsSource|FuenteBaseSource)\):",
+        tema,
+        re.M,
+    )
     if raiz is None:
         return source
     nombre_raiz = raiz.group(1)
     inicio = re.search(
-        rf"^class {nombre_raiz}\((?:MadaraSource|FuenteBaseSource)\):", source, re.M
+        rf"^class {nombre_raiz}\((?:MadaraSource|MadaraDetailsSource|FuenteBaseSource)\):",
+        source,
+        re.M,
     )
     fin = re.search(rf"^class \w+\({nombre_raiz}\):", source, re.M)
     if inicio is None or fin is None or fin.start() <= inicio.start():
@@ -238,7 +244,8 @@ def _manual_bundle(path: Path, engine: str = "", tema: str = "") -> bytes:
     # clase ya no existe en el bundle y el modulo peta con NameError al importarse.
     # Se reengancha la herencia a la clase que SI esta presente.
     if engine and "class FuenteBaseSource" in engine:
-        source = re.sub(r"\bMadaraSource\b", "FuenteBaseSource", source)
+        replacement = "MadaraDetailsSource" if "class MadaraDetailsSource" in engine else "FuenteBaseSource"
+        source = re.sub(r"\bMadaraSource\b", replacement, source)
     lines = source.splitlines(keepends=True)
     for index in range(len(lines) - 1):
         if lines[index].strip() == "try:" and lines[index + 1].lstrip().startswith("from .madara import"):
@@ -3501,6 +3508,9 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
     # Infraestructura comun (parser HTML, helpers, clase base). Los motores de tema
     # que no necesitan el motor Madara se apoyan aqui y su bundle pesa 106 KB menos.
     base_engine = (repo / "engines" / "base.py").read_text(encoding="utf-8")
+    madara_details_engine = (repo / "engines" / "madara_details.py").read_text(encoding="utf-8")
+    details_engine = base_engine.rstrip() + "\n\n" + madara_details_engine
+    madara_engine = details_engine.rstrip() + "\n\n" + madara_engine
     mangathemesia_engine = (repo / "engines" / "mangathemesia.py").read_text(encoding="utf-8")
     pizzareader_engine = (repo / "engines" / "pizzareader.py").read_text(encoding="utf-8")
     mangacatalog_engine = (repo / "engines" / "mangacatalog.py").read_text(encoding="utf-8")
@@ -4122,7 +4132,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             )
         elif engine_name == "natsuid":
             bundle_bytes = _natsuid_bundle(
-                madara_engine,
+                details_engine,
                 natsuid_engine,
                 extension,
             )
@@ -4140,7 +4150,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             )
         elif engine_name == "uzaymanga":
             bundle_bytes = _uzaymanga_bundle(
-                madara_engine,
+                details_engine,
                 uzaymanga_engine,
                 extension,
             )
@@ -4182,7 +4192,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             )
         elif engine_name == "goda":
             bundle_bytes = _goda_bundle(
-                madara_engine,
+                details_engine,
                 goda_engine,
                 extension,
             )
@@ -4334,7 +4344,9 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
             # sobre base.py dejaria dentro las dos jerarquias.
             bundle_bytes = _manual_bundle(
                 manual_path,
-                madara_engine if engine_name in _MOTORES_SOBRE_MADARA else base_engine,
+                madara_engine if engine_name in _MOTORES_SOBRE_MADARA else (
+                    details_engine if engine_name in {"goda", "natsuid", "uzaymanga"} else base_engine
+                ),
             )
         bundle_bytes = finalize(bundle_bytes)
         (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
