@@ -1,11 +1,13 @@
 Fuentes pendientes de revalidacion humana tras la correccion:
 
-- 18漫画 (eighteenmanhua_zh): verificar portadas y que la ficha no incluya elementos de navegacion en las etiquetas. El smoke actual recibe HTTP 403 desde el listado (bloqueo externo del sitio).
-- Goda (goda_en): verificar portadas y ficha. El listado de capitulos sigue sujeto al desafio Cloudflare del sitio (HTTP 403, bloqueo externo confirmado).
-- GoDa漫画 (baozimhorg_zh): verificar portadas y que la ficha no incluya elementos de navegacion en las etiquetas.
-- Kiryuu (kiryuu_id): verificar portadas y que los capitulos no aparezcan en las etiquetas.
-- Ikiru (mangatale_id): verificar portadas y que los capitulos no aparezcan en las etiquetas.
-- Natsu (natsu_id): verificar portadas y que los capitulos no aparezcan en las etiquetas.
+- Todas las fuentes con portada: revalidar la carga visual de portadas en el catalogo. La regresion era global en la app (la rejilla combinaba `content-visibility: auto` con imagenes lazy), no en los bundles ni en las URLs de las extensiones. Corregido en el repositorio Nyanko; se verifico que LectorMangaLat, MangaDex, InManga, Manga Crab y MantrazScan sirven bytes de imagen HTTP 200 por el proxy real.
+
+- 18漫画 (eighteenmanhua_zh): no carga portadas
+- Goda (goda_en): no carga portadas
+- GoDa漫画 (baozimhorg_zh): no carga portadas
+- Kiryuu (kiryuu_id): no carga portadas
+- Ikiru (mangatale_id): no carga portadas
+- Natsu (natsu_id): no carga portadas
 - Rawkuma (rawkuma_ja): verificar portadas y que los capitulos no aparezcan en las etiquetas.
 - Afrodit Scans (afroditscans_tr): verificar portadas y que los capitulos no aparezcan en las etiquetas.
 - Elder Manga (eldermanga_tr): verificar portadas y que los capitulos no aparezcan en las etiquetas.
