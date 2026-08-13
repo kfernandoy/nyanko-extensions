@@ -78,15 +78,60 @@ class UzayMangaSource(MadaraDetailsSource):
                 continue
             title = data.resolve_string(manga, "name")
             slug = data.resolve_string(manga, "slug")
+            image_path = data.resolve_string(manga, "image") or ""
             if title and slug:
                 result.append(
                     SourceSeries(
                         source_id=f"{self.base_url}/manga/{slug}",
                         title=title,
                         source_name=self.name,
+                        cover_url=self._image(image_path),
                     )
                 )
         return result
+
+    async def details(self, series: SourceSeries | str) -> SourceSeries:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        response = await self._request(
+            "GET",
+            f"{series_id.rstrip('/')}/__data.json",
+            params={"x-sveltekit-invalidated": "001"},
+        )
+        response.raise_for_status()
+        data = self._data(response.json())
+        root = data.object(0) if data else None
+        manga = data.resolve_object(root, "series") if data and root else None
+        if not data or not manga:
+            return series if isinstance(series, SourceSeries) else SourceSeries(series_id, series_id, self.name)
+        categories = data.resolve_array(manga, "categories") or []
+        genres: list[str] = []
+        for reference in categories:
+            category = data.object(reference) if isinstance(reference, int) else None
+            name = data.resolve_string(category, "name") if category else None
+            if name:
+                genres.append(name)
+        status = {1: "ongoing", 2: "completed", 3: "hiatus"}.get(
+            data.resolve_integer(manga, "status")
+        )
+        title = data.resolve_string(manga, "name")
+        return SourceSeries(
+            source_id=series_id,
+            title=title or (series.title if isinstance(series, SourceSeries) else series_id),
+            source_name=self.name,
+            cover_url=self._image(data.resolve_string(manga, "image") or ""),
+            description=data.resolve_string(manga, "description"),
+            status=status,
+            content_tags=tuple(dict.fromkeys(genres)),
+            metadata=series.metadata if isinstance(series, SourceSeries) else {},
+            web_url=series_id,
+        )
+
+    def _image(self, path: str) -> str | None:
+        if not path:
+            return None
+        if path.startswith("http"):
+            return path
+        return urljoin((self.cdn_url or self.base_url).rstrip("/") + "/", path.lstrip("/"))
 
     async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
         series_id = series.source_id if isinstance(series, SourceSeries) else series

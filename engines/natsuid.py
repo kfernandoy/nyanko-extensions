@@ -73,9 +73,61 @@ class NatsuIdSource(MadaraDetailsSource):
             if source_id not in seen and title:
                 seen.add(source_id)
                 result.append(
-                    SourceSeries(source_id=source_id, title=title, source_name=self.name)
+                    SourceSeries(
+                        source_id=source_id,
+                        title=title,
+                        source_name=self.name,
+                        cover_url=_image_url(image, str(response.url)),
+                    )
                 )
         return result
+
+    async def details(self, series: SourceSeries | str) -> SourceSeries:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        slug = urlsplit(series_id).path.rstrip("/").rsplit("/", 1)[-1]
+        response = await self._request(
+            "GET",
+            f"{self.base_url}/wp-json/wp/v2/manga",
+            params={"slug[]": slug, "per_page": "2", "_embed": ""},
+        )
+        response.raise_for_status()
+        items = response.json()
+        item = items[0] if isinstance(items, list) and items else None
+        if not isinstance(item, dict):
+            return series if isinstance(series, SourceSeries) else SourceSeries(series_id, slug, self.name)
+        embedded = item.get("_embedded", {})
+        terms = embedded.get("wp:term", []) if isinstance(embedded, dict) else []
+
+        def taxonomy(name: str) -> list[str]:
+            return [
+                str(term.get("name", "")).strip()
+                for group in terms if isinstance(group, list)
+                for term in group if isinstance(term, dict) and term.get("taxonomy") == name
+                and str(term.get("name", "")).strip()
+            ]
+
+        media = embedded.get("wp:featuredmedia", []) if isinstance(embedded, dict) else []
+        cover_url = next(
+            (str(value.get("source_url")) for value in media if isinstance(value, dict) and value.get("source_url")),
+            None,
+        )
+        title = str(item.get("title", {}).get("rendered", "")).strip()
+        content = str(item.get("content", {}).get("rendered", ""))
+        description = _parse_html(content).text().strip()
+        statuses = taxonomy("status")
+        return SourceSeries(
+            source_id=series_id,
+            title=title or (series.title if isinstance(series, SourceSeries) else slug),
+            source_name=self.name,
+            cover_url=cover_url or (series.cover_url if isinstance(series, SourceSeries) else None),
+            description=description or None,
+            author=", ".join(taxonomy("series-author")) or None,
+            artist=", ".join(taxonomy("artist")) or None,
+            status=self._madara_status(statuses[0]) if statuses else None,
+            content_tags=tuple(dict.fromkeys(taxonomy("genre") + taxonomy("type"))),
+            metadata=series.metadata if isinstance(series, SourceSeries) else {},
+            web_url=series_id,
+        )
 
     async def _search_nonce(self) -> str:
         if self._nonce:

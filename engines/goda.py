@@ -3,7 +3,7 @@
 import base64
 import json
 import re
-from urllib.parse import urljoin
+from urllib.parse import parse_qs, urljoin, urlsplit
 
 try:
     from .madara_details import (
@@ -78,29 +78,88 @@ class GodaSource(MadaraDetailsSource):
         root = _parse_html(html)
         result: list[SourceSeries] = []
         for card in (node for node in root.descendants() if node.has_class("pb-2")):
+            if not self._has_class_ancestor(card, "cardlist"):
+                continue
             anchor = _first(
                 card,
                 lambda node: node.tag == "a" and bool(node.attrs.get("href")),
             )
             heading = _first(card, lambda node: node.tag == "h3")
+            image = _first(card, lambda node: node.tag == "img")
             title = heading.text().strip() if heading else ""
             if anchor is not None and title:
+                cover_url = _image_url(image, response_url) if image else None
+                if cover_url:
+                    proxied = parse_qs(urlsplit(cover_url).query).get("url")
+                    if proxied:
+                        cover_url = proxied[0]
                 result.append(
                     SourceSeries(
                         source_id=urljoin(response_url, anchor.attrs["href"]),
                         title=title,
                         source_name=self.name,
+                        cover_url=cover_url,
                     )
                 )
         return result
 
+    async def details(self, series: SourceSeries | str) -> SourceSeries:
+        series_id = series.source_id if isinstance(series, SourceSeries) else str(series)
+        response = await self._request("GET", series_id)
+        response.raise_for_status()
+        root = _parse_html(response.text)
+        main = _first(root, lambda node: node.tag == "main") or root
+        title_node = _first(main, lambda node: node.tag == "h1")
+        title = title_node.text().strip() if title_node else (
+            series.title if isinstance(series, SourceSeries) else series_id.rstrip("/").rsplit("/", 1)[-1]
+        )
+        image = _first(
+            main,
+            lambda node: node.tag == "img" and node.has_class("object-cover"),
+        )
+        holder = _first(main, lambda node: node.attrs.get("id") == "mangachapters")
+        manga_id = holder.attrs.get("data-mid", "") if holder else ""
+        status = None
+        if title_node is not None:
+            badge = _first(title_node, lambda node: node is not title_node and bool(node.text().strip()))
+            status_text = badge.text().strip() if badge else ""
+            status = {
+                "連載中": "ongoing",
+                "完結": "completed",
+                "停止更新": "cancelled",
+                "休刊": "hiatus",
+            }.get(status_text) or self._madara_status(status_text)
+        parent = title_node.parent.parent if title_node and title_node.parent and title_node.parent.parent else None
+        rows = [child for child in parent.children if hasattr(child, "tag")] if parent else []
+        author = ", ".join(link.text().strip().rstrip(" ,") for link in rows[1].descendants("a")) if len(rows) > 1 else ""
+        genres: list[str] = []
+        if len(rows) > 2:
+            genres.extend(link.text().strip().rstrip(" ,") for link in rows[2].descendants("a"))
+        if len(rows) > 3:
+            genres.extend(link.text().strip().removeprefix("#") for link in rows[3].descendants("a"))
+        description = rows[4].text().strip() if len(rows) > 4 and rows[4].tag == "p" else ""
+        metadata = dict(series.metadata) if isinstance(series, SourceSeries) else {}
+        if manga_id:
+            metadata["manga_id"] = manga_id
+        return SourceSeries(
+            source_id=series_id,
+            title=title,
+            source_name=self.name,
+            cover_url=_image_url(image, str(response.url)) if image else None,
+            description=description or None,
+            author=author or None,
+            status=status,
+            content_tags=tuple(dict.fromkeys(tag for tag in genres if tag)),
+            metadata=metadata,
+            web_url=str(response.url),
+        )
+
     async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
         series_id = series.source_id if isinstance(series, SourceSeries) else series
-        details = await self._request("GET", series_id)
-        details.raise_for_status()
-        root = _parse_html(details.text)
-        holder = _first(root, lambda node: node.attrs.get("id") == "mangachapters")
-        manga_id = holder.attrs.get("data-mid", "") if holder else ""
+        manga_id = series.metadata.get("manga_id", "") if isinstance(series, SourceSeries) else ""
+        if not manga_id:
+            details = await self.details(series)
+            manga_id = details.metadata.get("manga_id", "")
         if not manga_id:
             return []
         if self.profile == "api":
