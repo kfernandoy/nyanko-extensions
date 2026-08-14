@@ -1,5 +1,7 @@
 try:
-    from .base import FuenteBaseSource, _Node, _TreeParser
+    from .base import (
+        FuenteBaseSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -436,14 +438,6 @@ class XkcdSource(FuenteBaseSource):
             return None
 
 
-class GeneratedXkcdSource(XkcdSource):
-    name = 'xkcd_es'
-    display_name = 'xkcd'
-    base_url = 'https://es.xkcd.com'
-    language = 'es'
-    requests_per_minute = 60
-    content_warning = 'safe'
-    image_headers = {'Referer': 'https://es.xkcd.com/'}
 
 
 SOURCE = XkcdSource

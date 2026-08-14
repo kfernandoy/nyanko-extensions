@@ -1,5 +1,7 @@
 try:
-    from .base import FuenteBaseSource, _Node, _TreeParser
+    from .base import (
+        FuenteBaseSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -342,14 +344,6 @@ class NamicomiSource(FuenteBaseSource):
         return None
 
 
-class GeneratedNamiComiSource(NamiComiSource):
-    name = 'namicomi_es'
-    display_name = 'NamiComi'
-    base_url = 'https://namicomi.com'
-    language = 'es'
-    requests_per_minute = 180
-    content_warning = 'safe'
-    image_headers = {'Referer': 'https://namicomi.com/'}
 
 
 SOURCE = NamicomiSource

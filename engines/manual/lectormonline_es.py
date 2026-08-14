@@ -1,5 +1,7 @@
 try:
-    from .madara import MadaraSource, _Node, _TreeParser
+    from .madara import (
+        MadaraSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -159,12 +161,6 @@ class LectormonlineSource(MadaraSource):
             )
         return paginas
 
-class GeneratedGatoLibreriaSource(GatoLibreriaSource):
-    name = 'lectormonline_es'
-    display_name = 'Gato Librería'
-    base_url = 'https://gatolibreria.com'
-    language = 'es'
-    requests_per_minute = 60
 
 
 SOURCE = LectormonlineSource

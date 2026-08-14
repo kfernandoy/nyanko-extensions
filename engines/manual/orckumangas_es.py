@@ -1,5 +1,7 @@
 try:
-    from .base import FuenteBaseSource, _Node, _TreeParser
+    from .base import (
+        FuenteBaseSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -244,14 +246,6 @@ class OrckumangasSource(FuenteBaseSource):
         return f"{parsed.path.lstrip('/')}{'?' + parsed.query if parsed.query else ''}"
 
 
-class GeneratedOrckuMangasSource(OrckuMangasSource):
-    name = 'orckumangas_es'
-    display_name = 'Orcku Mangas'
-    base_url = 'https://orckumangas.com'
-    language = 'es'
-    requests_per_minute = 180
-    content_warning = 'nsfw'
-    image_headers = {'Referer': 'https://orckumangas.com/'}
 
 
 SOURCE = OrckumangasSource

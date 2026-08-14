@@ -1,5 +1,7 @@
 try:
-    from .base import FuenteBaseSource, _Node, _TreeParser
+    from .base import (
+        FuenteBaseSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -209,14 +211,6 @@ class MantaSource(FuenteBaseSource):
             return None
 
 
-class GeneratedMantaComicsSource(MantaComicsSource):
-    name = 'manta_es'
-    display_name = 'Manta'
-    base_url = 'https://manta.net/es'
-    language = 'es'
-    requests_per_minute = 60
-    content_warning = 'mixed'
-    image_headers = {'Referer': 'https://manta.net/es/'}
 
 
 SOURCE = MantaSource

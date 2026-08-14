@@ -1,5 +1,7 @@
 try:
-    from .base import FuenteBaseSource, _Node, _TreeParser
+    from .base import (
+        FuenteBaseSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -189,14 +191,6 @@ class SimplyhentaiSource(FuenteBaseSource):
             return None
 
 
-class GeneratedSimplyHentaiSource(SimplyHentaiSource):
-    name = 'simplyhentai_es'
-    display_name = 'Simply Hentai'
-    base_url = 'https://www.simply-hentai.com'
-    language = 'es'
-    requests_per_minute = 60
-    content_warning = 'nsfw'
-    image_headers = {'Referer': 'https://www.simply-hentai.com/'}
 
 
 SOURCE = SimplyhentaiSource

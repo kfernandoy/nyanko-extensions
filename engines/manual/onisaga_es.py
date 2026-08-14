@@ -1,5 +1,7 @@
 try:
-    from .madara import MadaraSource, _Node, _TreeParser
+    from .madara import (
+        MadaraSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -563,14 +565,6 @@ class OnisagaSource(MadaraSource):
         return (now - spans[unit] * amount).isoformat()
 
 
-class GeneratedOniSagaSource(OniSagaSource):
-    name = 'onisaga_es'
-    display_name = 'OniSaga'
-    base_url = 'https://onisaga.com'
-    language = 'es'
-    requests_per_minute = 240
-    content_warning = 'mixed'
-    image_headers = {'Referer': 'https://onisaga.com/'}
 
 
 SOURCE = OnisagaSource

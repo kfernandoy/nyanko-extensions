@@ -132,14 +132,6 @@ class HdoujinSource (MadaraDetailsSource ):
             )
         return paginas 
 
-class GeneratedHDoujinSource (HDoujinSource ):
-    name ='hdoujin_es'
-    display_name ='HDoujin'
-    base_url ='https://hdoujin.org'
-    language ='es'
-    language_mask =0 
-    requests_per_minute =60 
-    content_warning ='nsfw'
 
 
 SOURCE =HdoujinSource

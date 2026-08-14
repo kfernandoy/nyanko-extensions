@@ -3736,7 +3736,8 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 )
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists() and not (is_heavenmanga or is_hentaihall or is_ikigaimangas or is_ikuhentai or is_inmanga or is_insanosscan or is_koinoboriscan or is_leercapitulo or is_leermangaesp or is_lectorjpg or is_lmtoonline or build_path.parent.name == "mangamx"):
-                    bundle_bytes = _manual_bundle(manual_path, madara_engine)
+                    _combined = madara_engine.rstrip() + "\n\n" + generic_engine.rstrip()
+                    bundle_bytes = _manual_bundle(manual_path, _combined)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")

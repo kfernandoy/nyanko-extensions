@@ -277,20 +277,6 @@ class OnfmangasSource (MadaraDetailsSource ):
             return None 
 
 
-class GeneratedOnfMangasSource (OnfMangasSource ):
-    name ='onfmangas_es'
-    display_name ='ONF MANGAS'
-    base_url ='https://onfmangas.com'
-    language ='es'
-    requests_per_minute =60 
-    content_warning ='mixed'
-    extra_headers ={
-    'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0',
-    'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Language':'en-US,en;q=0.9',
-    'Sec-Fetch-Site':'none',
-    }
-    image_headers ={'Referer':'https://onfmangas.com/'}
 
 
 SOURCE =OnfmangasSource

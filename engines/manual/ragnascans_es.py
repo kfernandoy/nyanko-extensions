@@ -1,5 +1,7 @@
 try:
-    from .base import FuenteBaseSource, _Node, _TreeParser
+    from .base import (
+        FuenteBaseSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -272,14 +274,6 @@ class RagnascansSource(FuenteBaseSource):
             return None
 
 
-class GeneratedRagnaScansSource(RagnaScansSource):
-    name = 'ragnascans_es'
-    display_name = 'Ragna Scans'
-    base_url = 'https://lector.ragnascan.xyz'
-    language = 'es'
-    requests_per_minute = 60
-    content_warning = 'safe'
-    image_headers = {'Referer': 'https://lector.ragnascan.xyz/'}
 
 
 SOURCE = RagnascansSource

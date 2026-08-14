@@ -1,5 +1,7 @@
 try:
-    from .base import FuenteBaseSource, _Node, _TreeParser
+    from .base import (
+        FuenteBaseSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -111,14 +113,6 @@ class OnepiecefansSource(FuenteBaseSource):
         ]
 
 
-class GeneratedOnePieceFansSource(OnePieceFansSource):
-    name = 'onepiecefans_es'
-    display_name = 'One Piece Fans'
-    base_url = 'https://one-piece-fans2.com'
-    language = 'es'
-    requests_per_minute = 60
-    content_warning = 'safe'
-    image_headers = {'Referer': 'https://one-piece-fans2.com/'}
 
 
 SOURCE = OnepiecefansSource

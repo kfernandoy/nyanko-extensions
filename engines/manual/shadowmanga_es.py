@@ -1,5 +1,7 @@
 try:
-    from .madara import MadaraSource, _Node, _TreeParser
+    from .madara import (
+        MadaraSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -205,14 +207,6 @@ class ShadowmangaSource(MadaraSource):
             return None
 
 
-class GeneratedShadowMangaSource(ShadowMangaSource):
-    name = 'shadowmanga_es'
-    display_name = 'Shadow Manga'
-    base_url = 'https://shademanga.com'
-    language = 'es'
-    requests_per_minute = 180
-    content_warning = 'mixed'
-    image_headers = {'Referer': 'https://shademanga.com/'}
 
 
 SOURCE = ShadowmangaSource

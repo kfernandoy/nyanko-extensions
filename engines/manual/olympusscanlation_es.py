@@ -1,5 +1,7 @@
 try:
-    from .madara import MadaraSource, _Node, _TreeParser
+    from .madara import (
+        MadaraSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -224,14 +226,6 @@ class OlympusscanlationSource(MadaraSource):
             return None
 
 
-class GeneratedOlympusScanlationSource(OlympusScanlationSource):
-    name = 'olympusscanlation_es'
-    display_name = 'Olympus Scanlation'
-    base_url = 'https://olympusxyz.com'
-    language = 'es'
-    requests_per_minute = 30
-    content_warning = 'safe'
-    image_headers = {'Referer': 'https://olympusxyz.com/'}
 
 
 SOURCE = OlympusscanlationSource

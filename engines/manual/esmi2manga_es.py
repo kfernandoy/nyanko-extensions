@@ -1,5 +1,7 @@
 try:
-    from .madara import MadaraSource, _Node, _TreeParser
+    from .madara import (
+        MadaraSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -545,23 +547,6 @@ class EsMi2MangaSource(DragonTranslationOrgSource):
             content_tags=genres,
             web_url=source_id,
         )
-class GeneratedMadaraSource(EsMi2MangaSource):
-    name = 'esmi2manga_es'
-    display_name = 'Es.Mi2Manga'
-    base_url = 'https://es.mi2manga.com'
-    language = 'es'
-    manga_substring = 'manga'
-    load_more = 'auto'
-    use_new_chapter_endpoint = False
-    chapter_url_suffix = '?style=list'
-    supports_latest = True
-    requests_per_minute = 120
-    pages_profile = 'default'
-    extra_headers = {}
-    image_headers = {}
-    date_format = 'MMMM dd, yyyy'
-    date_locale = 'es'
-    details_profile = 'default'
-    content_warning = 'nsfw'
+
 
 SOURCE = Esmi2mangaSource

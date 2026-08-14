@@ -6,7 +6,7 @@ Aqui vive lo que NO es de ningun tema en concreto: el parser de HTML, los helper
 de imagen y fecha, el descifrado de paginas protegidas y la clase base con lo
 minimo que toda fuente necesita (`__init__`, `_request`, `page_bytes`).
 
-Existe para que un motor de tema NO tenga que heredar de `FuenteBaseSource`. Antes lo
+Existe para que un motor de tema NO tenga que heredar de `MadaraSource`. Antes lo
 hacia: 63 de 64 motores heredaban de Madara solo para tener `_request` (5 lineas)
 y el parser, y a cambio cada bundle arrastraba `madara.py` entero -- 129 KB, con
 el motor Madara y hasta diez fuentes concretas ajenas dentro. Un arreglo del
@@ -17,45 +17,44 @@ El contenido se EXTRAJO de `madara.py` sin tocarlo, para no cambiar comportamien
 al reorganizar.
 """
 
- 
 
-import base64 
-import hashlib 
-import io 
-import json 
-import re 
-from html .parser import HTMLParser 
-from typing import Any 
-from urllib .parse import unquote ,urljoin ,urlparse ,urlunparse 
+import base64
+import hashlib
+import io
+import json
+import re
+from html.parser import HTMLParser
+from typing import Any
+from urllib.parse import unquote, urljoin, urlparse, urlunparse
 
-from PIL import Image 
+from PIL import Image
 
-from nyanko_api .sources .contract import (
-SOURCE_API_VERSION ,
-SourceCapabilities ,
-SourceChapter ,
-SourceFetcher ,
-SourceFilter ,
-SourcePage ,
-SourcePageContent ,
-SourcePreference ,
-SourceSeries ,
+from nyanko_api.sources.contract import (
+    SOURCE_API_VERSION,
+    SourceCapabilities,
+    SourceChapter,
+    SourceFetcher,
+    SourceFilter,
+    SourcePage,
+    SourcePageContent,
+    SourcePreference,
+    SourceSeries,
 )
-from nyanko_api .sources .errors import SourceNotFoundError 
+from nyanko_api.sources.errors import SourceNotFoundError
 
 # Re-exportados para los motores de tema que se concatenan detras en el bundle:
 # los usan en sus firmas y antes los tomaban del namespace de madara.py.
-__all__ =[
-"FuenteBaseSource",
-"SourceChapter",
-"SourceFilter",
-"SourcePage",
-"SourcePreference",
-"SourceSeries",
+__all__ = [
+    "FuenteBaseSource",
+    "SourceChapter",
+    "SourceFilter",
+    "SourcePage",
+    "SourcePreference",
+    "SourceSeries",
 ]
 
 
-def _es_no_encontrado (error :BaseException )->bool :
+def _es_no_encontrado(error: BaseException) -> bool:
     """`True` si la excepcion representa un 404 de la fuente.
 
     No se hace `except httpx.HTTPStatusError` porque el error puede llegar de dos
@@ -63,102 +62,102 @@ def _es_no_encontrado (error :BaseException )->bool :
     `SourceNotFoundError` en que lo traduce la app. Se cubren ambas sin importar
     httpx aqui, que este motor no lo trae.
     """
-    if isinstance (error ,SourceNotFoundError ):
-        return True 
-    respuesta =getattr (error ,"response",None )
-    return getattr (respuesta ,"status_code",None )==404 
+    if isinstance(error, SourceNotFoundError):
+        return True
+    respuesta = getattr(error, "response", None)
+    return getattr(respuesta, "status_code", None) == 404
 
 
-class _Node :
-    def __init__ (
-    self ,
-    tag :str ="",
-    attrs :list [tuple [str ,str |None ]]|None =None ,
-    parent :_Node |None =None ,
-    )->None :
-        self .tag =tag 
-        self .attrs ={key :value or ""for key ,value in attrs or []}
-        self .parent =parent 
-        self .children :list [_Node |str ]=[]
+class _Node:
+    def __init__(
+        self,
+        tag: str = "",
+        attrs: list[tuple[str, str | None]] | None = None,
+        parent: _Node | None = None,
+    ) -> None:
+        self.tag = tag
+        self.attrs = {key: value or "" for key, value in attrs or []}
+        self.parent = parent
+        self.children: list[_Node | str] = []
 
-    def text (self )->str :
-        return " ".join (
-        part 
-        for child in self .children 
-        if (part :=child .text ()if isinstance (child ,_Node )else child .strip ())
+    def text(self) -> str:
+        return " ".join(
+            part
+            for child in self.children
+            if (part := child.text() if isinstance(child, _Node) else child.strip())
         )
 
-    def descendants (self ,tag :str |None =None )->list [_Node ]:
-        result :list [_Node ]=[]
-        for child in self .children :
-            if not isinstance (child ,_Node ):
-                continue 
-            if tag is None or child .tag ==tag :
-                result .append (child )
-            result .extend (child .descendants (tag ))
-        return result 
+    def descendants(self, tag: str | None = None) -> list[_Node]:
+        result: list[_Node] = []
+        for child in self.children:
+            if not isinstance(child, _Node):
+                continue
+            if tag is None or child.tag == tag:
+                result.append(child)
+            result.extend(child.descendants(tag))
+        return result
 
-    def has_class (self ,name :str )->bool :
-        return name in self .attrs .get ("class","").split ()
-
-
-class _TreeParser (HTMLParser ):
-    _VOID ={"area","base","br","col","embed","hr","img","input","link","meta","source"}
-
-    def __init__ (self )->None :
-        super ().__init__ (convert_charrefs =True )
-        self .root =_Node ()
-        self .current =self .root 
-
-    def handle_starttag (self ,tag :str ,attrs :list [tuple [str ,str |None ]])->None :
-        node =_Node (tag ,attrs ,self .current )
-        self .current .children .append (node )
-        if tag not in self ._VOID :
-            self .current =node 
-
-    def handle_startendtag (self ,tag :str ,attrs :list [tuple [str ,str |None ]])->None :
-        self .current .children .append (_Node (tag ,attrs ,self .current ))
-
-    def handle_endtag (self ,tag :str )->None :
-        node =self .current 
-        while node .parent is not None :
-            if node .tag ==tag :
-                self .current =node .parent 
-                return 
-            node =node .parent 
-
-    def handle_data (self ,data :str )->None :
-        self .current .children .append (data )
+    def has_class(self, name: str) -> bool:
+        return name in self.attrs.get("class", "").split()
 
 
-def _parse_html (value :str )->_Node :
-    parser =_TreeParser ()
-    parser .feed (value )
-    return parser .root 
+class _TreeParser(HTMLParser):
+    _VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source"}
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.root = _Node()
+        self.current = self.root
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        node = _Node(tag, attrs, self.current)
+        self.current.children.append(node)
+        if tag not in self._VOID:
+            self.current = node
+
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.current.children.append(_Node(tag, attrs, self.current))
+
+    def handle_endtag(self, tag: str) -> None:
+        node = self.current
+        while node.parent is not None:
+            if node.tag == tag:
+                self.current = node.parent
+                return
+            node = node.parent
+
+    def handle_data(self, data: str) -> None:
+        self.current.children.append(data)
 
 
-def _first (node :_Node ,predicate :Any )->_Node |None :
-    return next ((item for item in node .descendants ()if predicate (item )),None )
+def _parse_html(value: str) -> _Node:
+    parser = _TreeParser()
+    parser.feed(value)
+    return parser.root
 
 
-_BACKGROUND_IMAGE =re .compile (r"background(?:-image)?\s*:[^;]*?url\(\s*(['\"]?)(.*?)\1\s*\)",re .I |re .S )
+def _first(node: _Node, predicate: Any) -> _Node | None:
+    return next((item for item in node.descendants() if predicate(item)), None)
 
 
-def _style_image_url (node :_Node ,base_url :str )->str :
+_BACKGROUND_IMAGE = re.compile(r"background(?:-image)?\s*:[^;]*?url\(\s*(['\"]?)(.*?)\1\s*\)", re.I | re.S)
+
+
+def _style_image_url(node: _Node, base_url: str) -> str:
     """Portada servida como CSS en el propio nodo, no como <img>.
 
     Los temas Madara re-skineados con Tailwind pintan la portada con
     ``style="background-image:url(...)"`` sobre el ancla de la serie y no
     emiten ni un solo ``<img>``.
     """
-    found =_BACKGROUND_IMAGE .search (node .attrs .get ("style",""))
-    if found is None :
+    found = _BACKGROUND_IMAGE.search(node.attrs.get("style", ""))
+    if found is None:
         return ""
-    value =found .group (2 ).strip ()
-    return _mismo_host_seguro (urljoin (base_url ,value ),base_url )if value else ""
+    value = found.group(2).strip()
+    return _mismo_host_seguro(urljoin(base_url, value), base_url) if value else ""
 
 
-def _cuerpo_de_formulario (kwargs :dict [str ,Any ])->dict [str ,Any ]:
+def _cuerpo_de_formulario(kwargs: dict[str, Any]) -> dict[str, Any]:
     """Convierte ``data=[(clave, valor), ...]`` en ``dict`` antes de salir a la red.
 
     httpx 0.28 solo trata como formulario los ``data`` que son Mapping; una lista de pares
@@ -173,14 +172,14 @@ def _cuerpo_de_formulario (kwargs :dict [str ,Any ])->dict [str ,Any ]:
     comprobo sobre 762 combinaciones de filtros. Si alguna vez hiciera falta repetir una
     clave, habria que pasarla ya codificada como ``content=``.
     """
-    cuerpo =kwargs .get ("data")
-    if isinstance (cuerpo ,(list ,tuple )):
-        kwargs =dict (kwargs )
-        kwargs ["data"]=dict (cuerpo )
-    return kwargs 
+    cuerpo = kwargs.get("data")
+    if isinstance(cuerpo, (list, tuple)):
+        kwargs = dict(kwargs)
+        kwargs["data"] = dict(cuerpo)
+    return kwargs
 
 
-def _mismo_host_seguro (url :str ,base_url :str )->str :
+def _mismo_host_seguro(url: str, base_url: str) -> str:
     """Sube a https las URLs http:// del propio sitio cuando este ya sirve por https.
 
     Varios temas Madara emiten las portadas y las paginas del capitulo con el esquema
@@ -193,37 +192,37 @@ def _mismo_host_seguro (url :str ,base_url :str )->str :
     los CDN de terceros se dejan intactos porque no hay garantia de que tengan
     certificado valido.
     """
-    if not url .startswith ("http://")or not base_url .startswith ("https://"):
-        return url 
-    if urlparse (url ).netloc .lower ()!=urlparse (base_url ).netloc .lower ():
-        return url 
-    return "https://"+url [len ("http://"):]
+    if not url.startswith("http://") or not base_url.startswith("https://"):
+        return url
+    if urlparse(url).netloc.lower() != urlparse(base_url).netloc.lower():
+        return url
+    return "https://" + url[len("http://"):]
 
 
-def _image_url (node :_Node ,base_url :str )->str :
+def _image_url(node: _Node, base_url: str) -> str:
     for key in (
-    "data-lm-orig-src",
-    "data-sec-src",
-    "data-src",
-    "data-lazy-src",
-    "data-cfsrc",
-    "data-manga-src",
-    "data-src-base64",
-    "src",
+        "data-lm-orig-src",
+        "data-sec-src",
+        "data-src",
+        "data-lazy-src",
+        "data-cfsrc",
+        "data-manga-src",
+        "data-src-base64",
+        "src",
     ):
-        if node .attrs .get (key ):
-            return _mismo_host_seguro (urljoin (base_url ,node .attrs [key ].strip ()),base_url )
-    candidates =[
-    item .strip ().split ()[0 ]
-    for item in node .attrs .get ("srcset","").split (",")
-    if item .strip ()
+        if node.attrs.get(key):
+            return _mismo_host_seguro(urljoin(base_url, node.attrs[key].strip()), base_url)
+    candidates = [
+        item.strip().split()[0]
+        for item in node.attrs.get("srcset", "").split(",")
+        if item.strip()
     ]
-    if candidates :
-        return _mismo_host_seguro (urljoin (base_url ,candidates [-1 ]),base_url )
-    return _style_image_url (node ,base_url )
+    if candidates:
+        return _mismo_host_seguro(urljoin(base_url, candidates[-1]), base_url)
+    return _style_image_url(node, base_url)
 
 
-def _es_imagen_de_carga (node :_Node )->bool :
+def _es_imagen_de_carga(node: _Node) -> bool:
     """`True` si el <img> es el spinner del tema y no la portada.
 
     Algunos temas Madara meten un placeholder ANTES de la portada real
@@ -234,115 +233,115 @@ def _es_imagen_de_carga (node :_Node )->bool :
     Se detecta por el alt y por la clase del contenedor, no por la URL: el archivo
     concreto cambia de un sitio a otro.
     """
-    if "load"in node .attrs .get ("alt","").casefold ():
-        return True 
-    padre =node .parent 
-    saltos =0 
-    while padre is not None and saltos <3 :
-        clases =padre .attrs .get ("class","").casefold ()
-        if "loader"in clases or "loading"in clases :
-            return True 
-        padre =padre .parent 
-        saltos +=1 
-    return False 
+    if "load" in node.attrs.get("alt", "").casefold():
+        return True
+    padre = node.parent
+    saltos = 0
+    while padre is not None and saltos < 3:
+        clases = padre.attrs.get("class", "").casefold()
+        if "loader" in clases or "loading" in clases:
+            return True
+        padre = padre.parent
+        saltos += 1
+    return False
 
 
-def _cover_url (container :_Node ,base_url :str )->str |None :
+def _cover_url(container: _Node, base_url: str) -> str | None:
     """Portada del contenedor: primero el <img>, si no el background del CSS.
 
     Es aditivo: el fallback de ``background-image`` solo entra cuando no hay
     ningun ``<img>`` con URL utilizable, asi que no puede cambiar el resultado
     de los sitios que hoy funcionan.
     """
-    image =_first (
-    container ,
-    lambda node :node .tag =="img"and not _es_imagen_de_carga (node ),
+    image = _first(
+        container,
+        lambda node: node.tag == "img" and not _es_imagen_de_carga(node),
     )
-    if image is not None and (url :=_image_url (image ,base_url )):
-        return url 
-        # Si solo habia loaders, se reintenta sin el filtro antes de pasar al CSS: es
-        # preferible un placeholder a quedarse sin portada.
-    image =_first (container ,lambda node :node .tag =="img")
-    if image is not None and (url :=_image_url (image ,base_url )):
-        return url 
-    if url :=_style_image_url (container ,base_url ):
-        return url 
-    styled =_first (container ,lambda node :bool (_style_image_url (node ,base_url )))
-    return _style_image_url (styled ,base_url )if styled is not None else None 
+    if image is not None and (url := _image_url(image, base_url)):
+        return url
+    # Si solo habia loaders, se reintenta sin el filtro antes de pasar al CSS: es
+    # preferible un placeholder a quedarse sin portada.
+    image = _first(container, lambda node: node.tag == "img")
+    if image is not None and (url := _image_url(image, base_url)):
+        return url
+    if url := _style_image_url(container, base_url):
+        return url
+    styled = _first(container, lambda node: bool(_style_image_url(node, base_url)))
+    return _style_image_url(styled, base_url) if styled is not None else None
 
 
-def _gf_mul (left :int ,right :int )->int :
-    result =0 
-    while right :
-        if right &1 :
-            result ^=left 
-        left =((left <<1 )^(0x11B if left &0x80 else 0 ))&0xFF 
-        right >>=1 
-    return result 
+def _gf_mul(left: int, right: int) -> int:
+    result = 0
+    while right:
+        if right & 1:
+            result ^= left
+        left = ((left << 1) ^ (0x11B if left & 0x80 else 0)) & 0xFF
+        right >>= 1
+    return result
 
 
-def _aes_sbox (value :int )->int :
-    inverse ,base ,exponent =1 ,value ,254 
-    while exponent :
-        if exponent &1 :
-            inverse =_gf_mul (inverse ,base )
-        base =_gf_mul (base ,base )
-        exponent >>=1 
-    if value ==0 :
-        inverse =0 
-    return inverse ^((inverse <<1 )|(inverse >>7 ))&0xFF ^((inverse <<2 )|(inverse >>6 ))&0xFF ^((inverse <<3 )|(inverse >>5 ))&0xFF ^((inverse <<4 )|(inverse >>4 ))&0xFF ^0x63 
+def _aes_sbox(value: int) -> int:
+    inverse, base, exponent = 1, value, 254
+    while exponent:
+        if exponent & 1:
+            inverse = _gf_mul(inverse, base)
+        base = _gf_mul(base, base)
+        exponent >>= 1
+    if value == 0:
+        inverse = 0
+    return inverse ^ ((inverse << 1) | (inverse >> 7)) & 0xFF ^ ((inverse << 2) | (inverse >> 6)) & 0xFF ^ ((inverse << 3) | (inverse >> 5)) & 0xFF ^ ((inverse << 4) | (inverse >> 4)) & 0xFF ^ 0x63
 
 
-_AES_SBOX =tuple (_aes_sbox (value )for value in range (256 ))
+_AES_SBOX = tuple(_aes_sbox(value) for value in range(256))
 
 
-_AES_INV_SBOX =tuple (_AES_SBOX .index (value )for value in range (256 ))
+_AES_INV_SBOX = tuple(_AES_SBOX.index(value) for value in range(256))
 
 
-def _aes256_decrypt (ciphertext :bytes ,key :bytes ,iv :bytes )->bytes :
-    words =[list (key [index :index +4 ])for index in range (0 ,32 ,4 )]
-    rcon =1 
-    for index in range (8 ,60 ):
-        temp =words [-1 ][:]
-        if index %8 ==0 :
-            temp =[_AES_SBOX [value ]for value in temp [1 :]+temp [:1 ]]
-            temp [0 ]^=rcon 
-            rcon =_gf_mul (rcon ,2 )
-        elif index %8 ==4 :
-            temp =[_AES_SBOX [value ]for value in temp ]
-        words .append ([left ^right for left ,right in zip (words [index -8 ],temp )])
-    round_keys =[sum (words [index :index +4 ],[])for index in range (0 ,60 ,4 )]
+def _aes256_decrypt(ciphertext: bytes, key: bytes, iv: bytes) -> bytes:
+    words = [list(key[index:index + 4]) for index in range(0, 32, 4)]
+    rcon = 1
+    for index in range(8, 60):
+        temp = words[-1][:]
+        if index % 8 == 0:
+            temp = [_AES_SBOX[value] for value in temp[1:] + temp[:1]]
+            temp[0] ^= rcon
+            rcon = _gf_mul(rcon, 2)
+        elif index % 8 == 4:
+            temp = [_AES_SBOX[value] for value in temp]
+        words.append([left ^ right for left, right in zip(words[index - 8], temp)])
+    round_keys = [sum(words[index:index + 4], []) for index in range(0, 60, 4)]
 
-    def decrypt_block (block :bytes )->bytes :
-        state =[value ^key_value for value ,key_value in zip (block ,round_keys [14 ])]
-        for round_number in range (13 ,-1 ,-1 ):
-            state =[state [index ]for index in (0 ,13 ,10 ,7 ,4 ,1 ,14 ,11 ,8 ,5 ,2 ,15 ,12 ,9 ,6 ,3 )]
-            state =[_AES_INV_SBOX [value ]for value in state ]
-            state =[value ^key_value for value ,key_value in zip (state ,round_keys [round_number ])]
-            if round_number :
-                mixed :list [int ]=[]
-                for column in range (4 ):
-                    a ,b ,c ,d =state [column *4 :column *4 +4 ]
-                    mixed .extend ((
-                    _gf_mul (a ,14 )^_gf_mul (b ,11 )^_gf_mul (c ,13 )^_gf_mul (d ,9 ),
-                    _gf_mul (a ,9 )^_gf_mul (b ,14 )^_gf_mul (c ,11 )^_gf_mul (d ,13 ),
-                    _gf_mul (a ,13 )^_gf_mul (b ,9 )^_gf_mul (c ,14 )^_gf_mul (d ,11 ),
-                    _gf_mul (a ,11 )^_gf_mul (b ,13 )^_gf_mul (c ,9 )^_gf_mul (d ,14 ),
+    def decrypt_block(block: bytes) -> bytes:
+        state = [value ^ key_value for value, key_value in zip(block, round_keys[14])]
+        for round_number in range(13, -1, -1):
+            state = [state[index] for index in (0, 13, 10, 7, 4, 1, 14, 11, 8, 5, 2, 15, 12, 9, 6, 3)]
+            state = [_AES_INV_SBOX[value] for value in state]
+            state = [value ^ key_value for value, key_value in zip(state, round_keys[round_number])]
+            if round_number:
+                mixed: list[int] = []
+                for column in range(4):
+                    a, b, c, d = state[column * 4:column * 4 + 4]
+                    mixed.extend((
+                        _gf_mul(a, 14) ^ _gf_mul(b, 11) ^ _gf_mul(c, 13) ^ _gf_mul(d, 9),
+                        _gf_mul(a, 9) ^ _gf_mul(b, 14) ^ _gf_mul(c, 11) ^ _gf_mul(d, 13),
+                        _gf_mul(a, 13) ^ _gf_mul(b, 9) ^ _gf_mul(c, 14) ^ _gf_mul(d, 11),
+                        _gf_mul(a, 11) ^ _gf_mul(b, 13) ^ _gf_mul(c, 9) ^ _gf_mul(d, 14),
                     ))
-                state =mixed 
-        return bytes (state )
+                state = mixed
+        return bytes(state)
 
-    result =b""
-    previous =iv 
-    for offset in range (0 ,len (ciphertext ),16 ):
-        block =ciphertext [offset :offset +16 ]
-        decrypted =decrypt_block (block )
-        result +=bytes (left ^right for left ,right in zip (decrypted ,previous ))
-        previous =block 
-    return result [:-result [-1 ]]if result else result 
+    result = b""
+    previous = iv
+    for offset in range(0, len(ciphertext), 16):
+        block = ciphertext[offset:offset + 16]
+        decrypted = decrypt_block(block)
+        result += bytes(left ^ right for left, right in zip(decrypted, previous))
+        previous = block
+    return result[:-result[-1]] if result else result
 
 
-def _evp_kdf_decrypt (ciphertext :str ,salt :str ,password :str ,iv :str |None =None )->str :
+def _evp_kdf_decrypt(ciphertext: str, salt: str, password: str, iv: str | None = None) -> str:
     """Descifra el AES-256-CBC que produce `CryptoJS.AES.encrypt` con passphrase.
 
     CryptoJS no usa la passphrase como clave: la pasa por EvpKDF (MD5 iterado sobre
@@ -352,18 +351,18 @@ def _evp_kdf_decrypt (ciphertext :str ,salt :str ,password :str ,iv :str |None =
     Se reimplementa AES en Python puro, igual que `generic.py`, porque los bundles se
     generan autocontenidos y no pueden arrastrar dependencias externas.
     """
-    generado =b""
-    digest =b""
-    password_bytes =password .encode ()
-    salt_bytes =bytes .fromhex (salt )
-    while len (generado )<48 :
-        digest =hashlib .md5 (digest +password_bytes +salt_bytes ).digest ()
-        generado +=digest 
-    vector =bytes .fromhex (iv )if iv else generado [32 :48 ]
-    return _aes256_decrypt (base64 .b64decode (ciphertext ),generado [:32 ],vector ).decode ()
+    generado = b""
+    digest = b""
+    password_bytes = password.encode()
+    salt_bytes = bytes.fromhex(salt)
+    while len(generado) < 48:
+        digest = hashlib.md5(digest + password_bytes + salt_bytes).digest()
+        generado += digest
+    vector = bytes.fromhex(iv) if iv else generado[32:48]
+    return _aes256_decrypt(base64.b64decode(ciphertext), generado[:32], vector).decode()
 
 
-def _protected_page_urls (html :str ,base_url :str )->list [str ]:
+def _protected_page_urls(html: str, base_url: str) -> list[str]:
     """Paginas del plugin `wp-manga-chapter-images-protection`.
 
     Ese plugin sustituye los <img> del lector por divs `.page-break` vacios y publica la
@@ -374,349 +373,343 @@ def _protected_page_urls (html :str ,base_url :str )->list [str ]:
     no hay forma fiable de saber cual, asi que se prueban en orden y se acepta el primero
     que produzca un JSON con lista de URLs.
     """
-    payload =re .search (r"var\s+chapter_data\s*=\s*'([^']+)'",html )
-    if payload is None :
+    payload = re.search(r"var\s+chapter_data\s*=\s*'([^']+)'", html)
+    if payload is None:
         return []
-    try :
-        datos =json .loads (payload .group (1 ).replace ("\\/","/"))
-    except json .JSONDecodeError :
+    try:
+        datos = json.loads(payload.group(1).replace("\\/", "/"))
+    except json.JSONDecodeError:
         return []
-    if not datos .get ("ct")or not datos .get ("s"):
+    if not datos.get("ct") or not datos.get("s"):
         return []
 
-    candidatas :list [str ]=[]
-    for encontrado in re .finditer (r"""["']([0-9a-f]{10})["']""",html ):
-        if encontrado .group (1 )not in candidatas :
-            candidatas .append (encontrado .group (1 ))
+    candidatas: list[str] = []
+    for encontrado in re.finditer(r"""["']([0-9a-f]{10})["']""", html):
+        if encontrado.group(1) not in candidatas:
+            candidatas.append(encontrado.group(1))
 
-    for clave in candidatas [:12 ]:
-        try :
-            valor =json .loads (
-            _evp_kdf_decrypt (datos ["ct"],datos ["s"],clave ,datos .get ("iv"))
+    for clave in candidatas[:12]:
+        try:
+            valor = json.loads(
+                _evp_kdf_decrypt(datos["ct"], datos["s"], clave, datos.get("iv"))
             )
-            while isinstance (valor ,str ):
-                valor =json .loads (valor )
-        except (ValueError ,UnicodeDecodeError ,json .JSONDecodeError ):
-            continue 
-        if isinstance (valor ,list )and valor :
+            while isinstance(valor, str):
+                valor = json.loads(valor)
+        except (ValueError, UnicodeDecodeError, json.JSONDecodeError):
+            continue
+        if isinstance(valor, list) and valor:
             return [
-            urljoin (base_url ,str (item ).strip ().replace ("\\/","/"))
-            for item in valor 
-            if str (item ).strip ()
+                urljoin(base_url, str(item).strip().replace("\\/", "/"))
+                for item in valor
+                if str(item).strip()
             ]
     return []
 
 
-class FuenteBaseSource :
+class FuenteBaseSource:
     """Base minima de toda fuente: identidad, capacidades y peticion HTTP.
 
     Deliberadamente NO trae `browse`, `search`, `details`, `chapters` ni `pages`:
     eso es trabajo de cada tema. Quien herede de aqui debe implementarlos.
     """
 
-    name ="madara"
+    name = "madara"
 
-    display_name ="Madara"
+    display_name = "Madara"
 
-    base_url =""
+    base_url = ""
 
-    language =""
+    language = ""
 
-    manga_substring ="manga"
+    manga_substring = "manga"
 
-    load_more ="auto"
+    load_more = "auto"
 
-    supports_latest =True 
+    supports_latest = True
 
-    use_new_chapter_endpoint =False 
+    use_new_chapter_endpoint = False
 
-    chapter_url_suffix ="?style=list"
+    chapter_url_suffix = "?style=list"
 
-    requests_per_minute =60 
+    requests_per_minute = 60
 
-    pages_profile ="default"
+    pages_profile = "default"
 
-    extra_headers :dict [str ,str ]={}
+    extra_headers: dict[str, str] = {}
 
-    image_headers :dict [str ,str ]={}
+    image_headers: dict[str, str] = {}
 
-    strip_external_image_referer =False 
+    strip_external_image_referer = False
 
-    date_format ="MMMM dd, yyyy"
+    date_format = "MMMM dd, yyyy"
 
-    date_locale ="en"
+    date_locale = "en"
 
-    details_profile ="default"
+    details_profile = "default"
 
-    api_version =SOURCE_API_VERSION 
+    api_version = SOURCE_API_VERSION
 
-    content_warning ="unknown"
+    content_warning = "unknown"
 
-    requires_auth =False 
+    requires_auth = False
 
-    _ESTADOS_BADGE ={
-    "ongoing","oncoming","on going","completed","completo","completado",
-    "finalizado","concluido","en curso","curso","pausado","en espera",
-    "on hold","canceled","cancelado","hiatus","publicandose","en emision",
+    _ESTADOS_BADGE = {
+        "ongoing", "oncoming", "on going", "completed", "completo", "completado",
+        "finalizado", "concluido", "en curso", "curso", "pausado", "en espera",
+        "on hold", "canceled", "cancelado", "hiatus", "publicandose", "en emision",
     }
 
-    def __init__ (self ,fetcher :SourceFetcher |None =None )->None :
-        self .fetcher =fetcher 
-        self ._load_more_detected =self .load_more =="always"
-        self .capabilities =SourceCapabilities (
-        search =True ,
-        browse =True ,
-        headers ={
-        "User-Agent":"Nyanko/0.2.4",
-        "Referer":f"{self .base_url }/",
-        **self .extra_headers ,
-        },
-        requests_per_minute =self .requests_per_minute ,
-        content_warning =self .content_warning ,
-        requires_auth =self .requires_auth ,
+    def __init__(self, fetcher: SourceFetcher | None = None) -> None:
+        self.fetcher = fetcher
+        self._load_more_detected = self.load_more == "always"
+        self.capabilities = SourceCapabilities(
+            search=True,
+            browse=True,
+            headers={
+                "User-Agent": "Nyanko/0.2.4",
+                "Referer": f"{self.base_url}/",
+                **self.extra_headers,
+            },
+            requests_per_minute=self.requests_per_minute,
+            content_warning=self.content_warning,
+            requires_auth=self.requires_auth,
         )
 
-    @staticmethod 
-    def _madara_status (value :str )->str |None :
-        normalized =" ".join (re .findall (r"\w+",value .casefold ()))
-        if normalized in {"completed","completo","completado","finalizado","concluido"}:
+    @staticmethod
+    def _madara_status(value: str) -> str | None:
+        normalized = " ".join(re.findall(r"\w+", value.casefold()))
+        if normalized in {"completed", "completo", "completado", "finalizado", "concluido"}:
             return "completed"
         if normalized in {
-        "ongoing","en curso","curso","en marcha","publicandose","en emision",
-        "emision","emisión","en emisión","ativo","updating",
+            "ongoing", "en curso", "curso", "en marcha", "publicandose", "en emision",
+            "emision", "emisión", "en emisión", "ativo", "updating",
         }:
             return "ongoing"
-        if normalized in {"on hold","pausado","en espera"}:
+        if normalized in {"on hold", "pausado", "en espera"}:
             return "hiatus"
-        if normalized in {"canceled","cancelado"}:
+        if normalized in {"canceled", "cancelado"}:
             return "cancelled"
-        return None 
+        return None
 
-    def _madara_date (self ,value :str )->str |None :
-        from calendar import monthrange 
-        from datetime import datetime ,timedelta 
+    def _madara_date(self, value: str) -> str | None:
+        from calendar import monthrange
+        from datetime import datetime, timedelta
 
-        text =value .strip ().casefold ()
-        now =datetime .now ().replace (microsecond =0 )
-        if text .startswith (("today","hoy")):
-            return now .replace (hour =0 ,minute =0 ,second =0 ).isoformat ()
-        if text .startswith (("yesterday","ayer")):
-            return (now -timedelta (days =1 )).replace (hour =0 ,minute =0 ,second =0 ).isoformat ()
-        relative =re .search (r"(\d+)",text )
-        if relative and (text .startswith ("hace")or text .endswith (("ago","atrás"))):
-            amount =int (relative .group ())
-            if any (unit in text for unit in ("día","dia","day")):
-                return (now -timedelta (days =amount )).isoformat ()
-            if any (unit in text for unit in ("hora","hour")):
-                return (now -timedelta (hours =amount )).isoformat ()
-            if any (unit in text for unit in ("minuto","minute"," min")):
-                return (now -timedelta (minutes =amount )).isoformat ()
-            if any (unit in text for unit in ("segundo","second")):
-                return (now -timedelta (seconds =amount )).isoformat ()
-            if any (unit in text for unit in ("semana","week")):
-                return (now -timedelta (days =amount *7 )).isoformat ()
-            if any (unit in text for unit in ("mes","month")):
-                total =now .year *12 +now .month -1 -amount 
-                year ,month =divmod (total ,12 )
-                return now .replace (
-                year =year ,month =month +1 ,
-                day =min (now .day ,monthrange (year ,month +1 )[1 ]),
-                ).isoformat ()
-            if any (unit in text for unit in ("año","year")):
-                year =now .year -amount 
-                return now .replace (year =year ,day =min (now .day ,monthrange (year ,now .month )[1 ])).isoformat ()
-        numeric_format ={
-        "MM/dd/yyyy":"%m/%d/%Y","dd/MM/yyyy":"%d/%m/%Y","yyyy-MM-dd":"%Y-%m-%d",
-        }.get (self .date_format )
-        if numeric_format :
-            try :
-                return datetime .strptime (value .strip (),numeric_format ).isoformat ()
-            except ValueError :
-                return None 
-        if self .date_format not in {"d MMMM, yyyy","dd MMM yyyy","dd MMM, yyyy","dd MMMM, yyyy","MMM dd, yyyy","MMMM dd, yyyy"}:
-            return None 
-        months ={
-        "january":1 ,"february":2 ,"march":3 ,"april":4 ,"may":5 ,"june":6 ,
-        "july":7 ,"august":8 ,"september":9 ,"october":10 ,"november":11 ,"december":12 ,
-        "enero":1 ,"febrero":2 ,"marzo":3 ,"abril":4 ,"mayo":5 ,"junio":6 ,
-        "julio":7 ,"agosto":8 ,"septiembre":9 ,"octubre":10 ,"noviembre":11 ,"diciembre":12 ,
-        "jan":1 ,"feb":2 ,"mar":3 ,"apr":4 ,"jun":6 ,"jul":7 ,"aug":8 ,
-        "sep":9 ,"sept":9 ,"oct":10 ,"nov":11 ,"dec":12 ,
-        "ene":1 ,"abr":4 ,"ago":8 ,"dic":12 ,
+        text = value.strip().casefold()
+        now = datetime.now().replace(microsecond=0)
+        if text.startswith(("today", "hoy")):
+            return now.replace(hour=0, minute=0, second=0).isoformat()
+        if text.startswith(("yesterday", "ayer")):
+            return (now - timedelta(days=1)).replace(hour=0, minute=0, second=0).isoformat()
+        relative = re.search(r"(\d+)", text)
+        if relative and (text.startswith("hace") or text.endswith(("ago", "atrás"))):
+            amount = int(relative.group())
+            if any(unit in text for unit in ("día", "dia", "day")):
+                return (now - timedelta(days=amount)).isoformat()
+            if any(unit in text for unit in ("hora", "hour")):
+                return (now - timedelta(hours=amount)).isoformat()
+            if any(unit in text for unit in ("minuto", "minute", " min")):
+                return (now - timedelta(minutes=amount)).isoformat()
+            if any(unit in text for unit in ("segundo", "second")):
+                return (now - timedelta(seconds=amount)).isoformat()
+            if any(unit in text for unit in ("semana", "week")):
+                return (now - timedelta(days=amount * 7)).isoformat()
+            if any(unit in text for unit in ("mes", "month")):
+                total = now.year * 12 + now.month - 1 - amount
+                year, month = divmod(total, 12)
+                return now.replace(
+                    year=year, month=month + 1,
+                    day=min(now.day, monthrange(year, month + 1)[1]),
+                ).isoformat()
+            if any(unit in text for unit in ("año", "year")):
+                year = now.year - amount
+                return now.replace(year=year, day=min(now.day, monthrange(year, now.month)[1])).isoformat()
+        numeric_format = {
+            "MM/dd/yyyy": "%m/%d/%Y", "dd/MM/yyyy": "%d/%m/%Y", "yyyy-MM-dd": "%Y-%m-%d",
+        }.get(self.date_format)
+        if numeric_format:
+            try:
+                return datetime.strptime(value.strip(), numeric_format).isoformat()
+            except ValueError:
+                return None
+        if self.date_format not in {"d MMMM, yyyy", "dd MMM yyyy", "dd MMM, yyyy", "dd MMMM, yyyy", "MMM dd, yyyy", "MMMM dd, yyyy"}:
+            return None
+        months = {
+            "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
+            "july": 7, "august": 8, "september": 9, "october": 10, "november": 11, "december": 12,
+            "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
+            "julio": 7, "agosto": 8, "septiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12,
+            "jan": 1, "feb": 2, "mar": 3, "apr": 4, "jun": 6, "jul": 7, "aug": 8,
+            "sep": 9, "sept": 9, "oct": 10, "nov": 11, "dec": 12,
+            "ene": 1, "abr": 4, "ago": 8, "dic": 12,
         }
-        day_first =self .date_format .startswith (("d ","dd "))
-        absolute =(
-        re .fullmatch (r"(\d{1,2})\s+([^\s,]+),?\s+(\d{4})",text )
-        if day_first 
-        else re .fullmatch (r"([^\s]+)\s+(\d{1,2}),\s*(\d{4})",text )
+        day_first = self.date_format.startswith(("d ", "dd "))
+        absolute = (
+            re.fullmatch(r"(\d{1,2})\s+([^\s,]+),?\s+(\d{4})", text)
+            if day_first
+            else re.fullmatch(r"([^\s]+)\s+(\d{1,2}),\s*(\d{4})", text)
         )
-        month =absolute .group (2 ).rstrip (".")if absolute and day_first else absolute .group (1 ).rstrip (".")if absolute else ""
-        if absolute and month in months :
-            day =absolute .group (1 )if day_first else absolute .group (2 )
-            return datetime (int (absolute .group (3 )),months [month ],int (day )).isoformat ()
-        return None 
+        month = absolute.group(2).rstrip(".") if absolute and day_first else absolute.group(1).rstrip(".") if absolute else ""
+        if absolute and month in months:
+            day = absolute.group(1) if day_first else absolute.group(2)
+            return datetime(int(absolute.group(3)), months[month], int(day)).isoformat()
+        return None
 
-    async def page_bytes (self ,page :SourcePage |str )->SourcePageContent :
-        url =page .source_id if isinstance (page ,SourcePage )else page 
-        if not url :
-            raise SourceNotFoundError ("Página Madara sin URL")
-        parsed =urlparse (url )
-        headers =dict (self .image_headers )
-        if isinstance (page ,SourcePage )and not (
-        self .strip_external_image_referer 
-        and parsed .hostname !=urlparse (self .base_url ).hostname 
+    async def page_bytes(self, page: SourcePage | str) -> SourcePageContent:
+        url = page.source_id if isinstance(page, SourcePage) else page
+        if not url:
+            raise SourceNotFoundError("Página Madara sin URL")
+        parsed = urlparse(url)
+        headers = dict(self.image_headers)
+        if isinstance(page, SourcePage) and not (
+            self.strip_external_image_referer
+            and parsed.hostname != urlparse(self.base_url).hostname
         ):
-            headers .setdefault ("Referer",page .chapter_id )
-        response =await self ._request (
-        "GET",
-        urlunparse (parsed ._replace (fragment ="")),
-        headers =headers ,
+            headers.setdefault("Referer", page.chapter_id)
+        response = await self._request(
+            "GET",
+            urlunparse(parsed._replace(fragment="")),
+            headers=headers,
         )
-        response .raise_for_status ()
-        content =response .content 
-        if parsed .fragment and self .pages_profile =="scrambled":
-            data =json .loads (unquote (parsed .fragment ))
-            source =Image .open (io .BytesIO (content )).convert ("RGBA")
-            output =Image .new ("RGBA",source .size )
-            width ,height =int (data ["blockWidth"]),int (data ["blockHeight"])
-            for dest_x ,dest_y ,src_x ,src_y ,*_ in data ["matrix"]:
-                block =source .crop ((int (src_x ),int (src_y ),int (src_x )+width ,int (src_y )+height ))
-                output .paste (block ,(int (dest_x ),int (dest_y )))
-            buffer =io .BytesIO ()
-            output .convert ("RGB").save (buffer ,"JPEG",quality =90 )
-            content =buffer .getvalue ()
-        return SourcePageContent (
-        media_type ="image/jpeg"if parsed .fragment else response .headers .get ("Content-Type","image/jpeg"),
-        chunks =iter ([content ]),
+        response.raise_for_status()
+        content = response.content
+        if parsed.fragment and self.pages_profile == "scrambled":
+            data = json.loads(unquote(parsed.fragment))
+            source = Image.open(io.BytesIO(content)).convert("RGBA")
+            output = Image.new("RGBA", source.size)
+            width, height = int(data["blockWidth"]), int(data["blockHeight"])
+            for dest_x, dest_y, src_x, src_y, *_ in data["matrix"]:
+                block = source.crop((int(src_x), int(src_y), int(src_x) + width, int(src_y) + height))
+                output.paste(block, (int(dest_x), int(dest_y)))
+            buffer = io.BytesIO()
+            output.convert("RGB").save(buffer, "JPEG", quality=90)
+            content = buffer.getvalue()
+        return SourcePageContent(
+            media_type="image/jpeg" if parsed.fragment else response.headers.get("Content-Type", "image/jpeg"),
+            chunks=iter([content]),
         )
 
-    @staticmethod 
-    def _has_class_ancestor (node :_Node ,class_name :str )->bool :
-        parent =node .parent 
-        while parent is not None :
-            if parent .has_class (class_name ):
-                return True 
-            parent =parent .parent 
-        return False 
+    @staticmethod
+    def _has_class_ancestor(node: _Node, class_name: str) -> bool:
+        parent = node.parent
+        while parent is not None:
+            if parent.has_class(class_name):
+                return True
+            parent = parent.parent
+        return False
 
-    @staticmethod 
-    def _has_id_ancestor (node :_Node ,identifier :str )->bool :
-        parent =node .parent 
-        while parent is not None :
-            if parent .attrs .get ("id")==identifier :
-                return True 
-            parent =parent .parent 
-        return False 
+    @staticmethod
+    def _has_id_ancestor(node: _Node, identifier: str) -> bool:
+        parent = node.parent
+        while parent is not None:
+            if parent.attrs.get("id") == identifier:
+                return True
+            parent = parent.parent
+        return False
 
-    async def _request (self ,method :str ,url :str ,**kwargs :Any )->Any :
-        if self .fetcher is None :
-            raise SourceNotFoundError (f"{self .display_name } no tiene fetcher inyectado")
-        kwargs =_cuerpo_de_formulario (kwargs )
-        return await self .fetcher .request (method ,url ,**kwargs )
+    async def _request(self, method: str, url: str, **kwargs: Any) -> Any:
+        if self.fetcher is None:
+            raise SourceNotFoundError(f"{self.display_name} no tiene fetcher inyectado")
+        kwargs = _cuerpo_de_formulario(kwargs)
+        return await self.fetcher.request(method, url, **kwargs)
+
+"""Implementación API común de MCCMS."""
+
+from html import unescape
+from urllib.parse import urljoin
+
+try:
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries, _parse_html
+except ImportError:
+    pass
 
 
-from html import unescape 
-from urllib .parse import urljoin 
+class MCCMSSource(FuenteBaseSource):
+    requests_per_minute = 120
 
+    async def _json(self, endpoint: str, params: dict) -> list[dict]:
+        response = await self._request("GET", f"{self.base_url}{endpoint}", params=params)
+        response.raise_for_status()
+        data = response.json()
+        return data.get("data", []) if isinstance(data, dict) else []
 
-
-class MCCMSSource (FuenteBaseSource ):
-    requests_per_minute =120 
-
-    async def _json (self ,endpoint :str ,params :dict )->list [dict ]:
-        response =await self ._request ("GET",f"{self .base_url }{endpoint }",params =params )
-        response .raise_for_status ()
-        data =response .json ()
-        return data .get ("data",[])if isinstance (data ,dict )else []
-
-    def _series (self ,rows :list [dict ])->list [SourceSeries ]:
+    def _series(self, rows: list[dict]) -> list[SourceSeries]:
         return [
-        SourceSeries (
-        source_id =f"{urljoin (self .base_url ,row ['url'].removeprefix ('/index.php'))}#{row ['id']}",
-        title =unescape (row ["name"]),
-        source_name =self .name ,
-        )
-        for row in rows 
-        if row .get ("id")and row .get ("name")and row .get ("url")
+            SourceSeries(
+                source_id=f"{urljoin(self.base_url, row['url'].removeprefix('/index.php'))}#{row['id']}",
+                title=unescape(row["name"]),
+                source_name=self.name,
+            )
+            for row in rows
+            if row.get("id") and row.get("name") and row.get("url")
         ]
 
-    async def _catalog (self ,page :int ,order :str ="",key :str ="")->list [SourceSeries ]:
-        params ={"page":max (page ,1 ),"size":30 }
-        if order :
-            params ["order"]=order 
-        if key :
-            params ["key"]=key 
-        return self ._series (await self ._json ("/api/data/comic",params ))
+    async def _catalog(self, page: int, order: str = "", key: str = "") -> list[SourceSeries]:
+        params = {"page": max(page, 1), "size": 30}
+        if order:
+            params["order"] = order
+        if key:
+            params["key"] = key
+        return self._series(await self._json("/api/data/comic", params))
 
-    async def search (self ,query :str ,limit :int =20 )->list [SourceSeries ]:
-        return (await self ._catalog (1 ,key =query .strip ()))[:limit ]
+    async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:
+        return (await self._catalog(1, key=query.strip()))[:limit]
 
-    async def browse (self ,kind :str ,page :int =1 )->list [SourceSeries ]:
-        if kind not in {"popular","latest"}:
+    async def browse(self, kind: str, page: int = 1) -> list[SourceSeries]:
+        if kind not in {"popular", "latest"}:
             return []
-        return await self ._catalog (page ,"hits"if kind =="popular"else "addtime")
+        return await self._catalog(page, "hits" if kind == "popular" else "addtime")
 
-    async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
-        series_id =series .source_id if isinstance (series ,SourceSeries )else series 
-        _ ,marker ,manga_id =series_id .rpartition ("#")
-        if not marker :
+    async def chapters(self, series: SourceSeries | str) -> list[SourceChapter]:
+        series_id = series.source_id if isinstance(series, SourceSeries) else series
+        _, marker, manga_id = series_id.rpartition("#")
+        if not marker:
             return []
-        rows =await self ._json ("/api/comic/chapter",{"mid":manga_id })
+        rows = await self._json("/api/comic/chapter", {"mid": manga_id})
         return [
-        SourceChapter (
-        source_id =urljoin (self .base_url ,row ["link"].removeprefix ("/index.php")),
-        title =unescape (row ["name"]),
-        series_id =series_id ,
-        source_name =self .name ,
-        )
-        for row in reversed (rows )
-        if row .get ("link")and row .get ("name")
+            SourceChapter(
+                source_id=urljoin(self.base_url, row["link"].removeprefix("/index.php")),
+                title=unescape(row["name"]),
+                series_id=series_id,
+                source_name=self.name,
+            )
+            for row in reversed(rows)
+            if row.get("link") and row.get("name")
         ]
 
-    async def pages (self ,chapter :SourceChapter |str )->list [SourcePage ]:
-        chapter_id =chapter .source_id if isinstance (chapter ,SourceChapter )else chapter 
-        response =await self ._request (
-        "GET",
-        chapter_id ,
-        headers ={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64)"},
+    async def pages(self, chapter: SourceChapter | str) -> list[SourcePage]:
+        chapter_id = chapter.source_id if isinstance(chapter, SourceChapter) else chapter
+        response = await self._request(
+            "GET",
+            chapter_id,
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"},
         )
-        response .raise_for_status ()
-        root =_parse_html (response .text )
-        images =[
-        node .attrs .get ("data-original")or node .attrs .get ("src")
-        for node in root .descendants ("img")
-        if node .attrs .get ("data-original")
+        response.raise_for_status()
+        root = _parse_html(response.text)
+        images = [
+            node.attrs.get("data-original") or node.attrs.get("src")
+            for node in root.descendants("img")
+            if node.attrs.get("data-original")
         ]
         return [
-        SourcePage (
-        source_id =urljoin (chapter_id ,url ),
-        chapter_id =chapter_id ,
-        index =index ,
-        filename =url .rsplit ("/",1 )[-1 ].split ("?",1 )[0 ],
-        source_name =self .name ,
-        )
-        for index ,url in enumerate (images ,1 )
+            SourcePage(
+                source_id=urljoin(chapter_id, url),
+                chapter_id=chapter_id,
+                index=index,
+                filename=url.rsplit("/", 1)[-1].split("?", 1)[0],
+                source_name=self.name,
+            )
+            for index, url in enumerate(images, 1)
         ]
 
-class GeneratedMCCMSSource (MCCMSSource ):
-
-    def get_preferences (self )->list [SourcePreference ]:
-    # Autogenerated via heuristic port
-        data =[]
-        return [SourcePreference (**item )for item in data ]
-
-    def get_filters (self )->list [SourceFilter ]:
-    # Autogenerated via heuristic port
-        data =[]
-        return [SourceFilter (**item )for item in data ]
-
-    name ='miaoqu_zh'
-    display_name ='喵趣漫画'
-    base_url ='https://www.miaoqumh.org'
-    language ='zh'
+class GeneratedMCCMSSource(MCCMSSource):
+    name = 'miaoqu_zh'
+    display_name = '喵趣漫画'
+    base_url = 'https://www.miaoqumh.org'
+    language = 'zh'
 
 
-SOURCE =GeneratedMCCMSSource
+SOURCE = GeneratedMCCMSSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

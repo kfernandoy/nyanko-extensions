@@ -1,5 +1,7 @@
 try:
-    from .base import FuenteBaseSource, _Node, _TreeParser
+    from .base import (
+        FuenteBaseSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -228,17 +230,6 @@ class ManhwawebSource(FuenteBaseSource):
         return moment.replace(tzinfo=None).isoformat()
 
 
-class GeneratedManhwaWebSource(ManhwaWebSource):
-    name = 'manhwaweb_es'
-    display_name = 'ManhwaWeb'
-    base_url = 'https://manhwaweb.com'
-    language = 'es'
-    requests_per_minute = 120
-    content_warning = 'mixed'
-    image_headers = {'Referer': 'https://manhwaweb.com/'}
-    extra_headers = {
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8',
-    }
 
 
 SOURCE = ManhwawebSource

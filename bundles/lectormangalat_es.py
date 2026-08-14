@@ -94,12 +94,6 @@ class LectormangalatSource (MadaraDetailsSource ):
         for indice ,url in enumerate (urls )
         ]
 
-class GeneratedLectorMangaSource (LectorMangaSource ):
-    name ='lectormangalat_es'
-    display_name ='Lectormanga'
-    base_url ='https://lectormangass.net'
-    language ='es'
-    requests_per_minute =60 
 
 
 SOURCE =LectormangalatSource

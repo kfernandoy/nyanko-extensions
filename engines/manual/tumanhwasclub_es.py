@@ -1,5 +1,7 @@
 try:
-    from .base import FuenteBaseSource, _Node, _TreeParser
+    from .base import (
+        FuenteBaseSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -271,14 +273,6 @@ class TumanhwasclubSource(FuenteBaseSource):
             return None
 
 
-class GeneratedManhwasMeSource(ManhwasMeSource):
-    name = 'tumanhwasclub_es'
-    display_name = 'ManhwasMe'
-    base_url = 'https://manhwas.me'
-    language = 'es'
-    requests_per_minute = 60
-    content_warning = 'nsfw'
-    image_headers = {'Referer': 'https://manhwas.me/'}
 
 
 SOURCE = TumanhwasclubSource

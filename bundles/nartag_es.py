@@ -284,14 +284,6 @@ class NartagSource (MadaraDetailsSource ):
         return None 
 
 
-class GeneratedRncalationSource (RncalationSource ):
-    name ='nartag_es'
-    display_name ='Rncalation'
-    base_url ='https://rncalation.online'
-    language ='es'
-    requests_per_minute =120 
-    content_warning ='mixed'
-    image_headers ={'Referer':'https://rncalation.online/'}
 
 
 SOURCE =NartagSource

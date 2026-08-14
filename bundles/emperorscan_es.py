@@ -368,24 +368,7 @@ class EmperorScanSource (DragonTranslationOrgSource ):
         "HAZ CLICK AQUÍ PARA UNIRTE A NUESTRO DISCORD","",
         ).strip ()or None 
         return replace (series ,description =description ,content_tags =tuple (categories ))
-class GeneratedMadaraSource (EmperorScanSource ):
-    name ='emperorscan_es'
-    display_name ='Emperor Scan'
-    base_url ='https://imperiomanhua.com'
-    language ='es'
-    manga_substring ='manga'
-    load_more ='never'
-    use_new_chapter_endpoint =False 
-    chapter_url_suffix ='?style=list'
-    supports_latest =True 
-    requests_per_minute =120 
-    pages_profile ='default'
-    extra_headers ={}
-    image_headers ={}
-    date_format ='MMMM dd, yyyy'
-    date_locale ='es'
-    details_profile ='default'
-    content_warning ='safe'
+
 
 SOURCE =EmperorscanSource
 

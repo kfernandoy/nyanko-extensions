@@ -170,14 +170,6 @@ class PlatinumlilyscanSource (MadaraDetailsSource ):
             return None 
 
 
-class GeneratedPlatinumLilyScanSource (PlatinumLilyScanSource ):
-    name ='platinumlilyscan_es'
-    display_name ='Platinum Lily Scan'
-    base_url ='https://platinumlilyscan.com'
-    language ='es'
-    requests_per_minute =60 
-    content_warning ='mixed'
-    image_headers ={'Referer':'https://platinumlilyscan.com/'}
 
 
 SOURCE =PlatinumlilyscanSource

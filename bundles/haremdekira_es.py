@@ -223,24 +223,7 @@ class HaremdekiraSource (MadaraDetailsSource ):
             (f"vars[meta_query][{meta_index }][value]",adult ),
             ])
         return data 
-class GeneratedMadaraSource (HaremDeKiraSource ):
-    name ='haremdekira_es'
-    display_name ='Harem de Kira'
-    base_url ='https://kiraproject.lat'
-    language ='es'
-    manga_substring ='serie'
-    load_more ='always'
-    use_new_chapter_endpoint =False 
-    chapter_url_suffix ='?style=list'
-    supports_latest =True 
-    requests_per_minute =180 
-    pages_profile ='default'
-    extra_headers ={}
-    image_headers ={}
-    date_format ='MMMM dd, yyyy'
-    date_locale ='es'
-    details_profile ='default'
-    content_warning ='mixed'
+
 
 SOURCE =HaremdekiraSource
 

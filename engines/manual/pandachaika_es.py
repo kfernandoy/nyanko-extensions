@@ -1,5 +1,7 @@
 try:
-    from .madara import MadaraSource, _Node, _TreeParser
+    from .madara import (
+        MadaraSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -396,14 +398,6 @@ class PandachaikaSource(MadaraSource):
         )
 
 
-class GeneratedPandaChaikaSource(PandaChaikaSource):
-    name = 'pandachaika_es'
-    display_name = 'PandaChaika'
-    base_url = 'https://panda.chaika.moe'
-    language = 'es'
-    requests_per_minute = 60
-    content_warning = 'nsfw'
-    image_headers = {'Referer': 'https://panda.chaika.moe/'}
 
 
 SOURCE = PandachaikaSource

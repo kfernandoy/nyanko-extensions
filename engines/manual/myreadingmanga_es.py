@@ -1,5 +1,7 @@
 try:
-    from .base import FuenteBaseSource, _Node, _TreeParser
+    from .base import (
+        FuenteBaseSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -329,14 +331,6 @@ class MyreadingmangaSource(FuenteBaseSource):
             return None
 
 
-class GeneratedMyReadingMangaSource(MyReadingMangaSource):
-    name = 'myreadingmanga_es'
-    display_name = 'MyReadingManga'
-    base_url = 'https://myreadingmanga.info'
-    language = 'es'
-    requests_per_minute = 60
-    content_warning = 'nsfw'
-    image_headers = {'Referer': 'https://myreadingmanga.info/'}
 
 
 SOURCE = MyreadingmangaSource

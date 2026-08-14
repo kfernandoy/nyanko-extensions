@@ -1,5 +1,7 @@
 try:
-    from .madara import MadaraSource, _Node, _TreeParser
+    from .madara import (
+        MadaraSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -325,14 +327,6 @@ class PlottwistnofansubSource(MadaraSource):
             return None
 
 
-class GeneratedPlotTwistNoFansubSource(PlotTwistNoFansubSource):
-    name = 'plottwistnofansub_es'
-    display_name = 'Plot Twist No Fansub'
-    base_url = 'https://plotnofansub.com'
-    language = 'es'
-    requests_per_minute = 120
-    content_warning = 'mixed'
-    image_headers = {'Referer': 'https://plotnofansub.com/'}
 
 
 SOURCE = PlottwistnofansubSource

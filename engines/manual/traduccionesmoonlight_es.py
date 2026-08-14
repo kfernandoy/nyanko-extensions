@@ -1,5 +1,7 @@
 try:
-    from .madara import MadaraSource, _Node, _TreeParser
+    from .madara import (
+        MadaraSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -153,13 +155,6 @@ class TraduccionesmoonlightSource(MadaraSource):
             )
         return paginas
 
-class GeneratedMoonlightSource(MoonlightSource):
-    name = 'traduccionesmoonlight_es'
-    display_name = 'Traducciones Moonlight'
-    base_url = 'https://traduccionesmoonlight.com'
-    language = 'es'
-    requests_per_minute = 60
-    image_headers = {'Referer': 'https://traduccionesmoonlight.com/'}
 
 
 SOURCE = TraduccionesmoonlightSource

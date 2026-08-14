@@ -1,5 +1,7 @@
 try:
-    from .madara import MadaraSource, _Node, _TreeParser
+    from .madara import (
+        MadaraSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -329,14 +331,6 @@ class YellownoteSource(MadaraSource):
             return None
 
 
-class GeneratedYellowNoteSource(YellowNoteSource):
-    name = 'yellownote_es'
-    display_name = '小黄书'
-    base_url = 'https://es.xchina.co'
-    language = 'es'
-    requests_per_minute = 60
-    content_warning = 'nsfw'
-    image_headers = {'Referer': 'https://es.xchina.co/'}
 
 
 SOURCE = YellownoteSource

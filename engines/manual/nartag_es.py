@@ -1,5 +1,7 @@
 try:
-    from .madara import MadaraSource, _Node, _TreeParser
+    from .madara import (
+        MadaraSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -286,14 +288,6 @@ class NartagSource(MadaraSource):
         return None
 
 
-class GeneratedRncalationSource(RncalationSource):
-    name = 'nartag_es'
-    display_name = 'Rncalation'
-    base_url = 'https://rncalation.online'
-    language = 'es'
-    requests_per_minute = 120
-    content_warning = 'mixed'
-    image_headers = {'Referer': 'https://rncalation.online/'}
 
 
 SOURCE = NartagSource

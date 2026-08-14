@@ -136,12 +136,6 @@ class MangashiinaSource (MangaThemesiaSource ):
             )
         return paginas 
 
-class GeneratedMangaMukaiSource (MangaMukaiSource ):
-    name ='mangashiina_es'
-    display_name ='MangaMukai'
-    base_url ='https://mangamukai.com'
-    language ='es'
-    requests_per_minute =60 
 
 
 SOURCE =MangashiinaSource

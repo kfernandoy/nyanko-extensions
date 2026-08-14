@@ -200,14 +200,6 @@ class ZonatmotoSource (MadaraDetailsSource ):
             return None 
 
 
-class GeneratedZonatmoToSource (ZonatmoToSource ):
-    name ='zonatmoto_es'
-    display_name ='Zonatmo.to (unoriginal)'
-    base_url ='https://zonatmo.to'
-    language ='es'
-    requests_per_minute =60 
-    content_warning ='mixed'
-    image_headers ={'Referer':'https://zonatmo.to/'}
 
 
 SOURCE =ZonatmotoSource

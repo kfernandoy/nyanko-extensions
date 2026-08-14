@@ -203,14 +203,6 @@ class ShadowmangaSource (MadaraDetailsSource ):
             return None 
 
 
-class GeneratedShadowMangaSource (ShadowMangaSource ):
-    name ='shadowmanga_es'
-    display_name ='Shadow Manga'
-    base_url ='https://shademanga.com'
-    language ='es'
-    requests_per_minute =180 
-    content_warning ='mixed'
-    image_headers ={'Referer':'https://shademanga.com/'}
 
 
 SOURCE =ShadowmangaSource

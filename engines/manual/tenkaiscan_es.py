@@ -1,5 +1,7 @@
 try:
-    from .base import FuenteBaseSource, _Node, _TreeParser
+    from .base import (
+        FuenteBaseSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -119,12 +121,6 @@ class TenkaiscanSource(FuenteBaseSource):
             chunks=iter([response.content]),
         )
 
-class GeneratedFalcoScanSource(FalcoScanSource):
-    name = 'tenkaiscan_es'
-    display_name = 'Falco Scan'
-    base_url = 'https://falcoscan.net'
-    language = 'es'
-    requests_per_minute = 60
 
 
 SOURCE = TenkaiscanSource

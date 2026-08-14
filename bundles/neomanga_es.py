@@ -226,14 +226,6 @@ class NeomangaSource (MadaraDetailsSource ):
             return None 
 
 
-class GeneratedNeoMangaSource (NeoMangaSource ):
-    name ='neomanga_es'
-    display_name ='NeoManga'
-    base_url ='https://www.neomanga.online'
-    language ='es'
-    requests_per_minute =60 
-    content_warning ='safe'
-    image_headers ={'Referer':'https://www.neomanga.online/'}
 
 
 SOURCE =NeomangaSource

@@ -1,5 +1,7 @@
 try:
-    from .base import FuenteBaseSource, _Node, _TreeParser
+    from .base import (
+        FuenteBaseSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -146,12 +148,6 @@ class AkayaSource(FuenteBaseSource):
             for indice, url in enumerate(urls)
         ]
 
-class GeneratedAkayaSource(AkayaSource):
-    name = 'akaya_es'
-    display_name = 'AKAYA'
-    base_url = 'https://akaya.io'
-    language = 'es'
-    requests_per_minute = 60
 
 
 SOURCE = AkayaSource

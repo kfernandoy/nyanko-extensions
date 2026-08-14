@@ -1,5 +1,7 @@
 try:
-    from .madara import MadaraSource, _Node, _TreeParser
+    from .madara import (
+        MadaraSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -228,14 +230,6 @@ class NeomangaSource(MadaraSource):
             return None
 
 
-class GeneratedNeoMangaSource(NeoMangaSource):
-    name = 'neomanga_es'
-    display_name = 'NeoManga'
-    base_url = 'https://www.neomanga.online'
-    language = 'es'
-    requests_per_minute = 60
-    content_warning = 'safe'
-    image_headers = {'Referer': 'https://www.neomanga.online/'}
 
 
 SOURCE = NeomangaSource

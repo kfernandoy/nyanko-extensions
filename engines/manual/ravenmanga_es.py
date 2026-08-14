@@ -1,5 +1,7 @@
 try:
-    from .madara import MadaraSource, _Node, _TreeParser
+    from .madara import (
+        MadaraSource, _Node, _TreeParser
+    )
 except ImportError:
     pass
 
@@ -293,14 +295,6 @@ class RavenmangaSource(MadaraSource):
         return None
 
 
-class GeneratedRavenMangaSource(RavenMangaSource):
-    name = 'ravenmanga_es'
-    display_name = 'RavenManga'
-    base_url = 'https://raventard.xyz'
-    language = 'es'
-    requests_per_minute = 120
-    content_warning = 'safe'
-    image_headers = {'Referer': 'https://raventard.xyz/'}
 
 
 SOURCE = RavenmangaSource
