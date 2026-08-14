@@ -3270,12 +3270,11 @@
       "id": "doujinshell_es",
       "name": "DoujinsHell",
       "version": "0.1.0",
-      "sha256": "8ce781f6fc5a11b9d6d7d13d4f95ab11e51a4d1f348186a2ddc02899ac48894a",
+      "sha256": "d1916526b94dd0e19a25b1e3bdfda40b66c4880eefbc6925166a2793f56edad3",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/doujinshell_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/doujinshell_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "madara",
-      "language": "es"
+      "engine": "madara"
     },
     {
       "id": "doujinza_th",
@@ -7100,12 +7099,11 @@
       "id": "infrafandub_es",
       "name": "InfraFandub",
       "version": "0.3.0",
-      "sha256": "ab856c6681a10169d4cc652881dbb9269de752de574bcf72ab03b39a92113687",
+      "sha256": "9445ba5d353272744542e255a90c5040d083408d68fb0fc01f996227ddeba176",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/infrafandub_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/infrafandub_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "madara",
-      "language": "es"
+      "engine": "madara"
     },
     {
       "id": "inkapk_pt_br",
@@ -9944,12 +9942,11 @@
       "id": "mangacrab_es",
       "name": "Manga Crab",
       "version": "0.23.0",
-      "sha256": "9ac51bf202d6d4fe417011ff5848adb215a68f84b2963af421df828ace74721f",
+      "sha256": "e5b6aca6369df99b339e021dbe4ba70cd07137a34cb7f46f58a547a7fb51973d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangacrab_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/mangacrab_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "madara",
-      "language": "es"
+      "engine": "madara"
     },
     {
       "id": "mangacrazy_all",
@@ -11942,12 +11939,11 @@
       "id": "mangasnosekai_es",
       "name": "Mangas No Sekai",
       "version": "0.19.0",
-      "sha256": "be7ba4e976e325946e321bc3eca8fa8597c8679cb2e40b145598ecd4ca0f9aa8",
+      "sha256": "39a4d527454e4e3fd0043fdaf10f39ef37eb493eb8467d2e042b165b63890f11",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangasnosekai_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/mangasnosekai_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "madara",
-      "language": "es"
+      "engine": "madara"
     },
     {
       "id": "mangasoriginesfr_fr",
@@ -12591,12 +12587,11 @@
       "id": "manhuaonline_es",
       "name": "SamuraiScan",
       "version": "0.17.0",
-      "sha256": "38eb1429f361f70114fa3ae15c007f825b576893f8089bf3ad06ed2a720f7596",
+      "sha256": "89d347032d7dad4f0d641fe1e0f0cd3c6f55a54755f31d4bd45c3656a2688ac3",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhuaonline_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/manhuaonline_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "madara",
-      "language": "es"
+      "engine": "madara"
     },
     {
       "id": "manhuaplus_en",
@@ -13009,12 +13004,11 @@
       "id": "manhwalatino_es",
       "name": "Manhwa-Latino",
       "version": "0.11.0",
-      "sha256": "50f1ca255eb78a1a8ab6e668484a6dc9d2c825110ee621f61905dddd5ad2122d",
+      "sha256": "b17d30f9dacd03778e3a9f2a6b35d86961ed88cb2e0c73bd710c3a837728c510",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manhwalatino_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/manhwalatino_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "madara",
-      "language": "es"
+      "engine": "madara"
     },
     {
       "id": "manhwalike_en",
@@ -13193,14 +13187,13 @@
     },
     {
       "id": "manta_en",
-      "name": "Manta (en)",
+      "name": "Manta",
       "version": "0.11.0",
-      "sha256": "2d0d9749378145dd117c28c478a6a5a5f7a3323eebcd3bd49a16d11545c0b2fb",
+      "sha256": "b17eac2ae87d35a68409789414011860ed56465afaaa5d22bdbd338de8b3e07d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/manta_en.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/manta_en.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "en"
+      "engine": "custom"
     },
     {
       "id": "manta_es",
@@ -13928,36 +13921,33 @@
     },
     {
       "id": "myreadingmanga_ar",
-      "name": "MyReadingManga (ar)",
+      "name": "MyReadingManga",
       "version": "0.61.0",
-      "sha256": "5d1873c7e423e0d18d5803ac79dacc1f19ddd83e5ccc82db9514a27f505bcad0",
+      "sha256": "f511766025851ae3324a007b8a5fb07ac8d81732bb0deb6977e0be63db7bb450",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_ar.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/myreadingmanga_ar.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ar"
+      "engine": "custom"
     },
     {
       "id": "myreadingmanga_de",
-      "name": "MyReadingManga (de)",
+      "name": "MyReadingManga",
       "version": "0.61.0",
-      "sha256": "ca46173f7af04c8d664247a119a45dd907717c109ca7ca74c7f2aea85018f9b6",
+      "sha256": "f511766025851ae3324a007b8a5fb07ac8d81732bb0deb6977e0be63db7bb450",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_de.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/myreadingmanga_de.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "de"
+      "engine": "custom"
     },
     {
       "id": "myreadingmanga_en",
-      "name": "MyReadingManga (en)",
+      "name": "MyReadingManga",
       "version": "0.61.0",
-      "sha256": "71ed6c83a868d09338d5f2b5afbd7487286cb03a6358530526885c83a7d070bf",
+      "sha256": "f511766025851ae3324a007b8a5fb07ac8d81732bb0deb6977e0be63db7bb450",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_en.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/myreadingmanga_en.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "en"
+      "engine": "custom"
     },
     {
       "id": "myreadingmanga_es",
@@ -13971,190 +13961,173 @@
     },
     {
       "id": "myreadingmanga_id",
-      "name": "MyReadingManga (id)",
+      "name": "MyReadingManga",
       "version": "0.61.0",
-      "sha256": "fb24d73d7adf2b7620ab1ad6cf42a8edba92d8b10d64b99f349121fe9ee1bc9c",
+      "sha256": "f511766025851ae3324a007b8a5fb07ac8d81732bb0deb6977e0be63db7bb450",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_id.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/myreadingmanga_id.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "id"
+      "engine": "custom"
     },
     {
       "id": "myreadingmanga_it",
-      "name": "MyReadingManga (it)",
+      "name": "MyReadingManga",
       "version": "0.61.0",
-      "sha256": "da988e001aac8441ec63246acfed3024065b66c41bd12ae94db0fef90fd2a696",
+      "sha256": "f511766025851ae3324a007b8a5fb07ac8d81732bb0deb6977e0be63db7bb450",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_it.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/myreadingmanga_it.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "it"
+      "engine": "custom"
     },
     {
       "id": "myreadingmanga_ja",
-      "name": "MyReadingManga (ja)",
+      "name": "MyReadingManga",
       "version": "0.61.0",
-      "sha256": "752e3aaf88dc2350f8c12b6cc45e295ff604e2fbb042192b198c5505fe8cc56c",
+      "sha256": "f511766025851ae3324a007b8a5fb07ac8d81732bb0deb6977e0be63db7bb450",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_ja.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/myreadingmanga_ja.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ja"
+      "engine": "custom"
     },
     {
       "id": "myreadingmanga_ko",
-      "name": "MyReadingManga (ko)",
+      "name": "MyReadingManga",
       "version": "0.61.0",
-      "sha256": "4c1a7006c89dd6e3387f1ee33736945a925230bfadbf9d12c4840bdda7b5c5c2",
+      "sha256": "f511766025851ae3324a007b8a5fb07ac8d81732bb0deb6977e0be63db7bb450",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_ko.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/myreadingmanga_ko.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ko"
+      "engine": "custom"
     },
     {
       "id": "myreadingmanga_pt_br",
-      "name": "MyReadingManga (pt-BR)",
+      "name": "MyReadingManga",
       "version": "0.61.0",
-      "sha256": "d193c16ece80575979c118684442d832d19a34d04e8bfab88cb201ac2adb7827",
+      "sha256": "f511766025851ae3324a007b8a5fb07ac8d81732bb0deb6977e0be63db7bb450",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_pt_br.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/myreadingmanga_pt_br.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "pt-BR"
+      "engine": "custom"
     },
     {
       "id": "myreadingmanga_ru",
-      "name": "MyReadingManga (ru)",
+      "name": "MyReadingManga",
       "version": "0.61.0",
-      "sha256": "bc83620ca0a33de77c55552cbc678a56130bff0b843bf90aee941eb64d7d7a17",
+      "sha256": "f511766025851ae3324a007b8a5fb07ac8d81732bb0deb6977e0be63db7bb450",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_ru.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/myreadingmanga_ru.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ru"
+      "engine": "custom"
     },
     {
       "id": "myreadingmanga_tr",
-      "name": "MyReadingManga (tr)",
+      "name": "MyReadingManga",
       "version": "0.61.0",
-      "sha256": "89fabee0b3b17af052023bf76a7b2c7747bcb00a78fdaea2334924c83638bbed",
+      "sha256": "f511766025851ae3324a007b8a5fb07ac8d81732bb0deb6977e0be63db7bb450",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_tr.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/myreadingmanga_tr.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "tr"
+      "engine": "custom"
     },
     {
       "id": "myreadingmanga_vi",
-      "name": "MyReadingManga (vi)",
+      "name": "MyReadingManga",
       "version": "0.61.0",
-      "sha256": "2b72386f719063d01c95a312658e25bfab42284ae30e031b2ffff035203f3b26",
+      "sha256": "f511766025851ae3324a007b8a5fb07ac8d81732bb0deb6977e0be63db7bb450",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_vi.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/myreadingmanga_vi.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "vi"
+      "engine": "custom"
     },
     {
       "id": "myreadingmanga_zh",
-      "name": "MyReadingManga (zh)",
+      "name": "MyReadingManga",
       "version": "0.61.0",
-      "sha256": "4629cde6837895b27e5bc11b413f14f4d32da7f98f56643d5a1387c209c9005c",
+      "sha256": "f511766025851ae3324a007b8a5fb07ac8d81732bb0deb6977e0be63db7bb450",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/myreadingmanga_zh.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/myreadingmanga_zh.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "zh"
+      "engine": "custom"
     },
     {
       "id": "namicomi_ar",
-      "name": "NamiComi (ar)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "7e9beacf9dbe63a1c71d62f6915cf6616a27abd377ac9c03a99dae9addd96cc3",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ar.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_ar.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ar"
+      "engine": "custom"
     },
     {
       "id": "namicomi_bg",
-      "name": "NamiComi (bg)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "a1b39e526cfeb713dd3b2dc85e376841c8b8e10606b697a32c2294114a42c8c0",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_bg.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_bg.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "bg"
+      "engine": "custom"
     },
     {
       "id": "namicomi_ca",
-      "name": "NamiComi (ca)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "1f195aebcba139b33adbbaf1cb651937ced699580c47e9fa4b7041bb7072b5b6",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ca.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_ca.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ca"
+      "engine": "custom"
     },
     {
       "id": "namicomi_cs",
-      "name": "NamiComi (cs)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "4329585272fdb0e7a0a96e003c8f20f5c7fb30552282310e9fd746f078d561a2",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_cs.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_cs.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "cs"
+      "engine": "custom"
     },
     {
       "id": "namicomi_da",
-      "name": "NamiComi (da)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "b5c37ccf3f674df524a1693df510ee6e42ead273cc0001c23a2a35094e6807b6",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_da.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_da.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "da"
+      "engine": "custom"
     },
     {
       "id": "namicomi_de",
-      "name": "NamiComi (de)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "b61c9de2c9975672330ce6ee85337499c943c6025c613c08929e6c2253f32419",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_de.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_de.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "de"
+      "engine": "custom"
     },
     {
       "id": "namicomi_el",
-      "name": "NamiComi (el)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "663db12b27302d71e18ef682cd0f81570924fe14301aceb781861ba121ec7b2d",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_el.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_el.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "el"
+      "engine": "custom"
     },
     {
       "id": "namicomi_en",
-      "name": "NamiComi (en)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "8f1b054557f8a279a456e6bf9b4ad99b3e0fc7f58ac8ba9bb6c972a12b7abce3",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_en.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_en.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "en"
+      "engine": "custom"
     },
     {
       "id": "namicomi_es",
@@ -14168,377 +14141,343 @@
     },
     {
       "id": "namicomi_es_419",
-      "name": "NamiComi (es-419)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "dcdfe29ea6d5e2c496a019e57599c029789c5444e5e8f2c707e530b2cda13ee1",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_es_419.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_es_419.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "es-419"
+      "engine": "custom"
     },
     {
       "id": "namicomi_et",
-      "name": "NamiComi (et)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "c3a628b632bd0da7383d9b6c98b50d2f49a20558a152b58b5ee57410bc0735bc",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_et.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_et.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "et"
+      "engine": "custom"
     },
     {
       "id": "namicomi_fa",
-      "name": "NamiComi (fa)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "2b78bb35f030121496a3932dab5f83f23319557957fe7695ab99b2c9b6677fa4",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_fa.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_fa.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "fa"
+      "engine": "custom"
     },
     {
       "id": "namicomi_fi",
-      "name": "NamiComi (fi)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "092f372f34ed133cbea30373a18e5eeb2ba479ea3d496f5a6973ec94f72cc360",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_fi.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_fi.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "fi"
+      "engine": "custom"
     },
     {
       "id": "namicomi_fil",
-      "name": "NamiComi (fil)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "e53a19fa81670641914498ad6c129a00b3a5dc52501db7b8c629a47a08c50a5b",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_fil.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_fil.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "fil"
+      "engine": "custom"
     },
     {
       "id": "namicomi_fr",
-      "name": "NamiComi (fr)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "d1d9764463b7d527afefe356d3f9e9e34f73646170bc5382e5c4dbc9dce85196",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_fr.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_fr.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "fr"
+      "engine": "custom"
     },
     {
       "id": "namicomi_ga",
-      "name": "NamiComi (ga)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "48fd3f498daf2b3a3e479974a30a68f4ff5a1652c648b38438d56da74766bc25",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ga.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_ga.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ga"
+      "engine": "custom"
     },
     {
       "id": "namicomi_he",
-      "name": "NamiComi (he)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "47340867caffae10e1a5c568c73ed6bdc9f98e801103917b81671c5698fce2aa",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_he.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_he.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "he"
+      "engine": "custom"
     },
     {
       "id": "namicomi_hi",
-      "name": "NamiComi (hi)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "40b62de5a45e5061c5ca4b6582c26041ab5a6e71dc6aac05bf164d353e6243fb",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_hi.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_hi.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "hi"
+      "engine": "custom"
     },
     {
       "id": "namicomi_hr",
-      "name": "NamiComi (hr)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "313e44e27f3c27b769a521839aa5bd9f57d87b96fd8e25fc862f6322182d6eb9",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_hr.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_hr.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "hr"
+      "engine": "custom"
     },
     {
       "id": "namicomi_hu",
-      "name": "NamiComi (hu)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "ea85a6487aefbc508ef4c4c6a0b6d51a56a3b49cac46f3e35bfa37c882901a12",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_hu.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_hu.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "hu"
+      "engine": "custom"
     },
     {
       "id": "namicomi_id",
-      "name": "NamiComi (id)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "441f4516971971781abe8fe283ae088cb7db0f957fd633f5e92be687567c275c",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_id.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_id.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "id"
+      "engine": "custom"
     },
     {
       "id": "namicomi_is",
-      "name": "NamiComi (is)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "53a4237fab2c269d0a79690ceda0744a4887ccc0532dbd375d34ab18eec6e581",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_is.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_is.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "is"
+      "engine": "custom"
     },
     {
       "id": "namicomi_it",
-      "name": "NamiComi (it)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "5796924ade61aa7bab824da2128d0fdf64594188c11c42fbe0402650739df613",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_it.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_it.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "it"
+      "engine": "custom"
     },
     {
       "id": "namicomi_ja",
-      "name": "NamiComi (ja)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "233c402ac15962dee89498e28dcf06273fd2a16258bd4748d9eec14c8357978c",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ja.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_ja.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ja"
+      "engine": "custom"
     },
     {
       "id": "namicomi_ko",
-      "name": "NamiComi (ko)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "4836e857d289ffa9f40f619e067ce25df10cea0a808c225d99fcb8620b8631f8",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ko.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_ko.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ko"
+      "engine": "custom"
     },
     {
       "id": "namicomi_lt",
-      "name": "NamiComi (lt)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "984dd5c5b2148a9529c140a460d25a84664cfa78466c7f073489817236b10244",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_lt.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_lt.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "lt"
+      "engine": "custom"
     },
     {
       "id": "namicomi_ms",
-      "name": "NamiComi (ms)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "7eee3af5da7c4cd86bbd8ad8011e19bf9b78e4033126e606bd1ee974008c9003",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ms.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_ms.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ms"
+      "engine": "custom"
     },
     {
       "id": "namicomi_ne",
-      "name": "NamiComi (ne)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "5568640a7577a2193eb147136d535a174f88ac723ae6ac99b1a61ceef0baf538",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ne.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_ne.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ne"
+      "engine": "custom"
     },
     {
       "id": "namicomi_nl",
-      "name": "NamiComi (nl)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "f37961c2586acbb54d247b5ee5839af235be32c178393e92084b0331c1ccd69a",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_nl.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_nl.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "nl"
+      "engine": "custom"
     },
     {
       "id": "namicomi_no",
-      "name": "NamiComi (no)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "0dec83c1e0f5b2c2c63aee75e9da1650dea124aae6c8f8a9f18a7ad09b84315c",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_no.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_no.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "no"
+      "engine": "custom"
     },
     {
       "id": "namicomi_pa",
-      "name": "NamiComi (pa)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "a50b1d7c9d097512c08b427511e70eb0cf2e72c4b39414016f8e0f3ebff34c1a",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_pa.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_pa.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "pa"
+      "engine": "custom"
     },
     {
       "id": "namicomi_pl",
-      "name": "NamiComi (pl)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "a5ee4772f68085416dd7e0964bc968d20609fdc501b40399eedc84faebdc5e83",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_pl.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_pl.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "pl"
+      "engine": "custom"
     },
     {
       "id": "namicomi_pt",
-      "name": "NamiComi (pt)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "9b1fe0f2f19ec00126b317339a21f2dfea7122c4756361e25fcb69c60f3929ce",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_pt.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_pt.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "pt"
+      "engine": "custom"
     },
     {
       "id": "namicomi_pt_br",
-      "name": "NamiComi (pt-BR)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "95b6c8cea5464e5a2210cf4badd87b08948917113db5245a89502a069303340b",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_pt_br.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_pt_br.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "pt-BR"
+      "engine": "custom"
     },
     {
       "id": "namicomi_ru",
-      "name": "NamiComi (ru)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "04a755573ef5d379e07e7db6ca69a6a080dc7d579215f23012535e8f5ed2d8b5",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_ru.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_ru.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ru"
+      "engine": "custom"
     },
     {
       "id": "namicomi_sk",
-      "name": "NamiComi (sk)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "0ec7a599fa29199a98cd318efb7051f7a0fac91a3fdad749280be27479a51956",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_sk.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_sk.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "sk"
+      "engine": "custom"
     },
     {
       "id": "namicomi_sl",
-      "name": "NamiComi (sl)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "c363ecff67470301727fc4d7fc6251c49e7f9a8f7a9b74748e8f05418ce45511",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_sl.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_sl.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "sl"
+      "engine": "custom"
     },
     {
       "id": "namicomi_sv",
-      "name": "NamiComi (sv)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "bddb9d4fa4491bc6790f181897f751276e3bf3c6c42f233aab1d1b6fe87f5797",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_sv.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_sv.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "sv"
+      "engine": "custom"
     },
     {
       "id": "namicomi_th",
-      "name": "NamiComi (th)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "363ba8563a8536f1f763e2c8fcd4dabd09607f856ad7e5075da4f1d6ede6ae70",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_th.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_th.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "th"
+      "engine": "custom"
     },
     {
       "id": "namicomi_tr",
-      "name": "NamiComi (tr)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "0b945f3ee830b5fb22fca6a4d2acabc3e4fbcb25747d228b7e6623166685a94d",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_tr.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_tr.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "tr"
+      "engine": "custom"
     },
     {
       "id": "namicomi_uk",
-      "name": "NamiComi (uk)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "f88162a6f4fba738103ba1957f8aee34bd42bd1d2976304d17cf51cc8b9ac682",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_uk.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_uk.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "uk"
+      "engine": "custom"
     },
     {
       "id": "namicomi_zh_hans",
-      "name": "NamiComi (zh-Hans)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "17f6f82c2b3db96f0e7828d6ea6765842eb7ef5788216c0051554b09d2737449",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_zh_hans.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_zh_hans.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "zh-Hans"
+      "engine": "custom"
     },
     {
       "id": "namicomi_zh_hant",
-      "name": "NamiComi (zh-Hant)",
+      "name": "NamiComi",
       "version": "0.6.0",
-      "sha256": "3bccdf2e5b22286d3371e0df3a69bf113a4975979407f151ee042e579ebde0d2",
+      "sha256": "e534347af603d09b62c3cf1b4482d7fd21abbbef7c044c85c8adcdf35cfa117a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/namicomi_zh_hant.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/namicomi_zh_hant.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "zh-Hant"
+      "engine": "custom"
     },
     {
       "id": "narasininja_id",
@@ -15573,14 +15512,13 @@
     },
     {
       "id": "onepiecefans_en",
-      "name": "One Piece Fans (en)",
+      "name": "One Piece Fans",
       "version": "0.1.0",
-      "sha256": "ba58bce618f5c5053b3a6dfa156490155e87b99f6213cab79304455e8982f3ab",
+      "sha256": "fe6d7816156570865fa434e6e33682e65e0352b413bfd740c695057684891ca1",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onepiecefans_en.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/onepiecefans_en.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "en"
+      "engine": "custom"
     },
     {
       "id": "onepiecefans_es",
@@ -15626,25 +15564,23 @@
     },
     {
       "id": "onisaga_all",
-      "name": "OniSaga (all)",
+      "name": "OniSaga",
       "version": "0.4.0",
-      "sha256": "7eda11cc1ccae8121f4ec87ad75a233ef53581a377a2b06a83f4619a028aaf9c",
+      "sha256": "dcdbd118fbbcbcdfdea51f67a9407bbd09354600d59c8e47908efd281ad621bf",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_all.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/onisaga_all.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "all"
+      "engine": "custom"
     },
     {
       "id": "onisaga_en",
-      "name": "OniSaga (en)",
+      "name": "OniSaga",
       "version": "0.4.0",
-      "sha256": "899912d33067531419423fdc15aaa9632bcc62a4436ad1f8d76de31f1c5a6a13",
+      "sha256": "dcdbd118fbbcbcdfdea51f67a9407bbd09354600d59c8e47908efd281ad621bf",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_en.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/onisaga_en.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "en"
+      "engine": "custom"
     },
     {
       "id": "onisaga_es",
@@ -15658,58 +15594,53 @@
     },
     {
       "id": "onisaga_es_419",
-      "name": "OniSaga (es-419)",
+      "name": "OniSaga",
       "version": "0.4.0",
-      "sha256": "3f080428c57f284fce30ccef88380b6100dd6f57a42b9c4d55dbba9b6d3ee5d5",
+      "sha256": "dcdbd118fbbcbcdfdea51f67a9407bbd09354600d59c8e47908efd281ad621bf",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_es_419.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/onisaga_es_419.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "es-419"
+      "engine": "custom"
     },
     {
       "id": "onisaga_fr",
-      "name": "OniSaga (fr)",
+      "name": "OniSaga",
       "version": "0.4.0",
-      "sha256": "e789523ad21a0e21bcf628d36ecbe927527d77d29f691bd9ca1ffc34e2491281",
+      "sha256": "dcdbd118fbbcbcdfdea51f67a9407bbd09354600d59c8e47908efd281ad621bf",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_fr.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/onisaga_fr.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "fr"
+      "engine": "custom"
     },
     {
       "id": "onisaga_ja",
-      "name": "OniSaga (ja)",
+      "name": "OniSaga",
       "version": "0.4.0",
-      "sha256": "1ac32550b0b083facecb0c74a3c4dfd629d1ee5d6d8e3cd7384aaf932ce3d290",
+      "sha256": "dcdbd118fbbcbcdfdea51f67a9407bbd09354600d59c8e47908efd281ad621bf",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_ja.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/onisaga_ja.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ja"
+      "engine": "custom"
     },
     {
       "id": "onisaga_pt",
-      "name": "OniSaga (pt)",
+      "name": "OniSaga",
       "version": "0.4.0",
-      "sha256": "4ebd6d72e3b83e80cfe9b084c3e2fdcc438c8efa8004ed4281948b1fc19a450c",
+      "sha256": "dcdbd118fbbcbcdfdea51f67a9407bbd09354600d59c8e47908efd281ad621bf",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_pt.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/onisaga_pt.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "pt"
+      "engine": "custom"
     },
     {
       "id": "onisaga_pt_br",
-      "name": "OniSaga (pt-BR)",
+      "name": "OniSaga",
       "version": "0.4.0",
-      "sha256": "6c94754d6f3e24a144e68387543cb3abf9e188d937e6033e213669815222e514",
+      "sha256": "dcdbd118fbbcbcdfdea51f67a9407bbd09354600d59c8e47908efd281ad621bf",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/onisaga_pt_br.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/onisaga_pt_br.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "pt-BR"
+      "engine": "custom"
     },
     {
       "id": "onlythebesthentai_en",
@@ -15910,58 +15841,53 @@
     },
     {
       "id": "pandachaika_all",
-      "name": "PandaChaika (all)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "1f8330df5c91fee09c94ee5a2ab9f9f2d7ad608c3d29abf25d7d890d51850ac1",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_all.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_all.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "all"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_ar",
-      "name": "PandaChaika (ar)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "102bc0bac99af8016a8e89e794fdc371f1e3e7debcb55df9e86a044cc27ce7ee",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_ar.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_ar.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ar"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_cs",
-      "name": "PandaChaika (cs)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "b6b29bac13a28398b23aff09459f3d4b3bde16ae526fa584ec987ec541d74246",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_cs.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_cs.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "cs"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_el",
-      "name": "PandaChaika (el)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "12908f6bc00640b437ec65b221d46732f22d70df871b7b8b4894af79818b28ab",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_el.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_el.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "el"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_en",
-      "name": "PandaChaika (en)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "a286bf95c1d3f00d6665786431b418c94094b5da1ded9706b4c692c3641037f6",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_en.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_en.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "en"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_es",
@@ -15975,157 +15901,143 @@
     },
     {
       "id": "pandachaika_fi",
-      "name": "PandaChaika (fi)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "0ab75ea530eb1e2c234b0dfba779a9dd229793d3f00cdbbf7f442f927a39b3cf",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_fi.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_fi.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "fi"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_fr",
-      "name": "PandaChaika (fr)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "3f99af9e675bb22a0afdc8104cb8de3a779c4fe753bea1b0e3dd1859f8a105ed",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_fr.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_fr.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "fr"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_id",
-      "name": "PandaChaika (id)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "d5a2622a7374c1d49e5cccbcf94a422ac3e864829d31252df8adbea38f3dc0d3",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_id.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_id.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "id"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_ja",
-      "name": "PandaChaika (ja)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "91c223e143929660ca94004924b6257c28b82b579fa9033e569e7690c85f5366",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_ja.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_ja.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ja"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_jv",
-      "name": "PandaChaika (jv)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "e2fee2e0aafd75e851b4cc71438e5f73edb44dac9ea87f164157a9fdf4c31e38",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_jv.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_jv.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "jv"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_ko",
-      "name": "PandaChaika (ko)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "6c33103662cb611a5a0978f663af00de53df695ac9dc4b3ddd535dda6e2a1e6c",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_ko.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_ko.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ko"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_pt",
-      "name": "PandaChaika (pt)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "56599e4aa3c672e0d55bc4f2e0fd1e219cf17e9c141f20236a8b5f483b73fea6",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_pt.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_pt.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "pt"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_ru",
-      "name": "PandaChaika (ru)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "2b159d342c511c5e426a944d6e2f57e72c89c45baffe2e43fa4dd20fe08c3268",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_ru.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_ru.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ru"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_th",
-      "name": "PandaChaika (th)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "9ea4c551dca7e26b755cfe57c9b45d2f3be62074fa6746129ac93c50f2c412c6",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_th.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_th.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "th"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_tl",
-      "name": "PandaChaika (tl)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "dd0a6ddd8eac1a7f2461d23f6507c77a9a645e4277bd35b3b0c712648e74d1eb",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_tl.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_tl.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "tl"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_tr",
-      "name": "PandaChaika (tr)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "e06ed3feda8b2511fd826ca04fed838001eec47f58f718d3315add3532979896",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_tr.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_tr.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "tr"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_uk",
-      "name": "PandaChaika (uk)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "dc97c7902c607686ff2b3de5ebecd588a6cbfc85c12e4cb01e872d795c32b1b4",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_uk.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_uk.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "uk"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_vi",
-      "name": "PandaChaika (vi)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "be675f9f071a2fa011d79c72d35f9e792f05bf8567f819fd2dfb9fa698bad500",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_vi.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_vi.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "vi"
+      "engine": "custom"
     },
     {
       "id": "pandachaika_zh",
-      "name": "PandaChaika (zh)",
+      "name": "PandaChaika",
       "version": "0.4.0",
-      "sha256": "419e00b41619a99b3ca3cad9f181261a77f2648f616ace9ed4a8231671a25854",
+      "sha256": "cd29d4fff5b0f3aea3b00c04f483d930d3b949f8fd6e5b8718ac44a68dec18c4",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/pandachaika_zh.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/pandachaika_zh.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "zh"
+      "engine": "custom"
     },
     {
       "id": "panomic_vi",
@@ -17972,25 +17884,23 @@
     },
     {
       "id": "simplyhentai_de",
-      "name": "Simply Hentai (de)",
+      "name": "Simply Hentai",
       "version": "0.8.0",
-      "sha256": "0f7902ffbbfcf47021f3f6608ae2a88bd7232d341e5513e50534baef45cbaca2",
+      "sha256": "1bc52435f9fe2c88ef56efc426a278d546f900d5e41ef248bdca5d8887718f49",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_de.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/simplyhentai_de.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "de"
+      "engine": "custom"
     },
     {
       "id": "simplyhentai_en",
-      "name": "Simply Hentai (en)",
+      "name": "Simply Hentai",
       "version": "0.8.0",
-      "sha256": "c144b0c7b37098ee4c6809b7af90e3218f7092d788b952189c7ae7a1a3449458",
+      "sha256": "1bc52435f9fe2c88ef56efc426a278d546f900d5e41ef248bdca5d8887718f49",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_en.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/simplyhentai_en.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "en"
+      "engine": "custom"
     },
     {
       "id": "simplyhentai_es",
@@ -18004,80 +17914,73 @@
     },
     {
       "id": "simplyhentai_fr",
-      "name": "Simply Hentai (fr)",
+      "name": "Simply Hentai",
       "version": "0.8.0",
-      "sha256": "71778c92bc511a81d6d265017a5d49e8c738714b366a81af0d93fc0663968ded",
+      "sha256": "1bc52435f9fe2c88ef56efc426a278d546f900d5e41ef248bdca5d8887718f49",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_fr.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/simplyhentai_fr.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "fr"
+      "engine": "custom"
     },
     {
       "id": "simplyhentai_it",
-      "name": "Simply Hentai (it)",
+      "name": "Simply Hentai",
       "version": "0.8.0",
-      "sha256": "330115c390863110464dccddf740dd67a0638bf9ccc05b56fbc4302e8592e508",
+      "sha256": "1bc52435f9fe2c88ef56efc426a278d546f900d5e41ef248bdca5d8887718f49",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_it.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/simplyhentai_it.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "it"
+      "engine": "custom"
     },
     {
       "id": "simplyhentai_ja",
-      "name": "Simply Hentai (ja)",
+      "name": "Simply Hentai",
       "version": "0.8.0",
-      "sha256": "577d2fc837a3ee6131a5207b8e76dd8da68683569c2d740571e71dd16a3dffbe",
+      "sha256": "1bc52435f9fe2c88ef56efc426a278d546f900d5e41ef248bdca5d8887718f49",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_ja.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/simplyhentai_ja.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ja"
+      "engine": "custom"
     },
     {
       "id": "simplyhentai_ko",
-      "name": "Simply Hentai (ko)",
+      "name": "Simply Hentai",
       "version": "0.8.0",
-      "sha256": "563260b0eb629e1e97dcda1f9af48809874f1e6715b80fad55bfbd1f0a32e01b",
+      "sha256": "1bc52435f9fe2c88ef56efc426a278d546f900d5e41ef248bdca5d8887718f49",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_ko.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/simplyhentai_ko.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ko"
+      "engine": "custom"
     },
     {
       "id": "simplyhentai_pl",
-      "name": "Simply Hentai (pl)",
+      "name": "Simply Hentai",
       "version": "0.8.0",
-      "sha256": "b7ce5ffc49bec7827c79038da68a538e53c63c3cfdd8ac2b2ad304deb80eeb76",
+      "sha256": "1bc52435f9fe2c88ef56efc426a278d546f900d5e41ef248bdca5d8887718f49",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_pl.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/simplyhentai_pl.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "pl"
+      "engine": "custom"
     },
     {
       "id": "simplyhentai_ru",
-      "name": "Simply Hentai (ru)",
+      "name": "Simply Hentai",
       "version": "0.8.0",
-      "sha256": "616524453379cba5ee005f688e7397d7a2df568be0434634e21ed3f91e9e3b7a",
+      "sha256": "1bc52435f9fe2c88ef56efc426a278d546f900d5e41ef248bdca5d8887718f49",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_ru.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/simplyhentai_ru.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ru"
+      "engine": "custom"
     },
     {
       "id": "simplyhentai_zh",
-      "name": "Simply Hentai (zh)",
+      "name": "Simply Hentai",
       "version": "0.8.0",
-      "sha256": "1b999458b93c4627cea834480d3e637f1d8835850d57c9f593076334195906d5",
+      "sha256": "1bc52435f9fe2c88ef56efc426a278d546f900d5e41ef248bdca5d8887718f49",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/simplyhentai_zh.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/simplyhentai_zh.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "zh"
+      "engine": "custom"
     },
     {
       "id": "singmanga_th",
@@ -18951,12 +18854,11 @@
       "id": "timelesstoons_en",
       "name": "TimelessToons",
       "version": "0.1.0",
-      "sha256": "ec1d02e0d3ff6f21429c0655f6a675cb54da31d1571bfb5a01092c8c8564f38a",
+      "sha256": "a5d33641e0dd8a59a44f318c7ee2a5b54340fbb842acb41d983aaadebddec37c",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/timelesstoons_en.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/timelesstoons_en.png",
       "author": "Keiyoushi contributors",
-      "engine": "keyoapp",
-      "language": "en"
+      "engine": "keyoapp"
     },
     {
       "id": "todaymanga_en",
@@ -20245,14 +20147,13 @@
     },
     {
       "id": "xkcd_en",
-      "name": "xkcd (en)",
+      "name": "xkcd",
       "version": "0.17.0",
-      "sha256": "0d433e4659441c36c9057a095328a63b0198ffeab80fe158879a5f40bb9e545d",
+      "sha256": "ed145fd330de2343bba8f18380721337f7010f26a0c938357510cd820896d27b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/xkcd_en.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/xkcd_en.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "en"
+      "engine": "custom"
     },
     {
       "id": "xkcd_es",
@@ -20266,36 +20167,33 @@
     },
     {
       "id": "xkcd_fr",
-      "name": "xkcd (fr)",
+      "name": "xkcd",
       "version": "0.17.0",
-      "sha256": "4499b7cd5129517fb6eb23f4674e285174feda51b6dafbfad28c90b80b41abbf",
+      "sha256": "ed145fd330de2343bba8f18380721337f7010f26a0c938357510cd820896d27b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/xkcd_fr.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/xkcd_fr.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "fr"
+      "engine": "custom"
     },
     {
       "id": "xkcd_ru",
-      "name": "xkcd (ru)",
+      "name": "xkcd",
       "version": "0.17.0",
-      "sha256": "c2ece5e6ab38f427d04f3c6ccc46c710ca55b0a3b3e3210ae30be737fac1616c",
+      "sha256": "ed145fd330de2343bba8f18380721337f7010f26a0c938357510cd820896d27b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/xkcd_ru.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/xkcd_ru.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ru"
+      "engine": "custom"
     },
     {
       "id": "xkcd_zh",
-      "name": "xkcd (zh)",
+      "name": "xkcd",
       "version": "0.17.0",
-      "sha256": "b83c2bcfb1956fcb2415e99592e11eb3dd9871f4e9fac2431f0c53f204c836a0",
+      "sha256": "ed145fd330de2343bba8f18380721337f7010f26a0c938357510cd820896d27b",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/xkcd_zh.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/xkcd_zh.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "zh"
+      "engine": "custom"
     },
     {
       "id": "xlecx_en",
@@ -20541,14 +20439,13 @@
     },
     {
       "id": "yellownote_en",
-      "name": "小黄书 (en)",
+      "name": "小黄书",
       "version": "0.7.0",
-      "sha256": "889fa10b011e79b55033619823e5dd69e52d524cdfa2c79562486b930faa25af",
+      "sha256": "9a27ba898e95d00e375ccb721e0f04d084e13ebf1155a1df45184f70487ca15a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/yellownote_en.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/yellownote_en.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "en"
+      "engine": "custom"
     },
     {
       "id": "yellownote_es",
@@ -20562,36 +20459,33 @@
     },
     {
       "id": "yellownote_ko",
-      "name": "小黄书 (ko)",
+      "name": "小黄书",
       "version": "0.7.0",
-      "sha256": "85751d2a7e3d03bcfea83a78163eb09781ce0f2ebd7cd7a547fabab7cfebc8cb",
+      "sha256": "9a27ba898e95d00e375ccb721e0f04d084e13ebf1155a1df45184f70487ca15a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/yellownote_ko.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/yellownote_ko.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "ko"
+      "engine": "custom"
     },
     {
       "id": "yellownote_zh_hans",
-      "name": "小黄书 (zh-Hans)",
+      "name": "小黄书",
       "version": "0.7.0",
-      "sha256": "e209df96d8a49cb10844b25e7088a1ae72157d069f9d409240750760f0652a19",
+      "sha256": "9a27ba898e95d00e375ccb721e0f04d084e13ebf1155a1df45184f70487ca15a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/yellownote_zh_hans.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/yellownote_zh_hans.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "zh-Hans"
+      "engine": "custom"
     },
     {
       "id": "yellownote_zh_hant",
-      "name": "小黄书 (zh-Hant)",
+      "name": "小黄书",
       "version": "0.7.0",
-      "sha256": "34e1c1809b73305f6f8c1d6d468eb67ffb9ad582834ccb3727d2a11c257ca58e",
+      "sha256": "9a27ba898e95d00e375ccb721e0f04d084e13ebf1155a1df45184f70487ca15a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/yellownote_zh_hant.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/yellownote_zh_hant.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom",
-      "language": "zh-Hant"
+      "engine": "custom"
     },
     {
       "id": "yidan_zh",
