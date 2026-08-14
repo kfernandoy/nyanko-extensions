@@ -21,27 +21,27 @@ Comprobacion automatica previa: portadas 100% en GoDa (36/36), NatsuId (96/96) y
 ### Fase 2: Checklist Global de Extensiones en Español
 
 #### Motor: custom
-- [ ] akaya_es (AKAYA)
-- [ ] akuma_es (Akuma (es))
-- [ ] anzmanga_es (AnzManga)
-- [ ] capibaratraductor_es (CapibaraTraductor)
-- [ ] catmanhwas_es (Catoons)
-- [ ] codearc_es (Code Arc Mangas)
-- [ ] comicfury_es (Comic Fury (es))
-- [ ] comicklive_es (Comick (Unoriginal) (es))
-- [ ] comicskingdom_es (Comics Kingdom (es))
-- [ ] comikey_es (Comikey (es))
-- [ ] doujinhentai_es (DoujinHentai)
-- [ ] dragonballmultiverse_es (Dragon Ball Multiverse (es))
-- [ ] dynasty_es (Dynasty)
-- [ ] enchiladascan_es (EnchiladaScan)
-- [ ] hdoujin_es (HDoujin (es))
-- [ ] heavenmanga_es (HeavenManga)
-- [ ] hentai3_es (3Hentai (es))
-- [ ] hentaihall_es (HentaiHall)
-- [ ] hentaimode_es (HentaiMode)
-- [ ] honeytoon_es (Honeytoon (es))
-- [ ] ikigaimangas_es (Ikigai Mangas)
+- [X] akaya_es (AKAYA) parcial: algunas imágenes dan 503, asumo tamaño?
+- [ ] akuma_es (Akuma (es)) Error: La fuente respondio HTTP 403
+- [X] anzmanga_es (AnzManga)
+- [X] capibaratraductor_es (CapibaraTraductor)
+- [ ] catmanhwas_es (Catoons) Error: CatManhwas no publicó sus endpoints remotos (La fuente en el webview si muestra los capítulos y su contenido)
+- [ ] codearc_es (Code Arc Mangas) Error: La fuente respondio HTTP 400 (Al entrar a un capitulo)
+- [ ] comicfury_es (Comic Fury (es)) Error: Las imágenes de los capítulos nunca cargan
+- [ ] comicklive_es (Comick (Unoriginal) (es)): Error?: Pide login asi que la fuente no devuelve capitulos
+- [X] comicskingdom_es (Comics Kingdom (es))
+- [ ] comikey_es (Comikey (es)) Error: Esta fuente requiere abrirse en WebView al menos una vez para funcionar. (pero no tenemos botón para abrir la fuente en webview, solo sus capítulos)
+- [X] doujinhentai_es (DoujinHentai)
+- [ ] dragonballmultiverse_es (Dragon Ball Multiverse (es)) Error: al abrir un capitulo dice "No se pudo conectar con la fuente" pasa lo mismo con su versión es_419
+- [X] dynasty_es (Dynasty)
+- [X] enchiladascan_es (EnchiladaScan)
+- [ ] hdoujin_es (HDoujin (es)) Error: al abrir una serie no carga el listado de capítulos "El servicio local no respondió a tiempo"
+- [ ] heavenmanga_es (HeavenManga) Error: La fuente no encontro el recurso
+- [ ] hentai3_es (3Hentai (es)) Error: la fuente carga su índice como series (#0-9,A-Z)
+- [ ] hentaihall_es (HentaiHall) Fuente muerta, dejarla ahí hasta que tenga url nueva.
+- [X] hentaimode_es (HentaiMode)
+- [ ] honeytoon_es (Honeytoon (es)) Error: al abrir incluye donde deberían ir las series Home, Discover, etc..
+- [ ] ikigaimangas_es (Ikigai Mangas) Error: "Este capitulo no tiene páginas disponibles", desde el webview si se ven.
 - [ ] ikuhentai_es (Ikuhentai)
 - [ ] inmanga_es (InManga)
 - [ ] insanosscan_es (InsanosScan)
