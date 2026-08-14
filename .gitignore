@@ -4,6 +4,7 @@ smoke*.json
 barrido*.json
 triaje*.json
 validacion_humana.txt
+validacion_humana*.txt
 .gitignore
 .claude
 tests/
