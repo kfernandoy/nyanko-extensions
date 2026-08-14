@@ -2,18 +2,193 @@ Fuentes pendientes de revalidacion humana tras la correccion:
 
 - Todas las fuentes con portada: revalidar la carga visual de portadas en el catalogo. La regresion era global en la app (la rejilla combinaba `content-visibility: auto` con imagenes lazy), no en los bundles ni en las URLs de las extensiones. Corregido en el repositorio Nyanko; se verifico que LectorMangaLat, MangaDex, InManga, Manga Crab y MantrazScan sirven bytes de imagen HTTP 200 por el proxy real.
 
-- 18漫画 (eighteenmanhua_zh): no carga portadas
-- Goda (goda_en): no carga portadas
-- GoDa漫画 (baozimhorg_zh): no carga portadas
-- Kiryuu (kiryuu_id): no carga portadas
-- Ikiru (mangatale_id): no carga portadas
-- Natsu (natsu_id): no carga portadas
-- Rawkuma (rawkuma_ja): verificar portadas y que los capitulos no aparezcan en las etiquetas.
-- Afrodit Scans (afroditscans_tr): verificar portadas y que los capitulos no aparezcan en las etiquetas.
-- Elder Manga (eldermanga_tr): verificar portadas y que los capitulos no aparezcan en las etiquetas.
-- Eski Mangalar (eskimangalar_tr): verificar portadas y que los capitulos no aparezcan en las etiquetas.
-- Limon Manga (limonmanga_tr): verificar portadas y que los capitulos no aparezcan en las etiquetas.
-- Tenshi Manga (tenshimanga_tr): verificar portadas y que los capitulos no aparezcan en las etiquetas.
-- Uzay Manga (uzaymanga_tr): verificar portadas y que los capitulos no aparezcan en las etiquetas.
+- 18漫画 (eighteenmanhua_zh): ok
+- Goda (goda_en): ok
+- GoDa漫画 (baozimhorg_zh): ok
+- Kiryuu (kiryuu_id): ok
+- Ikiru (mangatale_id): ok- Natsu (natsu_id): ok
+- Rawkuma (rawkuma_ja): ok
+- Afrodit Scans (afroditscans_tr): ok
+- Elder Manga (eldermanga_tr): ok
+- Eski Mangalar (eskimangalar_tr): ok
+- Limon Manga (limonmanga_tr): ok
+- Tenshi Manga (tenshimanga_tr): ok
+- Uzay Manga (uzaymanga_tr): ok
 
 Comprobacion automatica previa: portadas 100% en GoDa (36/36), NatsuId (96/96) y UzayManga (120/120); los demas flujos pasan salvo los HTTP 403 externos indicados arriba.
+
+
+### Fase 2: Checklist Global de Extensiones en Español
+
+#### Motor: custom
+- [ ] akaya_es (AKAYA)
+- [ ] akuma_es (Akuma (es))
+- [ ] anzmanga_es (AnzManga)
+- [ ] capibaratraductor_es (CapibaraTraductor)
+- [ ] catmanhwas_es (Catoons)
+- [ ] codearc_es (Code Arc Mangas)
+- [ ] comicfury_es (Comic Fury (es))
+- [ ] comicklive_es (Comick (Unoriginal) (es))
+- [ ] comicskingdom_es (Comics Kingdom (es))
+- [ ] comikey_es (Comikey (es))
+- [ ] doujinhentai_es (DoujinHentai)
+- [ ] dragonballmultiverse_es (Dragon Ball Multiverse (es))
+- [ ] dynasty_es (Dynasty)
+- [ ] enchiladascan_es (EnchiladaScan)
+- [ ] hdoujin_es (HDoujin (es))
+- [ ] heavenmanga_es (HeavenManga)
+- [ ] hentai3_es (3Hentai (es))
+- [ ] hentaihall_es (HentaiHall)
+- [ ] hentaimode_es (HentaiMode)
+- [ ] honeytoon_es (Honeytoon (es))
+- [ ] ikigaimangas_es (Ikigai Mangas)
+- [ ] ikuhentai_es (Ikuhentai)
+- [ ] inmanga_es (InManga)
+- [ ] insanosscan_es (InsanosScan)
+- [ ] jeazscans_es (Jeaz Scans)
+- [ ] kagane_es (Kagane (es))
+- [ ] koinoboriscan_es (Koinobori Scan)
+- [ ] lectorjpg_es (LectorJPG)
+- [ ] lectormonline_es (MangoLibreria)
+- [ ] leercapitulo_es (LeerCapitulo)
+- [ ] leermangaesp_es (LeerMangaEsp)
+- [ ] lmtoonline_es (Lmtos)
+- [ ] luscious_es (Luscious (es))
+- [ ] mangaball_es (Manga Ball (es))
+- [ ] mangafire_es (MangaFire (es))
+- [ ] mangamx_es (MangaOni)
+- [ ] mangaplus_es (MANGA Plus by SHUEISHA (es))
+- [ ] mangapluscreators_es (MANGA Plus Creators by SHUEISHA (es))
+- [ ] mangatoon_es (MangaToon (Limited) (es))
+- [ ] manhwaweb_es (ManhwaWeb)
+- [ ] manta_es (Manta (es))
+- [ ] mantrazscan_es (Manhwa Scan)
+- [ ] myreadingmanga_es (MyReadingManga (es))
+- [ ] namicomi_es (NamiComi (es))
+- [ ] nartag_es (Rncalation)
+- [ ] neomanga_es (NeoManga)
+- [ ] nexusscanlation_es (NexusScanlation)
+- [ ] olympusscanlation_es (Olympus Scanlation)
+- [ ] onepiecefans_es (One Piece Fans (es))
+- [ ] onfmangas_es (ONF MANGAS)
+- [ ] onisaga_es (OniSaga (es))
+- [ ] orckumangas_es (Orcku Mangas)
+- [ ] pandachaika_es (PandaChaika (es))
+- [ ] platinumlilyscan_es (Platinum Lily Scan)
+- [ ] plottwistnofansub_es (Plot Twist No Fansub)
+- [ ] ragnascans_es (Ragna Scans)
+- [ ] ravenmanga_es (RavenManga)
+- [ ] shadowmanga_es (Shadow Manga)
+- [ ] simplyhentai_es (Simply Hentai (es))
+- [ ] submanhwa_es (Submanhwa)
+- [ ] tenkaiscan_es (Falco Scan)
+- [ ] thelibraryofohara_es (The Library of Ohara (es))
+- [ ] tumanhwasclub_es (ManhwasMe)
+- [ ] vinnieveritas_es (Vinnie Veritas - CCC (es))
+- [ ] webcomics_es (Webcomics (es))
+- [ ] xkcd_es (xkcd (es))
+- [ ] yellownote_es (小黄书 (es))
+- [ ] yupmanga_es (Yupmanga)
+- [ ] zonatmoto_es (Zonatmo.to (unoriginal))
+
+#### Motor: foolslide
+- [ ] lolivault_es (Lolivault)
+- [ ] menudofansub_es (Menudo-Fansub)
+
+#### Motor: galleryadults
+- [ ] hentaienvy_es (HentaiEnvy (es))
+- [ ] hentaiera_es (HentaiEra (es))
+- [ ] hentaizap_es (HentaiZap (es))
+- [ ] imhentai_es (IMHentai (es))
+
+#### Motor: hentaihand
+- [ ] hentaihand_es (HentaiHand (es))
+
+#### Motor: iken
+- [ ] eternalmangas_es (EternalMangas)
+
+#### Motor: madara
+- [ ] apollcomics_es (ApollComics)
+- [ ] barmanga_es (BarManga)
+- [ ] begatranslation_es (Bega Translation)
+- [ ] bibliopanda_es (Biblio Panda)
+- [ ] catharsisworld_es (Catharsis World)
+- [ ] codexzero_es (Codex Zero)
+- [ ] doujinshell_es (DoujinsHell)
+- [ ] dragontranslationorg_es (DragonTranslation.org)
+- [ ] emperorscan_es (Emperor Scan)
+- [ ] esmi2manga_es (Es.Mi2Manga)
+- [ ] gremorymangas_es (Gremory Mangas)
+- [ ] hadesnofansub_es (Hades no Fansub)
+- [ ] haremdekira_es (Harem de Kira)
+- [ ] houseofotakus_es (House Of Otakus)
+- [ ] infrafandub_es (InfraFandub)
+- [ ] inventariooculto_es (Inventario Oculto)
+- [ ] kazokuden_es (Kazoku Den)
+- [ ] lectormangalat_es (LectorManga.lat)
+- [ ] mangacrab_es (Manga Crab)
+- [ ] mangaromance_es (Manga Romance)
+- [ ] mangasnosekai_es (Mangas No Sekai)
+- [ ] manhuaonline_es (SamuraiScan)
+- [ ] manhuarm_es (Manhuarm (es))
+- [ ] manhwalatino_es (Manhwa-Latino)
+- [ ] manhwaonline_es (ManhwaOnline)
+- [ ] marmota_es (Marmota)
+- [ ] mhscans_es (MHScans)
+- [ ] monopolyscan_es (Monopoly Scan)
+- [ ] mundomanhwa_es (Mundo Manhwa)
+- [ ] noblessetranslations_es (Noblesse Translations)
+- [ ] ragnarokscanlation_es (Ragnarok Scanlation)
+- [ ] richtoscan_es (RichtoScan)
+- [ ] seraphicdeviltry_es (SeraphicDeviltry (es))
+- [ ] swordofoblivion_es (Sword Of Oblivion)
+- [ ] taurusfansub_es (Taurus Fansub)
+- [ ] templescanesp_es (Temple Scan (es))
+- [ ] toones_es (Toon-es)
+- [ ] topcomicporno_es (TopComicPorno)
+- [ ] topcomicpornonet_es (TopComicPorno.net)
+- [ ] vermanhwas_es (Ver Manhwas)
+- [ ] yurionline_es (Yuri-Online)
+
+#### Motor: mangadex
+- [ ] mangadex_es (MangaDex (es))
+
+#### Motor: mangathemesia
+- [ ] asialotus_es (Asia Lotus)
+- [ ] bloomscans_es (Bloom Scans)
+- [ ] bokugentranslation_es (BokugenTranslation)
+- [ ] bymichiscan_es (Bymichi Scan)
+- [ ] celestialmoon_es (Celestial Moon)
+- [ ] cerberusseries_es (Cerberus Series)
+- [ ] lunapieces_es (Luna Pieces)
+- [ ] mangaesp_es (MangaEsp)
+- [ ] mangashiina_es (Manga Mukai)
+- [ ] mangatv_es (Manga  TV)
+- [ ] miauscan_es (Miau Scan (es))
+- [ ] nekoscans_es (NekoScans)
+- [ ] novamanhwa_es (Nova Manhwas)
+- [ ] skymangas_es (SkyMangas)
+- [ ] uchuujinprojects_es (Uchuujin Projects)
+
+#### Motor: mmrcms
+- [ ] mangasin_es (Mangas.in)
+
+#### Motor: moonlighttl
+- [ ] lectorasteria_es (Lector Asteria)
+- [ ] traduccionesmoonlight_es (Traducciones Moonlight)
+
+#### Motor: spicytheme
+- [ ] colorcitoscan_es (Colorcito Scan)
+- [ ] spicyscan_es (Spicy Scan)
+
+#### Motor: vercomics
+- [ ] chochox_es (ChoChoX)
+- [ ] vcp_es (VCP)
+- [ ] vmp_es (VMP)
+
+#### Motor: zeistmanga
+- [ ] darkroomfansub_es (Dark Room Fansub)
+- [ ] datgarscanlation_es (Dat-Gar Scan)
+- [ ] gistamishouse_es (Gistamis House)
+- [ ] sapphirescan_es (SapphireScan)
+
