@@ -7,8 +7,7 @@ class MadaraSource:
     pass
 
 
-
-class DragonTranslationOrgSource(MadaraSource):
+class EmperorscanSource(MadaraSource):
     def __init__(self, fetcher=None) -> None:
         super().__init__(fetcher)
         self._genres: list[tuple[str, str]] | None = None
@@ -390,4 +389,4 @@ class GeneratedMadaraSource(EmperorScanSource):
     details_profile = 'default'
     content_warning = 'safe'
 
-SOURCE = GeneratedMadaraSource
+SOURCE = EmperorscanSource

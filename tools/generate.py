@@ -3806,7 +3806,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 )
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path, base_engine)
+                    bundle_bytes = _manual_bundle(manual_path, mangathemesia_engine)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")

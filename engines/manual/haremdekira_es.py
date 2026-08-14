@@ -7,8 +7,7 @@ class MadaraSource:
     pass
 
 
-
-class HaremDeKiraSource(MadaraSource):
+class HaremdekiraSource(MadaraSource):
     async def browse(self, kind: str, page: int = 1):
         if kind not in {"popular", "latest"}:
             return {"items": [], "has_more": False}
@@ -245,4 +244,4 @@ class GeneratedMadaraSource(HaremDeKiraSource):
     details_profile = 'default'
     content_warning = 'mixed'
 
-SOURCE = GeneratedMadaraSource
+SOURCE = HaremdekiraSource

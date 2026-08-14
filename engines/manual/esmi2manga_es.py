@@ -7,8 +7,7 @@ class MadaraSource:
     pass
 
 
-
-class DragonTranslationOrgSource(MadaraSource):
+class Esmi2mangaSource(MadaraSource):
     def __init__(self, fetcher=None) -> None:
         super().__init__(fetcher)
         self._genres: list[tuple[str, str]] | None = None
@@ -565,4 +564,4 @@ class GeneratedMadaraSource(EsMi2MangaSource):
     details_profile = 'default'
     content_warning = 'nsfw'
 
-SOURCE = GeneratedMadaraSource
+SOURCE = Esmi2mangaSource
