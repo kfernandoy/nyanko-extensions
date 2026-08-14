@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Infraestructura compartida por todos los motores de bundles Nyanko Source v4.
 
 Aqui vive lo que NO es de ningun tema en concreto: el parser de HTML, los helpers
@@ -15,7 +17,6 @@ El contenido se EXTRAJO de `madara.py` sin tocarlo, para no cambiar comportamien
 al reorganizar.
 """
 
-from __future__ import annotations
 
 import base64
 import hashlib

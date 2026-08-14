@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Infraestructura compartida por todos los motores de bundles Nyanko Source v4.
 
 Aqui vive lo que NO es de ningun tema en concreto: el parser de HTML, los helpers
@@ -15,7 +17,7 @@ El contenido se EXTRAJO de `madara.py` sin tocarlo, para no cambiar comportamien
 al reorganizar.
 """
 
-from __future__ import annotations 
+ 
 
 import base64 
 import hashlib 
@@ -617,10 +619,6 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
-try :
-    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
-except ImportError :
-    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -772,7 +770,7 @@ class MadaraDetailsSource (FuenteBaseSource ):
 
 """Implementación común del tema Madara para bundles Nyanko Source v4."""
 
-from __future__ import annotations 
+ 
 
 import ast 
 import base64 

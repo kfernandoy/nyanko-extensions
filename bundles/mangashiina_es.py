@@ -1,7 +1,5 @@
-try :
-    from .mangathemesia import MangaThemesiaSource ,_Node ,_TreeParser 
-except ImportError :
-    pass 
+from __future__ import annotations
+
 
 class MangaThemesiaSource :
     pass 

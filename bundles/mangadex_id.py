@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Adaptador de MangaDex para Nyanko Source API v3."""
 
 from typing import Any 

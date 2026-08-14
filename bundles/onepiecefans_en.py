@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 """Implementación común del tema Madara para bundles Nyanko Source v4."""
 
-from __future__ import annotations 
+ 
 
 import ast 
 import base64 

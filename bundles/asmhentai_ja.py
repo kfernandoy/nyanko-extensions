@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 """Implementación común del tema Madara para bundles Nyanko Source v4."""
 
-from __future__ import annotations 
+ 
 
 import ast 
 import base64 
@@ -581,10 +583,6 @@ import json
 import re 
 from urllib .parse import urljoin ,urlparse 
 
-try :
-    from .base import FuenteBaseSource ,SourceChapter ,SourcePage ,SourceSeries ,_first ,_image_url ,_parse_html 
-except ImportError :
-    pass 
 
 
 class GalleryAdultsSource (FuenteBaseSource ):

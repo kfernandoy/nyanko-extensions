@@ -184,11 +184,11 @@ def _es_import_madara_vacio(node: ast.AST) -> bool:
 
 def _refrescar_motor_en_manual_textual(source: str, engine: str) -> str:
     """Fallback para los manuales historicos que aun no parsean antes del saneado."""
-    marca = re.search(r"^try:\s*\n\s*from \.madara import", source, re.M)
+    marca = re.search(r"^try:\s*\n\s*from \.[a-z_]+ import", source, re.M)
     if marca is not None:
         inicio_propio = marca.start()
     else:
-        subclase = re.search(r"^class \w+\(MadaraSource\):", source, re.M)
+        subclase = re.search(r"^class \w+\((MadaraSource|FuenteBaseSource|MangaThemesiaSource|WPComicsSource|GenericSource)\):", source, re.M)
         if subclase is None:
             return source
         inicio_propio = subclase.start()
@@ -248,7 +248,7 @@ def _manual_bundle(path: Path, engine: str = "", tema: str = "") -> bytes:
         source = re.sub(r"\bMadaraSource\b", replacement, source)
     lines = source.splitlines(keepends=True)
     for index in range(len(lines) - 1):
-        if lines[index].strip() == "try:" and lines[index + 1].lstrip().startswith("from .madara import"):
+        if lines[index].strip() == "try:" and lines[index + 1].lstrip().startswith("from ."):
             end = index + 2
             while end < len(lines) and lines[end].strip() != "except ImportError:":
                 end += 1
@@ -3502,7 +3502,9 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
     v4_engine = (repo / "engines" / "v4.py").read_bytes()
 
     def finalize(bundle: bytes) -> bytes:
-        return bundle.rstrip() + b"\n\n" + v4_engine.rstrip() + b"\n\nSOURCE = adapt_source(SOURCE)\n"
+        bundle = bundle.replace(b"from __future__ import annotations\n", b"").replace(b"from __future__ import annotations\r\n", b"")
+        bundle = bundle.replace(b"from __future__ import annotations", b"")
+        return b"from __future__ import annotations\n\n" + bundle.rstrip() + b"\n\n" + v4_engine.rstrip() + b"\n\nSOURCE = adapt_source(SOURCE)\n"
 
     madara_engine = (repo / "engines" / "madara.py").read_text(encoding="utf-8")
     # Infraestructura comun (parser HTML, helpers, clase base). Los motores de tema
