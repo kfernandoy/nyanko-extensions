@@ -924,6 +924,14 @@ class MyReadingMangaSource(MadaraSource):
             return None
 
 
+class GeneratedMyReadingMangaSource(MyReadingMangaSource):
+    name = 'myreadingmanga_id'
+    display_name = 'MyReadingManga'
+    base_url = 'https://myreadingmanga.info'
+    language = 'id'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+    image_headers = {'Referer': 'https://myreadingmanga.info/'}
 
 
-SOURCE = MyReadingMangaSource
+SOURCE = GeneratedMyReadingMangaSource

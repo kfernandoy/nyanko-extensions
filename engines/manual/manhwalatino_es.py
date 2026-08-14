@@ -105,6 +105,23 @@ class ManhwaLatinoSource(MadaraSource):
             if any(isinstance(sibling, _Node) and sibling.tag == "span" for sibling in parent.children[index + 1:]):
                 return True
         return False
+class GeneratedMadaraSource(ManhwaLatinoSource):
+    name = 'manhwalatino_es'
+    display_name = 'Manhwa-Latino'
+    base_url = 'https://manhwa-latino.com'
+    language = 'es'
+    manga_substring = 'manga'
+    load_more = 'auto'
+    use_new_chapter_endpoint = True
+    chapter_url_suffix = '?style=list'
+    supports_latest = True
+    requests_per_minute = 30
+    pages_profile = 'default'
+    extra_headers = {}
+    image_headers = {}
+    date_format = 'dd/MM/yyyy'
+    date_locale = 'es'
+    details_profile = 'default'
+    content_warning = 'mixed'
 
-
-SOURCE = ManhwaLatinoSource
+SOURCE = GeneratedMadaraSource

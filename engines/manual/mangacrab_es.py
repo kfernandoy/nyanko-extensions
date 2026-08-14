@@ -173,6 +173,23 @@ class MangaCrabSource(MadaraSource):
                 return parent
             parent = parent.parent
         return None
+class GeneratedMadaraSource(MangaCrabSource):
+    name = 'mangacrab_es'
+    display_name = 'Manga Crab'
+    base_url = 'https://mangacrab.org'
+    language = 'es'
+    manga_substring = 'series'
+    load_more = 'never'
+    use_new_chapter_endpoint = False
+    chapter_url_suffix = '?style=list'
+    supports_latest = True
+    requests_per_minute = 300
+    pages_profile = 'default'
+    extra_headers = {}
+    image_headers = {}
+    date_format = 'dd/MM/yyyy'
+    date_locale = 'es'
+    details_profile = 'default'
+    content_warning = 'safe'
 
-
-SOURCE = MangaCrabSource
+SOURCE = GeneratedMadaraSource

@@ -1026,6 +1026,14 @@ class XkcdSource(MadaraSource):
             return None
 
 
+class GeneratedXkcdSource(XkcdSource):
+    name = 'xkcd_ru'
+    display_name = 'xkcd'
+    base_url = 'https://xkcd.ru'
+    language = 'ru'
+    requests_per_minute = 60
+    content_warning = 'safe'
+    image_headers = {'Referer': 'https://xkcd.ru/'}
 
 
-SOURCE = XkcdSource
+SOURCE = GeneratedXkcdSource

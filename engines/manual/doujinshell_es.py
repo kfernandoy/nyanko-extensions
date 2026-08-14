@@ -130,6 +130,23 @@ class DoujinsHellSource(MadaraSource):
             source_id=url, chapter_id=chapter_id, index=index,
             filename=urlparse(url).path.rsplit("/", 1)[-1] or f"{index}.jpg", source_name=self.name,
         ) for index, url in enumerate(urls)]
+class GeneratedMadaraSource(DoujinsHellSource):
+    name = 'doujinshell_es'
+    display_name = 'DoujinsHell'
+    base_url = 'https://doujinshell.net'
+    language = 'es'
+    manga_substring = 'doujin'
+    load_more = 'never'
+    use_new_chapter_endpoint = False
+    chapter_url_suffix = '?style=list'
+    supports_latest = True
+    requests_per_minute = 60
+    pages_profile = 'default'
+    extra_headers = {}
+    image_headers = {}
+    date_format = 'd MMMM, yyyy'
+    date_locale = 'es'
+    details_profile = 'default'
+    content_warning = 'nsfw'
 
-
-SOURCE = DoujinsHellSource
+SOURCE = GeneratedMadaraSource

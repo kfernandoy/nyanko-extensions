@@ -1360,6 +1360,14 @@ class YellowNoteSource(MadaraSource):
             return None
 
 
+class GeneratedYellowNoteSource(YellowNoteSource):
+    name = 'yellownote_zh_hant'
+    display_name = '小黄书'
+    base_url = 'https://tw.xchina.co'
+    language = 'zh-Hant'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+    image_headers = {'Referer': 'https://tw.xchina.co/'}
 
 
-SOURCE = YellowNoteSource
+SOURCE = GeneratedYellowNoteSource

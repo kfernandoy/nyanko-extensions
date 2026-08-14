@@ -801,6 +801,14 @@ class MantaComicsSource(MadaraSource):
             return None
 
 
+class GeneratedMantaComicsSource(MantaComicsSource):
+    name = 'manta_en'
+    display_name = 'Manta'
+    base_url = 'https://manta.net/en'
+    language = 'en'
+    requests_per_minute = 60
+    content_warning = 'mixed'
+    image_headers = {'Referer': 'https://manta.net/en/'}
 
 
-SOURCE = MantaComicsSource
+SOURCE = GeneratedMantaComicsSource

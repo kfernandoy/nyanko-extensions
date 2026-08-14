@@ -128,6 +128,23 @@ class InfraFandubSource(MadaraSource):
                 uploaded_at=self._madara_date(date.text() if date else ""),
             ))
         return result
+class GeneratedMadaraSource(InfraFandubSource):
+    name = 'infrafandub_es'
+    display_name = 'InfraFandub'
+    base_url = 'https://infrafandub.com'
+    language = 'es'
+    manga_substring = 'manga'
+    load_more = 'auto'
+    use_new_chapter_endpoint = True
+    chapter_url_suffix = '?style=list'
+    supports_latest = True
+    requests_per_minute = 120
+    pages_profile = 'default'
+    extra_headers = {}
+    image_headers = {}
+    date_format = 'dd/MM/yyyy'
+    date_locale = 'es'
+    details_profile = 'default'
+    content_warning = 'safe'
 
-
-SOURCE = InfraFandubSource
+SOURCE = GeneratedMadaraSource

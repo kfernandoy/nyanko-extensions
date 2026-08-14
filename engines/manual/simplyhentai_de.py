@@ -767,6 +767,14 @@ class SimplyHentaiSource(MadaraSource):
             return None
 
 
+class GeneratedSimplyHentaiSource(SimplyHentaiSource):
+    name = 'simplyhentai_de'
+    display_name = 'Simply Hentai'
+    base_url = 'https://www.simply-hentai.com'
+    language = 'de'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+    image_headers = {'Referer': 'https://www.simply-hentai.com/'}
 
 
-SOURCE = SimplyHentaiSource
+SOURCE = GeneratedSimplyHentaiSource

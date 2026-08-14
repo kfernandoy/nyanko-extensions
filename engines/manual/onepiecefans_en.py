@@ -685,6 +685,14 @@ class OnePieceFansSource(MadaraSource):
         ]
 
 
+class GeneratedOnePieceFansSource(OnePieceFansSource):
+    name = 'onepiecefans_en'
+    display_name = 'One Piece Fans'
+    base_url = 'https://one-piece-fans2.com'
+    language = 'en'
+    requests_per_minute = 60
+    content_warning = 'safe'
+    image_headers = {'Referer': 'https://one-piece-fans2.com/'}
 
 
-SOURCE = OnePieceFansSource
+SOURCE = GeneratedOnePieceFansSource

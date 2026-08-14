@@ -1188,6 +1188,14 @@ class OniSagaSource(MadaraSource):
         return (now - spans[unit] * amount).isoformat()
 
 
+class GeneratedOniSagaSource(OniSagaSource):
+    name = 'onisaga_pt'
+    display_name = 'OniSaga'
+    base_url = 'https://onisaga.com'
+    language = 'pt'
+    requests_per_minute = 240
+    content_warning = 'mixed'
+    image_headers = {'Referer': 'https://onisaga.com/'}
 
 
-SOURCE = OniSagaSource
+SOURCE = GeneratedOniSagaSource

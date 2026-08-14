@@ -1102,6 +1102,14 @@ class NamiComiSource(MadaraSource):
         return None
 
 
+class GeneratedNamiComiSource(NamiComiSource):
+    name = 'namicomi_cs'
+    display_name = 'NamiComi'
+    base_url = 'https://namicomi.com'
+    language = 'cs'
+    requests_per_minute = 180
+    content_warning = 'safe'
+    image_headers = {'Referer': 'https://namicomi.com/'}
 
 
-SOURCE = NamiComiSource
+SOURCE = GeneratedNamiComiSource
