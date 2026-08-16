@@ -39,7 +39,35 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("names", nargs="*", help="manuales a revisar (sin .py)")
     ap.add_argument("--apply", action="store_true", help="restaurar los recortados")
+    ap.add_argument(
+        "--history",
+        action="store_true",
+        help="solo informar: rastrea pages/SOURCE por varios commits",
+    )
     args = ap.parse_args()
+
+    if args.history:
+        commits = ("2e0fdcb", "bcb2a33", "04da9e5", "8af3b48")
+        for name in args.names or []:
+            rel = f"engines/manual/{name}.py"
+            print(f"== {name}")
+            cur = (MANUAL / f"{name}.py")
+            if cur.exists():
+                t = cur.read_text(encoding="utf-8")
+                print(
+                    f"   ACTUAL : {len(t):>6}B pages={bool(HAS_PAGES.search(t))} "
+                    f"SOURCE={SOURCE_RE.findall(t)}"
+                )
+            for commit in commits:
+                blob = git_blob(commit, rel)
+                if blob is None:
+                    print(f"   {commit}: sin blob")
+                    continue
+                print(
+                    f"   {commit}: {len(blob):>6}B pages={bool(HAS_PAGES.search(blob))} "
+                    f"SOURCE={SOURCE_RE.findall(blob)}"
+                )
+        return 0
 
     names = args.names or [p.stem for p in sorted(MANUAL.glob("*.py"))]
 

@@ -1,0 +1,13 @@
+﻿[ok] contrato real cargado desde E:\2023-09-04\anitracker\Nyanko\apps\backend
+
+total 1916 | ok 1911 | fallan 5
+
+== SIN SOURCE/build_source: 1 ==
+  __init__: no declara SOURCE ni build_source
+
+== INCUMPLEN CONTRATO (-> 422): 4 ==
+  hentaienvy_es: No se pudo cargar la fuente: Source missing name
+  hentaizap_es: No se pudo cargar la fuente: Source missing name
+  mangashiina_es: No se pudo cargar la fuente: object.__init__() takes exactly one argument (the instance to initialize)
+  traduccionesmoonlight_es: No se pudo cargar la fuente: object.__init__() takes exactly one argument (the instance to initialize)
+

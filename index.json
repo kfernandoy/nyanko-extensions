@@ -5211,13 +5211,14 @@
     },
     {
       "id": "hentai3_es",
-      "name": "3Hentai",
+      "name": "3Hentai (es)",
       "version": "0.5.0",
-      "sha256": "c1314ff27c1a2295f5931457287c1410d20709c872a689bbd39f994250288305",
+      "sha256": "eb4d53f82361c49eea0f900258d8872ad695cf5737fa14505d3f888488cba9c3",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/hentai3_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/hentai3_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "hentai3_fi",
@@ -6792,13 +6793,14 @@
     },
     {
       "id": "honeytoon_es",
-      "name": "Honeytoon",
+      "name": "Honeytoon (es)",
       "version": "0.2.0",
-      "sha256": "87a4c52d67812db7877d00603cf4ef0621b9e9b3e7ad3434e452fc3ad934154d",
+      "sha256": "1dd885bc58c007cf8e33e87278ac6dad55eb4eea6449e6e3974757c2267c62bc",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/honeytoon_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/honeytoon_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "honeytoon_fr",
@@ -7462,13 +7464,14 @@
     },
     {
       "id": "kagane_es",
-      "name": "Kagane",
+      "name": "Kagane (es)",
       "version": "0.31.0",
-      "sha256": "4f68e8cc8a5fbac1b36f498d726bd5bd23f9645be6b7ee67b397b9c7351a362f",
+      "sha256": "5231bdcaa76c8b701703e5c18e6a5908617203a87bc48fc18aba962e6445cf24",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/kagane_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/kagane_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "kagane_es_419",
@@ -8933,13 +8936,14 @@
     },
     {
       "id": "luscious_es",
-      "name": "Luscious",
+      "name": "Luscious (es)",
       "version": "0.32.0",
-      "sha256": "b53da4269f537047496830536dbc0593e8933d731fabbf77a56bf9182d4b422d",
+      "sha256": "c5f9c9ce73a30a118a595ee0046a8b4a51043fd1aa655d02ba37e0e38f06e363",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/luscious_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/luscious_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "luscious_fr",
@@ -9438,13 +9442,14 @@
     },
     {
       "id": "mangaball_es",
-      "name": "Manga Ball",
+      "name": "Manga Ball (es)",
       "version": "0.3.0",
-      "sha256": "9d6cb2dac94d2baf385c64e9f0aeeac1424a8d84e6cbc8486cb89a319e4e512c",
+      "sha256": "3cfc7a3da19a140b96eec898472fcbf0985535d6a0f7b20643cf898aad10d4be",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaball_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/mangaball_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "mangaball_fa",
@@ -10845,13 +10850,14 @@
     },
     {
       "id": "mangafire_es",
-      "name": "MangaFire",
+      "name": "MangaFire (es)",
       "version": "0.28.0",
-      "sha256": "dcd775d63ec43191c42eb411154ceea6838ba8c76f1f0140f7cc365b89ebdd3e",
+      "sha256": "2471e08044d6028065e31519103622987f2e555eda85eb7e5775660f7cdf7c7a",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangafire_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/mangafire_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "mangafire_es_419",
@@ -11702,13 +11708,14 @@
     },
     {
       "id": "mangaplus_es",
-      "name": "MANGA Plus by SHUEISHA",
+      "name": "MANGA Plus by SHUEISHA (es)",
       "version": "0.65.0",
-      "sha256": "2ec700b6da4453b11950bacbec0ee2a419980753c59b3cafae25ab4f50c65cb8",
+      "sha256": "7451f59b8fb56fa62b9d397c7be602d1e7c5f4f30b574fb3547a73b60f5e5675",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangaplus_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/mangaplus_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "mangaplus_fr",
@@ -11789,13 +11796,14 @@
     },
     {
       "id": "mangapluscreators_es",
-      "name": "MANGA Plus Creators by SHUEISHA",
+      "name": "MANGA Plus Creators by SHUEISHA (es)",
       "version": "0.3.0",
-      "sha256": "55efbde854616f2dac9a44c8285b8af23afc888cb52cd696655efbac6e045d67",
+      "sha256": "30d7e85442dd3bb66332826a50bbeac61b391de71436069ff4f83b703501408e",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/mangapluscreators_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/mangapluscreators_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "mangapoisk_ru",

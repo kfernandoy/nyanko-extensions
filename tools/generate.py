@@ -80,6 +80,61 @@ def _refrescar_motor_de_tema(source: str, tema: str) -> str:
     return source[:corte] + tema.strip() + "\n\n\n" + source[fin.start() :]
 
 
+def _manual_cumple_contrato(manual_path: Path) -> bool:
+    """Indica si el manual define una fuente que implementa `pages`.
+
+    Varios manuales quedaron reducidos a su logica propia heredando de un stub
+    `FuenteBaseSource` vacio, que deliberadamente no trae `pages`. Preferir ese
+    manual sobre el motor generado producia un bundle que no satisface el
+    protocolo `Source` v4, y la instalacion respondia 422.
+
+    Se resuelve la herencia dentro del propio modulo, porque en la mayoria de
+    manuales `pages` llega por la cadena y no por la clase que nombra SOURCE.
+    Ante cualquier duda (sin SOURCE, sintaxis rota) se responde ``True`` para
+    conservar el comportamiento previo y no perder overrides legitimos.
+    """
+    try:
+        tree = ast.parse(manual_path.read_text(encoding="utf-8"))
+    except (OSError, SyntaxError):
+        return True
+
+    classes = {
+        node.name: node for node in tree.body if isinstance(node, ast.ClassDef)
+    }
+    target = None
+    for node in tree.body:
+        if isinstance(node, ast.Assign):
+            for name in node.targets:
+                if (
+                    isinstance(name, ast.Name)
+                    and name.id == "SOURCE"
+                    and isinstance(node.value, ast.Name)
+                ):
+                    target = node.value.id
+    if target is None or target not in classes:
+        return True
+
+    def alcanza_pages(cls: ast.ClassDef, vistos: set[str]) -> bool:
+        if cls.name in vistos:
+            return False
+        vistos.add(cls.name)
+        for item in cls.body:
+            if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                if item.name == "pages":
+                    return True
+        for base in cls.bases:
+            if isinstance(base, ast.Name):
+                if base.id not in classes:
+                    # Base externa (el motor que se inlinea despues): se asume
+                    # que aporta `pages`, como hace `MadaraSource`.
+                    return True
+                if alcanza_pages(classes[base.id], vistos):
+                    return True
+        return False
+
+    return alcanza_pages(classes[target], set())
+
+
 def _refrescar_motor_en_manual(source: str, engine: str) -> str:
     """Cambia la copia congelada del motor que lleva el manual por el motor actual.
 
@@ -3718,7 +3773,11 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                     else _generic_bundle(madara_engine, generic_engine, extension)
                 )
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
-                if manual_path.exists() and not (is_heavenmanga or is_hentaihall or is_ikigaimangas or is_ikuhentai or is_inmanga or is_insanosscan or is_koinoboriscan or is_leercapitulo or is_leermangaesp or is_lectorjpg or is_lmtoonline or build_path.parent.name == "mangamx"):
+                # El manual solo se prefiere si su SOURCE cumple el contrato. Los
+                # motores de la lista traen su propio `pages` por otra via, y varios
+                # manuales quedaron sin el tras la purga: usarlos daba un bundle que
+                # no satisface el protocolo Source v4 y la instalacion devolvia 422.
+                if manual_path.exists() and not (is_heavenmanga or is_hentaihall or is_ikigaimangas or is_ikuhentai or is_inmanga or is_insanosscan or is_koinoboriscan or is_leercapitulo or is_leermangaesp or is_lectorjpg or is_lmtoonline or build_path.parent.name == "mangamx") and _manual_cumple_contrato(manual_path):
                     _combined = madara_engine.rstrip() + "\n\n" + generic_engine.rstrip()
                     bundle_bytes = _manual_bundle(manual_path, _combined)
                 bundle_bytes = finalize(bundle_bytes)
