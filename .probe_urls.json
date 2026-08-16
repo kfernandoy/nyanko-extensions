@@ -1,0 +1,19 @@
+[
+ {
+  "id": "manta_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "ravenmanga_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "luscious_es",
+  "url": "https://www.luscious.net",
+  "status": 200,
+  "final": "https://www.luscious.net",
+  "bytes": 221991,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ }
+]

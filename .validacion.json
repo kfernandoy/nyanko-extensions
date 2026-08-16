@@ -1,0 +1,1343 @@
+[
+ {
+  "linea": 24,
+  "id": "akaya_es",
+  "nombre": "AKAYA",
+  "motor": "custom",
+  "ok": false,
+  "nota": "no aparece en las extensiones instaladas",
+  "ya_revisado": true
+ },
+ {
+  "linea": 25,
+  "id": "akuma_es",
+  "nombre": "Akuma (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: La fuente respondio HTTP 403",
+  "ya_revisado": true
+ },
+ {
+  "linea": 26,
+  "id": "anzmanga_es",
+  "nombre": "AnzManga",
+  "motor": "custom",
+  "ok": true,
+  "nota": "",
+  "ya_revisado": true
+ },
+ {
+  "linea": 27,
+  "id": "capibaratraductor_es",
+  "nombre": "CapibaraTraductor",
+  "motor": "custom",
+  "ok": true,
+  "nota": "",
+  "ya_revisado": true
+ },
+ {
+  "linea": 28,
+  "id": "catmanhwas_es",
+  "nombre": "Catoons",
+  "motor": "custom",
+  "ok": false,
+  "nota": "Error: CatManhwas no publicó sus endpoints remotos (La fuente en el webview si muestra los capítulos y su contenido)",
+  "ya_revisado": true
+ },
+ {
+  "linea": 29,
+  "id": "codearc_es",
+  "nombre": "Code Arc Mangas",
+  "motor": "custom",
+  "ok": false,
+  "nota": "Error: La fuente respondio HTTP 400 (Al entrar a un capitulo)",
+  "ya_revisado": true
+ },
+ {
+  "linea": 30,
+  "id": "comicfury_es",
+  "nombre": "Comic Fury (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: Las imágenes de los capítulos nunca cargan",
+  "ya_revisado": true
+ },
+ {
+  "linea": 31,
+  "id": "comicklive_es",
+  "nombre": "Comick (Unoriginal",
+  "motor": "custom",
+  "ok": false,
+  "nota": "(es)): Error?: Pide login asi que la fuente no devuelve capitulos",
+  "ya_revisado": true
+ },
+ {
+  "linea": 32,
+  "id": "comicskingdom_es",
+  "nombre": "Comics Kingdom (es",
+  "motor": "custom",
+  "ok": true,
+  "nota": ")",
+  "ya_revisado": true
+ },
+ {
+  "linea": 33,
+  "id": "comikey_es",
+  "nombre": "Comikey (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: Esta fuente requiere abrirse en WebView al menos una vez para funcionar. (pero no tenemos botón para abrir la fuente en webview, solo sus capítulos) La fuente no devolvio capitulos",
+  "ya_revisado": true
+ },
+ {
+  "linea": 34,
+  "id": "doujinhentai_es",
+  "nombre": "DoujinHentai",
+  "motor": "custom",
+  "ok": true,
+  "nota": "",
+  "ya_revisado": true
+ },
+ {
+  "linea": 35,
+  "id": "dragonballmultiverse_es",
+  "nombre": "Dragon Ball Multiverse (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: al abrir un capitulo dice \"No se pudo conectar con la fuente\"",
+  "ya_revisado": true
+ },
+ {
+  "linea": 36,
+  "id": "dragonballmultiverse_es",
+  "nombre": "Dragon Ball Multiverse (es_419",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: al abrir un capitulo dice \"No se pudo conectar con la fuente\"",
+  "ya_revisado": true
+ },
+ {
+  "linea": 37,
+  "id": "dynasty_es",
+  "nombre": "Dynasty",
+  "motor": "custom",
+  "ok": true,
+  "nota": "",
+  "ya_revisado": true
+ },
+ {
+  "linea": 38,
+  "id": "enchiladascan_es",
+  "nombre": "EnchiladaScan",
+  "motor": "custom",
+  "ok": true,
+  "nota": "",
+  "ya_revisado": true
+ },
+ {
+  "linea": 39,
+  "id": "hdoujin_es",
+  "nombre": "HDoujin (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: al abrir una serie no carga el listado de capítulos \"El servicio local no respondió a tiempo\"",
+  "ya_revisado": true
+ },
+ {
+  "linea": 40,
+  "id": "heavenmanga_es",
+  "nombre": "HeavenManga",
+  "motor": "custom",
+  "ok": false,
+  "nota": "Error: La fuente no encontro el recurso",
+  "ya_revisado": true
+ },
+ {
+  "linea": 41,
+  "id": "hentai3_es",
+  "nombre": "3Hentai (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: la fuente carga su índice como series (#0-9,A-Z)",
+  "ya_revisado": true
+ },
+ {
+  "linea": 42,
+  "id": "hentaihall_es",
+  "nombre": "HentaiHall",
+  "motor": "custom",
+  "ok": false,
+  "nota": "Fuente muerta, dejarla ahí hasta que tenga url nueva.",
+  "ya_revisado": true
+ },
+ {
+  "linea": 43,
+  "id": "hentaimode_es",
+  "nombre": "HentaiMode",
+  "motor": "custom",
+  "ok": true,
+  "nota": "",
+  "ya_revisado": true
+ },
+ {
+  "linea": 44,
+  "id": "honeytoon_es",
+  "nombre": "Honeytoon (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: al abrir incluye donde deberían ir las series Home, Discover, etc..",
+  "ya_revisado": true
+ },
+ {
+  "linea": 45,
+  "id": "ikigaimangas_es",
+  "nombre": "Ikigai Mangas",
+  "motor": "custom",
+  "ok": false,
+  "nota": "Error: \"Este capitulo no tiene páginas disponibles\", desde el webview si se ven.",
+  "ya_revisado": true
+ },
+ {
+  "linea": 46,
+  "id": "ikuhentai_es",
+  "nombre": "Ikuhentai",
+  "motor": "custom",
+  "ok": true,
+  "nota": "",
+  "ya_revisado": true
+ },
+ {
+  "linea": 47,
+  "id": "inmanga_es",
+  "nombre": "InManga",
+  "motor": "custom",
+  "ok": true,
+  "nota": "",
+  "ya_revisado": true
+ },
+ {
+  "linea": 48,
+  "id": "insanosscan_es",
+  "nombre": "InsanosScan",
+  "motor": "custom",
+  "ok": false,
+  "nota": "Error: El servicio local no respondió a tiempo",
+  "ya_revisado": true
+ },
+ {
+  "linea": 49,
+  "id": "jeazscans_es",
+  "nombre": "Jeaz Scans",
+  "motor": "custom",
+  "ok": false,
+  "nota": "Error: al abrir un capitulo \"La fuente no encontró el recurso\"",
+  "ya_revisado": true
+ },
+ {
+  "linea": 50,
+  "id": "kagane_es",
+  "nombre": "Kagane (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: solo carga elementos como Kagane Beta y View More",
+  "ya_revisado": true
+ },
+ {
+  "linea": 51,
+  "id": "kagane_es",
+  "nombre": "Kagane (es_419",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: solo carga elementos como Kagane Beta y View More",
+  "ya_revisado": true
+ },
+ {
+  "linea": 52,
+  "id": "koinoboriscan_es",
+  "nombre": "Koinobori Scan",
+  "motor": "custom",
+  "ok": false,
+  "nota": "Error: El servicio local no respondió a tiempo",
+  "ya_revisado": true
+ },
+ {
+  "linea": 53,
+  "id": "lectorjpg_es",
+  "nombre": "LectorJPG",
+  "motor": "custom",
+  "ok": false,
+  "nota": "Error: \"Este capítulo no tiene páginas disponibles\"",
+  "ya_revisado": true
+ },
+ {
+  "linea": 54,
+  "id": "lectormonline_es",
+  "nombre": "MangoLibreria",
+  "motor": "custom",
+  "ok": false,
+  "nota": "es Gato Librería, Error: imágenes rotas al abrir un capitulo",
+  "ya_revisado": true
+ },
+ {
+  "linea": 55,
+  "id": "leercapitulo_es",
+  "nombre": "LeerCapitulo",
+  "motor": "custom",
+  "ok": true,
+  "nota": "",
+  "ya_revisado": true
+ },
+ {
+  "linea": 56,
+  "id": "leermangaesp_es",
+  "nombre": "LeerMangaEsp",
+  "motor": "custom",
+  "ok": true,
+  "nota": "",
+  "ya_revisado": true
+ },
+ {
+  "linea": 57,
+  "id": "lmtoonline_es",
+  "nombre": "Lmtos",
+  "motor": "custom",
+  "ok": true,
+  "nota": "",
+  "ya_revisado": true
+ },
+ {
+  "linea": 58,
+  "id": "luscious_es",
+  "nombre": "Luscious (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: trae elementos como 1, 2 , 3, …, n",
+  "ya_revisado": true
+ },
+ {
+  "linea": 59,
+  "id": "mangaball_es",
+  "nombre": "Manga Ball (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: trae elementos como Notifications y Terms of service",
+  "ya_revisado": true
+ },
+ {
+  "linea": 60,
+  "id": "mangafire_es",
+  "nombre": "MangaFire (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": "): Error: \"No hay series ni capítulos en esta carpeta.\"",
+  "ya_revisado": true
+ },
+ {
+  "linea": 61,
+  "id": "mangafire_es",
+  "nombre": "MangaFire (es_419",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: \"No hay series ni capítulos en esta carpeta.\"",
+  "ya_revisado": true
+ },
+ {
+  "linea": 62,
+  "id": "mangamx_es",
+  "nombre": "MangaOni",
+  "motor": "custom",
+  "ok": false,
+  "nota": "Error: \"La fuente devolvió algo que no se pudo interpretar\"",
+  "ya_revisado": true
+ },
+ {
+  "linea": 63,
+  "id": "mangaplus_es",
+  "nombre": "MANGA Plus by SHUEISHA (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: \"No hay series ni capítulos en esta carpeta.\"",
+  "ya_revisado": true
+ },
+ {
+  "linea": 64,
+  "id": "mangapluscreators_es",
+  "nombre": "MANGA Plus Creators by SHUEISHA (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Error: \"No hay series ni capítulos en esta carpeta.\"",
+  "ya_revisado": true
+ },
+ {
+  "linea": 65,
+  "id": "mangatoon_es",
+  "nombre": "MangaToon (Limited",
+  "motor": "custom",
+  "ok": false,
+  "nota": "(es)) Error: trae elementos como English, Indonesia, Español, etc..",
+  "ya_revisado": true
+ },
+ {
+  "linea": 66,
+  "id": "manhwaweb_es",
+  "nombre": "ManhwaWeb",
+  "motor": "custom",
+  "ok": true,
+  "nota": "",
+  "ya_revisado": true
+ },
+ {
+  "linea": 67,
+  "id": "manta_es",
+  "nombre": "Manta (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ") Parcial: funciona pero solo llama a 5 series, creo que en edits antiguos habias podido solucionar esto.",
+  "ya_revisado": true
+ },
+ {
+  "linea": 68,
+  "id": "mantrazscan_es",
+  "nombre": "Manhwa Scan",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 69,
+  "id": "myreadingmanga_es",
+  "nombre": "MyReadingManga (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 70,
+  "id": "namicomi_es",
+  "nombre": "NamiComi (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 71,
+  "id": "nartag_es",
+  "nombre": "Rncalation",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 72,
+  "id": "neomanga_es",
+  "nombre": "NeoManga",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 73,
+  "id": "nexusscanlation_es",
+  "nombre": "NexusScanlation",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 74,
+  "id": "olympusscanlation_es",
+  "nombre": "Olympus Scanlation",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 75,
+  "id": "onepiecefans_es",
+  "nombre": "One Piece Fans (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 76,
+  "id": "onfmangas_es",
+  "nombre": "ONF MANGAS",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 77,
+  "id": "onisaga_es",
+  "nombre": "OniSaga (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 78,
+  "id": "orckumangas_es",
+  "nombre": "Orcku Mangas",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 79,
+  "id": "pandachaika_es",
+  "nombre": "PandaChaika (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 80,
+  "id": "platinumlilyscan_es",
+  "nombre": "Platinum Lily Scan",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 81,
+  "id": "plottwistnofansub_es",
+  "nombre": "Plot Twist No Fansub",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 82,
+  "id": "ragnascans_es",
+  "nombre": "Ragna Scans",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 83,
+  "id": "ravenmanga_es",
+  "nombre": "RavenManga",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 84,
+  "id": "shadowmanga_es",
+  "nombre": "Shadow Manga",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 85,
+  "id": "simplyhentai_es",
+  "nombre": "Simply Hentai (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 86,
+  "id": "submanhwa_es",
+  "nombre": "Submanhwa",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 87,
+  "id": "tenkaiscan_es",
+  "nombre": "Falco Scan",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 88,
+  "id": "thelibraryofohara_es",
+  "nombre": "The Library of Ohara (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 89,
+  "id": "tumanhwasclub_es",
+  "nombre": "ManhwasMe",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 90,
+  "id": "vinnieveritas_es",
+  "nombre": "Vinnie Veritas - CCC (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 91,
+  "id": "webcomics_es",
+  "nombre": "Webcomics (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 92,
+  "id": "xkcd_es",
+  "nombre": "xkcd (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 93,
+  "id": "yellownote_es",
+  "nombre": "小黄书 (es",
+  "motor": "custom",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 94,
+  "id": "yupmanga_es",
+  "nombre": "Yupmanga",
+  "motor": "custom",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 95,
+  "id": "zonatmoto_es",
+  "nombre": "Zonatmo.to (unoriginal",
+  "motor": "custom",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 98,
+  "id": "lolivault_es",
+  "nombre": "Lolivault",
+  "motor": "foolslide",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 99,
+  "id": "menudofansub_es",
+  "nombre": "Menudo-Fansub",
+  "motor": "foolslide",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 102,
+  "id": "hentaienvy_es",
+  "nombre": "HentaiEnvy (es",
+  "motor": "galleryadults",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 103,
+  "id": "hentaiera_es",
+  "nombre": "HentaiEra (es",
+  "motor": "galleryadults",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 104,
+  "id": "hentaizap_es",
+  "nombre": "HentaiZap (es",
+  "motor": "galleryadults",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 105,
+  "id": "imhentai_es",
+  "nombre": "IMHentai (es",
+  "motor": "galleryadults",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 108,
+  "id": "hentaihand_es",
+  "nombre": "HentaiHand (es",
+  "motor": "hentaihand",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 111,
+  "id": "eternalmangas_es",
+  "nombre": "EternalMangas",
+  "motor": "iken",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 114,
+  "id": "apollcomics_es",
+  "nombre": "ApollComics",
+  "motor": "madara",
+  "ok": true,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 115,
+  "id": "barmanga_es",
+  "nombre": "BarManga",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 116,
+  "id": "begatranslation_es",
+  "nombre": "Bega Translation",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 117,
+  "id": "bibliopanda_es",
+  "nombre": "Biblio Panda",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 118,
+  "id": "catharsisworld_es",
+  "nombre": "Catharsis World",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 119,
+  "id": "codexzero_es",
+  "nombre": "Codex Zero",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 120,
+  "id": "doujinshell_es",
+  "nombre": "DoujinsHell",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 121,
+  "id": "dragontranslationorg_es",
+  "nombre": "DragonTranslation.org",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 122,
+  "id": "emperorscan_es",
+  "nombre": "Emperor Scan",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 123,
+  "id": "esmi2manga_es",
+  "nombre": "Es.Mi2Manga",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 124,
+  "id": "gremorymangas_es",
+  "nombre": "Gremory Mangas",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 125,
+  "id": "hadesnofansub_es",
+  "nombre": "Hades no Fansub",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 126,
+  "id": "haremdekira_es",
+  "nombre": "Harem de Kira",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 127,
+  "id": "houseofotakus_es",
+  "nombre": "House Of Otakus",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 128,
+  "id": "infrafandub_es",
+  "nombre": "InfraFandub",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 129,
+  "id": "inventariooculto_es",
+  "nombre": "Inventario Oculto",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 130,
+  "id": "kazokuden_es",
+  "nombre": "Kazoku Den",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 131,
+  "id": "lectormangalat_es",
+  "nombre": "LectorManga.lat",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 132,
+  "id": "mangacrab_es",
+  "nombre": "Manga Crab",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 133,
+  "id": "mangaromance_es",
+  "nombre": "Manga Romance",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 134,
+  "id": "mangasnosekai_es",
+  "nombre": "Mangas No Sekai",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 135,
+  "id": "manhuaonline_es",
+  "nombre": "SamuraiScan",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 136,
+  "id": "manhuarm_es",
+  "nombre": "Manhuarm (es",
+  "motor": "madara",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 137,
+  "id": "manhwalatino_es",
+  "nombre": "Manhwa-Latino",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 138,
+  "id": "manhwaonline_es",
+  "nombre": "ManhwaOnline",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 139,
+  "id": "marmota_es",
+  "nombre": "Marmota",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 140,
+  "id": "mhscans_es",
+  "nombre": "MHScans",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 141,
+  "id": "monopolyscan_es",
+  "nombre": "Monopoly Scan",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 142,
+  "id": "mundomanhwa_es",
+  "nombre": "Mundo Manhwa",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 143,
+  "id": "noblessetranslations_es",
+  "nombre": "Noblesse Translations",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 144,
+  "id": "ragnarokscanlation_es",
+  "nombre": "Ragnarok Scanlation",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 145,
+  "id": "richtoscan_es",
+  "nombre": "RichtoScan",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 146,
+  "id": "seraphicdeviltry_es",
+  "nombre": "SeraphicDeviltry (es",
+  "motor": "madara",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 147,
+  "id": "swordofoblivion_es",
+  "nombre": "Sword Of Oblivion",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 148,
+  "id": "taurusfansub_es",
+  "nombre": "Taurus Fansub",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 149,
+  "id": "templescanesp_es",
+  "nombre": "Temple Scan (es",
+  "motor": "madara",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 150,
+  "id": "toones_es",
+  "nombre": "Toon-es",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 151,
+  "id": "topcomicporno_es",
+  "nombre": "TopComicPorno",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 152,
+  "id": "topcomicpornonet_es",
+  "nombre": "TopComicPorno.net",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 153,
+  "id": "vermanhwas_es",
+  "nombre": "Ver Manhwas",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 154,
+  "id": "yurionline_es",
+  "nombre": "Yuri-Online",
+  "motor": "madara",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 157,
+  "id": "mangadex_es",
+  "nombre": "MangaDex (es",
+  "motor": "mangadex",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 160,
+  "id": "asialotus_es",
+  "nombre": "Asia Lotus",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 161,
+  "id": "bloomscans_es",
+  "nombre": "Bloom Scans",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 162,
+  "id": "bokugentranslation_es",
+  "nombre": "BokugenTranslation",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 163,
+  "id": "bymichiscan_es",
+  "nombre": "Bymichi Scan",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 164,
+  "id": "celestialmoon_es",
+  "nombre": "Celestial Moon",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 165,
+  "id": "cerberusseries_es",
+  "nombre": "Cerberus Series",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 166,
+  "id": "lunapieces_es",
+  "nombre": "Luna Pieces",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 167,
+  "id": "mangaesp_es",
+  "nombre": "MangaEsp",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 168,
+  "id": "mangashiina_es",
+  "nombre": "Manga Mukai",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 169,
+  "id": "mangatv_es",
+  "nombre": "Manga  TV",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 170,
+  "id": "miauscan_es",
+  "nombre": "Miau Scan (es",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": ")",
+  "ya_revisado": false
+ },
+ {
+  "linea": 171,
+  "id": "nekoscans_es",
+  "nombre": "NekoScans",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 172,
+  "id": "novamanhwa_es",
+  "nombre": "Nova Manhwas",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 173,
+  "id": "skymangas_es",
+  "nombre": "SkyMangas",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 174,
+  "id": "uchuujinprojects_es",
+  "nombre": "Uchuujin Projects",
+  "motor": "mangathemesia",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 177,
+  "id": "mangasin_es",
+  "nombre": "Mangas.in",
+  "motor": "mmrcms",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 180,
+  "id": "lectorasteria_es",
+  "nombre": "Lector Asteria",
+  "motor": "moonlighttl",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 181,
+  "id": "traduccionesmoonlight_es",
+  "nombre": "Traducciones Moonlight",
+  "motor": "moonlighttl",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 184,
+  "id": "colorcitoscan_es",
+  "nombre": "Colorcito Scan",
+  "motor": "spicytheme",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 185,
+  "id": "spicyscan_es",
+  "nombre": "Spicy Scan",
+  "motor": "spicytheme",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 188,
+  "id": "chochox_es",
+  "nombre": "ChoChoX",
+  "motor": "vercomics",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 189,
+  "id": "vcp_es",
+  "nombre": "VCP",
+  "motor": "vercomics",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 190,
+  "id": "vmp_es",
+  "nombre": "VMP",
+  "motor": "vercomics",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 193,
+  "id": "darkroomfansub_es",
+  "nombre": "Dark Room Fansub",
+  "motor": "zeistmanga",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 194,
+  "id": "datgarscanlation_es",
+  "nombre": "Dat-Gar Scan",
+  "motor": "zeistmanga",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 195,
+  "id": "gistamishouse_es",
+  "nombre": "Gistamis House",
+  "motor": "zeistmanga",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ },
+ {
+  "linea": 196,
+  "id": "sapphirescan_es",
+  "nombre": "SapphireScan",
+  "motor": "zeistmanga",
+  "ok": false,
+  "nota": "",
+  "ya_revisado": false
+ }
+]

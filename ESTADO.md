@@ -1,5 +1,56 @@
 # Estado de la sesion — reparacion de bundles (422 al instalar)
 
+## FASE 2 — VALIDACION FUNCIONAL (en curso)
+
+Origen: `validacion_humana2.txt`. El usuario valido a mano hasta **`manta_es`**
+(linea 67) y pidio: (1) corregir lo listado para re-validar, (2) revisar lo que
+viene DESPUES de manta, y (3) **comprobar antes si la URL responde**, porque
+algunas fuentes pueden estar caidas y eso no seria un bug del bundle.
+
+Inventario (`python tools/parse_validacion.py` -> `.validacion.json`):
+- 149 entradas totales
+- 44 ya revisadas (hasta manta_es incl.), de las cuales **31 con error anotado**
+- **105 pendientes** (despues de manta_es)
+
+### HALLAZGO CRITICO: 36 fuentes con `base_url` VACIO
+`python tools/audit_base_url.py` -> `.audit_base_url.json`:
+- 1912 revisadas, 1876 con base_url correcto
+- **36 con `base_url` vacio** (entre ellas `manta_es`, `emperorscan_es`,
+  `hentaienvy_es`, `mangashiina_es`, `luscious_es`, `ravenmanga_es`)
+- `manta_es` ademas tiene `api_url = '://'`
+
+Esto explica los fallos funcionales: **pasan el contrato pero no pueden pedir
+nada**. `verify_bundles.py` solo comprueba que los atributos existan, no que
+tengan valor. Es un fallo DISTINTO al 422 que ya arreglamos.
+
+Causa raiz (misma familia que la purga): el manual empieza con
+```python
+try:
+    from .base import (FuenteBaseSource, _Node, _TreeParser)
+except ImportError:
+    pass
+class FuenteBaseSource:   # <-- stub que pisa el import
+    pass
+```
+y el bundle acaba llevando los metadatos GENERICOS del motor en vez de los de la
+fuente. En `bundles/manta_es.py` se ve literalmente:
+`name="madara"`, `display_name="Madara"`, `base_url=""`, `language=""`.
+Es decir: los metadatos reales (URL, idioma, nombre) **nunca se inyectaron**.
+
+Donde se extraen los metadatos en el generador: `generate.py:596-627`
+(`base_url` se saca por regex de `baseUrl = "..."` o `custom("...")` del build
+Kotlin) y `generate.py:790`. Si no los encuentra, `return None` (linea 606/800).
+
+Herramientas nuevas:
+- `tools/parse_validacion.py` — parsea validacion_humana2.txt a `.validacion.json`
+- `tools/audit_base_url.py` — detecta base_url vacio/corrupto en todos los bundles
+- `tools/probe_urls.py` — sondea si los sitios responden (VIVO / BLOQUEADO_CF /
+  INALCANZABLE...). Requiere que el bundle exponga base_url, asi que hay que
+  arreglar el base_url ANTES de poder sondear.
+
+SIGUIENTE PASO: arreglar la inyeccion de metadatos para esas 36, regenerar,
+y solo entonces sondear URLs y validar funcionalmente.
+
 ## CORRECCION IMPORTANTE — lo verificado era SOLO LOCAL
 
 La app instala desde **`raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/`**,
