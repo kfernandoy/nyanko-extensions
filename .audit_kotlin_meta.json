@@ -1,0 +1,46 @@
+{
+ "gradle_interpolado": [
+  "manta_es -> https://manta.net/$it"
+ ],
+ "gradle_literal": [
+  "akaya_es -> https://akaya.io",
+  "dragontranslationorg_es -> https://dragontranslation.org",
+  "emperorscan_es -> https://imperiomanhua.com",
+  "esmi2manga_es -> https://es.mi2manga.com",
+  "haremdekira_es -> https://kiraproject.lat",
+  "hdoujin_es -> https://hdoujin.org",
+  "hentaienvy_es -> https://hentaienvy.com",
+  "hentaizap_es -> https://hentaizap.com",
+  "lectormangalat_es -> https://lectormangass.com",
+  "lectormonline_es -> https://mangolibreria.com",
+  "mangashiina_es -> https://mangamukai.com",
+  "manhwaweb_es -> https://manhwaweb.com",
+  "mantrazscan_es -> https://manhwascanx.lat",
+  "myreadingmanga_es -> https://myreadingmanga.info",
+  "namicomi_es -> https://namicomi.com",
+  "nartag_es -> https://rncalation.online",
+  "neomanga_es -> https://www.neomanga.online",
+  "onepiecefans_es -> https://one-piece-fans2.com",
+  "onfmangas_es -> https://onfmangas.com",
+  "onisaga_es -> https://onisaga.com",
+  "orckumangas_es -> https://orckumangas.com",
+  "pandachaika_es -> https://panda.chaika.moe",
+  "platinumlilyscan_es -> https://platinumlilyscan.com",
+  "plottwistnofansub_es -> https://plotnofansub.com",
+  "ragnascans_es -> https://lector.ragnascan.xyz",
+  "ravenmanga_es -> https://raventard.xyz",
+  "shadowmanga_es -> https://shademanga.com",
+  "simplyhentai_es -> https://www.simply-hentai.com",
+  "tenkaiscan_es -> https://falcoscan.net",
+  "traduccionesmoonlight_es -> https://traduccionesmoonlight.com",
+  "tumanhwasclub_es -> https://manhwas.me",
+  "xkcd_es -> https://xkcd.com",
+  "zonatmoto_es -> https://zonatmo.to"
+ ],
+ "kt_literal": [],
+ "sin_baseurl": [
+  "olympusscanlation_es",
+  "yellownote_es"
+ ],
+ "modulo_no_encontrado": []
+}

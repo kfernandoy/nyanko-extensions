@@ -48,6 +48,58 @@ Herramientas nuevas:
   INALCANZABLE...). Requiere que el bundle exponga base_url, asi que hay que
   arreglar el base_url ANTES de poder sondear.
 
+### CAUSA RAIZ EXACTA (aislada, con prueba)
+Fuente Kotlin: `E:\2023-09-04\anitracker\extensions-source-main` (snapshot de
+keiyoushi/extensions-source, **NO es un repo git**: no tiene `.git`, asi que no
+se puede `git pull`; esta congelado).
+
+keiyoushi migro los metadatos al bloque `keiyoushi { }` de `build.gradle.kts` y
+usa bucles con interpolacion. Ejemplo real, `src/all/manta/build.gradle.kts`:
+```kotlin
+keiyoushi {
+    name = "Manta Comics"
+    listOf("en", "es").forEach {
+        source {
+            name = "Manta"
+            lang = it                        // <-- VARIABLE, sin comillas
+            baseUrl = "https://manta.net/$it" // <-- INTERPOLADO
+        }
+    }
+}
+```
+`generate.py:596-607` extrae asi:
+- `base_url` -> regex SI casa, devuelve `https://manta.net/$it` (con `$it` sin resolver)
+- `display_name` -> SI casa, `Manta`
+- `language` -> **NO casa**, porque el regex es `lang\s*=\s*"([^"]+)"` y aqui es `lang = it`
+
+Y en la linea 606:
+```python
+if not all((base_url, language, display_name)):
+    return None          # <-- descarta TODOS los metadatos
+```
+Al devolver `None` se pierde tambien el `base_url` que si se habia encontrado, y
+el bundle acaba heredando los metadatos genericos del motor
+(`name="madara"`, `base_url=""`). De ahi `base_url` vacio y `api_url = '://'`.
+
+Clasificacion de las 36 (`tools/audit_kotlin_meta.py` -> `.audit_kotlin_meta.json`):
+- **34 gradle_interpolado** (mismo patron que Manta: bucle + `$it`)
+- 1 gradle_literal, 1 sin_baseurl
+
+ARREGLO PENDIENTE (2 partes, ninguna hecha aun):
+1. Resolver el bucle: `listOf("en","es").forEach { ... $it ... }` genera UNA
+   fuente por idioma. Hay que expandir el bloque por cada valor de la lista,
+   sustituyendo `it` por el idioma tanto en `lang` como en la interpolacion de
+   `baseUrl`. Nota: el id se compone en `generate.py:624` como
+   `f"{_slug(module.name)}_{_slug(language)}"`, asi que el idioma es esencial.
+2. No perder metadatos parciales: revisar el `return None` de la linea 606.
+
+VERIFICAR DESPUES: `python tools/audit_base_url.py` debe bajar de 36 a ~0, y
+`python tools/probe_urls.py` ya podra sondear (necesita base_url para funcionar).
+
+### IDEA DEL USUARIO (pendiente, para despues)
+Montar un **MCP** que permita testear las fuentes directamente desde la app, en
+vez de validarlas a mano. Encaja con `tools/smoke.py`, que ya golpea la red.
+
 SIGUIENTE PASO: arreglar la inyeccion de metadatos para esas 36, regenerar,
 y solo entonces sondear URLs y validar funcionalmente.
 
