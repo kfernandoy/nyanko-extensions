@@ -10,6 +10,64 @@ contrato real y sin introducir regresiones.
 - Restantes: `__init__` (no es fuente, falso positivo), `hentaienvy_es`,
   `hentaizap_es`, `mangashiina_es`, `traduccionesmoonlight_es`.
 
+## EN CURSO — los 4 ultimos (diagnostico COMPLETO, fix a medias)
+
+### Causa raiz (confirmada con tools/debug_refresh2.py)
+Los 4 manuales empiezan con:
+```python
+try:
+    from .madara import (MadaraSource, _Node, _TreeParser)
+except ImportError:
+    pass
+
+class MadaraSource:   # <-- STUB que pisa el import SIEMPRE
+    pass
+```
+`_refrescar_motor_en_manual(manual, engine)` (generate.py:138) debe sustituir ese
+prefijo por el motor real. Falla asi:
+
+| extension | engine | refresco | por que |
+|---|---|---|---|
+| hentaienvy_es | galleryadults | **NO** (5517B->5517B, queda stub) | el manual importa `MadaraSource` pero el motor inyectado es `base+galleryadults`, que NO define esa clase -> no encuentra donde cortar y devuelve el manual intacto |
+| hentaizap_es | galleryadults | **NO** | idem |
+| traduccionesmoonlight_es | moonlighttl | **NO** (6470B->6470B) | idem, motor `base+moonlighttl` |
+| mangashiina_es | mangathemesia | **SI** (5876B->56113B, sin stubs) | el refresco funciona, pero el bundle sigue saliendo de 10971B -> el problema esta en la rama del generador, no en el refresco |
+
+Luego `generate.py:294-296` renombra `MadaraSource`->`FuenteBaseSource`, y por eso
+el bundle acaba con `class FuenteBaseSource: pass` (stub vacio) en vez del motor.
+De ahi los 2 sintomas: "Source missing name" y
+"object.__init__() takes exactly one argument" (`super().__init__(fetcher)` acaba
+en `object.__init__`).
+
+### Rutas del generador (ya localizadas)
+- `generate.py:3853-3854` mangathemesia -> `_manual_bundle(manual_path, mangathemesia_engine)`
+  (NOTA: pasa solo el tema, sin `base_engine`; sospechoso)
+- `generate.py:3883-3886` galleryadults -> `_manual_bundle(manual_path, base_engine, galleryadults_engine)`
+- `generate.py:4251` moonlighttl -> `_moonlighttl_bundle(...)`
+- `_manual_bundle(path, engine="", tema="")` esta en `generate.py:282`
+
+### Estado del fix (INCOMPLETO — ojo)
+Ya edite `generate.py` (~linea 297) anadiendo la llamada:
+```python
+    if engine:
+        source = _inyectar_motor_si_quedo_stub(source, engine)
+```
+**PERO LA FUNCION `_inyectar_motor_si_quedo_stub` TODAVIA NO EXISTE.** Hay que
+escribirla o `generate.py` petara con NameError. Debe: detectar
+`class X:\n    pass` que sea stub de una clase importada del motor, y si el motor
+inyectado no la define, anteponer el motor y reenganchar la herencia a la clase
+raiz que el motor SI define (p.ej. `GalleryAdultsSource`, `MoonlightTLSource`).
+Alternativa mas simple: en las 3 ramas pasar el motor correcto que si contiene la
+clase raiz que el manual espera.
+
+Verificar despues con:
+```powershell
+python tools/debug_refresh2.py hentaienvy_es mangashiina_es traduccionesmoonlight_es
+python tools/generate.py
+python tools/verify_bundles.py
+```
+Y **volver a firmar** al final (ver seccion de firma).
+
 ## Comandos clave
 ```powershell
 python tools/generate.py                 # regenera bundles/ (avisa de firma pendiente)

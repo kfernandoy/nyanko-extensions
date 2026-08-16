@@ -294,6 +294,8 @@ def _manual_bundle(path: Path, engine: str = "", tema: str = "") -> bytes:
     if engine and "class FuenteBaseSource" in engine:
         replacement = "MadaraDetailsSource" if "class MadaraDetailsSource" in engine else "FuenteBaseSource"
         source = re.sub(r"\bMadaraSource\b", replacement, source)
+    if engine:
+        source = _inyectar_motor_si_quedo_stub(source, engine)
     source = source.replace(
         "r'<meta[^>]+name=[\"']csrf-token[\"'][^>]+content=[\"']([^\"']+)[\"']'",
         "r\"\"\"<meta[^>]+name=[\"']csrf-token[\"'][^>]+content=[\"']([^\"']+)[\"']\"\"\"",
