@@ -5,6 +5,58 @@ Los bundles publicados fallaban al instalarse (HTTP 422: la fuente no cumple el
 contrato `Source` v4). Se reparan las causas raiz, comprobando siempre contra el
 contrato real y sin introducir regresiones.
 
+## TESTING — que cobertura hay realmente (investigado, PENDIENTE de ejecutar)
+
+IMPORTANTE: `verify_bundles.py` **NO prueba que las fuentes funcionen**. Solo
+comprueba conformidad con el contrato Source v4 (que existan `name`, `pages`,
+`search`, `chapters`...). Que 65 bundles pasen NO significa que devuelvan datos.
+
+Recursos de prueba encontrados:
+- **`tests/`** — 90 ficheros `test_*.py`, con `unittest.IsolatedAsyncioTestCase`.
+  Son **offline**: usan un `Fetcher` falso con respuestas HTML fijas (ver
+  `tests/test_akuma.py`). Cada test hace
+  `exec(_manual_bundle(engines/manual/X.py))` y coge `SOURCE`, o sea que
+  **ejercitan la misma ruta del generador que hemos tocado**: son la validacion
+  natural de los cambios. Comprueban paridad con el comportamiento Kotlin
+  (p.ej. `test_csrf_cursor_language_and_image_page_match_kotlin`).
+  Los 84 que "mencionan red" es solo por el mock, no salen a internet.
+- **`tools/smoke.py`** — prueba REAL contra la red.
+  `--lang --only --concurrency --timeout --samples-per-engine --out`.
+  Complementario: valida que los sitios responden de verdad.
+- **`tools/audit_contract.py`, `validate.py`, `auto_validator.py`,
+  `measure_fidelity.py`, `resumen_smoke.py`** — utilidades adicionales sin revisar.
+- No hay CI (`.github/workflows/` vacio).
+
+BLOQUEO 1: **pytest NO esta instalado** en
+`C:\Users\kev\AppData\Local\Programs\Python\Python314\python.exe`.
+Los tests son `unittest`, asi que en principio no hace falta pytest.
+
+BLOQUEO 2: `python -m unittest discover -s tests -t .` **falla** con
+`ImportError: Start directory is not importable`, porque **NO existe
+`tests/__init__.py`** (comprobado). Tampoco hay `pytest.ini`, `pyproject.toml`,
+`setup.cfg` ni `tests/conftest.py`. El repo no declara como se ejecutan.
+
+Los tests hacen `from tools.generate import _manual_bundle`, asi que necesitan
+la raiz del repo en `sys.path`. Opciones para desbloquear (ninguna probada aun):
+```powershell
+# A) discovery por patron de fichero, sin necesidad de paquete
+python -m unittest discover -s . -p "test_*.py" -t .
+
+# B) instalar pytest, que no exige __init__.py y añade rootdir al path
+python -m pip install pytest ; python -m pytest tests -q
+
+# C) ejecutar uno suelto por ruta
+python -m unittest tests/test_akuma.py
+```
+NO crear `tests/__init__.py` sin preguntar: cambiaria la estructura del repo.
+
+SIGUIENTE PASO SUGERIDO: correr la suite completa para confirmar que los cambios
+en `generate.py` (`_inyectar_motor_si_quedo_stub`, `_manual_cumple_contrato`) y
+los manuales restaurados no rompieron el comportamiento esperado. Priorizar los
+tests de las fuentes tocadas: akuma, comicfury, comikey, emperorscan, esmi2manga,
+hentaienvy, hentaizap, mangashiina, traduccionesmoonlight, luscious, hentai3,
+honeytoon, mangapluscreators.
+
 ## Resultado actual — TERMINADO
 - **HEAD original: 66 fallos → ahora 1. 65 arreglados, 0 regresiones.**
 - El unico "fallo" restante es `__init__`, que **NO es una fuente**:
