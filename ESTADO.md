@@ -1,6 +1,35 @@
 # Estado de la sesion — reparacion de bundles (422 al instalar)
 
-## ¿SE PUEDE YA INSTALAR Y ACTUALIZAR FUENTES? — comprobado
+## CORRECCION IMPORTANTE — lo verificado era SOLO LOCAL
+
+La app instala desde **`raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/`**,
+NO desde el arbol local. Toda la verificacion de abajo se hizo en local, asi que
+NO describia lo que reciben los usuarios.
+
+Comprobado contra el RAW publicado con la misma prueba que usa la app
+(`tools/check_like_app.py`, que ejecuta el bundle e instancia `SOURCE`):
+
+| | OK | FALLAN |
+|---|---|---|
+| RAW de GitHub (lo que ven los usuarios) | 0 | **14 de 14** |
+| `bundles/` local (tras los arreglos) | **14** | 0 |
+
+Los 14 fallos del RAW son exactamente los sintomas originales:
+`AkumaSource() takes no arguments`, `Source missing name`,
+`object.__init__() takes exactly one argument`, `NameError: ComicFurySource`.
+
+Causa: **13 commits sin empujar** (`git status -sb` -> `main...origin/main [ahead 13]`).
+Los arreglos existen, funcionan y estan firmados, pero **no estan publicados**.
+
+Herramientas nuevas para no repetir el error:
+- `tools/cmp_raw_local.py` — compara bundle publicado vs local (tamaño, `pages`,
+  stub vacio, `SOURCE`).
+- `tools/check_like_app.py` — valida como la app: `python tools/check_like_app.py <dir> [nombres]`.
+  Sirve igual para `bundles/` que para una carpeta descargada del RAW.
+
+REGLA: **verificar siempre contra el RAW despues de empujar**, no solo en local.
+
+## ¿SE PUEDE YA INSTALAR Y ACTUALIZAR FUENTES? — comprobado SOLO EN LOCAL
 
 Precondiciones del lado repositorio, todas VERDES:
 - **Firma**: `python tools/sign_index.py verify` -> "Firma valida". Y como se
