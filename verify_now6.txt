@@ -1,19 +1,11 @@
 ﻿[ok] contrato real cargado desde E:\2023-09-04\anitracker\Nyanko\apps\backend
 
-total 1916 | ok 1899 | fallan 17
+total 1916 | ok 1907 | fallan 9
 
 == SIN SOURCE/build_source: 1 ==
   __init__: no declara SOURCE ni build_source
 
-== INCUMPLEN CONTRATO (-> 422): 16 ==
-  akuma_es: La fuente no cumple el contrato Source
-  anzmanga_es: La fuente no cumple el contrato Source
-  capibaratraductor_es: La fuente no cumple el contrato Source
-  catmanhwas_es: La fuente no cumple el contrato Source
-  codearc_es: La fuente no cumple el contrato Source
-  comicklive_es: La fuente no cumple el contrato Source
-  comikey_es: La fuente no cumple el contrato Source
-  doujinhentai_es: La fuente no cumple el contrato Source
+== INCUMPLEN CONTRATO (-> 422): 8 ==
   hentai3_es: La fuente no cumple el contrato Source
   hentaienvy_es: No se pudo cargar la fuente: Source missing name
   hentaizap_es: No se pudo cargar la fuente: Source missing name

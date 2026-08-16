@@ -200,13 +200,14 @@
     },
     {
       "id": "akuma_es",
-      "name": "Akuma",
+      "name": "Akuma (es)",
       "version": "0.10.0",
-      "sha256": "bcb5f5ac016db56d59c0b3be7bc519b39df5cde825c8126b6f47e0d0938270e2",
+      "sha256": "c4a90b46cb6b37bd409b5d537674818b9bc4779fc77449cf33d15eb3950ea886",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/akuma_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/akuma_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "akuma_et",
@@ -597,11 +598,12 @@
       "id": "anzmanga_es",
       "name": "AnzManga",
       "version": "0.1.0",
-      "sha256": "7228b29ea5bec2a37b6b9db07e065ac586e3947eca959ae0d0b301f18018edca",
+      "sha256": "d927c2aa7775abe93df7773bb961e89836a30e590780b8d98039187060697aef",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/anzmanga_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/anzmanga_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "apcomics_en",
@@ -1564,11 +1566,12 @@
       "id": "capibaratraductor_es",
       "name": "CapibaraTraductor",
       "version": "0.1.0",
-      "sha256": "560f9b9e7afde695a2c6504b618231b856c8fcab6aad4e9f3a6454c7419d914d",
+      "sha256": "c04567b23db20146cdd912d63cb4ce9138e630f15d473a979d7bc866bd7575bd",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/capibaratraductor_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/capibaratraductor_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "caprazmanga_tr",
@@ -1618,11 +1621,12 @@
       "id": "catmanhwas_es",
       "name": "Catoons",
       "version": "0.53.0",
-      "sha256": "bf0eba2cd8fae620c2e650ea33c3c4debb8e918e1fb123dc26454f324e35efdc",
+      "sha256": "cee35d7f28ab5792cd9cf91d9d9baca53126793fce945e7260b8217f88111549",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/catmanhwas_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/catmanhwas_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "catzaa_th",
@@ -1771,11 +1775,12 @@
       "id": "codearc_es",
       "name": "Code Arc Mangas",
       "version": "0.3.0",
-      "sha256": "6a2d8c6e9dcdd643e61676fb2b324b12daf636e4a9bc2ff03f1dd8ab0c1c5896",
+      "sha256": "1965cf040a5b3220eb7e293ab212050326c51558707ab67dee7322819564e87d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/codearc_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/codearc_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "codexzero_es",
@@ -2164,13 +2169,14 @@
     },
     {
       "id": "comicklive_es",
-      "name": "Comick (Unoriginal)",
+      "name": "Comick (Unoriginal) (es)",
       "version": "0.5.0",
-      "sha256": "72ab162aa74e89ac724a2028c369fa7a1e55970a99440308dd185c782a04f2f2",
+      "sha256": "230dbdd3c1f755a2cadef0495c2638598a49fa3ba46835250590be8d6af9d0fa",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicklive_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/comicklive_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "comicklive_fr",
@@ -2438,13 +2444,14 @@
     },
     {
       "id": "comicskingdom_es",
-      "name": "Comics Kingdom",
+      "name": "Comics Kingdom (es)",
       "version": "0.3.0",
-      "sha256": "0ff9f369b5d41499037f524c66894fd658253eb11a58c1b08b887d678b306343",
+      "sha256": "a2ffaefb5ace290bc3450514bc46791e95c17feff7d03b0c07e6307b98a9db40",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comicskingdom_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/comicskingdom_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "comicsland_en",
@@ -2503,13 +2510,14 @@
     },
     {
       "id": "comikey_es",
-      "name": "Comikey",
+      "name": "Comikey (es)",
       "version": "0.8.0",
-      "sha256": "9141a9cd064949db3446674a045a801f885d496b95ce8978b866ecd6b4568911",
+      "sha256": "d62feeec10a0786866a503fce1c85d344ec9fcf15f83870bea1c0de9faf7abca",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/comikey_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/comikey_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "comikey_id",
@@ -3219,11 +3227,12 @@
       "id": "doujinhentai_es",
       "name": "DoujinHentai",
       "version": "0.50.0",
-      "sha256": "1509ba2843205b2be6f285eb36122ab37bc50887575cacce6cca9e79fbfdfbea",
+      "sha256": "0380bc626e82e9288728970b8204a2a157f444208ab7ff49f88c6d1ff0277d1d",
       "bundle_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/bundles/doujinhentai_es.py",
       "icon_url": "https://raw.githubusercontent.com/kfernandoy/nyanko-extensions/main/icons/doujinhentai_es.png",
       "author": "Keiyoushi contributors",
-      "engine": "custom"
+      "engine": "custom",
+      "language": "es"
     },
     {
       "id": "doujinio_en",
