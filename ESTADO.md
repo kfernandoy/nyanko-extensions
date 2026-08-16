@@ -60,14 +60,29 @@ Ultimo commit sano previo a la purga: **`2e0fdcb`**.
   Resuelve herencia dentro del modulo; solo toca los realmente rotos.
 - `fix_comicfury_es.py` — reconstruye `comicfury_es` desde `comicfury_en`.
 
-## PENDIENTE PARA EL USUARIO (acordado)
-`index.json` cambio (sha256 de los bundles) y su firma Ed25519 ya no valida. No
-hay clave privada en el repo ni CI que la inyecte. **El usuario firmara al final**:
-```powershell
-python tools/sign_index.py sign --signing-key <clave.pem>
-python tools/sign_index.py verify
+## Firma del indice — RESUELTO
+La clave privada original estaba en el equipo:
 ```
-`generate.py` avisa de esto en cada ejecucion; no es un fallo de generacion.
+C:\Users\kev\.config\nyanko\extension-repository-signing-key.pem
+```
+Su clave publica derivada coincide **exactamente** con `index.json.pub`
+(`fnZX/U9lsUi0amQfL1fRKJ1uBMOwWAPYo0K9odjU/sE=`), asi que NO es una clave nueva:
+`index.json.pub` no cambia y ningun usuario tiene que volver a confiar en el
+repo. Importante porque el backend (v16, tabla `trusted_repo_keys`) exige
+aceptacion explicita de la clave y no la deriva solo.
+
+Comando correcto (ojo: es `--private-key`, no `--signing-key`):
+```powershell
+python tools/sign_index.py sign --private-key "C:\Users\kev\.config\nyanko\extension-repository-signing-key.pem"
+python tools/sign_index.py verify   # -> "Firma valida"
+```
+Estado: **firmado y verificado**. Solo cambia `index.json.sig`.
+
+AVISO CONOCIDO: `generate.py` imprime al final "index.json cambio pero no se
+volvio a firmar" porque comprueba la firma ANTES de reescribir el indice. Si
+`sign_index.py verify` dice "Firma valida", el aviso es un falso positivo. Pero
+si `generate.py` llega a modificar los sha256, hay que volver a firmar DESPUES.
+Regla: **firmar siempre como ultimo paso, tras el ultimo `generate.py`**.
 
 ## Siguientes pasos
 Quedan 4 fuentes reales, en 2 grupos:
