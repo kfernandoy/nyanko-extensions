@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -1973,18 +1977,6 @@ class MadaraDetailsSource (MadaraDetailsSource ):
         return await self .fetcher .request (method ,url ,**kwargs )
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
-
 class MangasNoSekaiSource (MadaraDetailsSource ):
     async def browse (self ,kind :str ,page :int =1 )->list [SourceSeries ]:
         if kind not in {"popular","latest"}:
@@ -2153,6 +2145,8 @@ class MangasNoSekaiSource (MadaraDetailsSource ):
                 }
                 return found .group (2 ),fields 
         raise ValueError ("No se pudo obtener el endpoint de capítulos")
+
+
 class GeneratedMadaraSource (MangasNoSekaiSource ):
     name ='mangasnosekai_es'
     display_name ='Mangas No Sekai'
@@ -2171,6 +2165,7 @@ class GeneratedMadaraSource (MangasNoSekaiSource ):
     date_locale ='es'
     details_profile ='default'
     content_warning ='safe'
+
 
 SOURCE =GeneratedMadaraSource
 

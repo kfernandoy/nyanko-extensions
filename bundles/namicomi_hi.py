@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,6 +5247,9 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
+"""Adaptador de NamiComi: API propia con relaciones y capitulos con acceso."""
+
+
 _NAMICOMI_TAG_FILTERS =(
 ('content','Content',(
 ('drugs','Drugs'),
@@ -5327,6 +5334,8 @@ _NAMICOMI_TAG_FILTERS =(
 ('zombies','Zombies'),
 )),
 )
+
+
 _NAMICOMI_TAG_NAMES ={
 '4-koma':'4-Koma',
 'action':'Action',
@@ -5404,26 +5413,47 @@ _NAMICOMI_TAG_NAMES ={
 'zombies':'Zombies',
 }
 
+
 _NAMICOMI_API ="https://api.namicomi.com"
+
+
 _NAMICOMI_CDN ="https://uploads.namicomi.com"
+
+
 _NAMICOMI_LIMIT =20 
+
+
 _NAMICOMI_LOCK ="🔒"
+
+
 _NAMICOMI_EXT_LANGS ={
 "zh-Hans":"zh-hans","zh-Hant":"zh-hant","pt-BR":"pt-br","pt":"pt-pt","es":"es-es",
 }
+
+
 _NAMICOMI_INCLUDES =("cover_art","organization","tag","primary_tag","secondary_tag")
+
+
 _NAMICOMI_TAG_GROUPS =("content-warnings","format","genre","theme")
+
+
 _NAMICOMI_STATUSES =(
 ("ongoing","Ongoing"),("completed","Completed"),
 ("hiatus","Hiatus"),("cancelled","Cancelled"),
 )
+
+
 _NAMICOMI_RATINGS =(("safe","Safe"),("restricted","Restricted"),("mature","Mature"))
+
+
 _NAMICOMI_SORTS =(
 ("title","Alphabetic"),("chapterCount","Number of chapters"),
 ("followCount","Number of follows"),("reactions","Number of likes"),
 ("commentCount","Number of comments"),("publishedAt","Content created at"),
 ("views","Views"),("year","Year"),("rating","Rating"),
 )
+
+
 _NAMICOMI_LANG_NAMES ={
 "en":"English","ja":"Japanese","ko":"Korean","zh":"Chinese","es":"Spanish",
 "pt":"Portuguese","fr":"French","de":"German","it":"Italian","ru":"Russian",

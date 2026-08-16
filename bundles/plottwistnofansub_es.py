@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,17 +5247,6 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
 def _plot_image (node :_Node ,base :str )->str :
     for attribute in ("data-src","data-lazy-src"):
         value =node .attrs .get (attribute ,"").strip ()
@@ -5570,8 +5563,6 @@ class PlottwistnofansubSource (MadaraDetailsSource ):
             return datetime (int (found .group (3 )),month ,int (found .group (2 ))).isoformat ()
         except ValueError :
             return None 
-
-
 
 
 SOURCE =PlottwistnofansubSource

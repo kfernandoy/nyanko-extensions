@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,17 +5247,6 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
 def _nartag_last_child (node :_Node )->bool :
     parent =node .parent 
     if parent is None :
@@ -5531,8 +5524,6 @@ class NartagSource (MadaraDetailsSource ):
         if "ano"in cleaned :
             return (now -timedelta (days =amount *365 )).isoformat ()
         return None 
-
-
 
 
 SOURCE =NartagSource

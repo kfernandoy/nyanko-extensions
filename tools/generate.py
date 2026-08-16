@@ -114,22 +114,15 @@ def _refrescar_motor_en_manual(source: str, engine: str) -> str:
         # declaracion propia anterior a la subclase.
         return _refrescar_motor_en_manual_textual(source, engine)
 
-    root_class = next(
-        (
-            node.name
-            for node in engine_tree.body
-            if isinstance(node, ast.ClassDef) and node.name.endswith("Source")
-        ),
-        None,
-    )
-    frozen_engine = next(
-        (
-            node
-            for node in manual_tree.body
-            if isinstance(node, ast.ClassDef) and node.name == root_class
-        ),
-        None,
-    )
+    engine_classes = {
+        node.name
+        for node in engine_tree.body
+        if isinstance(node, ast.ClassDef) and node.name.endswith("Source")
+    }
+    frozen_engine = None
+    for node in manual_tree.body:
+        if isinstance(node, ast.ClassDef) and node.name in engine_classes:
+            frozen_engine = node
     if frozen_engine is None:
         return source
 
@@ -246,16 +239,6 @@ def _manual_bundle(path: Path, engine: str = "", tema: str = "") -> bytes:
     if engine and "class FuenteBaseSource" in engine:
         replacement = "MadaraDetailsSource" if "class MadaraDetailsSource" in engine else "FuenteBaseSource"
         source = re.sub(r"\bMadaraSource\b", replacement, source)
-    lines = source.splitlines(keepends=True)
-    for index in range(len(lines) - 1):
-        if lines[index].strip() == "try:" and lines[index + 1].lstrip().startswith("from ."):
-            end = index + 2
-            while end < len(lines) and lines[end].strip() != "except ImportError:":
-                end += 1
-            if end + 1 < len(lines) and lines[end + 1].strip() == "pass":
-                del lines[index : end + 2]
-            break
-    source = "".join(lines)
     source = source.replace(
         "r'<meta[^>]+name=[\"']csrf-token[\"'][^>]+content=[\"']([^\"']+)[\"']'",
         "r\"\"\"<meta[^>]+name=[\"']csrf-token[\"'][^>]+content=[\"']([^\"']+)[\"']\"\"\"",

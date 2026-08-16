@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,17 +5247,6 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
 def _neomanga_object (text :str ,key :str )->dict |None :
     """Busca el objeto JSON mas cercano que contenga `key`."""
     needle =f'"{key }"'
@@ -5473,8 +5466,6 @@ class NeomangaSource (MadaraDetailsSource ):
             return datetime .strptime (text ,"%Y-%m-%dT%H:%M:%S").isoformat ()
         except ValueError :
             return None 
-
-
 
 
 SOURCE =NeomangaSource

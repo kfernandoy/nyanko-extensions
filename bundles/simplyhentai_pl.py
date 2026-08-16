@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,7 +5247,12 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
+"""Adaptador de Simply Hentai: API v3 con el idioma como etiqueta."""
+
+
 _SIMPLYHENTAI_API ="https://api.simply-hentai.com/v3"
+
+
 _SIMPLYHENTAI_LANGS ={
 "en":"english","ja":"japanese","zh":"chinese","ko":"korean","es":"spanish",
 "ru":"russian","fr":"french","de":"german","it":"italian","pl":"polish",

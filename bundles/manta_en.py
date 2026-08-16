@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,9 +5247,15 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
+"""Adaptador de Manta Comics: API propia con textos por idioma."""
+
+
 _MANTA_COVERS =("1280x1840_480","1280x1840_720","1440x3072","1440x1440_480")
-# El sitio considera desbloqueado solo estos dos estados.
+
+
 _MANTA_UNLOCKED =(110 ,130 )
+
+
 _MANTA_CATEGORIES ={
 "es":(
 ("tagId=288","Nueva"),("tagId=289","Exclusiva"),("tagId=287","Finalizada"),

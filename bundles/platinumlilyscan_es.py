@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,17 +5247,6 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
 class PlatinumlilyscanSource (MadaraDetailsSource ):
     """El catalogo entero llega en /api/series y se ordena y filtra en el cliente."""
 
@@ -5417,8 +5410,6 @@ class PlatinumlilyscanSource (MadaraDetailsSource ):
             ).isoformat ()
         except ValueError :
             return None 
-
-
 
 
 SOURCE =PlatinumlilyscanSource

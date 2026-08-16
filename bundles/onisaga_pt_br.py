@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,34 +5247,67 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
+"""Adaptador de OniSaga: catalogo y capitulos detras de componentes Livewire."""
+
+
 _ONISAGA_READER_TOKEN =re .compile (r"""readerToken["']?\s*:\s*["']([^"']+)["']""")
+
+
 _ONISAGA_PAGE_ORDER =re .compile (r"""["']?order["']?\s*:\s*(\d+)""")
+
+
 _ONISAGA_CHAPTER_NUMBER =re .compile (r"Chapter\s+([\d.]+)")
+
+
 _ONISAGA_RELATIVE =re .compile (r"(\d+)\s+(minute|hour|day|week|month|year)s?\s+ago")
+
+
 _ONISAGA_ORIGIN =re .compile (r"(Japanese|Korean|Chinese|English)",re .I )
+
+
 _ONISAGA_YEAR =re .compile (r"^\d{4}$")
+
+
 _ONISAGA_RATING =re .compile (r"(\d)\.0(?=[/ ])")
+
+
 _ONISAGA_INTERPUNCT =re .compile (r"\s*·\s*")
+
+
 _ONISAGA_LANGS ={
 "en":"EN","fr":"FR","ja":"JA","pt-BR":"PT-BR",
 "pt":"PT","es-419":"ES-LA","es":"ES",
 }
+
+
 _ONISAGA_ALL_LANGS =("EN","FR","JA","PT-BR","PT","ES-LA","ES")
+
+
 _ONISAGA_TYPES =(
 ("","All"),("MANGA","Manga"),("MANHWA","Manhwa"),("MANHUA","Manhua"),
 ("NOVEL","Novel"),("ONE-SHOT","One-Shot"),("DOUJINSHI","Doujinshi"),
 )
+
+
 _ONISAGA_STATUSES =(
 ("","All"),("ongoing","Ongoing"),("completed","Completed"),
 ("hiatus","Hiatus"),("releasing","Releasing"),
 )
+
+
 _ONISAGA_SORTS =(
 ("created_at","Newest"),("view","Most Viewed"),("release_date","Release Date"),
 ("like_count","Top Rated (Likes)"),("title","Name A-Z"),
 ("vote_average","Top Rated (Score)"),("fan_favorites","Fan Favorites"),
 )
+
+
 _ONISAGA_MIN_CHAPTERS =(("","Any"),("10","10+"),("50","50+"),("100","100+"),("200","200+"))
+
+
 _ONISAGA_TYPE_BADGES =("manga","manhwa","manhua","shounen","seinen","shoujo","josei")
+
+
 _ONISAGA_GENRES =(
 ("1","Action"),("61","Adaptation"),("67","Adult"),("6","Adventure"),("84","Aliens"),
 ("43","Avant Garde"),("78","Award Winning"),("31","Boys Love"),("2","Comedy"),

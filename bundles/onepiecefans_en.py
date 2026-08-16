@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5241,6 +5245,9 @@ class HentaiModeSource (GenericSource ):
         while node is not None :
             yield node 
             node =node .parent 
+
+
+"""Adaptador de One Piece Fans: un JSON de fansubs y carpetas por idioma."""
 
 
 _ONEPIECEFANS_NUMBER =re .compile (r"\d+(?:\.\d+)?")

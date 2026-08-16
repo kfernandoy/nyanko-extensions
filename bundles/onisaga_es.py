@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,17 +5247,6 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
 def _onisaga_detach (node :_Node )->None :
     parent =node .parent 
     if parent is not None and node in parent .children :
@@ -5808,8 +5801,6 @@ class OnisagaSource (MadaraDetailsSource ):
         "week":timedelta (weeks =1 ),"month":timedelta (days =30 ),"year":timedelta (days =365 ),
         }
         return (now -spans [unit ]*amount ).isoformat ()
-
-
 
 
 SOURCE =OnisagaSource

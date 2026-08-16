@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,17 +5247,6 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
 class OlympusscanlationSource (MadaraDetailsSource ):
     """El slug de cada serie no viaja en la ficha: se aprende del listado."""
 
@@ -5469,8 +5462,6 @@ class OlympusscanlationSource (MadaraDetailsSource ):
             ).isoformat ()
         except ValueError :
             return None 
-
-
 
 
 SOURCE =OlympusscanlationSource

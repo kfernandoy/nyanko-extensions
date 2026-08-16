@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,17 +5247,6 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
 class ZonatmotoSource (MadaraDetailsSource ):
     """No hay recientes; pegar la URL de una serie abre su ficha directamente."""
 
@@ -5447,8 +5440,6 @@ class ZonatmotoSource (MadaraDetailsSource ):
             return datetime .strptime (str (value ),"%Y-%m-%d %H:%M:%S").isoformat ()
         except ValueError :
             return None 
-
-
 
 
 SOURCE =ZonatmotoSource

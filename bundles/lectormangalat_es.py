@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -1973,17 +1977,6 @@ class MadaraDetailsSource (MadaraDetailsSource ):
         return await self .fetcher .request (method ,url ,**kwargs )
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
 class LectormangalatSource (MadaraDetailsSource ):
     async def _html (self ,path :str )->str :
         response =await self ._request ("GET",f"{self .base_url }{path }")
@@ -2072,7 +2065,6 @@ class LectormangalatSource (MadaraDetailsSource ):
         )
         for indice ,url in enumerate (urls )
         ]
-
 
 
 SOURCE =LectormangalatSource

@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,17 +5247,6 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
 class HdoujinSource (MadaraDetailsSource ):
 # Mascara del idioma que sirve esta variante; 0 = sin filtro (todos).
     language_mask =0 
@@ -5380,7 +5373,6 @@ class HdoujinSource (MadaraDetailsSource ):
             )
             )
         return paginas 
-
 
 
 SOURCE =HdoujinSource

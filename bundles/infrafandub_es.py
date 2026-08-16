@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -1973,18 +1977,6 @@ class MadaraDetailsSource (MadaraDetailsSource ):
         return await self .fetcher .request (method ,url ,**kwargs )
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
-
 class InfraFandubSource (MadaraDetailsSource ):
     async def search (self ,query :str ,limit :int =20 )->list [SourceSeries ]:
     # El buscador de WordPress esta CAIDO en este sitio: `?s=a&post_type=wp-manga`
@@ -2103,6 +2095,8 @@ class InfraFandubSource (MadaraDetailsSource ):
             uploaded_at =self ._madara_date (date .text ()if date else ""),
             ))
         return result 
+
+
 class GeneratedMadaraSource (InfraFandubSource ):
     name ='infrafandub_es'
     display_name ='InfraFandub'
@@ -2121,6 +2115,7 @@ class GeneratedMadaraSource (InfraFandubSource ):
     date_locale ='es'
     details_profile ='default'
     content_warning ='safe'
+
 
 SOURCE =GeneratedMadaraSource
 

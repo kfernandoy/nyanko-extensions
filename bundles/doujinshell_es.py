@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -1973,18 +1977,6 @@ class MadaraDetailsSource (MadaraDetailsSource ):
         return await self .fetcher .request (method ,url ,**kwargs )
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
-
 class DoujinsHellSource (MadaraDetailsSource ):
     def get_filters (self )->list [SourceFilter ]:
         return [
@@ -2105,6 +2097,8 @@ class DoujinsHellSource (MadaraDetailsSource ):
         source_id =url ,chapter_id =chapter_id ,index =index ,
         filename =urlparse (url ).path .rsplit ("/",1 )[-1 ]or f"{index }.jpg",source_name =self .name ,
         )for index ,url in enumerate (urls )]
+
+
 class GeneratedMadaraSource (DoujinsHellSource ):
     name ='doujinshell_es'
     display_name ='DoujinsHell'
@@ -2123,6 +2117,7 @@ class GeneratedMadaraSource (DoujinsHellSource ):
     date_locale ='es'
     details_profile ='default'
     content_warning ='nsfw'
+
 
 SOURCE =GeneratedMadaraSource
 

@@ -1,0 +1,43 @@
+﻿[ok] contrato real cargado desde E:\2023-09-04\anitracker\Nyanko\apps\backend
+
+total 1916 | ok 1883 | fallan 33
+
+== PETAN AL EJECUTAR: 15 ==
+  comicfury_all: NameError: name 'ComicFurySource' is not defined
+  comicfury_de: NameError: name 'ComicFurySource' is not defined
+  comicfury_en: NameError: name 'ComicFurySource' is not defined
+  comicfury_fi: NameError: name 'ComicFurySource' is not defined
+  comicfury_fr: NameError: name 'ComicFurySource' is not defined
+  comicfury_it: NameError: name 'ComicFurySource' is not defined
+  comicfury_ja: NameError: name 'ComicFurySource' is not defined
+  comicfury_other: NameError: name 'ComicFurySource' is not defined
+  comicfury_other_comic_fury_no_text: NameError: name 'ComicFurySource' is not defined
+  comicfury_pl: NameError: name 'ComicFurySource' is not defined
+  comicfury_pt_br: NameError: name 'ComicFurySource' is not defined
+  comicfury_ru: NameError: name 'ComicFurySource' is not defined
+  comicfury_zh: NameError: name 'ComicFurySource' is not defined
+  emperorscan_es: NameError: name 'DragonTranslationOrgSource' is not defined
+  esmi2manga_es: NameError: name 'DragonTranslationOrgSource' is not defined
+
+== SIN SOURCE/build_source: 1 ==
+  __init__: no declara SOURCE ni build_source
+
+== INCUMPLEN CONTRATO (-> 422): 17 ==
+  akuma_es: La fuente no cumple el contrato Source
+  anzmanga_es: La fuente no cumple el contrato Source
+  capibaratraductor_es: La fuente no cumple el contrato Source
+  catmanhwas_es: La fuente no cumple el contrato Source
+  codearc_es: La fuente no cumple el contrato Source
+  comicfury_es: La fuente no cumple el contrato Source
+  comicklive_es: La fuente no cumple el contrato Source
+  comikey_es: La fuente no cumple el contrato Source
+  doujinhentai_es: La fuente no cumple el contrato Source
+  hentai3_es: La fuente no cumple el contrato Source
+  hentaienvy_es: No se pudo cargar la fuente: Source missing name
+  hentaizap_es: No se pudo cargar la fuente: Source missing name
+  honeytoon_es: La fuente no cumple el contrato Source
+  luscious_es: La fuente no cumple el contrato Source
+  mangapluscreators_es: La fuente no cumple el contrato Source
+  mangashiina_es: No se pudo cargar la fuente: object.__init__() takes exactly one argument (the instance to initialize)
+  traduccionesmoonlight_es: No se pudo cargar la fuente: object.__init__() takes exactly one argument (the instance to initialize)
+

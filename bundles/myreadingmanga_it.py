@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,21 +5247,37 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
+"""Adaptador de MyReadingManga: buscador WordPress con filtros cacheados."""
+
+
 _MRM_EXTENSION =re .compile (r"\.(jpg|png|jpeg|webp)")
+
+
 _MRM_TITLE =re .compile (r"\[[^\]]*\]")
+
+
 _MRM_TOTAL =re .compile (r"([\d,]+)")
+
+
 _MRM_DATE =re .compile (r"([A-Za-z]{3})\w*\s+(\d{1,2}),\s*(\d{4})")
+
+
 _MRM_MONTHS ={
 "jan":1 ,"feb":2 ,"mar":3 ,"apr":4 ,"may":5 ,"jun":6 ,
 "jul":7 ,"aug":8 ,"sep":9 ,"oct":10 ,"nov":11 ,"dec":12 ,
 }
+
+
 _MRM_LANGS ={
 "ar":"Arabic","id":"Indonesia","zh":"Chinese","en":"English","de":"German",
 "it":"Italian","ja":"Japanese","ko":"Korean","pt-BR":"Portuguese",
 "ru":"Russian","es":"Spanish","tr":"Turkish","vi":"Vietnamese",
 }
+
+
 _MRM_SORT =(("date","Newest"),("date_asc","Oldest"),("rand","Random"),("","More relevant"))
-# (id, etiqueta, parametro, ruta relativa, clase del ancla)
+
+
 _MRM_DYNAMIC =(
 ("genre","Genre","ep_filter_genre","","tagcloud"),
 ("tag","Popular Tags","ep_filter_post_tag","tags/","tag-groups-alphabetical-index"),

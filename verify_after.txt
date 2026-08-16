@@ -1,0 +1,193 @@
+﻿[ok] contrato real cargado desde E:\2023-09-04\anitracker\Nyanko\apps\backend
+
+total 1916 | ok 1883 | fallan 33
+
+== PETAN AL EJECUTAR: 15 ==
+  comicfury_all: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\comicfury_all.py", line 5250, in <module>
+    SOURCE =ComicFurySource
+            ^^^^^^^^^^^^^^^
+NameError: name 'ComicFurySource' is not defined
+
+  comicfury_de: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\comicfury_de.py", line 5250, in <module>
+    SOURCE =ComicFurySource
+            ^^^^^^^^^^^^^^^
+NameError: name 'ComicFurySource' is not defined
+
+  comicfury_en: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\comicfury_en.py", line 5250, in <module>
+    SOURCE =ComicFurySource
+            ^^^^^^^^^^^^^^^
+NameError: name 'ComicFurySource' is not defined
+
+  comicfury_fi: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\comicfury_fi.py", line 5250, in <module>
+    SOURCE =ComicFurySource
+            ^^^^^^^^^^^^^^^
+NameError: name 'ComicFurySource' is not defined
+
+  comicfury_fr: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\comicfury_fr.py", line 5250, in <module>
+    SOURCE =ComicFurySource
+            ^^^^^^^^^^^^^^^
+NameError: name 'ComicFurySource' is not defined
+
+  comicfury_it: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\comicfury_it.py", line 5250, in <module>
+    SOURCE =ComicFurySource
+            ^^^^^^^^^^^^^^^
+NameError: name 'ComicFurySource' is not defined
+
+  comicfury_ja: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\comicfury_ja.py", line 5250, in <module>
+    SOURCE =ComicFurySource
+            ^^^^^^^^^^^^^^^
+NameError: name 'ComicFurySource' is not defined
+
+  comicfury_other: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\comicfury_other.py", line 5250, in <module>
+    SOURCE =ComicFurySource
+            ^^^^^^^^^^^^^^^
+NameError: name 'ComicFurySource' is not defined
+
+  comicfury_other_comic_fury_no_text: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\comicfury_other_comic_fury_no_text.py", line 5250, in <module>
+    SOURCE =ComicFurySource
+            ^^^^^^^^^^^^^^^
+NameError: name 'ComicFurySource' is not defined
+
+  comicfury_pl: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\comicfury_pl.py", line 5250, in <module>
+    SOURCE =ComicFurySource
+            ^^^^^^^^^^^^^^^
+NameError: name 'ComicFurySource' is not defined
+
+  comicfury_pt_br: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\comicfury_pt_br.py", line 5250, in <module>
+    SOURCE =ComicFurySource
+            ^^^^^^^^^^^^^^^
+NameError: name 'ComicFurySource' is not defined
+
+  comicfury_ru: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\comicfury_ru.py", line 5250, in <module>
+    SOURCE =ComicFurySource
+            ^^^^^^^^^^^^^^^
+NameError: name 'ComicFurySource' is not defined
+
+  comicfury_zh: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\comicfury_zh.py", line 5250, in <module>
+    SOURCE =ComicFurySource
+            ^^^^^^^^^^^^^^^
+NameError: name 'ComicFurySource' is not defined
+
+  emperorscan_es: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\emperorscan_es.py", line 2268, in <module>
+    class EmperorScanSource (DragonTranslationOrgSource ):
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+NameError: name 'DragonTranslationOrgSource' is not defined
+
+  esmi2manga_es: Traceback (most recent call last):
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 62, in verify
+    module = _exec_bundle(path)
+  File "E:\2023-09-04\anitracker\nyanko-extensions\tools\verify_bundles.py", line 53, in _exec_bundle
+    exec(code, module.__dict__)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\2023-09-04\anitracker\nyanko-extensions\bundles\esmi2manga_es.py", line 2268, in <module>
+    class EsMi2MangaSource (DragonTranslationOrgSource ):
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+NameError: name 'DragonTranslationOrgSource' is not defined
+
+
+== SIN SOURCE/build_source: 1 ==
+  __init__: no declara SOURCE ni build_source
+
+== INCUMPLEN CONTRATO (-> 422): 17 ==
+  akuma_es: La fuente no cumple el contrato Source
+  anzmanga_es: La fuente no cumple el contrato Source
+  capibaratraductor_es: La fuente no cumple el contrato Source
+  catmanhwas_es: La fuente no cumple el contrato Source
+  codearc_es: La fuente no cumple el contrato Source
+  comicfury_es: La fuente no cumple el contrato Source
+  comicklive_es: La fuente no cumple el contrato Source
+  comikey_es: La fuente no cumple el contrato Source
+  doujinhentai_es: La fuente no cumple el contrato Source
+  hentai3_es: La fuente no cumple el contrato Source
+  hentaienvy_es: No se pudo cargar la fuente: Source missing name
+  hentaizap_es: No se pudo cargar la fuente: Source missing name
+  honeytoon_es: La fuente no cumple el contrato Source
+  luscious_es: La fuente no cumple el contrato Source
+  mangapluscreators_es: La fuente no cumple el contrato Source
+  mangashiina_es: No se pudo cargar la fuente: object.__init__() takes exactly one argument (the instance to initialize)
+  traduccionesmoonlight_es: No se pudo cargar la fuente: object.__init__() takes exactly one argument (the instance to initialize)
+

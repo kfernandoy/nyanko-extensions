@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,6 +5247,9 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
+"""Adaptador de YellowNote (XChina): albumes de fotos paginados."""
+
+
 _YELLOWNOTE_STRINGS ={
 'en':{
 'filter.sort.title':'Sort by',
@@ -5624,6 +5631,8 @@ _YELLOWNOTE_STRINGS ={
 'config.image_quality.summary':'選擇圖片品質。原圖(JPG)品質最高，高清(WebP)載入更快。',
 },
 }
+
+
 _YELLOWNOTE_CATEGORIES =(
 ('photos/album-1','filter.category.option.theme.xiuren-featured'),
 ('photos/album-2','filter.category.option.theme.large-scale'),
@@ -5692,14 +5701,21 @@ _YELLOWNOTE_CATEGORIES =(
 ('photos/series-61263de287e2f','filter.category.option.xiuren-ruisg'),
 )
 
+
 _YELLOWNOTE_SORT =(
 ("","filter.sort.option.last-update"),
 ("sort-hot","filter.sort.option.popularity"),
 ("sort-comment","filter.sort.option.most-comments"),
 ("sort-recent","filter.sort.option.latest-comments"),
 )
+
+
 _YELLOWNOTE_STYLE_URL =re .compile (r"background-image\s*:\s*url\('([^']+)'\)")
+
+
 _YELLOWNOTE_MEDIA_COUNT =re .compile (r"^\d+P( \+ \d+V)?$")
+
+
 _YELLOWNOTE_DATE =re .compile (r"\d{4}\.\d{2}\.\d{2}")
 
 

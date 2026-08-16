@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,17 +5247,6 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
 class MangaplusSource (MadaraDetailsSource ):
     search_paths :tuple [str ,...]=("search","")
     popular_paths :tuple [str ,...]=("series","manga","comics","popular","")
@@ -5415,7 +5408,6 @@ class MangaplusSource (MadaraDetailsSource ):
         elif isinstance (value ,list ):
             for child in value :
                 yield from GenericSource ._walk_dicts (child )
-
 
 
 SOURCE =MangaplusSource

@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,17 +5247,6 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
 class MantrazscanSource (MadaraDetailsSource ):
     """Lee el HTML del sitio: la API JSON que usaba esta extension ya no existe."""
 
@@ -5493,8 +5486,6 @@ class MantrazscanSource (MadaraDetailsSource ):
             return float (value )
         except (TypeError ,ValueError ):
             return None 
-
-
 
 
 SOURCE =MantrazscanSource

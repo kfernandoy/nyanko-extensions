@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -1973,22 +1977,12 @@ class MadaraDetailsSource (MadaraDetailsSource ):
         return await self .fetcher .request (method ,url ,**kwargs )
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
-
 class SamuraiScanSource (MadaraDetailsSource ):
     async def _request (self ,method :str ,url :str ,**kwargs :Any )->Any :
         kwargs .setdefault ("follow_redirects",True )
         return await super ()._request (method ,url ,**kwargs )
+
+
 class GeneratedMadaraSource (SamuraiScanSource ):
     name ='manhuaonline_es'
     display_name ='SamuraiScan'
@@ -2007,6 +2001,7 @@ class GeneratedMadaraSource (SamuraiScanSource ):
     date_locale ='es'
     details_profile ='default'
     content_warning ='safe'
+
 
 SOURCE =GeneratedMadaraSource
 

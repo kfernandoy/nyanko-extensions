@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -5243,17 +5247,6 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
 def _panda_titlecase (value :str )->str :
     return " ".join (part [:1 ].upper ()+part [1 :]if part else part for part in value .split (" "))
 
@@ -5641,8 +5634,6 @@ class PandachaikaSource (MadaraDetailsSource ):
         f"{_PANDA_WEEKDAYS [moment .weekday ()]}, {moment .day } "
         f"{_PANDA_MONTHS [moment .month -1 ]} {moment .year } {moment :%H:%M} (UTC)"
         )
-
-
 
 
 SOURCE =PandachaikaSource

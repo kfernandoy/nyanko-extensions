@@ -619,6 +619,10 @@ class FuenteBaseSource :
 import re 
 from urllib .parse import urljoin 
 
+try :
+    from .base import FuenteBaseSource ,SourceSeries ,_Node ,_first ,_image_url ,_parse_html ,_style_image_url 
+except ImportError :
+    pass 
 
 
 class MadaraDetailsSource (FuenteBaseSource ):
@@ -1973,18 +1977,6 @@ class MadaraDetailsSource (MadaraDetailsSource ):
         return await self .fetcher .request (method ,url ,**kwargs )
 
 
-try :
-    from .madara import (
-    MadaraDetailsSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
-
-class MadaraDetailsSource :
-    pass 
-
-
-
 class ManhwaLatinoSource (MadaraDetailsSource ):
     async def chapters (self ,series :SourceSeries |str )->list [SourceChapter ]:
         series_id =series .source_id if isinstance (series ,SourceSeries )else str (series )
@@ -2080,6 +2072,8 @@ class ManhwaLatinoSource (MadaraDetailsSource ):
             if any (isinstance (sibling ,_Node )and sibling .tag =="span"for sibling in parent .children [index +1 :]):
                 return True 
         return False 
+
+
 class GeneratedMadaraSource (ManhwaLatinoSource ):
     name ='manhwalatino_es'
     display_name ='Manhwa-Latino'
@@ -2098,6 +2092,7 @@ class GeneratedMadaraSource (ManhwaLatinoSource ):
     date_locale ='es'
     details_profile ='default'
     content_warning ='mixed'
+
 
 SOURCE =GeneratedMadaraSource
 
