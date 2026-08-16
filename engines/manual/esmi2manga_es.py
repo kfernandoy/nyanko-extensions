@@ -297,7 +297,7 @@ class Esmi2mangaSource(MadaraSource):
         return result.isoformat()
 
 
-class EsMi2MangaSource(DragonTranslationOrgSource):
+class EsMi2MangaSource(Esmi2mangaSource):
     def __init__(self, fetcher=None) -> None:
         super().__init__(fetcher)
         self._load_more_detected = False
@@ -549,4 +549,4 @@ class EsMi2MangaSource(DragonTranslationOrgSource):
         )
 
 
-SOURCE = Esmi2mangaSource
+SOURCE = EsMi2MangaSource

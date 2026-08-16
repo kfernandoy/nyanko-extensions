@@ -2265,7 +2265,7 @@ class EmperorscanSource (MadaraDetailsSource ):
         return result .isoformat ()
 
 
-class EmperorScanSource (DragonTranslationOrgSource ):
+class EmperorScanSource (EmperorscanSource ):
     remove_premium_chapters =True 
 
     def get_preferences (self )->list [SourcePreference ]:
@@ -2342,7 +2342,7 @@ class EmperorScanSource (DragonTranslationOrgSource ):
         return replace (series ,description =description ,content_tags =tuple (categories ))
 
 
-SOURCE =EmperorscanSource
+SOURCE =EmperorScanSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

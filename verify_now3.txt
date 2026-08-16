@@ -1,23 +1,6 @@
 ﻿[ok] contrato real cargado desde E:\2023-09-04\anitracker\Nyanko\apps\backend
 
-total 1916 | ok 1883 | fallan 33
-
-== PETAN AL EJECUTAR: 15 ==
-  comicfury_all: NameError: name 'ComicFurySource' is not defined
-  comicfury_de: NameError: name 'ComicFurySource' is not defined
-  comicfury_en: NameError: name 'ComicFurySource' is not defined
-  comicfury_fi: NameError: name 'ComicFurySource' is not defined
-  comicfury_fr: NameError: name 'ComicFurySource' is not defined
-  comicfury_it: NameError: name 'ComicFurySource' is not defined
-  comicfury_ja: NameError: name 'ComicFurySource' is not defined
-  comicfury_other: NameError: name 'ComicFurySource' is not defined
-  comicfury_other_comic_fury_no_text: NameError: name 'ComicFurySource' is not defined
-  comicfury_pl: NameError: name 'ComicFurySource' is not defined
-  comicfury_pt_br: NameError: name 'ComicFurySource' is not defined
-  comicfury_ru: NameError: name 'ComicFurySource' is not defined
-  comicfury_zh: NameError: name 'ComicFurySource' is not defined
-  emperorscan_es: NameError: name 'DragonTranslationOrgSource' is not defined
-  esmi2manga_es: NameError: name 'DragonTranslationOrgSource' is not defined
+total 1916 | ok 1898 | fallan 18
 
 == SIN SOURCE/build_source: 1 ==
   __init__: no declara SOURCE ni build_source
