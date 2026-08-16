@@ -1,5 +1,32 @@
 # Estado de la sesion — reparacion de bundles (422 al instalar)
 
+## ¿SE PUEDE YA INSTALAR Y ACTUALIZAR FUENTES? — comprobado
+
+Precondiciones del lado repositorio, todas VERDES:
+- **Firma**: `python tools/sign_index.py verify` -> "Firma valida". Y como se
+  firmo con la clave original, `index.json.pub` no cambio -> los usuarios que ya
+  confiaban en el repo NO tienen que volver a aceptar la clave.
+- **Indice sincronizado** (`python tools/check_index_sync.py`, script nuevo):
+  - 1912 extensiones en el indice
+  - 0 bundles ausentes
+  - 0 sin sha256
+  - **0 sha256 descuadrados**  <- clave: la app valida el hash al descargar
+- **Contrato**: 65 de 66 fallos arreglados. El unico restante es `__init__`, que
+  no es una fuente y no esta en el indice (falso positivo de verify_bundles.py).
+
+Detalle menor detectado (NO bloquea): hay **3 bundles fuera del indice**:
+`asmotoon_en`, `inmortalscan_es`, `noyacg_zh`. Existen en `bundles/` pero no
+aparecen en `index.json`, asi que simplemente no se ofreceran para instalar.
+Conviene revisar si deberian estar listados.
+
+RESPUESTA CORTA: **si, deberia poder instalarse y actualizarse.** Todo lo que
+depende del repositorio esta correcto. Lo que NO esta probado es que cada fuente
+devuelva datos reales (ver seccion TESTING): el contrato garantiza que la
+instalacion no de 422, no que el scraping funcione.
+
+Para probarlo de verdad hace falta servir el repo y apuntar la app a el, o usar
+`python tools/smoke.py` (golpea la red de verdad).
+
 ## Objetivo
 Los bundles publicados fallaban al instalarse (HTTP 422: la fuente no cumple el
 contrato `Source` v4). Se reparan las causas raiz, comprobando siempre contra el
