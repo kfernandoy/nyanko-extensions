@@ -73,10 +73,21 @@ ya no son autocontenidos**, y el test los ejercita sin motor. Es un desajuste
 test-vs-generador introducido por la restauracion, NO necesariamente un fallo
 del bundle final.
 
+### COMPROBADO: NO ES REGRESION NUESTRA
+Se ejecuto `test_akuma.py` en `87a3946` (el HEAD original, ANTES de todos
+nuestros cambios) y **tambien falla**, con otro error:
+```
+TypeError: AkumaSource() takes no arguments
+Ran 1 test — FAILED (errors=1)
+```
+Es decir, el test ya estaba roto de antes por el daño de la purga `eedde66`.
+Nuestros cambios solo cambiaron el sintoma
+(`TypeError: AkumaSource() takes no arguments` -> `NameError: GenericSource`).
+Conclusion: **la suite estaba rota antes de tocar nada; no hemos introducido
+esta regresion.** El arbol de trabajo quedo limpio y en `dc8064a` tras la
+comprobacion (checkout de vuelta + stash pop, sin stashes pendientes).
+
 PENDIENTE POR DECIDIR con el usuario:
-1. Comprobar si `test_akuma.py` ya fallaba ANTES de nuestros cambios
-   (`git stash` / probar en el commit base `2e0fdcb` o en el HEAD original) para
-   saber si es regresion nuestra o daño preexistente de la purga `eedde66`.
 2. Segun eso: o el test debe pasar el motor (actualizar test), o el manual debe
    volver a ser autocontenido (revisar restauracion).
 3. Ejecutar el resto de tests relevantes uno a uno por ruta:
