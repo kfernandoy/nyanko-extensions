@@ -50,6 +50,40 @@ python -m unittest tests/test_akuma.py
 ```
 NO crear `tests/__init__.py` sin preguntar: cambiaria la estructura del repo.
 
+### RESULTADO DE EJECUTAR LOS TESTS (hecho — hay un FALLO REAL)
+- `python -m unittest discover -s . -p "test_*.py" -t .` -> **"Ran 0 tests"**
+  (el discovery no entra en `tests/` por falta de `__init__.py`).
+- `python -m unittest tests/test_akuma.py` -> **SI ejecuta. Y FALLA:**
+```
+File "engines\manual\akuma_es.py", line 343, in <module>
+    class GeneratedGenericSource(GenericSource):
+NameError: name 'GenericSource' is not defined
+Ran 1 test — FAILED (errors=1)
+```
+
+INTERPRETACION (importante, no perder):
+El test llama a `_manual_bundle(path)` **SIN pasar `engine`**, mientras que
+`generate.py` en produccion SI le pasa el motor. Sin motor, el prefijo con la
+cadena `GenericSource` no se inyecta y el `GeneratedGenericSource(GenericSource)`
+del manual restaurado se queda sin base -> NameError.
+
+O sea: **el bundle publicado esta bien** (verify_bundles.py pasa 65/66 y ese
+bundle se genera CON motor), pero **los manuales que restauramos de `2e0fdcb`
+ya no son autocontenidos**, y el test los ejercita sin motor. Es un desajuste
+test-vs-generador introducido por la restauracion, NO necesariamente un fallo
+del bundle final.
+
+PENDIENTE POR DECIDIR con el usuario:
+1. Comprobar si `test_akuma.py` ya fallaba ANTES de nuestros cambios
+   (`git stash` / probar en el commit base `2e0fdcb` o en el HEAD original) para
+   saber si es regresion nuestra o daño preexistente de la purga `eedde66`.
+2. Segun eso: o el test debe pasar el motor (actualizar test), o el manual debe
+   volver a ser autocontenido (revisar restauracion).
+3. Ejecutar el resto de tests relevantes uno a uno por ruta:
+   `python -m unittest tests/test_comicfury.py` etc. (akuma, comicfury, comikey,
+   emperorscan, esmi2manga, hentaienvy, hentaizap, mangashiina,
+   traduccionesmoonlight, luscious, hentai3, honeytoon, mangapluscreators).
+
 SIGUIENTE PASO SUGERIDO: correr la suite completa para confirmar que los cambios
 en `generate.py` (`_inyectar_motor_si_quedo_stub`, `_manual_cumple_contrato`) y
 los manuales restaurados no rompieron el comportamiento esperado. Priorizar los
