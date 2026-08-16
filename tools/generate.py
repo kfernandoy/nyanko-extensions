@@ -279,6 +279,69 @@ def _refrescar_motor_en_manual_textual(source: str, engine: str) -> str:
     return engine.rstrip() + "\n\n\n" + source[inicio_propio:]
 
 
+def _inyectar_motor_si_quedo_stub(source: str, engine: str) -> str:
+    """Antepone el motor cuando el manual se quedo con un stub vacio.
+
+    Varios manuales empiezan con `try: from .madara import (MadaraSource, ...)`
+    seguido de `class MadaraSource: pass`. Ese stub pisa el import SIEMPRE, y en
+    runtime `.madara` no existe, asi que la clase base acaba siendo el stub.
+
+    `_refrescar_motor_en_manual` normalmente sustituye ese prefijo por el motor
+    real, pero se rinde cuando el motor inyectado no define la clase raiz que el
+    manual nombra: pasa con los engines `galleryadults` y `moonlighttl`, cuyos
+    manuales piden `MadaraSource` mientras el motor trae `GalleryAdultsSource` o
+    `MoonlightTLSource`. El bundle salia con `class X: pass` y la fuente no
+    cumplia el contrato (sin `name`, y `super().__init__(fetcher)` terminaba en
+    `object.__init__`, que no acepta argumentos).
+
+    Aqui se detecta ese stub residual y se reengancha la herencia a la clase raiz
+    que el motor SI define, anteponiendo el motor. Si no hay stub, o el motor ya
+    esta presente, se devuelve la fuente intacta.
+    """
+    stubs = re.findall(r"^class (\w+)\s*:\s*\n\s+pass\s*$", source, re.M)
+    if not stubs:
+        return source
+
+    try:
+        engine_tree = ast.parse(engine)
+    except SyntaxError:
+        return source
+    engine_classes = [
+        node.name for node in engine_tree.body if isinstance(node, ast.ClassDef)
+    ]
+    if not engine_classes:
+        return source
+
+    cambiado = False
+    for stub in stubs:
+        if stub in engine_classes:
+            # El motor define la clase de verdad: basta con quitar el stub para
+            # que la definicion real prevalezca.
+            source = re.sub(
+                rf"^class {stub}\s*:\s*\n\s+pass\s*$\n*", "", source, flags=re.M
+            )
+            cambiado = True
+            continue
+
+        # El motor usa otro nombre para la raiz. Se elige la ultima clase del
+        # motor que herede de `object` o de otra clase suya: en `galleryadults`
+        # y `moonlighttl` es la clase principal del tema.
+        raiz = engine_classes[-1]
+        for nombre in reversed(engine_classes):
+            if nombre.endswith("Source"):
+                raiz = nombre
+                break
+        source = re.sub(
+            rf"^class {stub}\s*:\s*\n\s+pass\s*$\n*", "", source, flags=re.M
+        )
+        source = re.sub(rf"\b{stub}\b", raiz, source)
+        cambiado = True
+
+    if not cambiado:
+        return source
+    return engine.rstrip() + "\n\n\n" + source.lstrip()
+
+
 def _manual_bundle(path: Path, engine: str = "", tema: str = "") -> bytes:
     source = path.read_text(encoding="utf-8")
     if tema:

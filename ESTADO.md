@@ -5,12 +5,32 @@ Los bundles publicados fallaban al instalarse (HTTP 422: la fuente no cumple el
 contrato `Source` v4). Se reparan las causas raiz, comprobando siempre contra el
 contrato real y sin introducir regresiones.
 
-## Resultado actual
-- **HEAD original: 66 fallos → ahora 5. 61 arreglados, 0 regresiones.**
-- Restantes: `__init__` (no es fuente, falso positivo), `hentaienvy_es`,
-  `hentaizap_es`, `mangashiina_es`, `traduccionesmoonlight_es`.
+## Resultado actual — TERMINADO
+- **HEAD original: 66 fallos → ahora 1. 65 arreglados, 0 regresiones.**
+- El unico "fallo" restante es `__init__`, que **NO es una fuente**:
+  `bundles/__init__.py` es el docstring del paquete (37 bytes) y no aparece en
+  `index.json` (1912 extensiones). Es un falso positivo de `verify_bundles.py`,
+  que recorre `bundles/*.py` sin excluir `__init__.py`. **Nada que arreglar.**
 
-## EN CURSO — los 4 ultimos (diagnostico COMPLETO, fix a medias)
+## PENDIENTE (ultimo paso)
+`generate.py` volvio a reescribir los sha256 de `index.json`, asi que la firma
+esta obsoleta otra vez. Hay que RE-FIRMAR (ver seccion de firma mas abajo):
+```powershell
+python tools/sign_index.py sign --private-key "C:\Users\kev\.config\nyanko\extension-repository-signing-key.pem"
+python tools/sign_index.py verify
+```
+Y luego commitear `index.json`, `index.json.sig`, `bundles/` y `tools/generate.py`.
+
+## RESUELTO — los 4 ultimos (fix aplicado y verificado)
+Se anadio `_inyectar_motor_si_quedo_stub(source, engine)` en `generate.py`
+(justo antes de `_manual_bundle`, que la llama en la linea ~297 con `if engine:`).
+Detecta el `class X:\n    pass` residual y, si el motor define esa clase, elimina
+el stub para que prevalezca la real; si el motor usa otro nombre de raiz
+(`GalleryAdultsSource`, `MoonlightTLSource`), reengancha la herencia a esa clase.
+En ambos casos antepone el motor. Resultado: 5 fallos -> 1 (solo el falso
+positivo `__init__`), sin regresiones.
+
+## Historico del diagnostico de los 4 (ya resuelto)
 
 ### Causa raiz (confirmada con tools/debug_refresh2.py)
 Los 4 manuales empiezan con:
