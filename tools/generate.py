@@ -342,7 +342,7 @@ def _inyectar_motor_si_quedo_stub(source: str, engine: str) -> str:
     return engine.rstrip() + "\n\n\n" + source.lstrip()
 
 
-def _manual_bundle(path: Path, engine: str = "", tema: str = "") -> bytes:
+def _manual_bundle(path: Path, engine: str = "", tema: str = "", extension: dict[str, object] | None = None) -> bytes:
     source = path.read_text(encoding="utf-8")
     if tema:
         # El tema PRIMERO: se localiza por la subclase de MadaraSource, que sigue en su
@@ -372,7 +372,28 @@ def _manual_bundle(path: Path, engine: str = "", tema: str = "") -> bytes:
         (token.type, replacements.get(token.string, token.string))
         for token in tokenize.generate_tokens(io.StringIO(source).readline)
     )
-    return source.encode()
+
+    if extension:
+        if extension["id"] == "emperorscan_es": print("--- HIT EMPEROR ---")
+        match = re.search(r"^SOURCE\s*=\s*(\w+)", source, re.M)
+        if match:
+            source_cls = match.group(1)
+            config = (
+                f"\n\nclass Generated{source_cls}({source_cls}):\n"
+                f"    name = {extension['id']!r}\n"
+                f"    display_name = {extension['name']!r}\n"
+                f"    base_url = {extension['base_url']!r}\n"
+                f"    language = {extension['language']!r}\n"
+            )
+            if "rpm" in extension:
+                config += f"    requests_per_minute = {extension['rpm']!r}\n"
+            if "content_warning" in extension:
+                config += f"    content_warning = {extension['content_warning']!r}\n"
+            config += f"\nSOURCE = Generated{source_cls}\n"
+            source = re.sub(r"^SOURCE\s*=\s*" + source_cls, "", source, flags=re.M)
+            source += config
+
+    return source.encode("utf-8")
 
 
 def _source_icon(build_path: Path, source_root: Path, engine_name: str) -> Path:
@@ -3769,7 +3790,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 bundle_bytes = _mangadex_bundle(mangadex_engine, extension)
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path, mangadex_engine)
+                    bundle_bytes = _manual_bundle(manual_path, mangadex_engine, extension=extension)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -3851,7 +3872,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 # no satisface el protocolo Source v4 y la instalacion devolvia 422.
                 if manual_path.exists() and not (is_heavenmanga or is_hentaihall or is_ikigaimangas or is_ikuhentai or is_inmanga or is_insanosscan or is_koinoboriscan or is_leercapitulo or is_leermangaesp or is_lectorjpg or is_lmtoonline or build_path.parent.name == "mangamx") and _manual_cumple_contrato(manual_path):
                     _combined = madara_engine.rstrip() + "\n\n" + generic_engine.rstrip()
-                    bundle_bytes = _manual_bundle(manual_path, _combined)
+                    bundle_bytes = _manual_bundle(manual_path, _combined, extension=extension)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -3890,7 +3911,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                     bundle_bytes = _madara_bundle(madara_engine, extension)
                     manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                     if manual_path.exists():
-                        bundle_bytes = _manual_bundle(manual_path, madara_engine)
+                        bundle_bytes = _manual_bundle(manual_path, madara_engine, extension=extension)
                     bundle_bytes = finalize(bundle_bytes)
                     (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                     shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -3923,7 +3944,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 )
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path, mangathemesia_engine)
+                    bundle_bytes = _manual_bundle(manual_path, mangathemesia_engine, extension=extension)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -3953,9 +3974,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 bundle_bytes = _galleryadults_bundle(base_engine, galleryadults_engine, extension)
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(
-                        manual_path, base_engine, galleryadults_engine,
-                    )
+                    bundle_bytes = _manual_bundle(manual_path, base_engine, galleryadults_engine, extension=extension)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -3985,7 +4004,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 bundle_bytes = _hentaihand_bundle(base_engine, hentaihand_engine, extension)
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path, base_engine)
+                    bundle_bytes = _manual_bundle(manual_path, base_engine, extension=extension)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -4018,7 +4037,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 )
                 manual_path = repo / "engines" / "manual" / f"{extension_id}.py"
                 if manual_path.exists():
-                    bundle_bytes = _manual_bundle(manual_path, base_engine)
+                    bundle_bytes = _manual_bundle(manual_path, base_engine, extension=extension)
                 bundle_bytes = finalize(bundle_bytes)
                 (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
                 shutil.copyfile(icon, icons_dir / f"{extension_id}.png")
@@ -4464,6 +4483,7 @@ def generate(repo: Path, source_root: Path, base_url: str) -> tuple[dict[str, in
                 madara_engine if engine_name in _MOTORES_SOBRE_MADARA else (
                     details_engine if engine_name in {"goda", "natsuid", "uzaymanga"} else base_engine
                 ),
+                extension=extension,
             )
         bundle_bytes = finalize(bundle_bytes)
         (bundles_dir / f"{extension_id}.py").write_bytes(bundle_bytes)
