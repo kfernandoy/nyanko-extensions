@@ -1,6 +1,225 @@
 [
  {
-  "id": "manta_es",
+  "id": "celestialmoon_es",
+  "url": "https://celestialmoonscan.es",
+  "status": 403,
+  "final": "https://celestialmoonscan.es",
+  "bytes": 6192,
+  "cloudflare": false,
+  "veredicto": "BLOQUEADO"
+ },
+ {
+  "id": "mangaromance_es",
+  "url": "https://mangaromance19.com",
+  "status": 403,
+  "final": "https://mangaromance19.com",
+  "bytes": 6192,
+  "cloudflare": false,
+  "veredicto": "BLOQUEADO"
+ },
+ {
+  "id": "begatranslation_es",
+  "url": "https://begatranslation.com",
+  "status": 403,
+  "final": "https://begatranslation.com",
+  "bytes": 5516,
+  "cloudflare": true,
+  "veredicto": "BLOQUEADO_CF"
+ },
+ {
+  "id": "bokugentranslation_es",
+  "url": "https://bokugents.com",
+  "status": 403,
+  "final": "https://bokugents.com",
+  "bytes": 5596,
+  "cloudflare": true,
+  "veredicto": "BLOQUEADO_CF"
+ },
+ {
+  "id": "chochox_es",
+  "url": "https://chochox.com",
+  "status": 403,
+  "final": "https://chochox.com",
+  "bytes": 5572,
+  "cloudflare": true,
+  "veredicto": "BLOQUEADO_CF"
+ },
+ {
+  "id": "mangasnosekai_es",
+  "url": "https://mangasnosekai.com",
+  "status": 403,
+  "final": "https://mangasnosekai.com",
+  "bytes": 5514,
+  "cloudflare": true,
+  "veredicto": "BLOQUEADO_CF"
+ },
+ {
+  "id": "manhwalatino_es",
+  "url": "https://manhwa-latino.com",
+  "status": 403,
+  "final": "https://manhwa-latino.com",
+  "bytes": 5514,
+  "cloudflare": true,
+  "veredicto": "BLOQUEADO_CF"
+ },
+ {
+  "id": "toones_es",
+  "url": "https://toon-es.com",
+  "status": 403,
+  "final": "https://toon-es.com",
+  "bytes": 5487,
+  "cloudflare": true,
+  "veredicto": "BLOQUEADO_CF"
+ },
+ {
+  "id": "topcomicporno_es",
+  "url": "https://topcomicporno.com",
+  "status": 403,
+  "final": "https://topcomicporno.com",
+  "bytes": 5514,
+  "cloudflare": true,
+  "veredicto": "BLOQUEADO_CF"
+ },
+ {
+  "id": "topcomicpornonet_es",
+  "url": "https://topcomicporno.net",
+  "status": 403,
+  "final": "https://topcomicporno.net",
+  "bytes": 5514,
+  "cloudflare": true,
+  "veredicto": "BLOQUEADO_CF"
+ },
+ {
+  "id": "vcp_es",
+  "url": "https://vercomicsporno.com",
+  "status": 403,
+  "final": "https://vercomicsporno.com",
+  "bytes": 5643,
+  "cloudflare": true,
+  "veredicto": "BLOQUEADO_CF"
+ },
+ {
+  "id": "vmp_es",
+  "url": "https://vermangasporno.com",
+  "status": 403,
+  "final": "https://vermangasporno.com",
+  "bytes": 5643,
+  "cloudflare": true,
+  "veredicto": "BLOQUEADO_CF"
+ },
+ {
+  "id": "codexzero_es",
+  "url": "https://codex.readkisho.me",
+  "status": 525,
+  "final": "https://codex.readkisho.me",
+  "bytes": 0,
+  "cloudflare": true,
+  "veredicto": "HTTP_525"
+ },
+ {
+  "id": "bibliopanda_es",
+  "url": "https://bibliopanda.com",
+  "status": null,
+  "veredicto": "INALCANZABLE",
+  "error": "ConnectError: [Errno 11004] getaddrinfo failed"
+ },
+ {
+  "id": "colorcitoscan_es",
+  "url": "https://colorcitoscan.com",
+  "status": null,
+  "veredicto": "INALCANZABLE",
+  "error": "ConnectError: [Errno 11001] getaddrinfo failed"
+ },
+ {
+  "id": "dragontranslationorg_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "emperorscan_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "esmi2manga_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "haremdekira_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "hentaienvy_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "hentaizap_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "lectormangalat_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "mangadex_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "mangashiina_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "mantrazscan_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "myreadingmanga_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "namicomi_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "nartag_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "neomanga_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "olympusscanlation_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "onepiecefans_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "onfmangas_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "onisaga_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "orckumangas_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "pandachaika_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "platinumlilyscan_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "plottwistnofansub_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "ragnascans_es",
   "veredicto": "SIN_URL"
  },
  {
@@ -8,11 +227,556 @@
   "veredicto": "SIN_URL"
  },
  {
-  "id": "luscious_es",
-  "url": "https://www.luscious.net",
+  "id": "shadowmanga_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "simplyhentai_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "tenkaiscan_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "traduccionesmoonlight_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "tumanhwasclub_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "xkcd_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "yellownote_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "zonatmoto_es",
+  "veredicto": "SIN_URL"
+ },
+ {
+  "id": "apollcomics_es",
+  "url": "https://apollcomics.es",
   "status": 200,
-  "final": "https://www.luscious.net",
-  "bytes": 221991,
+  "final": "https://apollcomics.es",
+  "bytes": 116234,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "asialotus_es",
+  "url": "https://asialotuss.com",
+  "status": 200,
+  "final": "https://asialotuss.com",
+  "bytes": 287378,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "barmanga_es",
+  "url": "https://archiviumbar.com",
+  "status": 200,
+  "final": "https://archiviumbar.com",
+  "bytes": 729944,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "bloomscans_es",
+  "url": "https://bloomscans.com",
+  "status": 200,
+  "final": "https://bloomscans.com",
+  "bytes": 300932,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "bymichiscan_es",
+  "url": "https://bymichiby.com",
+  "status": 200,
+  "final": "https://bymichiby.com",
+  "bytes": 153217,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "catharsisworld_es",
+  "url": "https://catharsisworld.dig-it.info",
+  "status": 200,
+  "final": "https://catharsisworld.dig-it.info",
+  "bytes": 309071,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "cerberusseries_es",
+  "url": "https://legionscans.com/wp",
+  "status": 200,
+  "final": "https://legionscans.com/wp/",
+  "bytes": 233896,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "darkroomfansub_es",
+  "url": "https://lector-darkroomfansub.blogspot.com",
+  "status": 200,
+  "final": "https://lector-darkroomfansub.blogspot.com",
+  "bytes": 224281,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "datgarscanlation_es",
+  "url": "https://datgarscanlation.blogspot.com",
+  "status": 200,
+  "final": "https://datgarscanlation.blogspot.com",
+  "bytes": 164593,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "doujinshell_es",
+  "url": "https://doujinshell.net",
+  "status": 200,
+  "final": "https://doujinshell.net",
+  "bytes": 197458,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "eternalmangas_es",
+  "url": "https://eternalmangas.org",
+  "status": 200,
+  "final": "https://eternalmangas.org",
+  "bytes": 125847,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "gistamishouse_es",
+  "url": "https://gistamishousefansub.blogspot.com",
+  "status": 200,
+  "final": "https://accounts.google.com/v3/signin/identifier?continue=https://www.blogger.com/blogin?u%3Dhttps://gistamishousefansub.blogspot.com/&followup=https://www.blogger.com/blogin?u%3Dhttps://gistamishousefansub.blogspot.com/&passive=1209600&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S1111241408:1786925244430791",
+  "bytes": 1235126,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "gremorymangas_es",
+  "url": "https://gremoryhistorias.org",
+  "status": 200,
+  "final": "https://gremoryhistorias.org/cgi-sys/suspendedpage.cgi",
+  "bytes": 7634,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "hadesnofansub_es",
+  "url": "https://lectorhades.latamtoon.com",
+  "status": 200,
+  "final": "https://lectorhades.latamtoon.com",
+  "bytes": 223564,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "hentaiera_es",
+  "url": "https://hentaiera.com",
+  "status": 200,
+  "final": "https://hentaiera.com",
+  "bytes": 69299,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "hentaihand_es",
+  "url": "https://hentaihand.com",
+  "status": 200,
+  "final": "https://hentaihand.com/xxx",
+  "bytes": 37895,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "houseofotakus_es",
+  "url": "https://houseofotakusv2.xyz",
+  "status": 200,
+  "final": "https://houseofotakusv2.xyz",
+  "bytes": 129987,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "imhentai_es",
+  "url": "https://imhentai.xxx",
+  "status": 200,
+  "final": "https://imhentai.xxx",
+  "bytes": 44483,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "infrafandub_es",
+  "url": "https://infrafandub.com",
+  "status": 200,
+  "final": "https://infrafandub.com",
+  "bytes": 121958,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "inventariooculto_es",
+  "url": "https://inventariooculto.com",
+  "status": 200,
+  "final": "https://inventariooculto.com",
+  "bytes": 127856,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "kazokuden_es",
+  "url": "https://www.kazokuden.com",
+  "status": 200,
+  "final": "https://www.kazokuden.com",
+  "bytes": 213410,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "lectorasteria_es",
+  "url": "https://lectorasteria.com",
+  "status": 200,
+  "final": "https://visor.chifa-tong.online/",
+  "bytes": 330654,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "lolivault_es",
+  "url": "https://lector.lolivault.net",
+  "status": 200,
+  "final": "https://lector.lolivault.net",
+  "bytes": 30697,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "lunapieces_es",
+  "url": "https://lunapiecesfansub.com",
+  "status": 200,
+  "final": "https://lunapiecesfansub.com",
+  "bytes": 261005,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "mangacrab_es",
+  "url": "https://mangacrab.org",
+  "status": 200,
+  "final": "https://mangacrab.org",
+  "bytes": 448897,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "mangaesp_es",
+  "url": "https://mangaesp.topmanhuas.org",
+  "status": 200,
+  "final": "https://mangaesp.topmanhuas.org",
+  "bytes": 2262,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "mangasin_es",
+  "url": "https://m440.in",
+  "status": 200,
+  "final": "https://m440.in",
+  "bytes": 304099,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "mangatv_es",
+  "url": "https://mangatv.net",
+  "status": 200,
+  "final": "https://mangatv.net",
+  "bytes": 92005,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "manhuaonline_es",
+  "url": "https://samurai.j5z.xyz",
+  "status": 200,
+  "final": "https://samurai.j5z.xyz",
+  "bytes": 293108,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "manhuarm_es",
+  "url": "https://manhuarmtl.com",
+  "status": 200,
+  "final": "https://manhuarmtl.com",
+  "bytes": 336379,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "manhwaonline_es",
+  "url": "https://manhwa-online.com",
+  "status": 200,
+  "final": "https://manhwa-online.com",
+  "bytes": 144863,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "marmota_es",
+  "url": "https://marmota.me",
+  "status": 200,
+  "final": "https://marmota.me",
+  "bytes": 221696,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "menudofansub_es",
+  "url": "https://www.menudo-fansub.com",
+  "status": 200,
+  "final": "https://www.menudo-fansub.com",
+  "bytes": 74683,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "mhscans_es",
+  "url": "https://mhscans.com",
+  "status": 200,
+  "final": "https://mhscans.com",
+  "bytes": 560464,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "miauscan_es",
+  "url": "https://leemiau.com",
+  "status": 200,
+  "final": "https://leemiau.com",
+  "bytes": 269979,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "monopolyscan_es",
+  "url": "https://monopolymanhua.com",
+  "status": 200,
+  "final": "https://www.monopolymanhua.com/",
+  "bytes": 134866,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "mundomanhwa_es",
+  "url": "https://mundomanhwa.com",
+  "status": 200,
+  "final": "https://mundomanhwa.com",
+  "bytes": 96814,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "nekoscans_es",
+  "url": "https://nekoproject.org",
+  "status": 200,
+  "final": "https://nekoproject.org",
+  "bytes": 218285,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "nexusscanlation_es",
+  "url": "https://nexusscanlation.com",
+  "status": 200,
+  "final": "https://nexusscanlation.com",
+  "bytes": 298816,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "noblessetranslations_es",
+  "url": "https://nobledicion.yoveo.xyz",
+  "status": 200,
+  "final": "https://get-entry.to/",
+  "bytes": 9909,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "novamanhwa_es",
+  "url": "https://novamanhwa.cc",
+  "status": 200,
+  "final": "https://novamanhwa.cc",
+  "bytes": 126396,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "ragnarokscanlation_es",
+  "url": "https://ragnarokscanlation.org",
+  "status": 200,
+  "final": "https://ragnarokscanlation.org",
+  "bytes": 120348,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "richtoscan_es",
+  "url": "https://r1.richtoon.top",
+  "status": 200,
+  "final": "https://r1.richtoon.top",
+  "bytes": 480362,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "sapphirescan_es",
+  "url": "https://www.sapphirescan.com",
+  "status": 200,
+  "final": "https://www.sapphirescan.com",
+  "bytes": 174666,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "seraphicdeviltry_es",
+  "url": "https://spanish.seraphic-deviltry.com",
+  "status": 200,
+  "final": "https://spanish.seraphic-deviltry.com",
+  "bytes": 102144,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "skymangas_es",
+  "url": "https://skymangas.com",
+  "status": 200,
+  "final": "https://skymangas.com",
+  "bytes": 440499,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "spicyscan_es",
+  "url": "https://spicyseries.com",
+  "status": 200,
+  "final": "https://spicyseries.com",
+  "bytes": 275227,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "submanhwa_es",
+  "url": "https://submanhwa.com",
+  "status": 200,
+  "final": "https://submanhwa.com",
+  "bytes": 385239,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "swordofoblivion_es",
+  "url": "https://swordofoblivion.com",
+  "status": 200,
+  "final": "https://swordofoblivion.com",
+  "bytes": 4730,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "taurusfansub_es",
+  "url": "https://lectortaurus.com",
+  "status": 200,
+  "final": "https://lectortaurus.com",
+  "bytes": 409681,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "templescanesp_es",
+  "url": "https://aedexnox.akan01.com",
+  "status": 200,
+  "final": "https://aedexnox.akan01.com",
+  "bytes": 265591,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "thelibraryofohara_es",
+  "url": "https://thelibraryofohara.com",
+  "status": 200,
+  "final": "https://thelibraryofohara.com",
+  "bytes": 128272,
+  "cloudflare": false,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "uchuujinprojects_es",
+  "url": "https://uchuujinmangas.com",
+  "status": 200,
+  "final": "https://uchuujinmangas.com",
+  "bytes": 184752,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "vermanhwas_es",
+  "url": "https://vermanhwa.com",
+  "status": 200,
+  "final": "https://vermanhwa.com",
+  "bytes": 109538,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "vinnieveritas_es",
+  "url": "https://ccc.vinnieveritas.com",
+  "status": 200,
+  "final": "https://ccc.vinnieveritas.com/CCC020.php",
+  "bytes": 12267,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "webcomics_es",
+  "url": "https://webcomicsapp.com",
+  "status": 200,
+  "final": "https://webcomicsapp.com/en/",
+  "bytes": 308307,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "yupmanga_es",
+  "url": "https://www.yupmanga.com",
+  "status": 200,
+  "final": "https://www.yupmanga.com",
+  "bytes": 165576,
+  "cloudflare": true,
+  "veredicto": "VIVO"
+ },
+ {
+  "id": "yurionline_es",
+  "url": "https://yuri-online.com",
+  "status": 200,
+  "final": "https://yuri-online.com",
+  "bytes": 256120,
   "cloudflare": true,
   "veredicto": "VIVO"
  }
