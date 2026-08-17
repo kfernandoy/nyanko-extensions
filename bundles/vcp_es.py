@@ -633,7 +633,7 @@ except ImportError:
 
 class VerComicsSource(FuenteBaseSource):
     url_suffix = ""
-    use_suffix_on_search = True
+    use_suffix_on_search = False
     supports_latest = False
 
     async def search(self, query: str, limit: int = 20) -> list[SourceSeries]:

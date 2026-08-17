@@ -8,7 +8,7 @@ from inspect import iscoroutine
 from pathlib import Path
 from typing import Any
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 # Config
 REPO = Path(r"E:\2023-09-04\anitracker\nyanko-extensions")
@@ -37,7 +37,13 @@ def _load_source(ext_id: str) -> Any:
     if not src_cls:
         raise RuntimeError(f"No se encontro SOURCE en {ext_id}.py")
         
-    return src_cls()
+    from nyanko_api.sources.contract import SourceCapabilities
+    from nyanko_api.sources.engine import build_source_fetcher
+    
+    cap = src_cls.capabilities if hasattr(src_cls, "capabilities") else SourceCapabilities()
+    fetcher = build_source_fetcher(cap, name=ext_id)
+        
+    return src_cls(fetcher=fetcher)
 
 
 @mcp.tool()
@@ -77,7 +83,7 @@ async def nyanko_call(ext_id: str, method: str, kwargs: str = "{}") -> str:
 
     try:
         res = func(**mapped_args)
-        if iscoroutine(res):
+        if getattr(res, "__class__", None) and hasattr(res.__class__, "__await__") or iscoroutine(res):
             res = await res
             
         # Intentamos volcar el resultado como JSON para que sea legible
@@ -97,4 +103,4 @@ async def nyanko_call(ext_id: str, method: str, kwargs: str = "{}") -> str:
 
 
 if __name__ == "__main__":
-    mcp.run(transport='stdio')
+    mcp.run()

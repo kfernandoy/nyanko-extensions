@@ -87,6 +87,20 @@ async def sondear(session, ext_id: str, url: str) -> dict:
             resultado["veredicto"] = "NO_ENCONTRADO"
         else:
             resultado["veredicto"] = f"HTTP_{resp.status_code}"
+    except httpx.HTTPStatusError as exc:
+        resp = exc.response
+        resultado["status"] = resp.status_code
+        resultado["final"] = str(resp.url)
+        cf = "cloudflare" in resp.headers.get("server", "").lower() or "cf-mitigated" in resp.headers
+        resultado["cloudflare"] = cf
+        if resp.status_code in (403, 503) and cf:
+            resultado["veredicto"] = "BLOQUEADO_CF"
+        elif resp.status_code in (401, 403):
+            resultado["veredicto"] = "BLOQUEADO"
+        elif resp.status_code == 404:
+            resultado["veredicto"] = "NO_ENCONTRADO"
+        else:
+            resultado["veredicto"] = f"HTTP_{resp.status_code}"
     except Exception as exc:  # noqa: BLE001
         resultado["status"] = None
         resultado["veredicto"] = "INALCANZABLE"
@@ -120,13 +134,14 @@ async def principal(ids: list[str]) -> int:
     limite = asyncio.Semaphore(8)
     resultados: list[dict] = []
 
-    async with httpx.AsyncClient(headers=headers) as session:
+    from nyanko_api.http import RateLimitedClient
+    client = RateLimitedClient(resolver_cloudflare=True, follow_redirects=True, timeout=20.0)
 
-        async def tarea(ext_id: str, url: str):
-            async with limite:
-                resultados.append(await sondear(session, ext_id, url))
+    async def tarea(ext_id: str, url: str):
+        async with limite:
+            resultados.append(await sondear(client, ext_id, url))
 
-        await asyncio.gather(*(tarea(i, u) for i, u in objetivos))
+    await asyncio.gather(*(tarea(i, u) for i, u in objetivos))
 
     resultados.extend(problemas)
     resultados.sort(key=lambda r: (r.get("veredicto", ""), r["id"]))

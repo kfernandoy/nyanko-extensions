@@ -9,6 +9,16 @@ class FuenteBaseSource:
     pass
 
 
+_MANTA_COVERS = ("1280x1840_480", "1280x1840_720", "1440x3072", "1440x1440_480")
+_MANTA_UNLOCKED = (110, 130)
+_MANTA_CATEGORIES = {
+    "es": (
+        ("tagId=288", "Nueva"), ("tagId=289", "Exclusiva"), ("tagId=287", "Finalizada"),
+        ("tagId=355", "Romantasia"), ("tagId=3", "Romance"), ("tagId=16", "BL"),
+        ("tagId=13", "Comedia"), ("tagId=7", "Historico"), ("tagId=11", "Vida cotidiana"),
+    ),
+}
+
 class MantaSource(FuenteBaseSource):
     """base_url incluye el idioma; la API cuelga del host a secas."""
 

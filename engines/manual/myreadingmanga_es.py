@@ -9,6 +9,20 @@ class FuenteBaseSource:
     pass
 
 
+_MRM_LANGS = {
+    "ar": "Arabic", "id": "Indonesia", "zh": "Chinese", "en": "English", "de": "German",
+    "it": "Italian", "ja": "Japanese", "ko": "Korean", "pt-BR": "Portuguese",
+    "ru": "Russian", "es": "Spanish", "tr": "Turkish", "vi": "Vietnamese",
+}
+_MRM_SORT = (("date", "Newest"), ("date_asc", "Oldest"), ("rand", "Random"), ("", "More relevant"))
+_MRM_DYNAMIC = (
+    ("genre", "Genre", "ep_filter_genre", "", "tagcloud"),
+    ("tag", "Popular Tags", "ep_filter_post_tag", "tags/", "tag-groups-alphabetical-index"),
+    ("category", "Categories", "ep_filter_category", "cats/", "tag-groups-alphabetical-index"),
+    ("pairing", "Pairing", "ep_filter_pairing", "pairing/", "tag-groups-alphabetical-index"),
+    ("group", "Scanlation Group", "ep_filter_group", "group/", "tag-groups-alphabetical-index"),
+)
+
 class MyreadingmangaSource(FuenteBaseSource):
     """El sitio no publica total de paginas: se acumula lo leido contra ep-search-count."""
 
