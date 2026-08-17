@@ -5,8 +5,24 @@ try:
 except ImportError:
     pass
 
+from html import unescape
+
 class FuenteBaseSource:
     pass
+
+
+_TARJETA = re.compile(
+    r'<a\s+href="([^"]*?/comics/([^"/]+))"[^>]*class="[^"]*falco-card[^"]*"(.*?)</a>',
+    re.S,
+)
+_PORTADA = re.compile(r'<img[^>]+src="([^"]+)"')
+_NOMBRE = re.compile(r"<h4[^>]*>(.*?)</h4>", re.S)
+_CAPITULO = re.compile(r'href="[^"]*?/comics/[^"/]+/([^"/]+)"')
+_LIENZO = re.compile(r'<canvas[^>]+data-src="([^"]+)"[^>]*data-token="([^"]*)"')
+_H1 = re.compile(r"<h1[^>]*>(.*?)</h1>", re.S)
+_DESC = re.compile(r'<meta name="description" content="([^"]*)"')
+_ETIQUETA = re.compile(r"<[^>]+>")
+_NUMERO = re.compile(r"(\d+(?:\.\d+)?)")
 
 
 class TenkaiscanSource(FuenteBaseSource):

@@ -5247,6 +5247,128 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
+_YELLOWNOTE_STRINGS ={
+"en":{
+"filter.sort.title":"Sort by",
+"filter.sort.option.last-update":"Last Update",
+"filter.sort.option.popularity":"Popularity",
+"filter.sort.option.most-comments":"Comment Count",
+"filter.sort.option.latest-comments":"Latest Comments",
+"filter.category.title":"Category",
+"filter.category.option.theme.xiuren-featured":"Theme: Xiuren Featured",
+"filter.category.option.theme.large-scale":"Theme: Large Scale",
+"filter.category.option.theme.sex":"Theme: Sex",
+"filter.category.option.theme.exposure":"Theme: Exposure",
+"filter.category.option.theme.cosplay":"Theme: Cosplay",
+"filter.category.option.theme.sex-toy":"Theme: Sex Toy",
+"filter.category.option.theme.bondage":"Theme: Bondage",
+"filter.category.option.theme.shaved-pussy":"Theme: Shaved Pussy",
+"filter.category.option.theme.lesbian":"Theme: Lesbian",
+"filter.category.option.theme.with-original-photos":"Theme: With Original Photos",
+"filter.category.option.theme.with-video":"Theme: With Video(s)",
+"filter.category.option.theme.amateur":"Theme: Amateur",
+"config.image_quality.title":"Image Quality",
+},
+"es":{
+"filter.sort.title":"Ordenar por",
+"filter.sort.option.last-update":"Última actualización",
+"filter.sort.option.popularity":"Contenido más popular",
+"filter.sort.option.most-comments":"Más comentarios",
+"filter.sort.option.latest-comments":"Comentarios más recientes",
+"filter.category.title":"Categoría del álbum",
+"filter.category.option.theme.xiuren-featured":"Xiuren Gran escala",
+"filter.category.option.theme.large-scale":"Gran Escala",
+"filter.category.option.theme.sex":"Sexo",
+"filter.category.option.theme.exposure":"Exposición",
+"filter.category.option.theme.cosplay":"Cosplay",
+"filter.category.option.theme.sex-toy":"Juguete Sexual",
+"filter.category.option.theme.bondage":"Esclavitud",
+"filter.category.option.theme.shaved-pussy":"Coño Afeitado",
+"filter.category.option.theme.lesbian":"Lesbiana",
+"filter.category.option.theme.with-original-photos":"Con fotos originales",
+"filter.category.option.theme.with-video":"Con vídeo(s)",
+"filter.category.option.theme.amateur":"Aficionado",
+"config.image_quality.title":"Calidad de imagen",
+},
+}
+
+
+_YELLOWNOTE_CATEGORIES =(
+("photos/album-1","filter.category.option.theme.xiuren-featured"),
+("photos/album-2","filter.category.option.theme.large-scale"),
+("photos/album-3","filter.category.option.theme.sex"),
+("photos/album-4","filter.category.option.theme.exposure"),
+("photos/album-5","filter.category.option.theme.cosplay"),
+("photos/album-6","filter.category.option.theme.sex-toy"),
+("photos/album-7","filter.category.option.theme.bondage"),
+("photos/album-8","filter.category.option.theme.shaved-pussy"),
+("photos/album-9","filter.category.option.theme.lesbian"),
+("photos/album-10","filter.category.option.theme.with-original-photos"),
+("photos/album-11","filter.category.option.theme.with-video"),
+("amateurs","filter.category.option.theme.amateur"),
+("photos/series-637b2029d2347","filter.category.option.taiwan-studios-jvid"),
+("photos/series-5f889afb37619","filter.category.option.taiwan-studios-fantasy-factory"),
+("photos/series-5f7a0a80d3d66","filter.category.option.taiwan-studios-tpimage"),
+("photos/series-6310ce9b90056","filter.category.option.chinese-studios-pans"),
+("photos/series-6666a7ac3ba9c","filter.category.option.chinese-studios-wind-sings"),
+("photos/series-64f44d99ce673","filter.category.option.chinese-studios-xing-se"),
+("photos/series-665f8bafab4bc","filter.category.option.chinese-studios-huang-fu"),
+("photos/series-665f7d787d681","filter.category.option.chinese-studios-other-studios"),
+("photos/series-5f1dcdeaee582","filter.category.option.chinese-studios-metcn"),
+("photos/series-5f1d784995865","filter.category.option.chinese-studios-litu"),
+("photos/series-638e5a60b1770","filter.category.option.chinese-studios-midnight-project"),
+("photos/series-5f23c44cd66bd","filter.category.option.chinese-studios-pandora"),
+("photos/series-5f2089564c6c2","filter.category.option.chinese-studios-missleg"),
+("photos/series-646c69b675f3d","filter.category.option.chinese-studios-iss"),
+("photos/series-5f15f389e993e","filter.category.option.chinese-studios-aiss"),
+("photos/series-5f60b98248a81","filter.category.option.chinese-studios-au"),
+("photos/series-622c7f95220a4","filter.category.option.chinese-studios-beijing-angel"),
+("photos/series-619a92aa1fa7a","filter.category.option.chinese-studios-wuji-works"),
+("photos/series-676c3e9b90749","filter.category.option.chinese-studios-pomelo"),
+("photos/series-5f382ba894af4","filter.category.option.chinese-studios-sk-silk"),
+("photos/series-5f15f727df393","filter.category.option.chinese-studios-ddy"),
+("photos/series-5f22ea422221c","filter.category.option.chinese-studios-dongguan-vgirls"),
+("photos/series-61b997728043b","filter.category.option.chinese-studios-youmei"),
+("photos/series-6443d480eb757","filter.category.option.others-ai-photos"),
+("photos/series-665f81885f103","filter.category.option.korean-studios-makemodel"),
+("photos/series-6224e755e21f4","filter.category.option.korean-studios-pure-media"),
+("photos/series-665a2385a2367","filter.category.option.korean-studios-espacia-korea"),
+("photos/series-62888afad416b","filter.category.option.korean-studios-loozy"),
+("photos/series-6450b47c9db0b","filter.category.option.japanese-studios-graphis"),
+("photos/series-66f9665804471","filter.category.option.japanese-studios-kuni-scan"),
+("photos/series-66e68b9c96ab0","filter.category.option.japanese-studios-weekly-post-digital-photo"),
+("photos/series-670d7142b3d88","filter.category.option.japanese-studios-morning-sexy"),
+("photos/series-670791f5f2f0f","filter.category.option.japanese-studios-prestige"),
+("photos/series-66fb8cca706ae","filter.category.option.japanese-studios-x-city"),
+("photos/series-66659e2d94489","filter.category.option.japanese-studios-friday"),
+("photos/series-63e7481fa2c44","filter.category.option.japanese-studios-flash"),
+("photos/series-662da0561effa","filter.category.option.japanese-studios-ex-max"),
+("photos/series-64637db850548","filter.category.option.japanese-studios-young-magazine"),
+("photos/series-66ec3705efc8b","filter.category.option.japanese-studios-young-gangan"),
+("photos/series-6562a4a15c6d1","filter.category.option.japanese-studios-weekly-playboy"),
+("photos/series-645739068c9e5","filter.category.option.japanese-studios-super-pose-book"),
+("photos/series-6288877690068","filter.category.option.japanese-studios-urabon"),
+("photos/series-670d6bf875331","filter.category.option.japanese-studios-escape"),
+)
+
+
+_YELLOWNOTE_SORT =(
+("","filter.sort.option.last-update"),
+("sort-hot","filter.sort.option.popularity"),
+("sort-comment","filter.sort.option.most-comments"),
+("sort-recent","filter.sort.option.latest-comments"),
+)
+
+
+_YELLOWNOTE_STYLE_URL =re .compile (r"background-image\s*:\s*url\('([^']+)'\)")
+
+
+_YELLOWNOTE_MEDIA_COUNT =re .compile (r"^\d+P( \+ \d+V)?$")
+
+
+_YELLOWNOTE_DATE =re .compile (r"\d{4}\.\d{2}\.\d{2}")
+
+
 def _yellownote_kids (node :_Node ,tag :str ,class_name :str |None =None )->list [_Node ]:
     return [
     child 

@@ -153,8 +153,8 @@ def _refrescar_motor_en_manual(source: str, engine: str) -> str:
     En el caso 2 no basta con cortar en la subclase: varios manuales definen ANTES helpers
     propios a nivel de modulo (``_nartag_last_child``, ``_raven_kids``...) que la subclase
     usa. Cortar en la clase los dejaba fuera y el bundle petaba con NameError en cuanto se
-    llamaba a browse. Por eso se retrocede hasta la primera definicion top-level que ya no
-    pertenece al motor.
+    llamaba a browse. Por eso se conserva el cierre transitivo de dependencias top-level
+    que usa la parte propia, sin arrastrar definiciones congeladas no usadas.
 
     Lo que va despues -que es lo unico que justifica el override- se conserva intacto. Si no
     aparece la clase raiz del motor se devuelve el archivo sin tocar.
@@ -183,7 +183,7 @@ def _refrescar_motor_en_manual(source: str, engine: str) -> str:
 
     lineas = source.splitlines(keepends=True)
     nombres_motor = _nombres_top_level(engine_tree)
-    propios: list[str] = []
+    nodos_propios: list[ast.stmt] = []
     for node in manual_tree.body:
         if node.lineno <= frozen_engine.end_lineno:
             continue
@@ -196,7 +196,17 @@ def _refrescar_motor_en_manual(source: str, engine: str) -> str:
                 "el manual redefine nombres del motor actual: "
                 + ", ".join(sorted(colisiones))
             )
-        propios.append("".join(lineas[node.lineno - 1 : node.end_lineno]))
+        nodos_propios.append(node)
+
+    # Algunos manuales fueron recortados con sus auxiliares antes de la ultima clase
+    # congelada. Rescatar solo el cierre transitivo evita copiar el prefijo completo.
+    dependencias = _dependencias_top_level(
+        manual_tree, engine_tree, frozen_engine, nodos_propios
+    )
+    propios = [
+        "".join(lineas[node.lineno - 1 : node.end_lineno])
+        for node in (*dependencias, *nodos_propios)
+    ]
 
     return engine.rstrip() + "\n\n\n" + "\n\n".join(propios).lstrip()
 
@@ -212,6 +222,60 @@ def _nombres_de_nodo(node: ast.AST) -> set[str]:
 
 def _nombres_top_level(tree: ast.Module) -> set[str]:
     return {nombre for node in tree.body for nombre in _nombres_de_nodo(node)}
+
+
+def _nombres_vinculados(node: ast.AST) -> set[str]:
+    nombres = _nombres_de_nodo(node)
+    if isinstance(node, ast.Import):
+        nombres.update(alias.asname or alias.name.split(".", 1)[0] for alias in node.names)
+    elif isinstance(node, ast.ImportFrom):
+        nombres.update(alias.asname or alias.name for alias in node.names if alias.name != "*")
+    return nombres
+
+
+def _dependencias_top_level(
+    manual_tree: ast.Module,
+    engine_tree: ast.Module,
+    frozen_engine: ast.ClassDef,
+    nodos_propios: list[ast.stmt],
+) -> list[ast.stmt]:
+    disponibles = {
+        nombre for node in engine_tree.body for nombre in _nombres_vinculados(node)
+    }
+    disponibles.update(
+        nombre for node in nodos_propios for nombre in _nombres_vinculados(node)
+    )
+
+    candidatos: dict[str, tuple[int, ast.stmt]] = {}
+    for indice, node in enumerate(manual_tree.body):
+        if node.lineno > frozen_engine.end_lineno:
+            break
+        for nombre in _nombres_vinculados(node):
+            candidatos[nombre] = (indice, node)
+
+    pendientes = {
+        child.id
+        for node in nodos_propios
+        for child in ast.walk(node)
+        if isinstance(child, ast.Name) and isinstance(child.ctx, ast.Load)
+    }
+    elegidos: dict[int, ast.stmt] = {}
+    while pendientes:
+        nombre = pendientes.pop()
+        if nombre in disponibles or nombre not in candidatos:
+            continue
+        indice, node = candidatos[nombre]
+        if indice in elegidos:
+            continue
+        elegidos[indice] = node
+        disponibles.update(_nombres_vinculados(node))
+        pendientes.update(
+            child.id
+            for child in ast.walk(node)
+            if isinstance(child, ast.Name) and isinstance(child.ctx, ast.Load)
+        )
+
+    return [elegidos[indice] for indice in sorted(elegidos)]
 
 
 def _es_import_madara_vacio(node: ast.AST) -> bool:
@@ -374,7 +438,6 @@ def _manual_bundle(path: Path, engine: str = "", tema: str = "", extension: dict
     )
 
     if extension:
-        if extension["id"] == "emperorscan_es": print("--- HIT EMPEROR ---")
         match = re.search(r"^SOURCE\s*=\s*(\w+)", source, re.M)
         if match:
             source_cls = match.group(1)
@@ -1367,6 +1430,7 @@ def _supported_zeistmanga(module: Path, build: str) -> dict[str, object] | None:
     }
     popular_is_latest = module.name in {
         "apenasumafa",
+        "datgarscanlation",
         "darkroomfansub",
         "mangahub",
         "mikoroku",

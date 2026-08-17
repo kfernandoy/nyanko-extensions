@@ -1,104 +1,89 @@
-# mcp server
 import asyncio
 import json
-import logging
-import sys
-import types
-from inspect import iscoroutine
+import os
 from pathlib import Path
-from typing import Any
 
+import httpx
 from fastmcp import FastMCP
 
-# Config
 REPO = Path(r"E:\2023-09-04\anitracker\nyanko-extensions")
-BACKEND = Path(r"E:\2023-09-04\anitracker\Nyanko\apps\backend")
+APP_DATA = Path(os.environ["APPDATA"]) / "app.nyanko.desktop"
+API_URL = os.environ.get("NYANKO_API_URL", "http://127.0.0.1:8765")
+UI_BRIDGE = REPO / "tools" / "nyanko_ui_bridge.js"
 
 mcp = FastMCP("Nyanko Tests")
 
 
-def _load_source(ext_id: str) -> Any:
-    if str(BACKEND) not in sys.path:
-        sys.path.insert(0, str(BACKEND))
-    
-    path = REPO / "bundles" / f"{ext_id}.py"
-    if not path.exists():
-        raise FileNotFoundError(f"Bundle no encontrado: {path}")
+def _instance_headers() -> dict[str, str]:
+    token = (APP_DATA / "instance_token").read_text(encoding="utf-8").strip()
+    return {"X-Nyanko-Instance": token}
 
-    mod = types.ModuleType(ext_id)
-    mod.__dict__["__file__"] = str(path)
-    
-    try:
-        exec(compile(path.read_text(encoding="utf-8"), str(path), "exec"), mod.__dict__)
-    except Exception as e:
-        raise RuntimeError(f"Error parseando/ejecutando {ext_id}.py: {e}") from e
-    
-    src_cls = mod.__dict__.get("SOURCE")
-    if not src_cls:
-        raise RuntimeError(f"No se encontro SOURCE en {ext_id}.py")
-        
-    from nyanko_api.sources.contract import SourceCapabilities
-    from nyanko_api.sources.engine import build_source_fetcher
-    
-    cap = src_cls.capabilities if hasattr(src_cls, "capabilities") else SourceCapabilities()
-    fetcher = build_source_fetcher(cap, name=ext_id)
-        
-    return src_cls(fetcher=fetcher)
+
+async def _show_source(ext_id: str) -> dict[str, object]:
+    process = await asyncio.create_subprocess_exec(
+        "node",
+        str(UI_BRIDGE),
+        ext_id,
+        cwd=str(REPO),
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    stdout, stderr = await process.communicate()
+    if process.returncode:
+        raise RuntimeError(stderr.decode("utf-8", errors="replace").strip())
+    return json.loads(stdout)
+
+
+async def _api_call(ext_id: str, method: str, args: dict[str, object]) -> object:
+    params: dict[str, object] = {"source": ext_id}
+    endpoint = method
+
+    if method == "browse":
+        params.update(kind=args.get("kind", "popular"), page=args.get("page", 1))
+    elif method == "search":
+        params.update(query=args.get("query", ""), page=args.get("page", 1))
+    elif method in {"details", "series"}:
+        endpoint = "series"
+        params["series_id"] = args.get("series_id") or args.get("source_id")
+    elif method == "chapters":
+        params["series_id"] = args.get("series_id") or args.get("source_id")
+    elif method == "pages":
+        params["chapter_id"] = args.get("chapter_id") or args.get("source_id")
+    else:
+        raise ValueError(f"Metodo no soportado por la API viva: {method}")
+
+    if "filters" in args:
+        params["filters"] = json.dumps(args["filters"], ensure_ascii=False)
+
+    async with httpx.AsyncClient(base_url=API_URL, headers=_instance_headers(), timeout=90) as client:
+        response = await client.get(f"/api/manga/{endpoint}", params=params)
+        response.raise_for_status()
+        return response.json()
 
 
 @mcp.tool()
 async def nyanko_call(ext_id: str, method: str, kwargs: str = "{}") -> str:
-    """Invoca un metodo en una fuente (ej. search, browse, details, chapters, pages).
+    """Muestra una fuente en Nyanko y la valida mediante el backend vivo.
+
     Args:
-       ext_id: ID de la extension (ej. "manta_es")
-       method: Nombre del metodo (ej. "search")
-       kwargs: Argumentos en JSON comun (ej. '{"query": "magia"}')
+       ext_id: ID instalado de la extension, por ejemplo "manta_es".
+       method: Metodo HTTP: browse, search, details, chapters o pages.
+       kwargs: Argumentos como JSON, por ejemplo '{"kind": "popular"}'.
     """
     try:
         args = json.loads(kwargs)
-    except json.JSONDecodeError:
-        return f"Error: kwargs no es un JSON valido: {kwargs}"
-        
-    try:
-        source = _load_source(ext_id)
-    except Exception as e:
-        return f"Error instanciando {ext_id}: {e}"
-        
-    func = getattr(source, method, None)
-    if not func:
-        return f"Error: La fuente {ext_id} no tiene el metodo {method}"
-        
-    # Casos especiales de serializacion en argumentos que esperan instacias como SourceSeries
-    # Si requiere una clase de Nyanko, intentamos pasar el ID directamente (los motores suelen aceptar string o model)
-    from nyanko_api.sources.contract import SourceSeries, SourceChapter
-
-    # Mapeo manual simple para convertir dicts (si mandan JSON) en modelos
-    mapped_args = {}
-    for k, v in args.items():
-        if isinstance(v, dict) and "source_id" in v:
-            # es probable que intenten pasar una serie y el metodo soporta objeto o string
-            mapped_args[k] = SourceSeries(**v) if "title" in v else SourceChapter(**v)
-        else:
-            mapped_args[k] = v
+        if not isinstance(args, dict):
+            raise ValueError("kwargs debe ser un objeto JSON")
+    except (json.JSONDecodeError, ValueError) as error:
+        return f"Error: kwargs no es un objeto JSON valido: {error}"
 
     try:
-        res = func(**mapped_args)
-        if getattr(res, "__class__", None) and hasattr(res.__class__, "__await__") or iscoroutine(res):
-            res = await res
-            
-        # Intentamos volcar el resultado como JSON para que sea legible
-        try:
-            # Si el resultado es lista de modelos Pydantic
-            if isinstance(res, list) and len(res) > 0 and hasattr(res[0], "model_dump"):
-                return json.dumps([x.model_dump() for x in res], indent=2)
-            elif hasattr(res, "model_dump"):
-                return json.dumps(res.model_dump(), indent=2)
-            else:
-                return json.dumps(res, indent=2)
-        except Exception:
-            return f"Resultado ({type(res).__name__}): {res}"
-    except Exception as e:
+        ui = await _show_source(ext_id)
+        result = await _api_call(ext_id, method, args)
+        return json.dumps({"ui": ui, "result": result}, ensure_ascii=False, indent=2)
+    except Exception:
         import traceback
+
         return f"Error ejecutando {ext_id}.{method}:\n{traceback.format_exc()}"
 
 

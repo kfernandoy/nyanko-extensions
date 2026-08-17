@@ -9,6 +9,9 @@ class MadaraSource:
     pass
 
 
+_POR_PAGINA = 24
+
+
 class TraduccionesmoonlightSource(MadaraSource):
     def __init__(self, fetcher=None) -> None:
         super().__init__(fetcher)

@@ -9,6 +9,19 @@ class MadaraSource:
     pass
 
 
+_PLATINUM_GENRES = (
+    "Acción", "Apocalíptico", "Aventura", "Ciencia Ficción", "Cocina", "Comedia", "Drama",
+    "Ecchi", "Escolar", "Fantasía", "Histórico", "Horror", "Isekai", "Magia", "Mecha",
+    "Misterio", "Música", "Psicológico", "Romance", "Slice of Life", "Sobrenatural",
+    "Supervivencia", "Tragedia", "Vampiros", "Yuri",
+)
+_PLATINUM_STATUS = {
+    "ONGOING": "ongoing",
+    "COMPLETED": "completed",
+    "HIATUS": "hiatus",
+}
+
+
 class PlatinumlilyscanSource(MadaraSource):
     """El catalogo entero llega en /api/series y se ordena y filtra en el cliente."""
 

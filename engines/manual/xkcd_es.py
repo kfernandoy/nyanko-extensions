@@ -5,8 +5,29 @@ try:
 except ImportError:
     pass
 
+from urllib.parse import parse_qs, urlencode
+
 class FuenteBaseSource:
     pass
+
+
+_XKCD_ENGLISH = "https://xkcd.com"
+_XKCD_TEXT = "nyanko-text:"
+_XKCD_CACHE_SECONDS = 60 * 60
+_XKCD_PER_PAGE = 10
+_XKCD_SPANISH_OVERRIDES = {"/strips/geografia/": 1472}
+_XKCD_ARCHIVE = {"fr": "/tous-episodes.php", "ru": "/img", "zh": "/api/strips.json"}
+_XKCD_CREATOR = {"ru": "Рэндел Манро", "zh": "兰德尔·门罗"}
+_XKCD_SYNOPSIS = {
+    "es": "Un webcómic sobre romance, sarcasmo, mates y lenguaje.",
+    "fr": "Un webcomic sarcastique qui parle de romance, de maths et de langage.",
+    "ru": "о романтике, сарказме, математике и языке",
+    "zh": "這裡翻譯某個關於浪漫、諷刺、數學、以及語言的漫畫",
+}
+_XKCD_INTERACTIVE = {
+    "es": "Para experimentar la versión interactiva de este cómic, ábralo en WebView/navegador.",
+    "zh": "要體驗本漫畫的互動版請在WebView/瀏覽器中打開。",
+}
 
 
 def _xkcd_children(node: _Node, tag: str | None = None) -> list[_Node]:

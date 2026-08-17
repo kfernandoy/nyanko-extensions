@@ -1977,7 +1977,38 @@ class MadaraDetailsSource (MadaraDetailsSource ):
         return await self .fetcher .request (method ,url ,**kwargs )
 
 
-class LectormangalatSource (MadaraDetailsSource ):
+from html import unescape 
+
+
+_TARJETA =re .compile (
+r'<a\s+href="/comics/([a-z0-9\-]+)"\s+class="card-cover-link"\s+title="([^"]*)"[^>]*>'
+r'\s*<img[^>]+src="([^"]+)"',
+re .S ,
+)
+
+
+_CAPITULO =re .compile (r'href="/comics/[a-z0-9\-]+/([a-z0-9\-]*\d[a-z0-9\-.]*)"')
+
+
+_PAGINA =re .compile (r'<img[^>]+src="(https://media\.[^"]+/capitulos/[^"]+)"')
+
+
+_H1 =re .compile (r"<h1[^>]*>(.*?)</h1>",re .S )
+
+
+_DESC =re .compile (r'<meta name="description" content="([^"]*)"')
+
+
+_PORTADA_OG =re .compile (r'<meta property="og:image" content="([^"]*)"')
+
+
+_ETIQUETA =re .compile (r"<[^>]+>")
+
+
+_NUMERO =re .compile (r"(\d+(?:\.\d+)?)")
+
+
+class LectormangalatSource (FuenteBaseSource ):
     async def _html (self ,path :str )->str :
         response =await self ._request ("GET",f"{self .base_url }{path }")
         response .raise_for_status ()

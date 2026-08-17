@@ -758,7 +758,13 @@ class GalleryAdultsSource(FuenteBaseSource):
     async def browse(self, kind: str, page: int = 1) -> list[SourceSeries]:
         if kind not in {"popular", "latest"}:
             return []
-        return await self._catalog(kind == "popular", page)
+        if kind == "popular":
+            try:
+                return await self._catalog(True, page)
+            except Exception as error:
+                if getattr(getattr(error, "response", None), "status_code", None) != 404:
+                    raise
+        return await self._catalog(False, page)
 
     async def details(self, series: SourceSeries | str) -> SourceSeries:
         """Ficha de la galeria.

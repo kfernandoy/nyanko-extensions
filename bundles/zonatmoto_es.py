@@ -5247,6 +5247,61 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
+_ZONATMO_GENRES =(
+("2","Acción"),("6198","Animación"),("861","Apocalíptico"),
+("26","Artes Marciales"),("3","Aventura"),("103","Boys Love"),
+("356","Ciberpunk"),("21","Ciencia Ficción"),("4","Comedia"),
+("41","Crimen"),("88","Demonios"),("37","Deporte"),
+("15","Drama"),("32","Ecchi"),("1168","Extranjero"),
+("1027","Familia"),("5","Fantasia"),("22","Girls Love"),
+("181","Gore"),("1109","Guerra"),("183","Género Bender"),
+("8","Harem"),("81","Historia"),("82","Horror"),
+("6","Magia"),("144","Mecha"),("342","Militar"),
+("40","Misterio"),("403","Musica"),("219","Niños"),
+("141","Oeste"),("820","Parodia"),("111","Policiaco"),
+("36","Psicológico"),("147","Realidad"),("27","Realidad Virtual"),
+("33","Recuentos de la vida"),("60","Reencarnación"),("16","Romance"),
+("99","Samurái"),("7","Sobrenatural"),("116","Superpoderes"),
+("112","Supervivencia"),("470","Telenovela"),("49","Thriller"),
+("46","Tragedia"),("1464","Traps"),("345","Vampiros"),
+("23","Vida Escolar"),
+)
+
+
+_ZONATMO_TYPES =(
+("207","Doujinshi"),("14","Manga"),("31","Manhua"),
+("87","Manhwa"),("214","Novela"),("976","OEL"),
+("12312","One shot"),
+)
+
+
+_ZONATMO_STATUSES =(
+("12","Publicándose"),("19","Finalizado"),
+("174","Pausado"),("198","Cancelado"),
+)
+
+
+_ZONATMO_GENRE_NAMES =dict (_ZONATMO_GENRES )
+
+
+_ZONATMO_HOST ="zonatmo.to"
+
+
+_ZONATMO_API =f"https://{_ZONATMO_HOST }/wp-api/api"
+
+
+_ZONATMO_CDN =f"https://cdn.{_ZONATMO_HOST }"
+
+
+_ZONATMO_UPLOADS =f"https://{_ZONATMO_HOST }/wp-content/uploads"
+
+
+_ZONATMO_CHAPTERS_PER_PAGE =50 
+
+
+_ZONATMO_STATUS =((12 ,"ongoing"),(19 ,"completed"),(174 ,"hiatus"),(198 ,"cancelled"))
+
+
 class ZonatmotoSource (MadaraDetailsSource ):
     """No hay recientes; pegar la URL de una serie abre su ficha directamente."""
 

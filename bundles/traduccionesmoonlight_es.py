@@ -622,6 +622,9 @@ try :
 except ImportError :
     pass 
 
+_POR_PAGINA =24 
+
+
 class TraduccionesmoonlightSource (FuenteBaseSource ):
     def __init__ (self ,fetcher =None )->None :
         super ().__init__ (fetcher )

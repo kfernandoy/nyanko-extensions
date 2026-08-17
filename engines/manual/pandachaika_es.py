@@ -9,6 +9,33 @@ class MadaraSource:
     pass
 
 
+_PANDA_ZIP = "nyanko-zip:"
+_PANDA_DIGITS = re.compile(r"\d+")
+_PANDA_LANGS = {
+    "en": "english", "zh": "chinese", "ko": "korean", "es": "spanish", "ru": "russian",
+    "pt": "portuguese", "fr": "french", "th": "thai", "vi": "vietnamese", "ja": "japanese",
+    "id": "indonesian", "ar": "arabic", "uk": "ukrainian", "tr": "turkish", "cs": "czech",
+    "tl": "tagalog", "fi": "finnish", "jv": "javanese", "el": "greek",
+}
+_PANDA_TYPES = (
+    "All", "Doujinshi", "Manga", "Image Set", "Artist CG", "Game CG", "Western", "Non-H", "Misc",
+)
+_PANDA_SORTS = (
+    ("public_date", "Public Date"), ("posted", "Posted Date"), ("title", "Title"),
+    ("title_jpn", "Japanese Title"), ("rating", "Rating"), ("filecount", "Images"),
+    ("filesize", "File Size"), ("category", "Category"),
+)
+_PANDA_TEXT = (
+    ("tags", "Tags", ""), ("male_tags", "Male Tags", "male"),
+    ("female_tags", "Female Tags", "female"), ("artists", "Artists", "artist"),
+    ("parodies", "Parodies", "parody"), ("characters", "Characters", "character"),
+)
+_PANDA_WEEKDAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+_PANDA_MONTHS = (
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+)
+
+
 def _panda_titlecase(value: str) -> str:
     return " ".join(part[:1].upper() + part[1:] if part else part for part in value.split(" "))
 

@@ -6,7 +6,7 @@ Aqui vive lo que NO es de ningun tema en concreto: el parser de HTML, los helper
 de imagen y fecha, el descifrado de paginas protegidas y la clase base con lo
 minimo que toda fuente necesita (`__init__`, `_request`, `page_bytes`).
 
-Existe para que un motor de tema NO tenga que heredar de `MadaraSource`. Antes lo
+Existe para que un motor de tema NO tenga que heredar de `FuenteBaseSource`. Antes lo
 hacia: 63 de 64 motores heredaban de Madara solo para tener `_request` (5 lineas)
 y el parser, y a cambio cada bundle arrastraba `madara.py` entero -- 129 KB, con
 el motor Madara y hasta diez fuentes concretas ajenas dentro. Un arreglo del
@@ -615,12 +615,14 @@ class FuenteBaseSource :
         return await self .fetcher .request (method ,url ,**kwargs )
 
 
-try :
-    from .mangathemesia import (
-    FuenteBaseSource ,_Node ,_TreeParser 
-    )
-except ImportError :
-    pass 
+from nyanko_api .sources .errors import SourceUnsupportedError 
+
+
+_API ="/wp-json/mangamukai/v1"
+
+
+_POR_PAGINA =24 
+
 
 class MangashiinaSource (FuenteBaseSource ):
     def __init__ (self ,fetcher =None )->None :
@@ -752,7 +754,6 @@ class MangashiinaSource (FuenteBaseSource ):
             )
             )
         return paginas 
-
 
 
  

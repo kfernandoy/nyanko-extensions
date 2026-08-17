@@ -1271,7 +1271,7 @@ class GeneratedZeistMangaSource(ZeistMangaSource):
     chapter_category = 'Chapter'
     use_new_chapter_feed = True
     chapter_feed_profile = 'default'
-    popular_is_latest = False
+    popular_is_latest = True
     popular_profile = 'default'
     request_referer = ''
     search_profile = 'default'

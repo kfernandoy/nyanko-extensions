@@ -5247,7 +5247,13 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
-class LectormonlineSource (MadaraDetailsSource ):
+_CAPITULO_HTML =re .compile (r"/chapters/(\d+)")
+
+
+_POR_PAGINA =20 
+
+
+class LectormonlineSource (FuenteBaseSource ):
     async def _json (self ,path :str ,params :dict |None =None )->dict :
         response =await self ._request (
         "GET",f"{self .base_url }{path }",params =params or {},
@@ -5274,11 +5280,11 @@ class LectormonlineSource (MadaraDetailsSource ):
         marcados =vistos |{indice }
         if isinstance (valor ,dict ):
             return {
-            clave :GatoLibreriaSource ._resolver (datos ,hijo ,marcados )
+            clave :LectormonlineSource ._resolver (datos ,hijo ,marcados )
             for clave ,hijo in valor .items ()
             }
         if isinstance (valor ,list ):
-            return [GatoLibreriaSource ._resolver (datos ,hijo ,marcados )for hijo in valor ]
+            return [LectormonlineSource ._resolver (datos ,hijo ,marcados )for hijo in valor ]
         return valor 
 
     async def _payload (self ,path :str )->dict :

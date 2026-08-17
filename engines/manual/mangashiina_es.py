@@ -1,15 +1,19 @@
+from nyanko_api.sources.errors import SourceUnsupportedError
+
 try:
-    from .mangathemesia import (
-        MangaThemesiaSource, _Node, _TreeParser
-    )
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
-class MangaThemesiaSource:
+_API = "/wp-json/mangamukai/v1"
+_POR_PAGINA = 24
+
+
+class FuenteBaseSource:
     pass
 
 
-class MangashiinaSource(MangaThemesiaSource):
+class MangashiinaSource(FuenteBaseSource):
     def __init__(self, fetcher=None) -> None:
         super().__init__(fetcher)
         self._catalogo: list[dict] | None = None

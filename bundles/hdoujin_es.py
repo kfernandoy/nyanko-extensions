@@ -5247,7 +5247,10 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
-class HdoujinSource (MadaraDetailsSource ):
+_API ="https://api.hdoujin.org"
+
+
+class HdoujinSource (FuenteBaseSource ):
 # Mascara del idioma que sirve esta variante; 0 = sin filtro (todos).
     language_mask =0 
 

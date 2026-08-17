@@ -1,15 +1,18 @@
+from urllib.parse import urlparse
+
 try:
-    from .madara import (
-        MadaraSource, _Node, _TreeParser
-    )
+    from .base import FuenteBaseSource, SourceChapter, SourcePage, SourceSeries
 except ImportError:
     pass
 
-class MadaraSource:
+_API = "https://api.hdoujin.org"
+
+
+class FuenteBaseSource:
     pass
 
 
-class HdoujinSource(MadaraSource):
+class HdoujinSource(FuenteBaseSource):
     # Mascara del idioma que sirve esta variante; 0 = sin filtro (todos).
     language_mask = 0
 

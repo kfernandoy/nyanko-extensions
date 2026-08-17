@@ -5247,6 +5247,45 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
+from html import unescape 
+
+
+_SNAPSHOT =re .compile (r'wire:snapshot="(.*?)" wire:effects=',re .S )
+
+
+_RUTA_WIRE =re .compile (r'"(https?://[^"]+/livewire-[a-z0-9]+)/update"')
+
+
+_CSRF =re .compile (r'csrf-token"\s+content="([^"]*)"')
+
+
+_TARJETA =re .compile (r'href="[^"]*?/serie/(\d+)"',re .S )
+
+
+_IMG_ALT =re .compile (r'<img\s[^>]*?src="([^"]+)"[^>]*?alt="([^"]*)"',re .S )
+
+
+_H1 =re .compile (r"<h1[^>]*>(.*?)</h1>",re .S )
+
+
+_CAPITULO =re .compile (r'href="[^"]*?/chapter/(\d+)"')
+
+
+_PAGINA =re .compile (r'<img[^>]+class="chapter-img[^"]*"[^>]+src="([^"]+)"')
+
+
+_TITULO_OG =re .compile (r'<meta property="og:title" content="([^"]*)"')
+
+
+_IMAGEN_OG =re .compile (r'<meta property="og:image" content="([^"]*)"')
+
+
+_DESC =re .compile (r'<meta name="description" content="([^"]*)"')
+
+
+_ETIQUETA =re .compile (r"<[^>]+>")
+
+
 class AkayaSource (FuenteBaseSource ):
     async def _html (self ,path :str )->str :
         response =await self ._request ("GET",f"{self .base_url }{path }")

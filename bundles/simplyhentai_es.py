@@ -5247,6 +5247,15 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
+_SIMPLYHENTAI_API ="https://api.simply-hentai.com/v3"
+
+
+_SIMPLYHENTAI_LANGS ={
+"en":"english","ja":"japanese","zh":"chinese","ko":"korean","es":"spanish",
+"ru":"russian","fr":"french","de":"german","it":"italian","pl":"polish",
+}
+
+
 class SimplyhentaiSource (FuenteBaseSource ):
     """Cada album es una sola serie con un unico capitulo de todas las paginas."""
 

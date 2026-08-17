@@ -76,6 +76,55 @@ SOURCE = SiteSource
         self.assertEqual(refreshed.count("class MadaraSource:"), 1)
         compile(refreshed, "manual.py", "exec")
 
+    def test_manual_refresh_recovers_top_level_dependencies_before_engine(self):
+        engine = '''\
+import hashlib
+
+class _Node:
+    pass
+
+class MadaraSource:
+    fixed = True
+'''
+        manual = '''\
+import math
+import statistics
+
+_OFFSET = 2
+_UNUSED = statistics.mean
+
+def _category(value):
+    return math.ceil(value) + _OFFSET
+
+def _unused():
+    return _UNUSED
+
+class _Node:
+    pass
+
+class MadaraSource:
+    fixed = False
+
+class SiteSource(MadaraSource):
+    category = _category(1.5)
+
+SOURCE = SiteSource
+'''
+
+        refreshed = _refrescar_motor_en_manual(manual, engine)
+
+        self.assertIn("import math", refreshed)
+        self.assertIn("_OFFSET = 2", refreshed)
+        self.assertIn("def _category(value):", refreshed)
+        self.assertNotIn("import statistics", refreshed)
+        self.assertNotIn("_UNUSED", refreshed)
+        self.assertNotIn("def _unused():", refreshed)
+        self.assertEqual(refreshed.count("class _Node:"), 1)
+        self.assertEqual(refreshed.count("class MadaraSource:"), 1)
+        namespace = {}
+        exec(compile(refreshed, "manual.py", "exec"), namespace)
+        self.assertEqual(namespace["SOURCE"].category, 4)
+
     def test_manual_refresh_keeps_suffix_after_madara_import_marker(self):
         engine = '''\
 class _Node:

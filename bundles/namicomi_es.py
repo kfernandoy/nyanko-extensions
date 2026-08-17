@@ -5247,6 +5247,150 @@ class HentaiModeSource (GenericSource ):
             node =node .parent 
 
 
+_NAMICOMI_TAG_FILTERS =(
+('content','Content',(
+('drugs','Drugs'),
+('gambling','Gambling'),
+('gore','Gore'),
+('mental-disorders','Mental Disorders'),
+('physical-abuse','Physical Abuse'),
+('racism','Racism'),
+('self-harm','Self-harm'),
+('sexual-abuse','Sexual Abuse'),
+('verbal-abuse','Verbal Abuse'),
+)),
+('format','Format',(
+('4-koma','4-Koma'),
+('adaptation','Adaptation'),
+('anthology','Anthology'),
+('full-color','Full Color'),
+('oneshot','Oneshot'),
+('silent','Silent'),
+)),
+('genre','Genre',(
+('action','Action'),
+('adventure','Adventure'),
+('boys-love',"Boys' Love"),
+('comedy','Comedy'),
+('crime','Crime'),
+('drama','Drama'),
+('fantasy','Fantasy'),
+('girls-love',"Girls' Love"),
+('historical','Historical'),
+('horror','Horror'),
+('isekai','Isekai'),
+('mecha','Mecha'),
+('medical','Medical'),
+('mystery','Mystery'),
+('philosophical','Philosophical'),
+('psychological','Psychological'),
+('romance','Romance'),
+('sci-fi','Sci-Fi'),
+('slice-of-life','Slice of Life'),
+('sports','Sports'),
+('superhero','Superhero'),
+('thriller','Thriller'),
+('tragedy','Tragedy'),
+('wuxia','Wuxia'),
+)),
+('theme','Theme',(
+('aliens','Aliens'),
+('animals','Animals'),
+('cooking','Cooking'),
+('crossdressing','Crossdressing'),
+('delinquents','Delinquents'),
+('demons','Demons'),
+('genderswap','Genderswap'),
+('ghosts','Ghosts'),
+('gyaru','Gyaru'),
+('harem','Harem'),
+('incest','Incest'),
+('loli','Loli'),
+('mafia','Mafia'),
+('magic','Magic'),
+('magical-boys','Magical Boys'),
+('magical-girls','Magical Girls'),
+('martial-arts','Martial Arts'),
+('military','Military'),
+('monster-girls','Monster Girls'),
+('monsters','Monsters'),
+('music','Music'),
+('ninja','Ninja'),
+('office-workers','Office Workers'),
+('police','Police'),
+('post-apocalyptic','Post-Apocalyptic'),
+('reincarnation','Reincarnation'),
+('reverse-harem','Reverse Harem'),
+('samurai','Samurai'),
+('school-life','School Life'),
+('supernatural','Supernatural'),
+('survival','Survival'),
+('time-travel','Time Travel'),
+('traditional-games','Traditional Games'),
+('vampires','Vampires'),
+('video-games','Video Games'),
+('villainess','Villainess'),
+('virtual-reality','Virtual Reality'),
+('zombies','Zombies'),
+)),
+)
+
+
+_NAMICOMI_TAG_NAMES ={
+tag :label 
+for _ ,_ ,options in _NAMICOMI_TAG_FILTERS 
+for tag ,label in options 
+}
+
+
+_NAMICOMI_API ="https://api.namicomi.com"
+
+
+_NAMICOMI_CDN ="https://uploads.namicomi.com"
+
+
+_NAMICOMI_LIMIT =20 
+
+
+_NAMICOMI_LOCK ="\N{LOCK}"
+
+
+_NAMICOMI_EXT_LANGS ={
+"zh-Hans":"zh-hans","zh-Hant":"zh-hant","pt-BR":"pt-br","pt":"pt-pt","es":"es-es",
+}
+
+
+_NAMICOMI_INCLUDES =("cover_art","organization","tag","primary_tag","secondary_tag")
+
+
+_NAMICOMI_TAG_GROUPS =("content-warnings","format","genre","theme")
+
+
+_NAMICOMI_STATUSES =(
+("ongoing","Ongoing"),("completed","Completed"),
+("hiatus","Hiatus"),("cancelled","Cancelled"),
+)
+
+
+_NAMICOMI_RATINGS =(("safe","Safe"),("restricted","Restricted"),("mature","Mature"))
+
+
+_NAMICOMI_SORTS =(
+("title","Alphabetic"),("chapterCount","Number of chapters"),
+("followCount","Number of follows"),("reactions","Number of likes"),
+("commentCount","Number of comments"),("publishedAt","Content created at"),
+("views","Views"),("year","Year"),("rating","Rating"),
+)
+
+
+_NAMICOMI_LANG_NAMES ={
+"en":"English","ja":"Japanese","ko":"Korean","zh":"Chinese","es":"Spanish",
+"pt":"Portuguese","fr":"French","de":"German","it":"Italian","ru":"Russian",
+"id":"Indonesian","th":"Thai","vi":"Vietnamese","ar":"Arabic","tr":"Turkish",
+"pl":"Polish","nl":"Dutch","uk":"Ukrainian","fil":"Filipino","hi":"Hindi",
+}
+
+
 class NamicomiSource (FuenteBaseSource ):
     """API tipo MangaDex: relaciones incluidas y capitulos con control de acceso."""
 

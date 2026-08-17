@@ -9,6 +9,12 @@ class MadaraSource:
     pass
 
 
+_OLYMPUS_DIRECTORY = "https://olympus.pages.dev"
+_OLYMPUS_CACHE_SECONDS = 60 * 60
+_OLYMPUS_PAGE = 20
+_OLYMPUS_STATUS = {1: "ongoing", 3: "hiatus", 4: "completed", 5: "cancelled"}
+
+
 class OlympusscanlationSource(MadaraSource):
     """El slug de cada serie no viaja en la ficha: se aprende del listado."""
 
