@@ -595,10 +595,13 @@ def _supported_madara(
     source = source_override or _source_block(build)
     base_url = (
         _match(r'baseUrl\s*=\s*"(https?://[^"]+)"', source)
+        or _match(r'baseUrl\s*=\s*"([^"]+)"', source)  # Laxo: acepta $it u otras vars
         or _match(r'custom\("(https?://[^"]+)"\)', source)
         or _match(r'mirrors\(\s*"(https?://[^"]+)"', source)
     )
     language = _match(r'lang\s*=\s*"([^"]+)"', source)
+    if "$" in base_url and language and language != "all":
+        base_url = re.sub(r"\$(?:it\b|\{it\})", language, base_url)
     display_name = _match(r'\bname\s*=\s*"([^"]+)"', source) or _match(
         r'\bname\s*=\s*"([^"]+)"', build
     )
@@ -1160,6 +1163,7 @@ def _supported_generic(
     base_url_name = _match(r"\bbaseUrl\s*=\s*(\w+)", source)
     base_url = (
         _match(r'baseUrl\s*(?::[^=]+)?=\s*"(https?://[^"]+)"', source)
+        or _match(r'baseUrl\s*=\s*"([^"]+)"', source)  # Laxo: acepta $it u otras vars
         or _match(r'custom\("(https?://[^"]+)"\)', source)
         or _match(r'mirrors\([\s\S]*?"(https?://[^"]+)"', source)
         or (
@@ -1170,7 +1174,10 @@ def _supported_generic(
         or _match(r'(?:override\s+)?val\s+baseUrl\s*(?::[^=]+)?=\s*"(https?://[^"]+)"', kotlin)
         or _match(r'baseUrl\s*=\s*"(https?://[^"]+)"', kotlin)
     )
+    # Reemplazar interpolaciones conocidas en baseUrl si language no es 'all'
     language = _match(r'lang\s*=\s*"([^"]+)"', source) or module.parent.name
+    if "$" in base_url and language and language != "all":
+        base_url = re.sub(r"\$(?:it\b|\{it\})", language, base_url)
     display_name = (
         _match(r'\bname\s*=\s*"([^"]+)"', source)
         or _match(r'\bname\s*=\s*"([^"]+)"', build)

@@ -1,0 +1,27 @@
+1153: def _supported_generic(
+1154:     module: Path,
+1155:     build: str,
+1156:     source_override: str = "",
+1157: ) -> dict[str, object] | None:
+1158:     source = source_override or _source_block(build)
+1159:     kotlin = "\n".join(path.read_text(encoding="utf-8") for path in module.rglob("*.kt"))
+1160:     base_url_name = _match(r"\bbaseUrl\s*=\s*(\w+)", source)
+1161:     base_url = (
+1162:         _match(r'baseUrl\s*(?::[^=]+)?=\s*"(https?://[^"]+)"', source)
+1163:         or _match(r'custom\("(https?://[^"]+)"\)', source)
+1164:         or _match(r'mirrors\([\s\S]*?"(https?://[^"]+)"', source)
+1165:         or (
+1166:             _match(rf'\bval\s+{re.escape(base_url_name)}\s*=\s*"(https?://[^"]+)"', build)
+1167:             if base_url_name
+1168:             else ""
+1169:         )
+1170:         or _match(r'(?:override\s+)?val\s+baseUrl\s*(?::[^=]+)?=\s*"(https?://[^"]+)"', kotlin)
+1171:         or _match(r'baseUrl\s*=\s*"(https?://[^"]+)"', kotlin)
+1172:     )
+1173:     language = _match(r'lang\s*=\s*"([^"]+)"', source) or module.parent.name
+1174:     display_name = (
+1175:         _match(r'\bname\s*=\s*"([^"]+)"', source)
+1176:         or _match(r'\bname\s*=\s*"([^"]+)"', build)
+1177:         or module.name
+1178:     )
+1179:     version = _match(r"versionCode\s*=\s*(\d+)", build, "1")
