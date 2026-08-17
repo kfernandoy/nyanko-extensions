@@ -5533,7 +5533,18 @@ class RavenmangaSource (MadaraDetailsSource ):
         return None 
 
 
-SOURCE =RavenmangaSource
+ 
+
+
+class GeneratedRavenmangaSource(RavenmangaSource):
+    name = 'ravenmanga_es'
+    display_name = 'RavenManga'
+    base_url = 'https://raventard.xyz'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'safe'
+
+SOURCE = GeneratedRavenmangaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

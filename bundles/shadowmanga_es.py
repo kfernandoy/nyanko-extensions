@@ -5445,7 +5445,18 @@ class ShadowmangaSource (MadaraDetailsSource ):
             return None 
 
 
-SOURCE =ShadowmangaSource
+ 
+
+
+class GeneratedShadowmangaSource(ShadowmangaSource):
+    name = 'shadowmanga_es'
+    display_name = 'Shadow Manga'
+    base_url = 'https://shademanga.com'
+    language = 'es'
+    requests_per_minute = 180
+    content_warning = 'mixed'
+
+SOURCE = GeneratedShadowmangaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

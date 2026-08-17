@@ -5464,7 +5464,18 @@ class OlympusscanlationSource (MadaraDetailsSource ):
             return None 
 
 
-SOURCE =OlympusscanlationSource
+ 
+
+
+class GeneratedOlympusscanlationSource(OlympusscanlationSource):
+    name = 'olympusscanlation_es'
+    display_name = 'Olympus Scanlation'
+    base_url = 'https://olympusxyz.com'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'safe'
+
+SOURCE = GeneratedOlympusscanlationSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

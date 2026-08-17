@@ -5387,7 +5387,18 @@ class AkayaSource (FuenteBaseSource ):
         ]
 
 
-SOURCE =AkayaSource
+ 
+
+
+class GeneratedAkayaSource(AkayaSource):
+    name = 'akaya_es'
+    display_name = 'AKAYA'
+    base_url = 'https://akaya.io'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'mixed'
+
+SOURCE = GeneratedAkayaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

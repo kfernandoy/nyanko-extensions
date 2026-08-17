@@ -2011,7 +2011,18 @@ class TaurusfansubSource (MadaraDetailsSource ):
     image_headers ={}
 
 
-SOURCE =TaurusfansubSource
+ 
+
+
+class GeneratedTaurusfansubSource(TaurusfansubSource):
+    name = 'taurusfansub_es'
+    display_name = 'Taurus Fansub'
+    base_url = 'https://lectortaurus.com'
+    language = 'es'
+    requests_per_minute = 120
+    content_warning = 'safe'
+
+SOURCE = GeneratedTaurusfansubSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

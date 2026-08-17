@@ -5590,7 +5590,18 @@ class ComicFurySource (GeneratedGenericSource ):
         return SourcePageContent (media_type ="image/svg+xml",chunks =iter ([svg ]))
 
 
-SOURCE =ComicFurySource
+ 
+
+
+class GeneratedComicFurySource(ComicFurySource):
+    name = 'comicfury_all'
+    display_name = 'Comic Fury'
+    base_url = 'https://comicfury.com'
+    language = 'all'
+    requests_per_minute = 60
+    content_warning = 'mixed'
+
+SOURCE = GeneratedComicFurySource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

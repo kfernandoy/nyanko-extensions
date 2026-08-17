@@ -2094,7 +2094,18 @@ class GeneratedMadaraSource (ManhwaLatinoSource ):
     content_warning ='mixed'
 
 
-SOURCE =GeneratedMadaraSource
+ 
+
+
+class GeneratedGeneratedMadaraSource(GeneratedMadaraSource):
+    name = 'manhwalatino_es'
+    display_name = 'Manhwa-Latino'
+    base_url = 'https://manhwa-latino.com'
+    language = 'es'
+    requests_per_minute = 30
+    content_warning = 'mixed'
+
+SOURCE = GeneratedGeneratedMadaraSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

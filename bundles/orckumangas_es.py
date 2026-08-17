@@ -5484,7 +5484,18 @@ class OrckumangasSource (FuenteBaseSource ):
         return f"{parsed .path .lstrip ('/')}{'?'+parsed .query if parsed .query else ''}"
 
 
-SOURCE =OrckumangasSource
+ 
+
+
+class GeneratedOrckumangasSource(OrckumangasSource):
+    name = 'orckumangas_es'
+    display_name = 'Orcku Mangas'
+    base_url = 'https://orckumangas.com'
+    language = 'es'
+    requests_per_minute = 180
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedOrckumangasSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

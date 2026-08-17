@@ -2011,7 +2011,18 @@ class TemplescanespSource (MadaraDetailsSource ):
     image_headers ={}
 
 
-SOURCE =TemplescanespSource
+ 
+
+
+class GeneratedTemplescanespSource(TemplescanespSource):
+    name = 'templescanesp_es'
+    display_name = 'Temple Scan'
+    base_url = 'https://aedexnox.akan01.com'
+    language = 'es'
+    requests_per_minute = 180
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedTemplescanespSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

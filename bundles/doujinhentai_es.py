@@ -6554,7 +6554,17 @@ class DoujinHentaiSource (GeneratedGenericSource ):
         )for index ,url in enumerate (urls )]
 
 
-SOURCE =DoujinHentaiSource
+ 
+
+class GeneratedDoujinHentaiSource(DoujinHentaiSource):
+    name = 'doujinhentai_es'
+    display_name = 'DoujinHentai'
+    base_url = 'https://doujinhentai.net'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedDoujinHentaiSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

@@ -2342,7 +2342,18 @@ class EmperorScanSource (EmperorscanSource ):
         return replace (series ,description =description ,content_tags =tuple (categories ))
 
 
-SOURCE =EmperorScanSource
+ 
+
+
+class GeneratedEmperorScanSource(EmperorScanSource):
+    name = 'emperorscan_es'
+    display_name = 'Emperor Scan'
+    base_url = 'https://imperiomanhua.com'
+    language = 'es'
+    requests_per_minute = 120
+    content_warning = 'safe'
+
+SOURCE = GeneratedEmperorScanSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

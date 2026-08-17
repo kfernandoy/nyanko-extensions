@@ -2162,7 +2162,18 @@ class GeneratedMadaraSource (MangaCrabSource ):
     content_warning ='safe'
 
 
-SOURCE =GeneratedMadaraSource
+ 
+
+
+class GeneratedGeneratedMadaraSource(GeneratedMadaraSource):
+    name = 'mangacrab_es'
+    display_name = 'Manga Crab'
+    base_url = 'https://mangacrab.org'
+    language = 'es'
+    requests_per_minute = 300
+    content_warning = 'safe'
+
+SOURCE = GeneratedGeneratedMadaraSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

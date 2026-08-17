@@ -5582,7 +5582,18 @@ class NamicomiSource (FuenteBaseSource ):
         return None 
 
 
-SOURCE =NamicomiSource
+ 
+
+
+class GeneratedNamicomiSource(NamicomiSource):
+    name = 'namicomi_es'
+    display_name = 'NamiComi'
+    base_url = 'https://namicomi.com'
+    language = 'es'
+    requests_per_minute = 180
+    content_warning = 'safe'
+
+SOURCE = GeneratedNamicomiSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

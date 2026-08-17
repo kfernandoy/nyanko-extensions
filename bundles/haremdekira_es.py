@@ -2197,7 +2197,18 @@ class HaremdekiraSource (MadaraDetailsSource ):
         return data 
 
 
-SOURCE =HaremdekiraSource
+ 
+
+
+class GeneratedHaremdekiraSource(HaremdekiraSource):
+    name = 'haremdekira_es'
+    display_name = 'Harem de Kira'
+    base_url = 'https://kiraproject.lat'
+    language = 'es'
+    requests_per_minute = 180
+    content_warning = 'mixed'
+
+SOURCE = GeneratedHaremdekiraSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

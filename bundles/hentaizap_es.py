@@ -748,7 +748,17 @@ class HentaizapSource (FuenteBaseSource ):
 
 
 
-SOURCE =HentaizapSource
+ 
+
+
+class GeneratedHentaizapSource(HentaizapSource):
+    name = 'hentaizap_es'
+    display_name = 'HentaiZap (es)'
+    base_url = 'https://hentaizap.com'
+    language = 'es'
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedHentaizapSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

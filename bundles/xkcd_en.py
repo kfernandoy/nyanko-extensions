@@ -5724,7 +5724,18 @@ class GeneratedXkcdSource (XkcdSource ):
     image_headers ={'Referer':'https://xkcd.com/'}
 
 
-SOURCE =GeneratedXkcdSource
+ 
+
+
+class GeneratedGeneratedXkcdSource(GeneratedXkcdSource):
+    name = 'xkcd_en'
+    display_name = 'xkcd'
+    base_url = 'https://xkcd.com'
+    language = 'en'
+    requests_per_minute = 60
+    content_warning = 'safe'
+
+SOURCE = GeneratedGeneratedXkcdSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

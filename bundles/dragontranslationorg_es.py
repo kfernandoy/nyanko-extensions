@@ -2265,7 +2265,18 @@ class DragontranslationorgSource (MadaraDetailsSource ):
         return result .isoformat ()
 
 
-SOURCE =DragontranslationorgSource
+ 
+
+
+class GeneratedDragontranslationorgSource(DragontranslationorgSource):
+    name = 'dragontranslationorg_es'
+    display_name = 'DragonTranslation.org'
+    base_url = 'https://dragontranslation.org'
+    language = 'es'
+    requests_per_minute = 180
+    content_warning = 'mixed'
+
+SOURCE = GeneratedDragontranslationorgSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

@@ -5956,7 +5956,17 @@ class ComicsKingdomSource (GeneratedGenericSource ):
         )for index ,url in enumerate (urls )]
 
 
-SOURCE =ComicsKingdomSource
+ 
+
+class GeneratedComicsKingdomSource(ComicsKingdomSource):
+    name = 'comicskingdom_es'
+    display_name = 'Comics Kingdom'
+    base_url = 'https://wp.comicskingdom.com'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'safe'
+
+SOURCE = GeneratedComicsKingdomSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

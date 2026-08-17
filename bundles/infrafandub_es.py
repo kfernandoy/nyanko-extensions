@@ -2117,7 +2117,18 @@ class GeneratedMadaraSource (InfraFandubSource ):
     content_warning ='safe'
 
 
-SOURCE =GeneratedMadaraSource
+ 
+
+
+class GeneratedGeneratedMadaraSource(GeneratedMadaraSource):
+    name = 'infrafandub_es'
+    display_name = 'InfraFandub'
+    base_url = 'https://infrafandub.com'
+    language = 'es'
+    requests_per_minute = 120
+    content_warning = 'safe'
+
+SOURCE = GeneratedGeneratedMadaraSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

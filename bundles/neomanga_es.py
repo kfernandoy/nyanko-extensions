@@ -5468,7 +5468,18 @@ class NeomangaSource (MadaraDetailsSource ):
             return None 
 
 
-SOURCE =NeomangaSource
+ 
+
+
+class GeneratedNeomangaSource(NeomangaSource):
+    name = 'neomanga_es'
+    display_name = 'NeoManga'
+    base_url = 'https://www.neomanga.online'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'safe'
+
+SOURCE = GeneratedNeomangaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

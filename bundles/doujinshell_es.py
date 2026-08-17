@@ -2119,7 +2119,18 @@ class GeneratedMadaraSource (DoujinsHellSource ):
     content_warning ='nsfw'
 
 
-SOURCE =GeneratedMadaraSource
+ 
+
+
+class GeneratedGeneratedMadaraSource(GeneratedMadaraSource):
+    name = 'doujinshell_es'
+    display_name = 'DoujinsHell'
+    base_url = 'https://doujinshell.net'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedGeneratedMadaraSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

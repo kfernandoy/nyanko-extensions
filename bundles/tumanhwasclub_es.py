@@ -5511,7 +5511,18 @@ class TumanhwasclubSource (FuenteBaseSource ):
             return None 
 
 
-SOURCE =TumanhwasclubSource
+ 
+
+
+class GeneratedTumanhwasclubSource(TumanhwasclubSource):
+    name = 'tumanhwasclub_es'
+    display_name = 'ManhwasMe'
+    base_url = 'https://manhwas.me'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedTumanhwasclubSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

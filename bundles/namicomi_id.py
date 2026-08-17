@@ -5807,7 +5807,18 @@ class GeneratedNamiComiSource (NamiComiSource ):
     image_headers ={'Referer':'https://namicomi.com/'}
 
 
-SOURCE =GeneratedNamiComiSource
+ 
+
+
+class GeneratedGeneratedNamiComiSource(GeneratedNamiComiSource):
+    name = 'namicomi_id'
+    display_name = 'NamiComi'
+    base_url = 'https://namicomi.com'
+    language = 'id'
+    requests_per_minute = 180
+    content_warning = 'safe'
+
+SOURCE = GeneratedGeneratedNamiComiSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

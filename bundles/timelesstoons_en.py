@@ -802,7 +802,17 @@ class GeneratedKeyoappSource (KeyoappSource ):
     pages_profile ='default'
 
 
-SOURCE =GeneratedKeyoappSource
+ 
+
+
+class GeneratedGeneratedKeyoappSource(GeneratedKeyoappSource):
+    name = 'timelesstoons_en'
+    display_name = 'TimelessToons'
+    base_url = 'https://timelesstoons.org'
+    language = 'en'
+    requests_per_minute = 60
+
+SOURCE = GeneratedGeneratedKeyoappSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

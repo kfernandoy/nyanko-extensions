@@ -5367,7 +5367,18 @@ class GeneratedOnePieceFansSource (OnePieceFansSource ):
     image_headers ={'Referer':'https://one-piece-fans2.com/'}
 
 
-SOURCE =GeneratedOnePieceFansSource
+ 
+
+
+class GeneratedGeneratedOnePieceFansSource(GeneratedOnePieceFansSource):
+    name = 'onepiecefans_en'
+    display_name = 'One Piece Fans'
+    base_url = 'https://one-piece-fans2.com'
+    language = 'en'
+    requests_per_minute = 60
+    content_warning = 'safe'
+
+SOURCE = GeneratedGeneratedOnePieceFansSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

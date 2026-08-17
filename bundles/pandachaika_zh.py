@@ -5690,7 +5690,18 @@ class GeneratedPandaChaikaSource (PandaChaikaSource ):
     image_headers ={'Referer':'https://panda.chaika.moe/'}
 
 
-SOURCE =GeneratedPandaChaikaSource
+ 
+
+
+class GeneratedGeneratedPandaChaikaSource(GeneratedPandaChaikaSource):
+    name = 'pandachaika_zh'
+    display_name = 'PandaChaika'
+    base_url = 'https://panda.chaika.moe'
+    language = 'zh'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedGeneratedPandaChaikaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

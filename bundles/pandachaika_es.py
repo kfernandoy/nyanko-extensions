@@ -5636,7 +5636,18 @@ class PandachaikaSource (MadaraDetailsSource ):
         )
 
 
-SOURCE =PandachaikaSource
+ 
+
+
+class GeneratedPandachaikaSource(PandachaikaSource):
+    name = 'pandachaika_es'
+    display_name = 'PandaChaika'
+    base_url = 'https://panda.chaika.moe'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedPandachaikaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

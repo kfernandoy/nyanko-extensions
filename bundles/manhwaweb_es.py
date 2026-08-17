@@ -5468,7 +5468,18 @@ class ManhwawebSource (FuenteBaseSource ):
         return moment .replace (tzinfo =None ).isoformat ()
 
 
-SOURCE =ManhwawebSource
+ 
+
+
+class GeneratedManhwawebSource(ManhwawebSource):
+    name = 'manhwaweb_es'
+    display_name = 'ManhwaWeb'
+    base_url = 'https://manhwaweb.com'
+    language = 'es'
+    requests_per_minute = 120
+    content_warning = 'mixed'
+
+SOURCE = GeneratedManhwawebSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

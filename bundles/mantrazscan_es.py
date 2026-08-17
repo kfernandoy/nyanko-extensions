@@ -5488,7 +5488,18 @@ class MantrazscanSource (MadaraDetailsSource ):
             return None 
 
 
-SOURCE =MantrazscanSource
+ 
+
+
+class GeneratedMantrazscanSource(MantrazscanSource):
+    name = 'mantrazscan_es'
+    display_name = 'Manhwa Scan'
+    base_url = 'https://manhwascanx.lat'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedMantrazscanSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

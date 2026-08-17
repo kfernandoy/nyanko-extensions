@@ -5519,7 +5519,18 @@ class OnfmangasSource (MadaraDetailsSource ):
             return None 
 
 
-SOURCE =OnfmangasSource
+ 
+
+
+class GeneratedOnfmangasSource(OnfmangasSource):
+    name = 'onfmangas_es'
+    display_name = 'ONF MANGAS'
+    base_url = 'https://onfmangas.com'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'mixed'
+
+SOURCE = GeneratedOnfmangasSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

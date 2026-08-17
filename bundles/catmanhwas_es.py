@@ -6390,7 +6390,17 @@ class CatManhwasSource (GeneratedGenericSource ):
         )for index ,url in enumerate (urls )]
 
 
-SOURCE =CatManhwasSource
+ 
+
+class GeneratedCatManhwasSource(CatManhwasSource):
+    name = 'catmanhwas_es'
+    display_name = 'Catoons'
+    base_url = 'https://newcat1.xyz'
+    language = 'es'
+    requests_per_minute = 180
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedCatManhwasSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

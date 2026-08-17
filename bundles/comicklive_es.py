@@ -6024,7 +6024,17 @@ class ComickSource (GeneratedGenericSource ):
         )for index ,url in enumerate (urls )]
 
 
-SOURCE =ComickSource
+ 
+
+class GeneratedComickSource(ComickSource):
+    name = 'comicklive_es'
+    display_name = 'Comick (Unoriginal)'
+    base_url = 'https://comick.live'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'mixed'
+
+SOURCE = GeneratedComickSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

@@ -755,7 +755,18 @@ class MangashiinaSource (FuenteBaseSource ):
 
 
 
-SOURCE =MangashiinaSource
+ 
+
+
+class GeneratedMangashiinaSource(MangashiinaSource):
+    name = 'mangashiina_es'
+    display_name = 'Manga Mukai'
+    base_url = 'https://mangamukai.com'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'mixed'
+
+SOURCE = GeneratedMangashiinaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

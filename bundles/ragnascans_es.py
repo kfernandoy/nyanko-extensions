@@ -5512,7 +5512,18 @@ class RagnascansSource (FuenteBaseSource ):
             return None 
 
 
-SOURCE =RagnascansSource
+ 
+
+
+class GeneratedRagnascansSource(RagnascansSource):
+    name = 'ragnascans_es'
+    display_name = 'Ragna Scans'
+    base_url = 'https://lector.ragnascan.xyz'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'safe'
+
+SOURCE = GeneratedRagnascansSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

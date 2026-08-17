@@ -5400,7 +5400,18 @@ class LectormonlineSource (MadaraDetailsSource ):
         return paginas 
 
 
-SOURCE =LectormonlineSource
+ 
+
+
+class GeneratedLectormonlineSource(LectormonlineSource):
+    name = 'lectormonline_es'
+    display_name = 'MangoLibreria'
+    base_url = 'https://mangolibreria.com'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'mixed'
+
+SOURCE = GeneratedLectormonlineSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

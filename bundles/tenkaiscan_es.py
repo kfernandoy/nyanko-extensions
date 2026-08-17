@@ -5360,7 +5360,18 @@ class TenkaiscanSource (FuenteBaseSource ):
         )
 
 
-SOURCE =TenkaiscanSource
+ 
+
+
+class GeneratedTenkaiscanSource(TenkaiscanSource):
+    name = 'tenkaiscan_es'
+    display_name = 'Falco Scan'
+    base_url = 'https://falcoscan.net'
+    language = 'es'
+    requests_per_minute = 180
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedTenkaiscanSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

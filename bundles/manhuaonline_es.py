@@ -2003,7 +2003,18 @@ class GeneratedMadaraSource (SamuraiScanSource ):
     content_warning ='safe'
 
 
-SOURCE =GeneratedMadaraSource
+ 
+
+
+class GeneratedGeneratedMadaraSource(GeneratedMadaraSource):
+    name = 'manhuaonline_es'
+    display_name = 'SamuraiScan'
+    base_url = 'https://samurai.j5z.xyz'
+    language = 'es'
+    requests_per_minute = 180
+    content_warning = 'safe'
+
+SOURCE = GeneratedGeneratedMadaraSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

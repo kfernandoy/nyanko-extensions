@@ -2011,7 +2011,18 @@ class ManhuarmSource (MadaraDetailsSource ):
     image_headers ={}
 
 
-SOURCE =ManhuarmSource
+ 
+
+
+class GeneratedManhuarmSource(ManhuarmSource):
+    name = 'manhuarm_es'
+    display_name = 'Manhuarm'
+    base_url = 'https://manhuarmtl.com'
+    language = 'es'
+    requests_per_minute = 90
+    content_warning = 'mixed'
+
+SOURCE = GeneratedManhuarmSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

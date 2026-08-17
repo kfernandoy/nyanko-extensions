@@ -6256,7 +6256,17 @@ class AnzMangaSource (GeneratedGenericSource ):
         )for index ,url in enumerate (urls )]
 
 
-SOURCE =AnzMangaSource
+ 
+
+class GeneratedAnzMangaSource(AnzMangaSource):
+    name = 'anzmanga_es'
+    display_name = 'AnzManga'
+    base_url = 'https://www.anzmanga25.com'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'safe'
+
+SOURCE = GeneratedAnzMangaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

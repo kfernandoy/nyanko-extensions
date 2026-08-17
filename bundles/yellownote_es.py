@@ -5569,7 +5569,18 @@ class YellownoteSource (MadaraDetailsSource ):
             return None 
 
 
-SOURCE =YellownoteSource
+ 
+
+
+class GeneratedYellownoteSource(YellownoteSource):
+    name = 'yellownote_es'
+    display_name = '小黄书'
+    base_url = 'https://es.xchina.co'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedYellownoteSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

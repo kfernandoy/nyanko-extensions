@@ -5429,7 +5429,18 @@ class SimplyhentaiSource (FuenteBaseSource ):
             return None 
 
 
-SOURCE =SimplyhentaiSource
+ 
+
+
+class GeneratedSimplyhentaiSource(SimplyhentaiSource):
+    name = 'simplyhentai_es'
+    display_name = 'Simply Hentai'
+    base_url = 'https://www.simply-hentai.com'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedSimplyhentaiSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

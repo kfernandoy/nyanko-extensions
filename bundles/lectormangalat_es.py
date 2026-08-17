@@ -2067,7 +2067,18 @@ class LectormangalatSource (MadaraDetailsSource ):
         ]
 
 
-SOURCE =LectormangalatSource
+ 
+
+
+class GeneratedLectormangalatSource(LectormangalatSource):
+    name = 'lectormangalat_es'
+    display_name = 'LectorManga.lat'
+    base_url = 'https://lectormangass.com'
+    language = 'es'
+    requests_per_minute = 120
+    content_warning = 'mixed'
+
+SOURCE = GeneratedLectormangalatSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

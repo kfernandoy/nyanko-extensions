@@ -5526,7 +5526,18 @@ class NartagSource (MadaraDetailsSource ):
         return None 
 
 
-SOURCE =NartagSource
+ 
+
+
+class GeneratedNartagSource(NartagSource):
+    name = 'nartag_es'
+    display_name = 'Rncalation'
+    base_url = 'https://rncalation.online'
+    language = 'es'
+    requests_per_minute = 120
+    content_warning = 'mixed'
+
+SOURCE = GeneratedNartagSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

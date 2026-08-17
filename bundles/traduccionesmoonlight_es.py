@@ -770,7 +770,17 @@ class TraduccionesmoonlightSource (FuenteBaseSource ):
 
 
 
-SOURCE =TraduccionesmoonlightSource
+ 
+
+
+class GeneratedTraduccionesmoonlightSource(TraduccionesmoonlightSource):
+    name = 'traduccionesmoonlight_es'
+    display_name = 'Traducciones Moonlight'
+    base_url = 'https://traduccionesmoonlight.com'
+    language = 'es'
+    content_warning = 'mixed'
+
+SOURCE = GeneratedTraduccionesmoonlightSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

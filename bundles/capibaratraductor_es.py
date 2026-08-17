@@ -5900,7 +5900,17 @@ class CapibaraTraductorSource (GeneratedGenericSource ):
         )for index ,value in enumerate (values )if value .get ("imageUrl")]
 
 
-SOURCE =CapibaraTraductorSource
+ 
+
+class GeneratedCapibaraTraductorSource(CapibaraTraductorSource):
+    name = 'capibaratraductor_es'
+    display_name = 'CapibaraTraductor'
+    base_url = 'https://capibaratraductor.com'
+    language = 'es'
+    requests_per_minute = 180
+    content_warning = 'mixed'
+
+SOURCE = GeneratedCapibaraTraductorSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

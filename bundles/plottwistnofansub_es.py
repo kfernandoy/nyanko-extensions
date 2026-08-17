@@ -5565,7 +5565,18 @@ class PlottwistnofansubSource (MadaraDetailsSource ):
             return None 
 
 
-SOURCE =PlottwistnofansubSource
+ 
+
+
+class GeneratedPlottwistnofansubSource(PlottwistnofansubSource):
+    name = 'plottwistnofansub_es'
+    display_name = 'Plot Twist No Fansub'
+    base_url = 'https://plotnofansub.com'
+    language = 'es'
+    requests_per_minute = 120
+    content_warning = 'mixed'
+
+SOURCE = GeneratedPlottwistnofansubSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

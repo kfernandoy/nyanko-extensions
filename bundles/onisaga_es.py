@@ -5803,7 +5803,18 @@ class OnisagaSource (MadaraDetailsSource ):
         return (now -spans [unit ]*amount ).isoformat ()
 
 
-SOURCE =OnisagaSource
+ 
+
+
+class GeneratedOnisagaSource(OnisagaSource):
+    name = 'onisaga_es'
+    display_name = 'OniSaga'
+    base_url = 'https://onisaga.com'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'mixed'
+
+SOURCE = GeneratedOnisagaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

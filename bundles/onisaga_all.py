@@ -5900,7 +5900,18 @@ class GeneratedOniSagaSource (OniSagaSource ):
     image_headers ={'Referer':'https://onisaga.com/'}
 
 
-SOURCE =GeneratedOniSagaSource
+ 
+
+
+class GeneratedGeneratedOniSagaSource(GeneratedOniSagaSource):
+    name = 'onisaga_all'
+    display_name = 'OniSaga'
+    base_url = 'https://onisaga.com'
+    language = 'all'
+    requests_per_minute = 60
+    content_warning = 'mixed'
+
+SOURCE = GeneratedGeneratedOniSagaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

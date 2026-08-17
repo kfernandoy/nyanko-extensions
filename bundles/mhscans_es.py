@@ -2011,7 +2011,18 @@ class MhscansSource (MadaraDetailsSource ):
     image_headers ={}
 
 
-SOURCE =MhscansSource
+ 
+
+
+class GeneratedMhscansSource(MhscansSource):
+    name = 'mhscans_es'
+    display_name = 'MHScans'
+    base_url = 'https://mhscans.com'
+    language = 'es'
+    requests_per_minute = 20
+    content_warning = 'safe'
+
+SOURCE = GeneratedMhscansSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

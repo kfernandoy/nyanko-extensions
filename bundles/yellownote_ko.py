@@ -6051,7 +6051,18 @@ class GeneratedYellowNoteSource (YellowNoteSource ):
     image_headers ={'Referer':'https://kr.xchina.co/'}
 
 
-SOURCE =GeneratedYellowNoteSource
+ 
+
+
+class GeneratedGeneratedYellowNoteSource(GeneratedYellowNoteSource):
+    name = 'yellownote_ko'
+    display_name = '小黄书'
+    base_url = 'https://kr.xchina.co'
+    language = 'ko'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedGeneratedYellowNoteSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

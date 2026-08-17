@@ -5451,7 +5451,18 @@ class GeneratedSimplyHentaiSource (SimplyHentaiSource ):
     image_headers ={'Referer':'https://www.simply-hentai.com/'}
 
 
-SOURCE =GeneratedSimplyHentaiSource
+ 
+
+
+class GeneratedGeneratedSimplyHentaiSource(GeneratedSimplyHentaiSource):
+    name = 'simplyhentai_ru'
+    display_name = 'Simply Hentai'
+    base_url = 'https://www.simply-hentai.com'
+    language = 'ru'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedGeneratedSimplyHentaiSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

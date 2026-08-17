@@ -2167,7 +2167,18 @@ class GeneratedMadaraSource (MangasNoSekaiSource ):
     content_warning ='safe'
 
 
-SOURCE =GeneratedMadaraSource
+ 
+
+
+class GeneratedGeneratedMadaraSource(GeneratedMadaraSource):
+    name = 'mangasnosekai_es'
+    display_name = 'Mangas No Sekai'
+    base_url = 'https://mangasnosekai.com'
+    language = 'es'
+    requests_per_minute = 120
+    content_warning = 'safe'
+
+SOURCE = GeneratedGeneratedMadaraSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

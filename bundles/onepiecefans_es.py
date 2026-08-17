@@ -5351,7 +5351,18 @@ class OnepiecefansSource (FuenteBaseSource ):
         ]
 
 
-SOURCE =OnepiecefansSource
+ 
+
+
+class GeneratedOnepiecefansSource(OnepiecefansSource):
+    name = 'onepiecefans_es'
+    display_name = 'One Piece Fans'
+    base_url = 'https://one-piece-fans2.com'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'safe'
+
+SOURCE = GeneratedOnepiecefansSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

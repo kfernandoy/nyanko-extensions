@@ -5569,7 +5569,18 @@ class MyreadingmangaSource (FuenteBaseSource ):
             return None 
 
 
-SOURCE =MyreadingmangaSource
+ 
+
+
+class GeneratedMyreadingmangaSource(MyreadingmangaSource):
+    name = 'myreadingmanga_es'
+    display_name = 'MyReadingManga'
+    base_url = 'https://myreadingmanga.info'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedMyreadingmangaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

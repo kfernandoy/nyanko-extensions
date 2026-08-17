@@ -6108,7 +6108,18 @@ class ComikeySource (GeneratedGenericSource ):
         return self ._manifest_pages (manifest ,str (manifest_response .url ),act ,chapter_id ,self .name )
 
 
-SOURCE =ComikeySource
+ 
+
+
+class GeneratedComikeySource(ComikeySource):
+    name = 'comikey_es'
+    display_name = 'Comikey'
+    base_url = 'https://comikey.com'
+    language = 'es'
+    requests_per_minute = 180
+    content_warning = 'safe'
+
+SOURCE = GeneratedComikeySource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

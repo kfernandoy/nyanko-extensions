@@ -5486,7 +5486,18 @@ class GeneratedMantaComicsSource (MantaComicsSource ):
     image_headers ={'Referer':'https://manta.net/en/'}
 
 
-SOURCE =GeneratedMantaComicsSource
+ 
+
+
+class GeneratedGeneratedMantaComicsSource(GeneratedMantaComicsSource):
+    name = 'manta_en'
+    display_name = 'Manta'
+    base_url = 'https://manta.net/en'
+    language = 'en'
+    requests_per_minute = 60
+    content_warning = 'mixed'
+
+SOURCE = GeneratedGeneratedMantaComicsSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

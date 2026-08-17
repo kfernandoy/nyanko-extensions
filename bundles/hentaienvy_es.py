@@ -748,7 +748,17 @@ class HentaienvySource (FuenteBaseSource ):
 
 
 
-SOURCE =HentaienvySource
+ 
+
+
+class GeneratedHentaienvySource(HentaienvySource):
+    name = 'hentaienvy_es'
+    display_name = 'HentaiEnvy (es)'
+    base_url = 'https://hentaienvy.com'
+    language = 'es'
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedHentaienvySource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

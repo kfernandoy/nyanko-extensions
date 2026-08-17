@@ -5619,7 +5619,18 @@ class GeneratedMyReadingMangaSource (MyReadingMangaSource ):
     image_headers ={'Referer':'https://myreadingmanga.info/'}
 
 
-SOURCE =GeneratedMyReadingMangaSource
+ 
+
+
+class GeneratedGeneratedMyReadingMangaSource(GeneratedMyReadingMangaSource):
+    name = 'myreadingmanga_ja'
+    display_name = 'MyReadingManga'
+    base_url = 'https://myreadingmanga.info'
+    language = 'ja'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedGeneratedMyReadingMangaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

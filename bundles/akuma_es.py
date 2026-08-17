@@ -6239,7 +6239,17 @@ class GeneratedGenericSource (GenericSource ):
         )
 
 
-SOURCE =GeneratedGenericSource
+ 
+
+class GeneratedGeneratedGenericSource(GeneratedGenericSource):
+    name = 'akuma_es'
+    display_name = 'Akuma'
+    base_url = 'https://akuma.moe'
+    language = 'es'
+    requests_per_minute = 120
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedGeneratedGenericSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

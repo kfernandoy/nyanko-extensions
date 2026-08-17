@@ -5449,7 +5449,18 @@ class MantaSource (FuenteBaseSource ):
             return None 
 
 
-SOURCE =MantaSource
+ 
+
+
+class GeneratedMantaSource(MantaSource):
+    name = 'manta_es'
+    display_name = 'Manta'
+    base_url = 'https://manta.net/es'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'mixed'
+
+SOURCE = GeneratedMantaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

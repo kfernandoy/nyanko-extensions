@@ -2517,7 +2517,18 @@ class EsMi2MangaSource (Esmi2mangaSource ):
         )
 
 
-SOURCE =EsMi2MangaSource
+ 
+
+
+class GeneratedEsMi2MangaSource(EsMi2MangaSource):
+    name = 'esmi2manga_es'
+    display_name = 'Es.Mi2Manga'
+    base_url = 'https://es.mi2manga.com'
+    language = 'es'
+    requests_per_minute = 120
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedEsMi2MangaSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

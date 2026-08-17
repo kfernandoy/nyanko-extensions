@@ -5375,7 +5375,18 @@ class HdoujinSource (MadaraDetailsSource ):
         return paginas 
 
 
-SOURCE =HdoujinSource
+ 
+
+
+class GeneratedHdoujinSource(HdoujinSource):
+    name = 'hdoujin_es'
+    display_name = 'HDoujin'
+    base_url = 'https://hdoujin.org'
+    language = 'es'
+    requests_per_minute = 180
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedHdoujinSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

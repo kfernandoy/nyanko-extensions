@@ -5442,7 +5442,18 @@ class ZonatmotoSource (MadaraDetailsSource ):
             return None 
 
 
-SOURCE =ZonatmotoSource
+ 
+
+
+class GeneratedZonatmotoSource(ZonatmotoSource):
+    name = 'zonatmoto_es'
+    display_name = 'Zonatmo.to (unoriginal)'
+    base_url = 'https://zonatmo.to'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'mixed'
+
+SOURCE = GeneratedZonatmotoSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

@@ -5412,7 +5412,18 @@ class PlatinumlilyscanSource (MadaraDetailsSource ):
             return None 
 
 
-SOURCE =PlatinumlilyscanSource
+ 
+
+
+class GeneratedPlatinumlilyscanSource(PlatinumlilyscanSource):
+    name = 'platinumlilyscan_es'
+    display_name = 'Platinum Lily Scan'
+    base_url = 'https://platinumlilyscan.com'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'mixed'
+
+SOURCE = GeneratedPlatinumlilyscanSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

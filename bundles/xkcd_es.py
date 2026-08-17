@@ -5676,7 +5676,18 @@ class XkcdSource (FuenteBaseSource ):
             return None 
 
 
-SOURCE =XkcdSource
+ 
+
+
+class GeneratedXkcdSource(XkcdSource):
+    name = 'xkcd_es'
+    display_name = 'xkcd'
+    base_url = 'https://es.xkcd.com'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'safe'
+
+SOURCE = GeneratedXkcdSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 

@@ -6064,7 +6064,17 @@ class CodeArcSource (GeneratedGenericSource ):
         )for index ,url in enumerate (urls )]
 
 
-SOURCE =CodeArcSource
+ 
+
+class GeneratedCodeArcSource(CodeArcSource):
+    name = 'codearc_es'
+    display_name = 'Code Arc Mangas'
+    base_url = 'https://mangas.codearctraducciones.com'
+    language = 'es'
+    requests_per_minute = 60
+    content_warning = 'nsfw'
+
+SOURCE = GeneratedCodeArcSource
 
 """Puente de contrato para adaptadores que conservan metodos v3."""
 
